@@ -1,6 +1,4 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { appStatusSlice } from "./app-status-slice";
-import axios from "axios";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export type UserErrors = {
     loginError: string | null;

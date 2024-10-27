@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { appStatusSlice, getUserInfoActionCreator } from "../store/reducers/app-status-slice";
 import { useAppDispatch, useTypedSelector } from "./use-typed-selector";
-import { useLogin } from "../screens/auth/login/login.props";
+import { useLogInUser } from "../screens/auth/login/login.props";
 
 export const useUser = () => {
     const dispatch = useAppDispatch();
@@ -9,13 +9,13 @@ export const useUser = () => {
     const userState = useTypedSelector(state => state.user);
 
     const authToken = localStorage.getItem("authToken");
-    const goToLogin = useLogin();
+    const goToLogInUser = useLogInUser();
 
     const redirectToLogin = useCallback(() => {
         dispatch(appStatusSlice.actions.clearStatus());
         localStorage.removeItem("authToken");
-        goToLogin();
-    }, [dispatch, goToLogin])
+        goToLogInUser();
+    }, [dispatch, goToLogInUser])
 
     const getUserInfo = useCallback(() => {
         if (authToken === null) {

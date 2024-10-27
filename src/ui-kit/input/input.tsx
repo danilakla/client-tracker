@@ -5,7 +5,6 @@ import noEyeLogo from "../assets/no-eye.svg"
 import { theme } from "../themes/theme";
 import { Text } from "../text";
 import { Spacing } from "../spacing";
-import { error } from "console";
 
 export type InputProps = {
   themeColor?: string;

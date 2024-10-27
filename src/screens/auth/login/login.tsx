@@ -1,20 +1,18 @@
 import { FC, memo, useCallback } from 'react';
-import { LoginProps } from './login.props';
+import { LoginProps, useLogInParent, useLogInUser } from './login.props';
 import { LoginView } from './login.view';
 import { useAppDispatch, useTypedSelector } from '../../../hooks/use-typed-selector';
-import { loginActionCreator, loginSlice } from '../../../store/reducers/auth/login-slice';
+import { loginUserActionCreator, loginSlice, loginParentActionCreator } from '../../../store/reducers/auth/login-slice';
 import { useSignUpAdmin, useSignUpUser } from '../signup/signup.props';
-import { ItemOfSelectType } from '../../../ui-kit/select/select';
 import { useNavigate } from 'react-router-dom';
 
-export const Login: FC<LoginProps> = memo(() => {
+export const Login: FC<LoginProps> = memo(({typeOfLogin}) => {
   const loginState = useTypedSelector(state => state.login);
   
   const { 
     setParentKeyActionCreater, 
     setLoginActionCreater,
     setPasswordActionCreater,
-    setRoleActionCreater,
     reset
   } = loginSlice.actions;
 
@@ -23,11 +21,6 @@ export const Login: FC<LoginProps> = memo(() => {
   const setLogin = useCallback((login: string) => {
     dispatch(setLoginActionCreater(login));
   }, [dispatch, setLoginActionCreater]);
-
-  const setRole = useCallback((role: ItemOfSelectType) => {
-    dispatch(setRoleActionCreater(role));
-    dispatch(reset());
-  }, [dispatch, reset,setRoleActionCreater]);
 
   const setParentKey = useCallback((parentKey: string) => {
     dispatch(setParentKeyActionCreater(parentKey));
@@ -40,35 +33,68 @@ export const Login: FC<LoginProps> = memo(() => {
   const navigate = useNavigate();
 
   const onLogin = useCallback(() => {
-    dispatch(loginActionCreator({
-      login: loginState.login,
-      password: loginState.password,
-      onSuccess: () => navigate('/')
-    }));
-  }, [dispatch, loginState.password, loginState.login, navigate])
+    switch(typeOfLogin){
+      case 'parent':
+        dispatch(loginParentActionCreator({
+          token: loginState.parentKey,
+          onSuccess: () => navigate('/')
+        }));
+        break;
+      default:
+        dispatch(loginUserActionCreator({
+          login: loginState.login,
+          password: loginState.password,
+          onSuccess: () => navigate('/')
+        }));
+    }
+  }, [
+    dispatch, 
+    typeOfLogin, 
+    loginState.password, 
+    loginState.login, 
+    navigate,
+    loginState.parentKey])
 
   const goToSignUpUser = useSignUpUser();
   const goToSignUpAdmin = useSignUpAdmin();
+  const goToLogInUser= useLogInUser();
+  const goToLogInParent= useLogInParent();
 
   const goToSignUpUserAndReset = useCallback(() => {
     goToSignUpUser();
-    reset();
-  },[goToSignUpUser, reset]);
+    dispatch(reset());
+  },[dispatch, goToSignUpUser, reset]);
 
   const goToSignUpAdminAndReset = useCallback(() => {
     goToSignUpAdmin();
-    reset();
-  },[goToSignUpAdmin, reset]);
+    dispatch(reset());
+  },[dispatch, goToSignUpAdmin, reset]);
+
+  const onChangeLogInType = useCallback(() => {
+    dispatch(reset());
+    switch(typeOfLogin){
+      case 'other':
+        goToLogInParent(); 
+        break;
+      case 'parent':
+        goToLogInUser(); 
+        break;
+      default:
+        goToLogInUser(); 
+    }
+  },[typeOfLogin, goToLogInParent, reset, goToLogInUser, dispatch]) 
 
   return (
       <LoginView 
+        onChangeLogInType={onChangeLogInType}
         onLogin={onLogin} 
         loginState={loginState} 
         setPassword={setPassword} 
         setLogin={setLogin}
+        typeOfLogin={typeOfLogin}
         goToSignUpAdmin={goToSignUpAdminAndReset}
         goToSignUpUser={goToSignUpUserAndReset}
         setParentKey={setParentKey}
-        setRole={setRole}/>
+        />
     );
 });

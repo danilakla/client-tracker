@@ -1,5 +1,4 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { ItemOfSelectType } from "../../../ui-kit/select/select";
 import { authApi } from "../../../api/auth/auth-api";
 import axios from "axios";
 
@@ -10,7 +9,6 @@ export type LoginErrors = {
 };
 
 export type LoginState = {
-    role: ItemOfSelectType;
     login: string;
     parentKey: string;
     password: string;
@@ -19,10 +17,6 @@ export type LoginState = {
 };
 
 const initialState: LoginState = {
-    role: {
-        name: 'Преподаватель',
-        value: 'teacher'
-    },
     login: "",
     parentKey: "",
     password: "",
@@ -51,9 +45,6 @@ export const loginSlice = createSlice({
         setPasswordActionCreater(state, action: PayloadAction<string>) {
             state.password = action.payload;
         },
-        setRoleActionCreater(state, action: PayloadAction<ItemOfSelectType>) {
-            state.role = action.payload;
-        },
         reset(state) {
             state.login = "";
             state.parentKey = "";
@@ -68,7 +59,7 @@ export const loginSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loginActionCreator.fulfilled, (state) => {
+            .addCase(loginUserActionCreator.fulfilled, (state) => {
                 state.login = "";
                 state.parentKey = "";
                 state.password = "";
@@ -79,20 +70,55 @@ export const loginSlice = createSlice({
                     passwordError: null,
                 };
             })
-            .addCase(loginActionCreator.pending, (state) => {
+            .addCase(loginUserActionCreator.pending, (state) => {
                 state.loading = 'loading';
             })
-            .addCase(loginActionCreator.rejected, (state) => {
+            .addCase(loginUserActionCreator.rejected, (state) => {
+                state.loading = "idle";
+            })
+            .addCase(loginParentActionCreator.fulfilled, (state) => {
+                state.login = "";
+                state.parentKey = "";
+                state.password = "";
+                state.loading = "idle";
+                state.errors = {
+                    loginError: null,
+                    parentKeyError: null,
+                    passwordError: null,
+                };
+            })
+            .addCase(loginParentActionCreator.pending, (state) => {
+                state.loading = 'loading';
+            })
+            .addCase(loginParentActionCreator.rejected, (state) => {
                 state.loading = "idle";
             });
     },
 });
 
-export const loginActionCreator = createAsyncThunk('login',
+export const loginUserActionCreator = createAsyncThunk('login/user',
     async (data: { login: string, password: string, onSuccess?: () => void }) => {
         const { login, password, onSuccess } = data;
         try {
-            const responce = await authApi.login(login, password);
+            const responce = await authApi.loginUser(login, password);
+            localStorage.setItem('authToken', responce.jwt);
+            if(onSuccess !== undefined) onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if (e.response?.status === 401) {
+                    
+                }
+            }
+        }
+    }
+)
+
+export const loginParentActionCreator = createAsyncThunk('login/parent',
+    async (data: { token: string, onSuccess?: () => void }) => {
+        const { token, onSuccess } = data;
+        try {
+            const responce = await authApi.loginParent(token);
             localStorage.setItem('authToken', responce.jwt);
             if(onSuccess !== undefined) onSuccess();
         }

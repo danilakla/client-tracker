@@ -3,7 +3,7 @@ import { SignupProps, useSignUpAdmin, useSignUpUser } from './signup.props';
 import { SignupView } from './signup.view';
 import { singupSlice } from '../../../store/reducers/auth/singup-slice';
 import { useAppDispatch, useTypedSelector } from '../../../hooks/use-typed-selector';
-import { useLogin } from '../login/login.props';
+import { useLogInParent, useLogInUser } from '../login/login.props';
 
 export const Signup: FC<SignupProps> = memo(({
   typeOfSignup
@@ -57,7 +57,8 @@ export const Signup: FC<SignupProps> = memo(({
 
   const goToSignUpUser = useSignUpUser();
   const goToSignUpAdmin = useSignUpAdmin();
-  const goToLogin = useLogin();
+  const goToLogInUser = useLogInUser();
+  const goToLogInParent = useLogInParent();
 
   const onChangeSignUpType = useCallback(() => {
     dispatch(reset());
@@ -79,7 +80,8 @@ export const Signup: FC<SignupProps> = memo(({
         typeOfSignup={typeOfSignup}
         setNameUniversity={setNameUniversity}
         onSignup={onSignup}
-        goToLogin={goToLogin}
+        goToLogInUser={goToLogInUser}
+        goToLogInParent={goToLogInParent}
         setKey={setKey} 
         setLogin={setLogin}
         setPassword={setPassword}

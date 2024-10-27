@@ -9,70 +9,42 @@ import logoTracker from '../../../images/Logo.svg'
 import { Text } from '../../../ui-kit/text';
 import { theme } from '../../../ui-kit/themes/theme';
 import { Link } from '../../../ui-kit/link';
-import { Select } from '../../../ui-kit/select';
-import { ItemOfSelectType } from '../../../ui-kit/select/select';
-
-const roles = [
-  {
-    name: 'Преподаватель',
-    value: 'teacher'
-  },
-  {
-    name: 'Студент',
-    value: 'student'
-  },
-  {
-    name: 'Родитель',
-    value: 'parent'
-  },
-  {
-    name: 'Деканат',
-    value: 'dean'
-  },
-  {
-    name: 'Администратор',
-    value: 'admin'
-  },
-]
 
 export type LoginViewProps = {
-  setRole: (role: ItemOfSelectType) => void;
   setLogin: (login: string) => void;
   setParentKey: (parentKey: string) => void;
   setPassword: (password: string) => void;
   onLogin: () => void;
+  onChangeLogInType: () => void;
+  typeOfLogin: "parent" | "other";
   goToSignUpUser: () => void;
   goToSignUpAdmin: () => void;
   loginState: LoginState;
 };
 
 export const LoginView: FC<LoginViewProps> = memo(({
-  setRole, 
   setLogin, 
   setParentKey, 
   setPassword, 
   onLogin, 
+  onChangeLogInType,
+  typeOfLogin,
   loginState, 
   goToSignUpUser, 
   goToSignUpAdmin
 }) => {
 
-  
-
   return (
     <AuthWrapper>
       <StyledLogo src={logoTracker}/>
       <Spacing variant='Column' themeSpace={35}/>
-      <Select header='Выберите роль' items={roles} selectedItem={loginState.role} setValue={setRole}/>
-      <Spacing variant='Column' themeSpace={25}/>
       {
-        loginState.role.value === 'parent' ? 
+        typeOfLogin === 'parent' ? 
         (<>
           <Input 
             header='Родительский код' 
             placeholder='3fac%...' error={loginState.errors.parentKeyError}
             value={loginState.parentKey} setValue={setParentKey}/>
-          <Spacing variant='Column' themeSpace={25}/>
         </>) : (<>
           <Input 
             header='Логин' 
@@ -91,6 +63,12 @@ export const LoginView: FC<LoginViewProps> = memo(({
         Войти в аккаунт
       </Button>
       <Spacing variant='Column' themeSpace={30}/>
+      <Link onClick={onChangeLogInType}>
+        <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.gray}>
+          {typeOfLogin === 'other' ? 'Родительский аккаунт' : 'Войти в аккаунт'}
+        </Text>
+      </Link>
+      <Spacing variant='Column' themeSpace={15}/>
       <Link onClick={goToSignUpUser}>
         <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.gray}>
           Зарегестрироваться

@@ -1,10 +1,7 @@
-
 import { FC, memo } from 'react';
 import { SingupState } from '../../../store/reducers/auth/singup-slice';
-import { Column } from '../../../ui-kit/column';
 import { Input } from '../../../ui-kit/input';
 import { Spacing } from '../../../ui-kit/spacing';
-import { Image } from '../../../ui-kit/image';
 import logoTracker from '../../../images/Logo.svg'
 import { AuthWrapper, StyledLogo } from './signup.styled';
 import { Button } from '../../../ui-kit/button';
@@ -18,7 +15,8 @@ export type SignupViewProps = {
   setPassword: (password: string) => void;
   setConfirmPassword: (confirmPassword: string) => void;
   onSignup: () => void;
-  goToLogin: () => void;
+  goToLogInUser: () => void;
+  goToLogInParent: () => void;
   setNameUniversity: (nameUniversity: string) => void;
   signupState: SingupState;
   onChangeSignUpType: () => void;
@@ -30,7 +28,8 @@ export const SignupView: FC<SignupViewProps> = memo(({
   setLogin, 
   setNameUniversity, 
   setPassword, 
-  goToLogin,
+  goToLogInUser,
+  goToLogInParent,
   setConfirmPassword, 
   onSignup, 
   onChangeSignUpType,
@@ -74,9 +73,15 @@ export const SignupView: FC<SignupViewProps> = memo(({
         {typeOfSignup === 'admin' ? 'Создать университет' : 'Зарегестрироваться'}
       </Button>
       <Spacing variant='Column' themeSpace={30}/>
-      <Link onClick={goToLogin}>
+      <Link onClick={goToLogInUser}>
         <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.gray}>
           Войти в аккаунт
+        </Text>
+      </Link>
+      <Spacing variant='Column' themeSpace={15}/>
+      <Link onClick={goToLogInParent}>
+        <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.gray}>
+          Родительский аккаунт
         </Text>
       </Link>
       <Spacing variant='Column' themeSpace={15}/>

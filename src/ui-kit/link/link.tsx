@@ -1,6 +1,5 @@
 import { FC, memo, ReactNode } from "react";
 import { LinkWrapper } from "./link.styles";
-import { Text } from "../text";
 import { theme } from "../themes/theme";
 import { Spacing } from "../spacing";
 import { Line } from "../line";

@@ -1,4 +1,4 @@
-import { FC, HtmlHTMLAttributes, ReactNode, memo } from "react";
+import { FC, HtmlHTMLAttributes, memo } from "react";
 import { StyledButton } from "./button.styles";
 import { Text } from "../text";
 import { theme } from "../themes/theme";

@@ -4,7 +4,6 @@ import { Text } from "../text";
 import { theme } from "../themes/theme";
 
 import arrowActiveButtonSVG from "../assets/arrow-button.svg";
-import { Spacing } from "../spacing";
 
 export type ActionButtonProps = {
   text?: string;

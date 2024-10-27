@@ -1,13 +1,13 @@
 import { useUser } from "./user-hook";
 import { useCallback, useEffect, useRef } from "react";
 import { useTypedSelector } from "./use-typed-selector";
-import { useLogin } from "../screens/auth/login/login.props";
+import { useLogInUser } from "../screens/auth/login/login.props";
 
 export const useAuthentication = () => {
     const { getUserInfo } = useUser();
     const { status } = useTypedSelector(state => state.appStatus);
 
-    const goToLogin = useLogin();
+    const goToLogin = useLogInUser();
 
     const hasFetched = useRef(false);
 

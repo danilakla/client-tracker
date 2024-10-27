@@ -6,13 +6,27 @@ const instance = axios.create({
 });
 
 export const authApi = {
-    login(login: string, password: string) {
+    loginUser(login: string, password: string) {
         return instance.post('/authenticate', { login: login, password: password })
             .then((response) => {
                 return response.data;
             })
     },
+    loginParent(token: string) {
+        return instance.post('/authenticate/parent', { token: token, role: 'ROLE_PARENTS' })
+            .then((response) => {
+                return response.data;
+            })
+    },
     singup(userName: string, password: string) {
+        return instance.post('/singup', {userName: userName, password: password })
+            .then(responce => responce.data)
+    },
+    singupAdmin(userName: string, password: string) {
+        return instance.post('/singup', {userName: userName, password: password })
+            .then(responce => responce.data)
+    },
+    createUniversity(userName: string, password: string) {
         return instance.post('/singup', {userName: userName, password: password })
             .then(responce => responce.data)
     },

@@ -1,4 +1,4 @@
-import { FC, HtmlHTMLAttributes, ReactNode, memo } from "react";
+import { FC, HtmlHTMLAttributes, memo } from "react";
 import { StyledLine } from "./line.styles";
 
 export type LineProps = {
