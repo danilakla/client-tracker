@@ -3,15 +3,7 @@ import { authApi } from "../../../api/auth/auth-api";
 import axios from "axios";
 import { ItemOfSelectType } from "../../../ui-kit/select/select";
 
-type error = string | null;
-
-export type SingupErrors = {
-    keyError: error;
-    nameUniversityError: error;
-    loginError: error;
-    passwordError: error;
-    confirmPasswordError: error;
-};
+type ErrorType = string | null;
 
 export type SingupState = {
     key: string;
@@ -24,7 +16,7 @@ export type SingupState = {
     surname: string;
     confirmPassword: string;
     loading: "idle" | "loading" | "success" | "error";
-    errors: SingupErrors,
+    errors: Record<string, ErrorType>;
 };
 
 const initialState: SingupState = {
@@ -41,15 +33,12 @@ const initialState: SingupState = {
     surname: '',
     confirmPassword: "",
     loading: "idle",
-    errors: {
-        keyError: null,
-        nameUniversityError: null,
-        loginError: null,
-        passwordError: null,
-        confirmPasswordError: null,
-    },
+    errors: {},
 };
 
+const setErrorByKey = (state: SingupState, key: string, error: ErrorType) => {
+    state.errors[key] = error;
+};
 
 export const singupSlice = createSlice({
     name: "singup",
@@ -82,54 +71,20 @@ export const singupSlice = createSlice({
         setConfirmPasswordActionCreater(state, action: PayloadAction<string>) {
             state.confirmPassword = action.payload;
         },
-        setErrors(state, action: PayloadAction<SingupErrors>) {
-            state.errors = action.payload;
+        setError(state, action: PayloadAction<{ key: string; error: ErrorType }>) {
+            setErrorByKey(state, action.payload.key, action.payload.error);
         },
-        reset(state){
-            state.key = "";
-            state.nameUniversity = "";
-            state.name = "";
-            state.lastname = "";
-            state.role = {
-                name: 'Преподаватель',
-                value: 'TEACHER'
-            };
-            state.surname = "";
-            state.login = "";
-            state.password = "";
-            state.confirmPassword = "";
-            state.loading = "idle";
-            state.errors = {
-                keyError: null,
-                nameUniversityError: null,
-                loginError: null,
-                passwordError: null,
-                confirmPasswordError: null,
-            };
-        }
+        reset(state) {
+            Object.assign(state, initialState);
+        },
+        clearErrors(state) {
+            state.errors = {};
+        },
     },
     extraReducers: (builder) => {
         builder
             .addCase(signUpAdminAndCreateUniversityActionCreator.fulfilled, (state) => {
-                state.nameUniversity = "";
-                state.login = "";
-                state.password = "";
-                state.name = "";
-                state.lastname = "";
-                state.surname = "";
-                state.role = {
-                    name: 'Преподаватель',
-                    value: 'TEACHER'
-                };
-                state.confirmPassword = "";
-                state.loading = "idle";
-                state.errors = {
-                    keyError: null,
-                    nameUniversityError: null,
-                    loginError: null,
-                    passwordError: null,
-                    confirmPasswordError: null,
-                };
+                state.loading = 'success';
             })
             .addCase(signUpAdminAndCreateUniversityActionCreator.pending, (state) => {
                 state.loading = 'loading';
@@ -150,14 +105,22 @@ export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sig
         surname: string,
         universityName: string,
         onSuccess?: () => void 
-    }) => {
+    }, thunkApi) => {
         const { login, role, password, name, lastname, surname, onSuccess, universityName } = data;
         try {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(login)) {
+                thunkApi.dispatch(singupSlice.actions.setError(
+                    { key: "loginError", error: 'Введите корректный адрес электронной почты' }
+                ));
+                return;
+            } thunkApi.dispatch(singupSlice.actions.clearErrors())
+
             await authApi.singUp(login, role, password, name, lastname, surname);
             const responce = await authApi.loginUser(login, password);
             await authApi.createUniversity(universityName, responce.jwt);
             localStorage.setItem('authToken', responce.jwt);
-            if(onSuccess !== undefined) onSuccess();
+            onSuccess?.();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -178,13 +141,21 @@ export const signUpActionCreator = createAsyncThunk('sign-up/user',
         lastname: string, 
         surname: string,
         onSuccess?: () => void 
-    }) => {
+    }, thunkApi) => {
         const { login, password, name, lastname, role, surname, onSuccess } = data;
         try {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(login)) {
+                thunkApi.dispatch(singupSlice.actions.setError(
+                    { key: "loginError", error: 'Введите корректный адрес электронной почты' }
+                ));
+                return;
+            } thunkApi.dispatch(singupSlice.actions.clearErrors())
+
             await authApi.singUp(login, role, password, name, lastname, surname);
             const responce = await authApi.loginUser(login, password);
             localStorage.setItem('authToken', responce.jwt);
-            if(onSuccess !== undefined) onSuccess();
+            onSuccess?.();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

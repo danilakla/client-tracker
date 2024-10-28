@@ -64,7 +64,7 @@ export const Input: FC<InputProps> = memo(({
         <InputStyled
           themeColor={themeColor}
           textColor={textColor}
-          borderColor={borderColor}
+          borderColor={error ? theme.colors.attentive : borderColor}
           maxLength={maxLength}
           minLength={minLength}
           placeholder={placeholder}
@@ -80,9 +80,10 @@ export const Input: FC<InputProps> = memo(({
       {error && <Text 
         style={{
           position: 'absolute', 
-          marginTop: 45,
+          marginTop: 67,
           marginLeft: 5,
-          width: '90%', 
+          width: '97%', 
+          fontSize: 12,
           wordBreak: 'break-word',
         }} 
         themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}>

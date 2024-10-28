@@ -45,23 +45,23 @@ export const LoginView: FC<LoginViewProps> = memo(({
         (<>
           <Input 
             header='Родительский код' 
-            placeholder='3fac%...' error={loginState.errors.parentKeyError}
+            placeholder='3fac%...' error={loginState.errors["parentKeyError"]}
             value={loginState.parentKey} setValue={setParentKey}/>
         </>) : (<>
           <Input 
-            header='Логин' 
-            placeholder='Nikola...' error={loginState.errors.loginError}
+            header='Электронная почта' 
+            placeholder='Nikola...' error={loginState.errors["loginError"]}
             value={loginState.login} setValue={setLogin}/>
-          <Spacing variant='Column' themeSpace={25}/>
+          <Spacing variant='Column' themeSpace={30}/>
           <Input 
             header='Пароль' 
             placeholder='********' 
-            type='password' error={loginState.errors.passwordError}
+            type='password' error={loginState.errors["passwordError"]}
             value={loginState.password} setValue={setPassword}/>
         </>)
       }
-      <Spacing variant='Column' themeSpace={35}/>
-      <Button state={loginState.loading} onClick={onLogin} variant='primary' padding={[10,17]}>
+      <Spacing variant='Column' themeSpace={40}/>
+      <Button state={loginState.loading} onClick={onLogin} variant='primary' padding={[12,17]}>
         Войти в аккаунт
       </Button>
       <Spacing variant='Column' themeSpace={30}/>

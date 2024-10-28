@@ -61,53 +61,53 @@ export const SignupView: FC<SignupViewProps> = memo(({
     <AuthWrapper>
       <StyledLogo src={logoTracker}/>
       <Spacing variant='Column' themeSpace={35}/>
-      <Select items={data} selectedItem={signupState.role} setValue={setRole}/>
-      <Spacing variant='Column' themeSpace={25}/>
+      <Select header='Выберите роль' items={data} selectedItem={signupState.role} setValue={setRole}/>
+      <Spacing variant='Column' themeSpace={30}/>
       {signupState.role.value === 'ADMIN' ? (<>
         <Input 
           header='Введите название университета' 
-          placeholder='Белоруccкий....' error={signupState.errors.nameUniversityError}
+          placeholder='Белоруccкий....' error={signupState.errors['nameUniversityError']}
           value={signupState.nameUniversity} setValue={setNameUniversity}/>
       </>) : (
         <Input 
           header='Введите ключ' 
-          placeholder='3fac%...' error={signupState.errors.keyError}
+          placeholder='3fac%...' error={signupState.errors['keyError']}
           value={signupState.key} setValue={setKey}/>
         )}
-      <Spacing variant='Column' themeSpace={25}/>
+      <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Введите электроную почту' 
-        placeholder='ivanov@gmail.com' error={signupState.errors.loginError}
+        placeholder='ivanov@gmail.com' error={signupState.errors['loginError']}
         value={signupState.login} setValue={setLogin}/>
-      <Spacing variant='Column' themeSpace={25}/>
+      <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Введите фамилию' 
-        placeholder='Иванов' error={signupState.errors.loginError}
+        placeholder='Иванов' error={signupState.errors['lastnameError']}
         value={signupState.lastname} setValue={setLastname}/>
-      <Spacing variant='Column' themeSpace={25}/>
+      <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Введите имя' 
-        placeholder='Иван' error={signupState.errors.loginError}
+        placeholder='Иван' error={signupState.errors['nameError']}
         value={signupState.name} setValue={setName}/>
-      <Spacing variant='Column' themeSpace={25}/>
+      <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Введите отчество' 
-        placeholder='Иванович' error={signupState.errors.loginError}
+        placeholder='Иванович' error={signupState.errors['surnamenameError']}
         value={signupState.surname} setValue={setSurname}/>
-      <Spacing variant='Column' themeSpace={25}/>
+      <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Придумайте пароль' 
         placeholder='********' 
-        type='password' error={signupState.errors.passwordError}
+        type='password' error={signupState.errors['passwordError']}
         value={signupState.password} setValue={setPassword}/>
-      <Spacing variant='Column' themeSpace={25}/>
+      <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Подтвердите пароль' 
         placeholder='********' 
-        type='password' error={signupState.errors.confirmPasswordError}
+        type='password' error={signupState.errors['confirmPasswordError']}
         value={signupState.confirmPassword} setValue={setConfirmPassword}/>
       <Spacing variant='Column' themeSpace={30}/>
-      <Button onClick={onSignup} variant='primary' padding={[10,17]}>
+      <Button onClick={onSignup} variant='primary' padding={[12,17]}>
         Зарегестрироваться
       </Button>
       <Spacing variant='Column' themeSpace={30}/>
