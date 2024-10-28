@@ -102,19 +102,42 @@ export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sig
         role: string,
         name: string, 
         lastname: string, 
+        confirmPassword: string,
         surname: string,
         universityName: string,
         onSuccess?: () => void 
     }, thunkApi) => {
-        const { login, role, password, name, lastname, surname, onSuccess, universityName } = data;
+        const { login, role, password, name, confirmPassword, lastname, surname, onSuccess, universityName } = data;
         try {
+            thunkApi.dispatch(singupSlice.actions.clearErrors());
+
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let hasError = false;
+            
+            hasError = !validateField(thunkApi, universityName, 1, "universityNameError", 'Введите название университета') || hasError;
+            hasError = !validateField(thunkApi, name, 1, "nameError", 'Введите корректное имя') || hasError;
+            hasError = !validateField(thunkApi, lastname, 1, "lastnameError", 'Введите корректную фамилию') || hasError;
+            hasError = !validateField(thunkApi, surname, 1, "surnameError", 'Введите корректное отчество') || hasError;
+            hasError = !validateField(thunkApi, password, 8, "passwordError", 'Пароль должен содержать не менее 8 символов') || hasError;
+
+            if (password !== confirmPassword) {
+                thunkApi.dispatch(singupSlice.actions.setError({
+                    key: "confirmPasswordError",
+                    error: 'Пароли не совпадают',
+                }));
+
+                hasError = true;
+            }
+
             if (!emailRegex.test(login)) {
                 thunkApi.dispatch(singupSlice.actions.setError(
                     { key: "loginError", error: 'Введите корректный адрес электронной почты' }
                 ));
-                return;
-            } thunkApi.dispatch(singupSlice.actions.clearErrors())
+            }
+
+            if (hasError) return;
+
+            thunkApi.dispatch(singupSlice.actions.clearErrors());
 
             await authApi.singUp(login, role, password, name, lastname, surname);
             const responce = await authApi.loginUser(login, password);
@@ -132,25 +155,65 @@ export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sig
     }
 )
 
+const validateField = (
+    thunkApi: any, 
+    value: string, 
+    minLength: number, 
+    errorKey: string, 
+    errorMessage: string
+) => {
+    if (value.length < minLength) {
+        thunkApi.dispatch(singupSlice.actions.setError(
+            { key: errorKey, error: errorMessage }
+        ));
+        return false;
+    }
+    return true;
+};
+
 export const signUpActionCreator = createAsyncThunk('sign-up/user',
     async (data: { 
+        key: string,
         login: string, 
         password: string, 
+        confirmPassword: string,
         role: string,
         name: string, 
         lastname: string, 
         surname: string,
         onSuccess?: () => void 
     }, thunkApi) => {
-        const { login, password, name, lastname, role, surname, onSuccess } = data;
+        const { login, password, name, key, lastname, confirmPassword,role, surname, onSuccess } = data;
         try {
+            thunkApi.dispatch(singupSlice.actions.clearErrors());
+
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let hasError = false;
+            
+            hasError = !validateField(thunkApi, key, 1, "keyError", 'Введите ключ') || hasError;
+            hasError = !validateField(thunkApi, name, 1, "nameError", 'Введите корректное имя') || hasError;
+            hasError = !validateField(thunkApi, lastname, 1, "lastnameError", 'Введите корректную фамилию') || hasError;
+            hasError = !validateField(thunkApi, surname, 1, "surnameError", 'Введите корректное отчество') || hasError;
+            hasError = !validateField(thunkApi, password, 8, "passwordError", 'Пароль должен содержать не менее 8 символов') || hasError;
+
+            if (password !== confirmPassword) {
+                thunkApi.dispatch(singupSlice.actions.setError({
+                    key: "confirmPasswordError",
+                    error: 'Пароли не совпадают',
+                }));
+
+                hasError = true;
+            }
+
             if (!emailRegex.test(login)) {
                 thunkApi.dispatch(singupSlice.actions.setError(
                     { key: "loginError", error: 'Введите корректный адрес электронной почты' }
                 ));
-                return;
-            } thunkApi.dispatch(singupSlice.actions.clearErrors())
+            }
+
+            if (hasError) return;
+
+            thunkApi.dispatch(singupSlice.actions.clearErrors());
 
             await authApi.singUp(login, role, password, name, lastname, surname);
             const responce = await authApi.loginUser(login, password);
@@ -159,9 +222,9 @@ export const signUpActionCreator = createAsyncThunk('sign-up/user',
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
-                if (e.response?.status === 401) {
-                    
-                }
+                thunkApi.dispatch(singupSlice.actions.setError(
+                    { key: "keyError", error: e.response?.data.message }
+                ));
             }
         }
     }

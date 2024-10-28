@@ -56,8 +56,9 @@ export const Signup: FC<SignupProps> = memo(({
   }, [dispatch, setPasswordActionCreater])
 
   const setRole = useCallback((role: ItemOfSelectType) => {
+    dispatch(reset());
     dispatch(setRoleActionCreater(role));
-  }, [dispatch, setRoleActionCreater])
+  }, [dispatch, setRoleActionCreater, reset])
 
   const setConfirmPassword = useCallback((confirmPassword: string) => {
     dispatch(setConfirmPasswordActionCreater(confirmPassword));
@@ -71,6 +72,7 @@ export const Signup: FC<SignupProps> = memo(({
         dispatch(signUpAdminAndCreateUniversityActionCreator({
             login: signupState.login, 
             password: signupState.password, 
+            confirmPassword: signupState.confirmPassword,
             name: signupState.name, 
             role: signupState.role.value,
             lastname: signupState.lastname, 
@@ -83,6 +85,8 @@ export const Signup: FC<SignupProps> = memo(({
         dispatch(signUpActionCreator({
           login: signupState.login, 
           password: signupState.password, 
+          key: signupState.key,
+          confirmPassword: signupState.confirmPassword,
           name: signupState.name, 
           role: signupState.role.value,
           lastname: signupState.lastname, 

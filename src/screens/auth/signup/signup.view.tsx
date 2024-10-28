@@ -66,7 +66,7 @@ export const SignupView: FC<SignupViewProps> = memo(({
       {signupState.role.value === 'ADMIN' ? (<>
         <Input 
           header='Введите название университета' 
-          placeholder='Белоруccкий....' error={signupState.errors['nameUniversityError']}
+          placeholder='Белоруccкий....' error={signupState.errors['universityNameError']}
           value={signupState.nameUniversity} setValue={setNameUniversity}/>
       </>) : (
         <Input 
@@ -92,7 +92,7 @@ export const SignupView: FC<SignupViewProps> = memo(({
       <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Введите отчество' 
-        placeholder='Иванович' error={signupState.errors['surnamenameError']}
+        placeholder='Иванович' error={signupState.errors['surnameError']}
         value={signupState.surname} setValue={setSurname}/>
       <Spacing variant='Column' themeSpace={30}/>
       <Input 
