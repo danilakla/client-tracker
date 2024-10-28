@@ -23,6 +23,21 @@ export const Root: FC<RootProps> = () => {
       <Route path={urls.logInParent} element={<Login typeOfLogin='parent' />} />
       <Route path={urls.signUp} element={<Signup/>} />
       <Route path="/" element={<PrivateRoute />} >
+        {user.role === 'ROLE_ADMIN' && <>
+          
+        </>}
+        {user.role === 'ROLE_DEAN' && <>
+          
+          </>}
+        {user.role === 'ROLE_PARENT' && <>
+        
+        </>}
+        {user.role === 'ROLE_STUDENT' && <>
+        
+        </>}
+        {user.role === 'ROLE_TEACHER' && <>
+        
+        </>}
         <Route index element={<>{user.role}</>} />
       </Route>
       <Route path='*' element={<Navigate to='/' />} />
