@@ -14,13 +14,10 @@ export const StyledLogo = styled.img`
 
 export const AuthWrapper = styled.div`
     display: flex;
-    height: 100vh;
     box-sizing: border-box;
-    width: 100vw;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 35px;
-    min-height: 660px;
 `;
   

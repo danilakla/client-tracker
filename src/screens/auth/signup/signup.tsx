@@ -1,12 +1,13 @@
 import { FC, memo, useCallback } from 'react';
-import { SignupProps, useSignUpAdmin, useSignUpUser } from './signup.props';
+import { SignupProps } from './signup.props';
 import { SignupView } from './signup.view';
-import { singupSlice } from '../../../store/reducers/auth/singup-slice';
+import { signUpActionCreator, signUpAdminAndCreateUniversityActionCreator, singupSlice } from '../../../store/reducers/auth/singup-slice';
 import { useAppDispatch, useTypedSelector } from '../../../hooks/use-typed-selector';
 import { useLogInParent, useLogInUser } from '../login/login.props';
+import { ItemOfSelectType } from '../../../ui-kit/select/select';
+import { useNavigate } from 'react-router-dom';
 
 export const Signup: FC<SignupProps> = memo(({
-  typeOfSignup
 }) => {
 
   const signupState = useTypedSelector(state => state.singup);
@@ -17,6 +18,10 @@ export const Signup: FC<SignupProps> = memo(({
     setPasswordActionCreater,
     setConfirmPasswordActionCreater,
     setNameUniversityActionCreater,
+    setNameActionCreater,
+    setRoleActionCreater,
+    setLastnameActionCreater,
+    setSurnameActionCreater,
     reset
   } = singupSlice.actions;
 
@@ -30,54 +35,83 @@ export const Signup: FC<SignupProps> = memo(({
     dispatch(setNameUniversityActionCreater(nameUniversity));
   }, [dispatch, setNameUniversityActionCreater]);
 
-  const setLogin = useCallback((key: string) => {
-    dispatch(setLoginActionCreater(key));
+  const setLogin = useCallback((login: string) => {
+    dispatch(setLoginActionCreater(login));
   }, [dispatch, setLoginActionCreater]);
+
+  const setName = useCallback((name: string) => {
+    dispatch(setNameActionCreater(name));
+  }, [dispatch, setNameActionCreater]);
+
+  const setLastname = useCallback((lastname: string) => {
+    dispatch(setLastnameActionCreater(lastname));
+  }, [dispatch, setLastnameActionCreater]);
+
+  const setSurname = useCallback((surname: string) => {
+    dispatch(setSurnameActionCreater(surname));
+  }, [dispatch, setSurnameActionCreater]);
 
   const setPassword = useCallback((password: string) => {
       dispatch(setPasswordActionCreater(password));
   }, [dispatch, setPasswordActionCreater])
 
+  const setRole = useCallback((role: ItemOfSelectType) => {
+    dispatch(setRoleActionCreater(role));
+  }, [dispatch, setRoleActionCreater])
+
   const setConfirmPassword = useCallback((confirmPassword: string) => {
     dispatch(setConfirmPasswordActionCreater(confirmPassword));
-}, [dispatch, setConfirmPasswordActionCreater])
+  }, [dispatch, setConfirmPasswordActionCreater])
+
+  const navigate = useNavigate();
 
   const onSignup = useCallback(() => {
-    switch(typeOfSignup){
-      case 'admin':
-    // dispatch(signupActionCreater(signupState.userName, signupState.password));
-
+    switch(signupState.role.value){
+      case 'ADMIN':
+        dispatch(signUpAdminAndCreateUniversityActionCreator({
+            login: signupState.login, 
+            password: signupState.password, 
+            name: signupState.name, 
+            role: signupState.role.value,
+            lastname: signupState.lastname, 
+            surname: signupState.surname,
+            universityName: signupState.nameUniversity,
+            onSuccess: () => navigate('/')
+        }));
         break;
-      case 'user':
-    // dispatch(signupActionCreater(signupState.userName, signupState.password));
-
+      default:
+        dispatch(signUpActionCreator({
+          login: signupState.login, 
+          password: signupState.password, 
+          name: signupState.name, 
+          role: signupState.role.value,
+          lastname: signupState.lastname, 
+          surname: signupState.surname,
+          onSuccess: () => navigate('/')
+        }));
         break;
     }
-  }, [typeOfSignup])
+  }, [
+    dispatch,
+    signupState.login, 
+    signupState.password, 
+    signupState.name, 
+    navigate,
+    signupState.role.value,
+    signupState.lastname, 
+    signupState.surname,
+    signupState.nameUniversity
+  ])
 
-  const goToSignUpUser = useSignUpUser();
-  const goToSignUpAdmin = useSignUpAdmin();
   const goToLogInUser = useLogInUser();
   const goToLogInParent = useLogInParent();
 
-  const onChangeSignUpType = useCallback(() => {
-    dispatch(reset());
-    switch(typeOfSignup){
-      case 'admin':
-        goToSignUpUser(); 
-        break;
-      case 'user':
-        goToSignUpAdmin(); 
-        break;
-      default:
-        goToSignUpUser(); 
-    }
-  },[typeOfSignup, dispatch, reset, goToSignUpUser, goToSignUpAdmin]) 
-
   return (
       <SignupView 
-        onChangeSignUpType={onChangeSignUpType}
-        typeOfSignup={typeOfSignup}
+        setLastname={setLastname}
+        setSurname={setSurname}
+        setName={setName}
+        setRole={setRole}
         setNameUniversity={setNameUniversity}
         onSignup={onSignup}
         goToLogInUser={goToLogInUser}

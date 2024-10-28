@@ -18,16 +18,21 @@ export const authApi = {
                 return response.data;
             })
     },
-    singup(userName: string, password: string) {
-        return instance.post('/singup', {userName: userName, password: password })
+    singUp(login: string, role: string, password: string, name: string, lastname: string, surname: string) {
+        return instance.post('/register', {
+                login: login, 
+                password: password,
+                name: name,
+                role: role,
+                lastname: lastname,
+                surname: surname
+            })
             .then(responce => responce.data)
     },
-    singupAdmin(userName: string, password: string) {
-        return instance.post('/singup', {userName: userName, password: password })
-            .then(responce => responce.data)
-    },
-    createUniversity(userName: string, password: string) {
-        return instance.post('/singup', {userName: userName, password: password })
+    createUniversity(name: string, authToken: string) {
+        return instance.post('/admin/university/create', {name: name, description: '' }, {
+            headers: {'Authorization' : `Bearer ${authToken}`}
+        })
             .then(responce => responce.data)
     },
 }

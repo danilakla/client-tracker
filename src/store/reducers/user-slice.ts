@@ -8,7 +8,7 @@ export type UserErrors = {
 
 export type UserData = {
     login: string,
-    role: "ROLE_ADMIN" | "ROLE_TEACHER" | "ROLE_STUDENT" | "ROLE_DEAN" | "ROLE_PARENT",
+    role: "ROLE_ADMIN" | "ROLE_TEACHER" | "ROLE_STUDENT" | "ROLE_DEAN" | "ROLE_PARENT" | "UNDEFINED",
     name: string,
     lastname: string,
     surname: string
@@ -22,7 +22,7 @@ export type UserState = {
 const initialState: UserState = {
     user: {
         login: '',
-        role: 'ROLE_PARENT',
+        role: 'UNDEFINED',
         name: '',
         lastname: '',
         surname: ''

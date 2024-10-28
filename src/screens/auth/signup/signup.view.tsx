@@ -8,6 +8,22 @@ import { Button } from '../../../ui-kit/button';
 import { Text } from '../../../ui-kit/text';
 import { Link } from '../../../ui-kit/link';
 import { theme } from '../../../ui-kit/themes/theme';
+import { ItemOfSelectType, Select } from '../../../ui-kit/select/select';
+
+const data = [
+  {
+    name: 'Преподаватель',
+    value: 'TEACHER',
+  },
+  {
+    name: 'Декан',
+    value: 'DEAN',
+  },
+  {
+    name: 'Администратор',
+    value: 'ADMIN',
+  }
+]
 
 export type SignupViewProps = {
   setKey: (login: string) => void;
@@ -16,11 +32,13 @@ export type SignupViewProps = {
   setConfirmPassword: (confirmPassword: string) => void;
   onSignup: () => void;
   goToLogInUser: () => void;
+  setRole: (role: ItemOfSelectType) => void;
   goToLogInParent: () => void;
   setNameUniversity: (nameUniversity: string) => void;
   signupState: SingupState;
-  onChangeSignUpType: () => void;
-  typeOfSignup: 'admin' | 'user';
+  setName: (key: string) => void;
+  setLastname: (key: string) => void;
+  setSurname: (key: string) => void;
 };
 
 export const SignupView: FC<SignupViewProps> = memo(({
@@ -29,33 +47,53 @@ export const SignupView: FC<SignupViewProps> = memo(({
   setNameUniversity, 
   setPassword, 
   goToLogInUser,
+  setName,
+  setLastname,
+  setRole,
+  setSurname,
   goToLogInParent,
   setConfirmPassword, 
   onSignup, 
-  onChangeSignUpType,
-  signupState,
-  typeOfSignup
+  signupState
 }) => {
 
   return (
     <AuthWrapper>
       <StyledLogo src={logoTracker}/>
       <Spacing variant='Column' themeSpace={35}/>
-      {typeOfSignup === 'admin' && 
+      <Select items={data} selectedItem={signupState.role} setValue={setRole}/>
+      <Spacing variant='Column' themeSpace={25}/>
+      {signupState.role.value === 'ADMIN' ? (<>
         <Input 
-        header='Введите название университета' 
-        placeholder='Белоруccкий....' error={signupState.errors.nameUniversityError}
-        value={signupState.nameUniversity} setValue={setNameUniversity}/>}
-      {typeOfSignup === 'user' && 
+          header='Введите название университета' 
+          placeholder='Белоруccкий....' error={signupState.errors.nameUniversityError}
+          value={signupState.nameUniversity} setValue={setNameUniversity}/>
+      </>) : (
         <Input 
-        header='Введите ключ' 
-        placeholder='3fac%...' error={signupState.errors.keyError}
-        value={signupState.key} setValue={setKey}/>}
+          header='Введите ключ' 
+          placeholder='3fac%...' error={signupState.errors.keyError}
+          value={signupState.key} setValue={setKey}/>
+        )}
       <Spacing variant='Column' themeSpace={25}/>
       <Input 
-        header='Придумайте логин для входа' 
-        placeholder='Nikola...' error={signupState.errors.loginError}
+        header='Введите электроную почту' 
+        placeholder='ivanov@gmail.com' error={signupState.errors.loginError}
         value={signupState.login} setValue={setLogin}/>
+      <Spacing variant='Column' themeSpace={25}/>
+      <Input 
+        header='Введите фамилию' 
+        placeholder='Иванов' error={signupState.errors.loginError}
+        value={signupState.lastname} setValue={setLastname}/>
+      <Spacing variant='Column' themeSpace={25}/>
+      <Input 
+        header='Введите имя' 
+        placeholder='Иван' error={signupState.errors.loginError}
+        value={signupState.name} setValue={setName}/>
+      <Spacing variant='Column' themeSpace={25}/>
+      <Input 
+        header='Введите отчество' 
+        placeholder='Иванович' error={signupState.errors.loginError}
+        value={signupState.surname} setValue={setSurname}/>
       <Spacing variant='Column' themeSpace={25}/>
       <Input 
         header='Придумайте пароль' 
@@ -70,7 +108,7 @@ export const SignupView: FC<SignupViewProps> = memo(({
         value={signupState.confirmPassword} setValue={setConfirmPassword}/>
       <Spacing variant='Column' themeSpace={30}/>
       <Button onClick={onSignup} variant='primary' padding={[10,17]}>
-        {typeOfSignup === 'admin' ? 'Создать университет' : 'Зарегестрироваться'}
+        Зарегестрироваться
       </Button>
       <Spacing variant='Column' themeSpace={30}/>
       <Link onClick={goToLogInUser}>
@@ -85,11 +123,6 @@ export const SignupView: FC<SignupViewProps> = memo(({
         </Text>
       </Link>
       <Spacing variant='Column' themeSpace={15}/>
-      <Link onClick={onChangeSignUpType}>
-        <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.gray}>
-          {typeOfSignup === 'admin' ? 'Зарегестрироваться' : 'Создать университет'}
-        </Text>
-      </Link>
     </AuthWrapper>
   );
 });

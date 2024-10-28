@@ -11,25 +11,26 @@ type PopupProps = {
   
 export const Popup: FC<PopupProps> = memo(({ isActive, closePopup, children, padding = '25px',...rest }) => {
     useEffect(() => {
-        const handleScroll = (event: Event) => {
-          if (isActive) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-        };
-        if (isActive) {
+      const handleScroll = (event: Event) => {
+          event.preventDefault();
+          event.stopPropagation();
+      };
+
+      if (isActive) {
           document.body.style.overflow = "hidden";
-          document.body.addEventListener("scroll", handleScroll, {
-            passive: false,
-          });
-        } else {
+          document.addEventListener("wheel", handleScroll, { passive: false });
+          document.addEventListener("touchmove", handleScroll, { passive: false });
+      } else {
           document.body.style.overflow = "";
-          document.body.removeEventListener("scroll", handleScroll);
-        }
-        return () => {
+          document.removeEventListener("wheel", handleScroll);
+          document.removeEventListener("touchmove", handleScroll);
+      }
+
+      return () => {
           document.body.style.overflow = "";
-          document.body.removeEventListener("scroll", handleScroll);
-        };
+          document.removeEventListener("wheel", handleScroll);
+          document.removeEventListener("touchmove", handleScroll);
+      };
     }, [isActive]);
     
     return (

@@ -3,7 +3,7 @@ import { LoginProps, useLogInParent, useLogInUser } from './login.props';
 import { LoginView } from './login.view';
 import { useAppDispatch, useTypedSelector } from '../../../hooks/use-typed-selector';
 import { loginUserActionCreator, loginSlice, loginParentActionCreator } from '../../../store/reducers/auth/login-slice';
-import { useSignUpAdmin, useSignUpUser } from '../signup/signup.props';
+import { useSignUp } from '../signup/signup.props';
 import { useNavigate } from 'react-router-dom';
 
 export const Login: FC<LoginProps> = memo(({typeOfLogin}) => {
@@ -55,20 +55,14 @@ export const Login: FC<LoginProps> = memo(({typeOfLogin}) => {
     navigate,
     loginState.parentKey])
 
-  const goToSignUpUser = useSignUpUser();
-  const goToSignUpAdmin = useSignUpAdmin();
+  const goToSignUp = useSignUp();
   const goToLogInUser= useLogInUser();
   const goToLogInParent= useLogInParent();
 
-  const goToSignUpUserAndReset = useCallback(() => {
-    goToSignUpUser();
+  const goToSignUpAndReset = useCallback(() => {
+    goToSignUp();
     dispatch(reset());
-  },[dispatch, goToSignUpUser, reset]);
-
-  const goToSignUpAdminAndReset = useCallback(() => {
-    goToSignUpAdmin();
-    dispatch(reset());
-  },[dispatch, goToSignUpAdmin, reset]);
+  },[dispatch, goToSignUp, reset]);
 
   const onChangeLogInType = useCallback(() => {
     dispatch(reset());
@@ -92,8 +86,7 @@ export const Login: FC<LoginProps> = memo(({typeOfLogin}) => {
         setPassword={setPassword} 
         setLogin={setLogin}
         typeOfLogin={typeOfLogin}
-        goToSignUpAdmin={goToSignUpAdminAndReset}
-        goToSignUpUser={goToSignUpUserAndReset}
+        goToSignUpAndReset={goToSignUpAndReset}
         setParentKey={setParentKey}
         />
     );

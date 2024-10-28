@@ -1,6 +1,7 @@
 import { FC, HtmlHTMLAttributes, ReactNode, memo, useEffect } from "react";
 import { WrapperModal } from "./modal.styles";
 import { Surface } from "../surface";
+import { Column } from "../column";
 
 type ModalProps = {
     isActive : boolean,
@@ -49,7 +50,9 @@ export const Modal: FC<ModalProps> = memo(({
           borderRadius={`${borderRadius}px ${borderRadius}px 0px 0px`} 
           padding={padding} 
           onClick={(e) => e.stopPropagation()} {...rest}>
-          {children}
+          <Column horizontalAlign='center'>
+            {children}
+          </Column>
         </Surface>
       </WrapperModal>
     )
