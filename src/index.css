@@ -6,3 +6,7 @@
   scrollbar-width: none;
   -webkit-scrollbar: none;
 }
+
+body{
+  background-color: #f7f9fc;
+}

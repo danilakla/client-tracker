@@ -6,9 +6,11 @@ export type UserErrors = {
     passwordError: string | null;
 };
 
+export type UserRole = "ROLE_ADMIN" | "ROLE_TEACHER" | "ROLE_STUDENT" | "ROLE_DEAN" | "ROLE_PARENT" | "UNDEFINED";
+
 export type UserData = {
     login: string,
-    role: "ROLE_ADMIN" | "ROLE_TEACHER" | "ROLE_STUDENT" | "ROLE_DEAN" | "ROLE_PARENT" | "UNDEFINED",
+    role: UserRole,
     name: string,
     lastname: string,
     surname: string

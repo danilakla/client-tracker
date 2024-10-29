@@ -2,11 +2,12 @@ export const theme ={
     colors: {
         background: '#131328',
         primary: '#33CCFF',
-        secondary: '#FDFDCE',
+        
         foreground: '#1D1D38',
 
         surface: '#FFFFFF',
         attentive: '#FF0B33',
+        secondary: '#FCFCFC',
         gray: '#525266',
         nothing: '000000',
         gradients: {
@@ -20,10 +21,16 @@ export const theme ={
     fonts: {
         
         h3: {
-            family: "ApplePro-Regular",
+            family: "ApplePro-Medium",
             desktopSize: "14px",
             mobileSize: "14px",
             weight: "700",
+        },
+        h2: {
+            family: "ApplePro-Medium",
+            desktopSize: "16px",
+            mobileSize: "16px",
+            weight: "400",
         },
         ht1: {
             family: "ApplePro-Light",
@@ -37,7 +44,12 @@ export const theme ={
             mobileSize: "14px",
             weight: "400",
         },
-
+        ml: {
+            family: "ApplePro-Light",
+            desktopSize: "12px",
+            mobileSize: "12px",
+            weight: "400",
+        },
 
         h1: {
             family: "ApplePro-Heavy",

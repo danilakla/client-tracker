@@ -5,6 +5,7 @@ import { Login } from './screens/auth/login';
 import { Signup } from './screens/auth/signup';
 import { PrivateRoute } from "./private-route";
 import { useTypedSelector } from "./hooks/use-typed-selector";
+import { Example } from "./screens/roles/example";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -22,7 +23,8 @@ export const Root: FC<RootProps> = () => {
       <Route path={urls.logInUser} element={<Login typeOfLogin='other' />} />
       <Route path={urls.logInParent} element={<Login typeOfLogin='parent' />} />
       <Route path={urls.signUp} element={<Signup/>} />
-      <Route path="/" element={<PrivateRoute />} >
+      <Route index element={<Example/>} />
+      {/* <Route index element={<PrivateRoute />} >
         {user.role === 'ROLE_ADMIN' && <>
           
         </>}
@@ -39,7 +41,7 @@ export const Root: FC<RootProps> = () => {
         
         </>}
         <Route index element={<>{user.role}</>} />
-      </Route>
+      </Route> */}
       <Route path='*' element={<Navigate to='/' />} />
     </Routes>
   );

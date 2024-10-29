@@ -1,0 +1,1 @@
+export { WrapperMobile } from './wrapper-mobile';
