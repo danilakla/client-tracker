@@ -40,7 +40,8 @@ export const getUserInfoActionCreator = createAsyncThunk('user/info',
         const { authToken } = data;
         try {
             const responce = await userApi.getUserInfo(authToken);
-            
+            localStorage.setItem("authToken", authToken)
+            thunkApi.dispatch(userSlice.actions.setAuthTockenActionCreater(authToken));
             thunkApi.dispatch(userSlice.actions.setUserActionCreater(responce));
         }
         catch (e) {

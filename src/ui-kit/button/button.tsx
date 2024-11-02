@@ -5,7 +5,7 @@ import { theme } from "../themes/theme";
 import { CircleLoading } from "../circle-loading";
 
 export type ButtonProps = {
-    variant: 'primary' | 'secondary' | 'attentive'
+    variant: 'primary' | 'secondary' | 'attentive' | 'recomended'
     width?: number | string;
     borderRaius?: number;
     children?: string;
@@ -27,11 +27,6 @@ export const Button: FC<ButtonProps> = memo(({
     children, 
     ...rest 
 }) => {
-    const variantLoadingColors = {
-        primary: theme.colors.surface,
-        secondary: theme.colors.gray,
-        attentive: theme.colors.surface
-    };
 
     return <StyledButton
         variant={variant}
@@ -42,8 +37,8 @@ export const Button: FC<ButtonProps> = memo(({
         onClick={onClick}
         { ...rest}
     >
-        <CircleLoading size={sizeLoading} state={state} color={variantLoadingColors[variant]}/>
-        <Text style={{visibility: state === 'loading' ? 'hidden' : 'visible'}} themeFont={theme.fonts.h3}>
+        <CircleLoading size={sizeLoading} state={state} color={theme.colors.surface}/>
+        <Text themeColor={theme.colors.surface} style={{visibility: state === 'loading' ? 'hidden' : 'visible'}} themeFont={theme.fonts.h3}>
             {children}
         </Text>
     </StyledButton>

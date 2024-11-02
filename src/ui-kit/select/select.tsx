@@ -27,7 +27,7 @@ export type SelectProps = {
 } & HtmlHTMLAttributes<HTMLElement>;
 
 export const Select: FC<SelectProps> = memo(({
-  borderColor = theme.colors.gray, 
+  borderColor = theme.colors.foreground, 
   themeColor = theme.colors.surface,
   textColor = theme.colors.gray, 
   header,
@@ -86,7 +86,7 @@ export const Select: FC<SelectProps> = memo(({
         }
       </Popup>) :(<Modal isActive={isOpen} closeModal={toggleSelect}>
         {header && <>
-          <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+          <Text style={{width: '100%', maxWidth:440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
             {header}
           </Text>
           <Spacing variant='Column' themeSpace={15}/>

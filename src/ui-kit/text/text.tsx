@@ -13,7 +13,7 @@ export type TextProps = {
 
 export const Text : FC<TextProps> = memo(({ 
     themeFont, 
-    themeColor = theme.colors.nothing, 
+    themeColor = theme.colors.gray, 
     themePadding, 
     transform, 
     align, 

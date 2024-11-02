@@ -1,4 +1,4 @@
-import { FC, memo, ReactNode } from "react";
+import { FC, HtmlHTMLAttributes, memo, ReactNode, useState } from "react";
 
 import profileActive from '../../images/menu-panel/white/profile.svg';
 import statisticsActive from '../../images/menu-panel/white/statistics.svg';
@@ -10,42 +10,109 @@ import statisticsDisable from '../../images/menu-panel/gray/statistics.svg';
 import subjectDisable from '../../images/menu-panel/gray/subject.svg';
 import workshopDisable from '../../images/menu-panel/gray/workshop.svg';
 import { UserRole } from "../../store/reducers/user-slice";
+import { BackButton, ControlPanelContainer, ControlPanelWrapper, HeaderContainer, ImageArrowButton, ImageButtonStyled, ScreenContent, SelectedButtonWrapper, Wrapper } from "./wrapper-desktop.styles";
+import { Spacing } from "../../ui-kit/spacing";
+import { Text } from "../../ui-kit/text";
+import { theme } from "../../ui-kit/themes/theme";
+import backArrowSVG from '../../images/back-arrow.svg';
+import { link } from "fs";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export type WrapperDesktopProps = {
 	header?: string;
 	role: UserRole;
 	onBack?: () => void;
 	children?: ReactNode;
-};
+	isCenter?: boolean;
+} & HtmlHTMLAttributes<HTMLElement>;
 
 export const WrapperDesktop: FC<WrapperDesktopProps> = memo(({
 	header,
 	role,
+	isCenter = false,
 	children,
-	onBack
+	onBack,
+	...rest
 }) => {
-    
-
 
   return(
-    <>
-		{children}
-    </>
+    <Wrapper>
+	  	<HeaderContainer>
+	  		{onBack && <BackButton onClick={onBack}>
+	  			<ImageArrowButton src={backArrowSVG}/>
+	  			<Spacing themeSpace={3} variant='Row' />
+	  			<Text themeFont={theme.fonts.ht2}>
+	  				Назад
+	  			</Text>
+	  		</BackButton>}
+	  		<Text themeFont={theme.fonts.h2}>
+	  			{header}
+	  		</Text>
+	  	</HeaderContainer>
+    
+	  	<ScreenContent isCenter={isCenter} {...rest}>
+	  		{children}
+	  	</ScreenContent>
+    
+		<ControlPanelWrapper>
+			<ControlPanelContainer>
+	  			{role === 'ROLE_ADMIN' && adminSections.map(
+	  				(item) => <ImageButton 
+						item={item}/>)}
+	  			{role === 'ROLE_DEAN' && deanSections.map(
+	  				(item) => <ImageButton 
+        	  			item={item}/>)}
+	  			{role === 'ROLE_PARENT' && parentSections.map(
+	  				(item) => <ImageButton 
+        	  			item={item}/>)}
+	  			{role === 'ROLE_STUDENT' && studentSections.map(
+	  				(item) => <ImageButton 
+        	  			item={item}/>)}
+	  			{role === 'ROLE_TEACHER' && teacherSections.map(
+	  				(item) => <ImageButton 
+        	  			item={item}/>)}
+	  		</ControlPanelContainer>
+		</ControlPanelWrapper>
+    </Wrapper>
+)})
+
+
+
+export type ImageButtonProps = {
+  item: {
+    link: string;
+    imageActive: string;
+    imageDisable: string;
+  }
+};
+
+export const ImageButton: FC<ImageButtonProps> = memo(({
+  item
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [isActive] = useState<boolean>(location.pathname.includes(item.link));
+
+  return(
+    <SelectedButtonWrapper onClick={() => navigate(item.link)} isAvctive={isActive}>
+      <ImageButtonStyled src={isActive ? item.imageActive : item.imageDisable}/>
+    </SelectedButtonWrapper>
 )})
 
 const studentSections = [
 	{
-		link: '',
+		link: '/student/statistics',
 		imageActive: statisticsActive,
 		imageDisable: statisticsDisable,
 	},
 	{
-		link: '',
+		link: '/student/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -53,17 +120,17 @@ const studentSections = [
 
 const parentSections = [
 	{
-		link: '',
+		link: '/student/statistics',
 		imageActive: statisticsActive,
 		imageDisable: statisticsDisable,
 	},
 	{
-		link: '',
+		link: '/student/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -71,17 +138,17 @@ const parentSections = [
 
 const deanSections = [
 	{
-		link: '',
+		link: '/dean/workshop',
 		imageActive: workshopActive,
 		imageDisable: workshopDisable,
 	},
 	{
-		link: '',
+		link: '/teacher/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -89,12 +156,12 @@ const deanSections = [
 
 const adminSections = [
 	{
-		link: '',
+		link: '/admin/workshop',
 		imageActive: workshopActive,
 		imageDisable: workshopDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -102,12 +169,12 @@ const adminSections = [
 
 const teacherSections = [
 	{
-		link: '',
+		link: '/teacher/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}

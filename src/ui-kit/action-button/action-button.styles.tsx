@@ -27,7 +27,7 @@ export const ActionButtonStyled = styled.div<{
 }>`
   width: 100%;
   height: 42px;
-  box-shadow: 0 0 10px 5px rgba(221, 221, 221, 1);
+  box-shadow: 0 0 16px 5px #8f8fbf40;
   box-sizing: border-box;
   border: none;
   padding: 0px 20px;

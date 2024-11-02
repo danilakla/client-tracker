@@ -4,6 +4,7 @@ export const HeaderContainer = styled.div`
     position: fixed; 
     display: flex;
     top: 0;
+    z-index: 10;
     height: 50px;
     justify-content: center;
     align-items: center;
@@ -26,7 +27,7 @@ export const BottomContainer = styled.div`
     
 `;
 
-export const ImageButton = styled.img`
+export const ImageButtonStyled = styled.img`
     cursor: pointer;
     width: 32px;
     height: 32px;
@@ -38,7 +39,10 @@ export const ImageArrowButton = styled.img`
 `;
 
 export const ScreenContent = styled.div`
-
+    padding: 75px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 
 export const Wrapper = styled.div`

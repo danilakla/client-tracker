@@ -1,13 +1,15 @@
 export const theme ={ 
     colors: {
         background: '#131328',
-        primary: '#33CCFF',
+       
         
-        foreground: '#1D1D38',
-
+        
+        primary: '#33ccff',
         surface: '#FFFFFF',
-        attentive: '#FF0B33',
+        attentive: '#fc657e',
         secondary: '#FCFCFC',
+        foreground: '#e9e9f2',
+        success: "#16d977",
         gray: '#525266',
         nothing: '000000',
         gradients: {
@@ -15,8 +17,7 @@ export const theme ={
         },
 
         error: '#AA0020',
-        surfaceGray: "#7B7B7B",
-        success: "#77CE41"
+        surfaceGray: "#7B7B7B"
     },
     fonts: {
         
@@ -24,7 +25,7 @@ export const theme ={
             family: "ApplePro-Medium",
             desktopSize: "14px",
             mobileSize: "14px",
-            weight: "700",
+            weight: "500",
         },
         h2: {
             family: "ApplePro-Medium",
@@ -94,7 +95,7 @@ export const theme ={
             weight: "400",
         }
     },
-    toMobileSize : 800
+    toMobileSize : 1200
   }
   
   export type FontProps = {

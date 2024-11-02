@@ -1,4 +1,4 @@
-import { FC, memo, ReactNode } from "react";
+import { FC, memo, ReactNode, useState } from "react";
 
 import profileActive from '../../images/menu-panel/primary/profile.svg';
 import scannerActive from '../../images/menu-panel/primary/scanner.svg';
@@ -15,10 +15,11 @@ import workshopDisable from '../../images/menu-panel/gray/workshop.svg';
 import backArrowSVG from '../../images/back-arrow.svg';
 
 import { UserRole } from "../../store/reducers/user-slice";
-import { BackButton, BottomContainer, HeaderContainer, ImageArrowButton, ImageButton, ScreenContent, Wrapper } from "./wrapper-mobile.styles";
+import { BackButton, BottomContainer, HeaderContainer, ImageArrowButton, ImageButtonStyled, ScreenContent, Wrapper } from "./wrapper-mobile.styles";
 import { Text } from "../../ui-kit/text";
 import { theme } from "../../ui-kit/themes/theme";
 import { Spacing } from "../../ui-kit/spacing";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export type WrapperMobileProps = {
 	header?: string;
@@ -33,19 +34,17 @@ export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 	children,
 	onBack
 }) => {
-    
-
 
   return(
     <Wrapper>
 		<HeaderContainer>
-			<BackButton>
+			{onBack && <BackButton onClick={onBack}>
 				<ImageArrowButton src={backArrowSVG}/>
 				<Spacing themeSpace={3} variant='Row' />
 				<Text themeFont={theme.fonts.ml}>
 					Назад
 				</Text>
-			</BackButton>
+			</BackButton>}
 			<Text themeFont={theme.fonts.h2}>
 				{header}
 			</Text>
@@ -57,37 +56,63 @@ export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 
 		<BottomContainer>
 			{role === 'ROLE_ADMIN' && adminSections.map(
-				(item) => <ImageButton src={item.imageDisable}/>)}
-			{role === 'ROLE_DEAN' && deanSections.map(
-				(item) => <ImageButton src={item.imageDisable}/>)}
-			{role === 'ROLE_PARENT' && parentSections.map(
-				(item) => <ImageButton src={item.imageDisable}/>)}
-			{role === 'ROLE_STUDENT' && studentSections.map(
-				(item) => <ImageButton src={item.imageDisable}/>)}
-			{role === 'ROLE_TEACHER' && teacherSections.map(
-				(item) => <ImageButton src={item.imageDisable}/>)}
+	  			(item) => <ImageButton 
+					item={item}/>)}
+	  		{role === 'ROLE_DEAN' && deanSections.map(
+	  			(item) => <ImageButton 
+        			item={item}/>)}
+	  		{role === 'ROLE_PARENT' && parentSections.map(
+	  			(item) => <ImageButton 
+        			item={item}/>)}
+	  		{role === 'ROLE_STUDENT' && studentSections.map(
+	  			(item) => <ImageButton 
+        			item={item}/>)}
+	  		{role === 'ROLE_TEACHER' && teacherSections.map(
+	  			(item) => <ImageButton 
+        			item={item}/>)}
 		</BottomContainer>
     </Wrapper>
 )})
 
+export type ImageButtonProps = {
+	item: {
+	  link: string;
+	  imageActive: string;
+	  imageDisable: string;
+	}
+  };
+  
+export const ImageButton: FC<ImageButtonProps> = memo(({
+	item
+}) => {
+	const navigate = useNavigate();
+	const location = useLocation();
+
+  	const [isActive] = useState<boolean>(location.pathname.includes(item.link));
+
+	return(<ImageButtonStyled 
+		onClick={() => navigate(item.link)} 
+		src={isActive ? item.imageActive : item.imageDisable}/>
+)})
+
 const studentSections = [
 	{
-		link: '',
+		link: '/student/statistics',
 		imageActive: statisticsActive,
 		imageDisable: statisticsDisable,
 	},
 	{
-		link: '',
+		link: '/student/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/student/scanner',
 		imageActive: scannerActive,
 		imageDisable: scannerDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -95,17 +120,17 @@ const studentSections = [
 
 const parentSections = [
 	{
-		link: '',
+		link: '/student/statistics',
 		imageActive: statisticsActive,
 		imageDisable: statisticsDisable,
 	},
 	{
-		link: '',
+		link: '/student/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -113,17 +138,17 @@ const parentSections = [
 
 const deanSections = [
 	{
-		link: '',
+		link: '/dean/workshop',
 		imageActive: workshopActive,
 		imageDisable: workshopDisable,
 	},
 	{
-		link: '',
+		link: '/teacher/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -131,12 +156,12 @@ const deanSections = [
 
 const adminSections = [
 	{
-		link: '',
+		link: '/admin/workshop',
 		imageActive: workshopActive,
 		imageDisable: workshopDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}
@@ -144,12 +169,12 @@ const adminSections = [
 
 const teacherSections = [
 	{
-		link: '',
+		link: '/teacher/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
 	},
 	{
-		link: '',
+		link: '/profile',
 		imageActive: profileActive,
 		imageDisable: profileDisable,
 	}

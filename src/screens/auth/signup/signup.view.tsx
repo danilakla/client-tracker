@@ -61,7 +61,11 @@ export const SignupView: FC<SignupViewProps> = memo(({
     <AuthWrapper>
       <StyledLogo src={logoTracker}/>
       <Spacing variant='Column' themeSpace={35}/>
-      <Select header='Выберите роль' items={data} selectedItem={signupState.role} setValue={setRole}/>
+      <Select 
+        header='Выберите роль' 
+        items={data} 
+        selectedItem={signupState.role} 
+        setValue={setRole}/>
       <Spacing variant='Column' themeSpace={30}/>
       {signupState.role.value === 'ADMIN' ? (<>
         <Input 
@@ -107,7 +111,7 @@ export const SignupView: FC<SignupViewProps> = memo(({
         type='password' error={signupState.errors['confirmPasswordError']}
         value={signupState.confirmPassword} setValue={setConfirmPassword}/>
       <Spacing variant='Column' themeSpace={30}/>
-      <Button onClick={onSignup} variant='primary' padding={[12,17]}>
+      <Button onClick={onSignup} state={signupState.loading} variant='primary' padding={[12,17]}>
         Зарегестрироваться
       </Button>
       <Spacing variant='Column' themeSpace={30}/>

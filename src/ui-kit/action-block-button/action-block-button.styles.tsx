@@ -26,17 +26,17 @@ export const ActionBlockButtonStyled = styled.div<{
   textColor?: string;
   borderRadius?: number;
 }>`
-  width: ${({size}) => `${size || '150'}px`};
-  height: ${({size}) => `${size || '150'}px`};
+  width: ${({size}) => `${size || '155'}px`};
+  cursor: pointer;
+  height: ${({size}) => `${size || '155'}px`};
   border-radius: ${({borderRadius}) => `${borderRadius || '30'}px`};
-  box-shadow: 0 0 10px 5px rgba(221, 221, 221, 1);
+  box-shadow: 0 0 16px 5px #8f8fbf40;
   box-sizing: border-box;
   border: none;
   display: flex;
   flex-direction: column;
   padding: 25px;
   background-color: ${({ themeColor }) => themeColor};
-  color: ${({ textColor }) => textColor};
   align-items: center;
   justify-content: center;
 

@@ -7,14 +7,8 @@ export const StyledSurface = styled.div<SurfaceProps>`
   border: ${({ borderColor }) => borderColor ? `2px solid ${borderColor}` : 0};
   padding: ${({ padding }) => padding || '25px'};
   background-color:${({ themeColor }) =>  themeColor ? themeColor : theme.colors.surface};
-  box-shadow: ${({ shadow }) => shadow ? shadow : '0px 0px 5px rgba(0, 0, 0, 0.2)'};
+  box-shadow: ${({ shadow }) => shadow ? shadow : '0 0 16px 5px #8f8fbf40'};
   box-sizing: border-box;
-  width: ${props => {
-    if(props.width) return `${props.width}px`
-    else  return `100%`
-  }};
-  height: ${props => {
-    if(props.height) return `${props.height}px`
-    else return `auto`
-  }};
+  width: ${(({ width }) => width === undefined ? `100%` : typeof width === "number" ? `${width}px` : width)};
+  height: ${(({ height }) => height === undefined ? `auto` : typeof height === "number" ? `${height}px` : height)}; 
 `;

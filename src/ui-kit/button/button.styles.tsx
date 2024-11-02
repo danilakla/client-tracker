@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { theme } from "../themes/theme";
 
 export type StyledButtonProps = {
-  variant: 'primary' | 'secondary' | 'attentive';
+  variant: 'primary' | 'secondary' | 'attentive' | 'recomended';
   borderRaius?: number;
   width?: number | string;
   height?: number | string;
@@ -19,28 +19,16 @@ export const StyledButton = styled.button<StyledButtonProps>`
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
-
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  
-  color: ${({ variant }) => {
-    switch(variant){
-      case 'primary':
-        return `${theme.colors.surface}`;
-      case 'secondary':
-        return `${theme.colors.gray}`;
-      case 'attentive':
-        return `${theme.colors.surface} `;
-      default:
-        return `${theme.colors.surface}`;
-    }
-  }};
+  box-shadow: 0 0 16px 5px #8f8fbf40;
 
   background: ${({ variant }) => {
     switch(variant){
       case 'primary':
-        return `${theme.colors.gradients.primary}`;
+        return `${theme.colors.primary}`;
       case 'secondary':
-        return `${theme.colors.surface}`;
+        return `${theme.colors.attentive}`;
+      case 'recomended':
+        return `${theme.colors.success}`;
       case 'attentive':
         return `${theme.colors.attentive} `;
       default:
@@ -48,18 +36,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
     }
   }};
 
-  border: ${({ variant }) => {
-    switch(variant){
-      case 'primary':
-        return `none`;
-      case 'secondary':
-        return `2px solid ${theme.colors.gray}`;
-      case 'attentive':
-        return `none`;
-      default:
-        return `none`;
-    }
-  }};
+  border: none;
 
   padding: ${({ padding }) => {
     if (typeof padding === "number") {

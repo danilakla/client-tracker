@@ -24,7 +24,7 @@ export type InputProps = {
 } & HTMLAttributes<HTMLInputElement>;
 
 export const Input: FC<InputProps> = memo(({
-  borderColor = theme.colors.gray, 
+  borderColor = theme.colors.foreground, 
   themeColor = theme.colors.surface,
   textColor = theme.colors.gray, 
   header,

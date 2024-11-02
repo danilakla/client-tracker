@@ -97,8 +97,10 @@ export const Signup: FC<SignupProps> = memo(({
     }
   }, [
     dispatch,
-    signupState.login, 
+    signupState.login,
+    signupState.key, 
     signupState.password, 
+    signupState.confirmPassword,
     signupState.name, 
     navigate,
     signupState.role.value,

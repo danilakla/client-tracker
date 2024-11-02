@@ -24,7 +24,7 @@ export type UserState = {
 const initialState: UserState = {
     user: {
         login: '',
-        role: 'UNDEFINED',
+        role: 'ROLE_ADMIN',
         name: '',
         lastname: '',
         surname: ''
@@ -44,14 +44,7 @@ export const userSlice = createSlice({
             state.authToken = action.payload;
         },
         reset(state) {
-            state.user = {
-                login: '',
-                role: 'ROLE_PARENT',
-                name: '',
-                lastname: '',
-                surname: ''
-            };
-            state.authToken = '';
+            Object.assign(state, initialState);
         }
     }
 });

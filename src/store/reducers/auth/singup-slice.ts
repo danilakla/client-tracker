@@ -91,6 +91,15 @@ export const singupSlice = createSlice({
             })
             .addCase(signUpAdminAndCreateUniversityActionCreator.rejected, (state) => {
                 state.loading = "idle";
+            })
+            .addCase(signUpActionCreator.fulfilled, (state) => {
+                state.loading = 'success';
+            })
+            .addCase(signUpActionCreator.pending, (state) => {
+                state.loading = 'loading';
+            })
+            .addCase(signUpActionCreator.rejected, (state) => {
+                state.loading = "idle";
             });
     }
 });

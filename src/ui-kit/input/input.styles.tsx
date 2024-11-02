@@ -25,7 +25,7 @@ export const InputStyled = styled.input<{
 }>`
   width: 100%;
   autocomplete: off;
-  box-shadow: 0 0 10px 5px rgba(221, 221, 221, 1);
+  box-shadow: 0 0 16px 5px #8f8fbf40;
   box-sizing: border-box;
   border: 2px solid ${({ borderColor }) => borderColor};
   padding: 10px 10px 10px 10px;

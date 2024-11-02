@@ -1,0 +1,1 @@
+export { UniversityInfo } from './university-info';

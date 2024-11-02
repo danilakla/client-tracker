@@ -1,0 +1,1 @@
+export { UniversityEditor } from './university-editor';
