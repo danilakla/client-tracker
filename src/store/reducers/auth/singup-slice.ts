@@ -148,7 +148,7 @@ export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sig
 
             thunkApi.dispatch(singupSlice.actions.clearErrors());
 
-            await authApi.singUp(login, role, password, name, lastname, surname);
+            await authApi.singUpAdmin(login, role, password, name, lastname, surname);
             const responce = await authApi.loginUser(login, password);
             await authApi.createUniversity(universityName, responce.jwt);
             localStorage.setItem('authToken', responce.jwt);
@@ -224,7 +224,8 @@ export const signUpActionCreator = createAsyncThunk('sign-up/user',
 
             thunkApi.dispatch(singupSlice.actions.clearErrors());
 
-            await authApi.singUp(login, role, password, name, lastname, surname);
+            await authApi.singUp(key, login, role, password, name, lastname, surname);
+            
             const responce = await authApi.loginUser(login, password);
             localStorage.setItem('authToken', responce.jwt);
             onSuccess?.();

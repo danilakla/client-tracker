@@ -18,8 +18,20 @@ export const authApi = {
                 return response.data;
             })
     },
-    singUp(login: string, role: string, password: string, name: string, lastname: string, surname: string) {
+    singUpAdmin(login: string, role: string, password: string, name: string, lastname: string, surname: string) {
         return instance.post('/register', {
+                login: login, 
+                password: password,
+                name: name,
+                role: role,
+                lastname: lastname,
+                surname: surname
+            })
+            .then(responce => responce.data)
+    },
+    singUp(key: string, login: string, role: string, password: string, name: string, lastname: string, surname: string) {
+        return instance.post('/register', {
+                key:key,
                 login: login, 
                 password: password,
                 name: name,

@@ -43,14 +43,17 @@ export const Root: FC<RootProps> = () => {
       <Route path={urls.signUp} element={<Signup/>} />
 
       <Route element={<PrivateRoute />} >
+        {/* General */}
+        <Route path={urls.profile} element={<Profile/>}/>
+        <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
+        
+
         {user.role === 'ROLE_ADMIN' && <>
           <Route index element={<Navigate to={urls.profile} />} />
 
-          <Route path={urls.profile} element={<Profile/>}/>
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
-          <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
             
           <Route path={urls.adminWorkshop} element={<AdminWorkShop/>}/>
           <Route path={urls.adminGeneratorKeys} element={<AdminGeneratorKeys/>}/>
@@ -59,13 +62,9 @@ export const Root: FC<RootProps> = () => {
         {user.role === 'ROLE_DEAN' && <>
           <Route index element={<Navigate to={urls.profile} />} />
 
-          <Route path={urls.profile} element={<Profile/>}/>
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
-          <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
-
-
         </>}
         {user.role === 'ROLE_PARENT' && <>
           <Route index element={<Navigate to={urls.profile} />} />
@@ -77,19 +76,15 @@ export const Root: FC<RootProps> = () => {
         {user.role === 'ROLE_STUDENT' && <>
           <Route index element={<Navigate to={urls.profile} />} />
 
-          <Route path={urls.profile} element={<Profile/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
-          <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
         </>}
         {user.role === 'ROLE_TEACHER' && <>
           <Route index element={<Navigate to={urls.profile} />} />
 
-          <Route path={urls.profile} element={<Profile/>}/>
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
-          <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
         </>}
       </Route>
       <Route path='*' element={<Navigate to='/' />} />
