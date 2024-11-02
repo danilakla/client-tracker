@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { userApi } from "../../../api/auth/user-api";
 import axios from "axios";
 import { userSlice } from "../user-slice";
+import { appStatusSlice } from "../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -57,7 +58,7 @@ export const changeLoginSlice = createSlice({
     },
 });
 
-export const changeLoginActionCreator = createAsyncThunk('/profile/change-login',
+export const changeLoginActionCreator = createAsyncThunk('profile/change-login',
     async (data: { authToken: string, newLogin: string, onSuccess?: () => void}, thunkApi ) => {
         const { authToken, newLogin, onSuccess } = data;
         try {
@@ -83,6 +84,10 @@ export const changeLoginActionCreator = createAsyncThunk('/profile/change-login'
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+
                 thunkApi.dispatch(changeLoginSlice.actions.setError(
                     { key: "newLoginError", error: e.response?.data.message }
                 ));

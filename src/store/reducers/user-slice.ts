@@ -34,7 +34,7 @@ const initialState: UserState = {
 
 
 export const userSlice = createSlice({
-    name: "user",
+    name: "user-slice",
     initialState: initialState,
     reducers: {
         setUserActionCreater(state, action: PayloadAction<UserData>) {
@@ -48,19 +48,5 @@ export const userSlice = createSlice({
         }
     }
 });
-
-// export const loginActionCreater = (userName: string, password: string, onSuccess?: () => void) => {
-//     return (dispatch: AppDispatch) => {
-//       dispatch(loginSlice.actions.fetchLoginUserActionCreater());
-//       authApi.login(userName, password)
-//           .then(responce => {
-//               dispatch(loginSlice.actions.fetchLoginSuccessActionCreater());
-//               if(onSuccess !== undefined) onSuccess();
-//           })
-//           .catch((err) => {
-//               dispatch(loginSlice.actions.fetchLoginErrorActionCreater("Not found"));
-//           })
-//     }
-// }
 
 export default userSlice.reducer;

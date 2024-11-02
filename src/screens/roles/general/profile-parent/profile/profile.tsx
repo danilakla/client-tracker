@@ -9,6 +9,7 @@ import { useUniversityInfo } from '../university-info/university-info.props';
 import { useAppDispatch } from '../../../../../hooks/use-typed-selector';
 import { userSlice } from '../../../../../store/reducers/user-slice';
 import { useLogInUser } from '../../../../auth/login/login.props';
+import { appStatusSlice } from '../../../../../store/reducers/app-status-slice';
 
 export const Profile: FC<ProfileProps> = memo(() => {
   const {user} = useUser();
@@ -25,6 +26,7 @@ export const Profile: FC<ProfileProps> = memo(() => {
     localStorage.removeItem('authToken');
     dispatch(userSlice.actions.reset());
     goToLogin();
+    dispatch(appStatusSlice.actions.setStatusApp({status: 'idle'}));
   },[dispatch,goToLogin])
 
   return (

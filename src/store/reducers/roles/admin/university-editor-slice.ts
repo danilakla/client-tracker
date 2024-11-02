@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { universityApi } from "../../../../api/auth/university-api";
 import axios from "axios";
+import { appStatusSlice } from "../../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -78,31 +79,7 @@ export const universityEditorSlice = createSlice({
     },
 });
 
-// export const changePasswordActionCreator = createAsyncThunk('/profile/change-password',
-//     async (data: { 
-//             authToken: string, 
-//             oldPassword: string, 
-//             newPassword: string, 
-//             confirmPassword: string, 
-//             onSuccess?: () => void
-//         }, thunkApi ) => {
-//         const { authToken, oldPassword, newPassword, confirmPassword, onSuccess } = data;
-//         try {
-//             const responce = await userApi.changePassword(authToken, oldPassword, newPassword);
-//             onSuccess?.();
-//             thunkApi.dispatch(changePasswordSlice.actions.reset());
-//         }
-//         catch (e) {
-//             if (axios.isAxiosError(e)) {
-//                 // thunkApi.dispatch(changeAccountDataSlice.actions.setError(
-//                 //     { key: "passwordError", error: e.response?.data.message }
-//                 // ));
-//             }
-//         }
-//     }
-// )
-
-export const initializationUniversityInfoActionCreator = createAsyncThunk('login/user',
+export const initializationUniversityInfoActionCreator = createAsyncThunk('admin-university-editor/initialize',
     async (data: { authToken: string}, thunkApi ) => {
         const { authToken } = data;
         try {
@@ -111,15 +88,15 @@ export const initializationUniversityInfoActionCreator = createAsyncThunk('login
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
-                // thunkApi.dispatch(loginSlice.actions.setError(
-                //     { key: "passwordError", error: e.response?.data.message }
-                // ));
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
             }
         }
     }
 )
 
-export const changeUniversityInfoActionCreator = createAsyncThunk('/profile/change-login',
+export const changeUniversityInfoActionCreator = createAsyncThunk('admin-university-editor/update',
     async (data: { authToken: string,id: number, name: string, description: string, onSuccess?: () => void}, thunkApi ) => {
         const { authToken, name, id, description, onSuccess } = data;
         try {
@@ -141,9 +118,9 @@ export const changeUniversityInfoActionCreator = createAsyncThunk('/profile/chan
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
-                // thunkApi.dispatch(universityEditorSlice.actions.setError(
-                //     { key: "newLoginError", error: e.response?.data.message }
-                // ));
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
             }
         }
     }

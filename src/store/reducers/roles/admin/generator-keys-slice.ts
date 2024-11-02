@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { ItemOfSelectType } from "../../../../ui-kit/select/select";
 import axios from "axios";
 import { adminApi } from "../../../../api/auth/admin-api";
+import { appStatusSlice } from "../../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -65,7 +66,7 @@ export const generatorKeysSlice = createSlice({
     },
 });
 
-export const generateKeyActionCreator = createAsyncThunk('/admin-generator-keys/generate',
+export const generateKeyActionCreator = createAsyncThunk('/admin-generator-keys/generate-key',
     async (data: { 
             authToken: string, 
             faculty: string, 
@@ -97,9 +98,9 @@ export const generateKeyActionCreator = createAsyncThunk('/admin-generator-keys/
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
-                // thunkApi.dispatch(changeAccountDataSlice.actions.setError(
-                //     { key: "passwordError", error: e.response?.data.message }
-                // ));
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
             }
         }
     }

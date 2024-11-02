@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { userApi } from "../../../api/auth/user-api";
+import { appStatusSlice } from "../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -61,7 +62,7 @@ export const changePasswordSlice = createSlice({
     },
 });
 
-export const changePasswordActionCreator = createAsyncThunk('/profile/change-password',
+export const changePasswordActionCreator = createAsyncThunk('profile/change-password',
     async (data: { 
             authToken: string, 
             oldPassword: string, 
@@ -106,6 +107,10 @@ export const changePasswordActionCreator = createAsyncThunk('/profile/change-pas
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+
                 thunkApi.dispatch(changePasswordSlice.actions.setError(
                     { key: "oldPasswordError", error: e.response?.data.message }
                 ));

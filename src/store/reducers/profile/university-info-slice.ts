@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { universityApi } from "../../../api/auth/university-api";
+import { appStatusSlice } from "../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -70,9 +71,9 @@ export const getUniversityInfoActionCreator = createAsyncThunk('university/info'
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
-                // thunkApi.dispatch(loginSlice.actions.setError(
-                //     { key: "passwordError", error: e.response?.data.message }
-                // ));
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
             }
         }
     }

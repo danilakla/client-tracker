@@ -41,7 +41,7 @@ const setErrorByKey = (state: SingupState, key: string, error: ErrorType) => {
 };
 
 export const singupSlice = createSlice({
-    name: "singup",
+    name: "sing-up",
     initialState: initialState,
     reducers: {
         setNameUniversityActionCreater(state, action: PayloadAction<string>) {
@@ -225,7 +225,7 @@ export const signUpActionCreator = createAsyncThunk('sign-up/user',
             thunkApi.dispatch(singupSlice.actions.clearErrors());
 
             await authApi.singUp(key, login, role, password, name, lastname, surname);
-            
+
             const responce = await authApi.loginUser(login, password);
             localStorage.setItem('authToken', responce.jwt);
             onSuccess?.();
