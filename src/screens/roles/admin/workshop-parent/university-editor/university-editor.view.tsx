@@ -12,6 +12,7 @@ import { Button } from '../../../../../ui-kit/button';
 import { Row } from '../../../../../ui-kit/row';
 import { Surface } from '../../../../../ui-kit/surface';
 import { Column } from '../../../../../ui-kit/column';
+import { CircleLoading } from '../../../../../ui-kit/circle-loading';
 
 export type UniversityEditorViewProps = {
   goToWorkshop: () => void;
@@ -60,27 +61,31 @@ export const UniversityEditorMobileView: FC<UniversityEditorViewProps> = memo(({
 
   return (
     <WrapperMobile onBack={goToWorkshop} role='ROLE_ADMIN' header='Университет'>
-      <Input 
+      {adminUniversityEditorState.loadingData === 'loading' ?
+      (<CircleLoading state={'loading'} />) :
+      (<>
+        <Input 
           header='Название' 
           placeholder='Белоруccкий....' error={adminUniversityEditorState.errors['universityNameError']}
-          value={adminUniversityEditorState.nameUniversity} setValue={setNameUniversity}/>
-      <Spacing themeSpace={30} variant='Column' />
-      <Textarea
-        value={adminUniversityEditorState.descriptionUniversity} 
-        placeholder='Создан в ...' 
-        height={200} setValue={setDescriptionUniversity}
-        error={adminUniversityEditorState.errors['descriptionUniversityError']}
-        header='Описание' />
-      <Spacing themeSpace={40} variant='Column' />
-      <Row>
-        <Button onClick={() => {}} state={adminUniversityEditorState.loading} variant='recomended' padding={[12,17]}>
-          Сохранить
-        </Button>
-        <Spacing variant='Row' themeSpace={20}/>
-        <Button onClick={goToWorkshop} state={'idle'} variant='secondary' padding={[12,17]}>
-          Отмена
-        </Button>
-      </Row>
+          value={adminUniversityEditorState.university.name} setValue={setNameUniversity}/>
+        <Spacing themeSpace={30} variant='Column' />
+        <Textarea
+          value={adminUniversityEditorState.university.description} 
+          placeholder='Создан в ...' 
+          height={200} setValue={setDescriptionUniversity}
+          error={adminUniversityEditorState.errors['descriptionUniversityError']}
+          header='Описание' />
+        <Spacing themeSpace={40} variant='Column' />
+        <Row>
+          <Button onClick={onSave} state={adminUniversityEditorState.loading} variant='recomended' padding={[12,17]}>
+            Сохранить
+          </Button>
+          <Spacing variant='Row' themeSpace={20}/>
+          <Button onClick={goToWorkshop} state={'idle'} variant='secondary' padding={[12,17]}>
+            Отмена
+          </Button>
+        </Row>
+      </>)}
     </WrapperMobile>
   );
 });
@@ -95,22 +100,23 @@ export const UniversityEditorDesktopView: FC<UniversityEditorViewProps> = memo((
 
   return (
     <WrapperDesktop isCenter={true} onBack={goToWorkshop} role='ROLE_ADMIN' header='Университет'>
-      <Surface style={{width: 'auto'}} padding='40px'>
+      {adminUniversityEditorState.loadingData === 'loading' ?
+      (<CircleLoading state={'loading'} />) : (<Surface style={{width: 'auto'}} padding='40px'>
         <Column style={{width: 440}} horizontalAlign='center'>
           <Input 
               header='Название' 
               placeholder='Белоруccкий....' error={adminUniversityEditorState.errors['universityNameError']}
-              value={adminUniversityEditorState.nameUniversity} setValue={setNameUniversity}/>
+              value={adminUniversityEditorState.university.name} setValue={setNameUniversity}/>
           <Spacing themeSpace={30} variant='Column' />
           <Textarea
-            value={adminUniversityEditorState.descriptionUniversity} 
+            value={adminUniversityEditorState.university.description} 
             placeholder='Создан в ...' 
             height={200} setValue={setDescriptionUniversity}
             error={adminUniversityEditorState.errors['descriptionUniversityError']}
             header='Описание' />
           <Spacing themeSpace={40} variant='Column' />
           <Row>
-            <Button onClick={() => {}} state={adminUniversityEditorState.loading} variant='recomended' padding={[12,17]}>
+            <Button onClick={onSave} state={adminUniversityEditorState.loading} variant='recomended' padding={[12,17]}>
               Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
@@ -119,7 +125,7 @@ export const UniversityEditorDesktopView: FC<UniversityEditorViewProps> = memo((
             </Button>
           </Row>
         </Column>
-      </Surface>
+      </Surface>)}
     </WrapperDesktop>
   );
 });

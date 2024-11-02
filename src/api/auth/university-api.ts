@@ -13,4 +13,14 @@ export const universityApi = {
                 return response.data;
             })
     },
+    changeUniversityInfo(authToken: string, id: number, name: string, description: string){
+        return instance.post('/admin/university/update',{
+            name: name,
+            id: id,
+            description: description
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

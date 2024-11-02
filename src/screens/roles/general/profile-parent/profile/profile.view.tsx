@@ -165,13 +165,13 @@ export const ProfileDesktopView: FC<ProfileViewProps> = memo(({
               <Spacing variant='Row' themeSpace={25} />
               <Column style={{gap: 15}} verticalAlign='space-between'>
                 <Text themeFont={theme.fonts.h2} themeColor={theme.colors.nothing}>
-                  {user.lastname}Иванов
+                  {user.lastname}
                 </Text>
                 <Text themeFont={theme.fonts.h2} themeColor={theme.colors.nothing}>
-                  {user.name}Иван
+                  {user.name}
                 </Text>
                 <Text themeFont={theme.fonts.h2} themeColor={theme.colors.nothing}>
-                  {user.surname}Иванов
+                  {user.surname}
                 </Text>
                 <Text themeFont={theme.fonts.ml} >
                   {roleView[user.role]}

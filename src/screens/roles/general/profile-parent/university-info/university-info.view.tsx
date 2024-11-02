@@ -69,7 +69,7 @@ export const UniversityInfoMobileView: FC<UniversityInfoViewProps> = memo(({
                 textOverflow: 'ellipsis'
               }} 
               themeColor={theme.colors.nothing}>
-              {universityInfoState.nameUniversity === '' ? 'Не указано' : universityInfoState.nameUniversity}
+              {universityInfoState.university.name}
             </Text>
             <Spacing themeSpace={25} variant='Column' />
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
@@ -84,7 +84,7 @@ export const UniversityInfoMobileView: FC<UniversityInfoViewProps> = memo(({
               }} 
               themeFont={theme.fonts.h2} 
               themeColor={theme.colors.nothing}>
-              {universityInfoState.descriptionUniversity === '' ? 'Не указано' : universityInfoState.descriptionUniversity}
+              {universityInfoState.university.description === '' ? 'Не указано' : universityInfoState.university.description}
             </Text>
           </ScrollView>)}
         </Column>
@@ -101,7 +101,8 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
 
   return (
     <WrapperDesktop onBack={goToProfile} isCenter={true} role={user.role} header='Университет'>
-      <Surface padding='40px' style={{width: 'auto'}}>
+      {universityInfoState.loading === 'loading' ? (<CircleLoading state={universityInfoState.loading} />) :
+      (<Surface padding='40px' style={{width: 'auto'}}>
         <Column style={{width: 500, height: 440}}>
           <ScrollView>
             <Text 
@@ -118,7 +119,7 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
                 textOverflow: 'ellipsis'
               }} 
               themeColor={theme.colors.nothing}>
-              {universityInfoState.nameUniversity === '' ? 'Не указано' : universityInfoState.nameUniversity}
+              {universityInfoState.university.name === '' ? 'Не указано' : universityInfoState.university.name}
             </Text>
             <Spacing themeSpace={25} variant='Column' />
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
@@ -133,11 +134,11 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
               }} 
               themeFont={theme.fonts.h2} 
               themeColor={theme.colors.nothing}>
-              {universityInfoState.descriptionUniversity === '' ? 'Не указано' : universityInfoState.descriptionUniversity}
+              {universityInfoState.university.description === '' ? 'Не указано' : universityInfoState.university.description}
             </Text>
           </ScrollView>
         </Column>
-      </Surface>
+      </Surface>)}
     </WrapperDesktop>
   );
 });

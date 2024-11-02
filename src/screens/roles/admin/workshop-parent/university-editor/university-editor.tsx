@@ -3,11 +3,13 @@ import { UniversityEditorProps } from './university-editor.props';
 import { UniversityEditorView } from './university-editor.view';
 import { useWorkshop } from '../workshop/workshop.props';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { universityEditorSlice } from '../../../../../store/reducers/roles/admin/university-editor-slice';
+import { changeUniversityInfoActionCreator, initializationUniversityInfoActionCreator, universityEditorSlice } from '../../../../../store/reducers/roles/admin/university-editor-slice';
+import { useUser } from '../../../../../hooks/user-hook';
 
 export const UniversityEditor: FC<UniversityEditorProps> = memo(() => {
   
   const goToWorkshop = useWorkshop();
+  const {authToken} = useUser();
 
   const adminUniversityEditorState = useTypedSelector(state => state.adminUniversityEditor);
 
@@ -21,15 +23,18 @@ export const UniversityEditor: FC<UniversityEditorProps> = memo(() => {
 
   const isInizialized = useRef(true);
 
+  const initializationUniversityInfo = useCallback(()=>{
+    dispatch(initializationUniversityInfoActionCreator({authToken: authToken}));
+  },[dispatch, authToken])
+
   useEffect(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
-      console.log('set');
+      initializationUniversityInfo();
     } else return () => {
-      console.log('cleared');
       dispatch(reset());
     };
-  }, [dispatch,reset]);
+  }, [dispatch, reset, initializationUniversityInfo]);
 
   const setNameUniversity = useCallback((value: string) => {
     dispatch(setNameUniversityActionCreater(value));
@@ -40,8 +45,21 @@ export const UniversityEditor: FC<UniversityEditorProps> = memo(() => {
   }, [dispatch, setDescriptionUniversityActionCreater])
 
   const onSave = useCallback(() => {
-
-  },[])
+    dispatch(changeUniversityInfoActionCreator({
+      authToken: authToken,
+      id: adminUniversityEditorState.university.idUniversity,
+      name: adminUniversityEditorState.university.name,
+      description: adminUniversityEditorState.university.description,
+      onSuccess: goToWorkshop
+    }))
+  },[
+    dispatch, 
+    goToWorkshop,
+    authToken, 
+    adminUniversityEditorState.university.name, 
+    adminUniversityEditorState.university.idUniversity,
+    adminUniversityEditorState.university.description
+  ])
 
   return (
       <UniversityEditorView 
