@@ -25,4 +25,11 @@ export const adminApi = {
                 return response.data;
         })
     },
+    getMembers(authToken: string) {
+        return instance.get('/admin/members/get', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

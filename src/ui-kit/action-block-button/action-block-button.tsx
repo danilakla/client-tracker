@@ -19,7 +19,7 @@ export const ActionBlockButton : FC<ActionBlockButtonProps> = memo(({
   borderRadius,
   themeFont = theme.fonts.ht1,
   size,
-  themeColor,
+  themeColor = theme.colors.surface,
   onClick
 }) => {
   return(

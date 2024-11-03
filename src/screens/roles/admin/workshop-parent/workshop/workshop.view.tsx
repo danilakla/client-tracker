@@ -12,22 +12,26 @@ import { Column } from '../../../../../ui-kit/column';
 
 export type WorkshopViewProps = {
   goToGeneratorKeys: () => void;
+  goToMembers: () => void;
   goToUniversityEditor: () => void;
 };
 
 export const WorkshopView: FC<WorkshopViewProps> = memo(({
   goToGeneratorKeys,
-  goToUniversityEditor
+  goToUniversityEditor,
+  goToMembers
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
   return (
     isMobile ? 
       (<WorkshopMobileView
+        goToMembers={goToMembers}
         goToUniversityEditor={goToUniversityEditor}
         goToGeneratorKeys={goToGeneratorKeys}
         />) :
       (<WorkshopDesktopView
+        goToMembers={goToMembers}
         goToUniversityEditor={goToUniversityEditor}
         goToGeneratorKeys={goToGeneratorKeys}
         />)
@@ -37,7 +41,8 @@ export const WorkshopView: FC<WorkshopViewProps> = memo(({
 
 export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
   goToGeneratorKeys,
-  goToUniversityEditor
+  goToUniversityEditor,
+  goToMembers
 }) => {
 
   return (
@@ -46,14 +51,15 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToUniversityEditor} text='Университет' />
       <Spacing variant='Column' themeSpace={10} />
-      <ActionButton text='Участники' />
+      <ActionButton onClick={goToMembers} text='Участники' />
     </WrapperMobile>
   );
 });
 
 export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
   goToGeneratorKeys,
-  goToUniversityEditor
+  goToUniversityEditor,
+  goToMembers
 }) => {
 
   return (
@@ -62,7 +68,7 @@ export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
         <GridContainer columns={3}>
           <ActionBlockButton onClick={goToGeneratorKeys} text='Генерация ключей' />
           <ActionBlockButton onClick={goToUniversityEditor} text='Университет' />
-          <ActionBlockButton text='Участники' />
+          <ActionBlockButton onClick={goToMembers} text='Участники' />
         </GridContainer>
       </Column>
     </WrapperDesktop>

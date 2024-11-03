@@ -11,6 +11,7 @@ import universityInfoReducer from "./profile/university-info-slice"
 
 import adminGeneratorKeysReducer from "./roles/admin/generator-keys-slice"
 import adminUniversityEditorReducer from "./roles/admin/university-editor-slice"
+import adminMembersReducer from "./roles/admin/members-slice"
 
 export const rootReducers = combineReducers({
       singup: singupReducer,
@@ -22,8 +23,8 @@ export const rootReducers = combineReducers({
       changePassword: changePasswordReducer,
       universityInfo: universityInfoReducer,
       adminGeneratorKeys: adminGeneratorKeysReducer,
-      adminUniversityEditor: adminUniversityEditorReducer
-
+      adminUniversityEditor: adminUniversityEditorReducer,
+      adminMembers: adminMembersReducer
 });
 
 export type RootState = ReturnType<typeof rootReducers>;

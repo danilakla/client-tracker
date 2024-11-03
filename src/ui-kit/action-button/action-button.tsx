@@ -12,10 +12,12 @@ export type ActionButtonProps = {
   textColor?: string;
   themeFont?: FontProps;
   isShowArrow?: boolean;
+  themeColor?: string;
 };
 
 export const ActionButton : FC<ActionButtonProps> = memo(({
   text,
+  themeColor = theme.colors.surface,
   width,
   textColor = theme.colors.nothing,
   themeFont = theme.fonts.ht1,
@@ -25,7 +27,7 @@ export const ActionButton : FC<ActionButtonProps> = memo(({
   return(
     <ButtonWrapper width={width}>
       <ButtonContainer width={width} onClick={onClick}>
-        <ActionButtonStyled>
+        <ActionButtonStyled themeColor={themeColor}>
           <Text 
             style={{
               width: 'calc(100% - 25px)',

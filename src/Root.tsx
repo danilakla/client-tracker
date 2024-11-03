@@ -14,6 +14,7 @@ import { UniversityInfo } from "./screens/roles/general/profile-parent/universit
 import { Workshop as AdminWorkShop } from "./screens/roles/admin/workshop-parent/workshop";
 import { GeneratorKeys as AdminGeneratorKeys } from "./screens/roles/admin/workshop-parent/generator-keys";
 import { UniversityEditor as AdminUniversityEditor } from "./screens/roles/admin/workshop-parent/university-editor";
+import { Members as AdminMembers } from "./screens/roles/admin/workshop-parent/members";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -29,6 +30,7 @@ export const urls = {
   adminWorkshop: '/admin/workshop',
   adminGeneratorKeys: '/admin/workshop/generator-keys',
   adminUniversityEditor: '/admin/workshop/university-editor',
+  adminMembers: '/admin/workshop/members'
 };
 
 type RootProps = {};
@@ -58,6 +60,7 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.adminWorkshop} element={<AdminWorkShop/>}/>
           <Route path={urls.adminGeneratorKeys} element={<AdminGeneratorKeys/>}/>
           <Route path={urls.adminUniversityEditor} element={<AdminUniversityEditor/>}/>
+          <Route path={urls.adminMembers} element={<AdminMembers/>}/>
         </>}
         {user.role === 'ROLE_DEAN' && <>
           <Route index element={<Navigate to={urls.profile} />} />

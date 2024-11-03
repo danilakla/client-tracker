@@ -86,7 +86,7 @@ export const Select: FC<SelectProps> = memo(({
         }
       </Popup>) :(<Modal isActive={isOpen} closeModal={toggleSelect}>
         {header && <>
-          <Text style={{width: '100%', maxWidth:440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+          <Text style={{width: '100%', maxWidth: 440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
             {header}
           </Text>
           <Spacing variant='Column' themeSpace={15}/>

@@ -46,7 +46,7 @@ export const ScreenContent = styled.div`
 `;
 
 export const Wrapper = styled.div`
-
+    position: relative;
 `;
 
 export const BackButton = styled.div`

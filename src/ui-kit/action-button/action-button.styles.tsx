@@ -22,8 +22,6 @@ export const ButtonContainer = styled.div<{width?: string}>`
 
 export const ActionButtonStyled = styled.div<{
   themeColor?: string;
-  textColor?: string;
-  borderColor?: string;
 }>`
   width: 100%;
   height: 42px;
@@ -34,7 +32,6 @@ export const ActionButtonStyled = styled.div<{
   display: flex;
   border-radius: 10px;
   background-color: ${({ themeColor }) => themeColor};
-  color: ${({ textColor }) => textColor};
   align-items: center;
 
   &:focus {

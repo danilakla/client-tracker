@@ -29,7 +29,7 @@ export const ControlPanelContainer = styled.div`
 `;
 
 export const ControlPanelWrapper = styled.div`
-    position: absolute; 
+    position: fixed; 
     top: 0;
     display: flex;
     flex-direction: column;
@@ -37,7 +37,6 @@ export const ControlPanelWrapper = styled.div`
     align-items: center;
     left: 25px;
     width: auto;
-    min-height: 700px;  
     height: 100vh;
 `;
 
