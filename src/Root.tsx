@@ -5,7 +5,6 @@ import { Login } from './screens/auth/login';
 import { Signup } from './screens/auth/signup';
 import { PrivateRoute } from "./private-route";
 import { useTypedSelector } from "./hooks/use-typed-selector";
-import { Example } from "./screens/roles/example";
 import { Profile } from "./screens/roles/general/profile-parent/profile";
 import { ChangeAccoundData } from "./screens/roles/general/profile-parent/change-accound-data";
 import { ChangePassword } from "./screens/roles/general/profile-parent/change-password";

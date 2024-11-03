@@ -7,15 +7,12 @@ import { theme } from '../../../../../ui-kit/themes/theme';
 import { GridContainer } from '../../../../../ui-kit/grid-container';
 import { Column } from '../../../../../ui-kit/column';
 import { ActionBlockButton } from '../../../../../ui-kit/action-block-button';
-import { ScrollView } from '../../../../../ui-kit/scroll-view';
 import { Search } from '../../../../../ui-kit/search';
 import { Spacing } from '../../../../../ui-kit/spacing';
 import { ActionButton } from '../../../../../ui-kit/action-button';
 import { Toggle } from '../../../../../ui-kit/toggle';
-import accountLogoSVG from '../../../../../images/account-image.svg';
 import { Surface } from '../../../../../ui-kit/surface';
 import { Row } from '../../../../../ui-kit/row';
-import { Image } from '../../../../../ui-kit/image';
 import { Text } from '../../../../../ui-kit/text';
 import { Button } from '../../../../../ui-kit/button';
 import { DeanInfoState, MembersState, TeacherInfoState } from '../../../../../store/reducers/roles/admin/members-slice';
@@ -240,7 +237,7 @@ export const MembersDesktopView: FC<MembersViewProps> = memo(({
                 </Row>
               </Column>
             </Surface>
-          </>) : (<>
+          </>) : (<Column horizontalAlign='center' style={{width: 695}}>
             <Toggle varinat={toggle} onButtonClick={onClickToggle}   leftText='Деканы' rightText='Преподаватели'/>
             <Spacing themeSpace={35} variant='Column' />
             <Search isMobile={false} value={adminMembersState.searchText} setValue={setSearchText}/>
@@ -255,7 +252,7 @@ export const MembersDesktopView: FC<MembersViewProps> = memo(({
                     <ActionBlockButton onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
               }
             </GridContainer>
-          </>)
+          </Column>)
         }
       </Column>}
     </WrapperDesktop>

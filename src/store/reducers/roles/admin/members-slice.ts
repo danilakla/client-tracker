@@ -1,5 +1,4 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { universityApi } from "../../../../api/auth/university-api";
 import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { adminApi } from "../../../../api/auth/admin-api";
