@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useEffect, useRef } from 'react';
+import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { MembersProps } from './members.props';
 import { MembersView } from './members.view';
 import { useWorkshop } from '../workshop/workshop.props';
@@ -49,11 +49,31 @@ export const Members: FC<MembersProps> = memo(() => {
     dispatch(setSearchTextActionCreater(value));
   }, [dispatch, setSearchTextActionCreater])
 
+  const [filteredListDeans, setFilteredListDeans] = useState<DeanInfoState[]>();
+  const [filteredListTeachers, setFilteredListTeachers] = useState<TeacherInfoState[]>();
+
+  useEffect(() => {
+    const trimmedSearchText = adminMembersState.searchText.trim().toLowerCase();
+
+    const filteredDeans = adminMembersState.listDeans
+      .filter(dean => !trimmedSearchText || dean.flpName.toLowerCase().includes(trimmedSearchText))
+      .sort((a, b) => a.flpName.localeCompare(b.flpName));
+
+    const filteredTeachers = adminMembersState.listTeachers
+      .filter(teacher => !trimmedSearchText || teacher.flpName.toLowerCase().includes(trimmedSearchText))
+      .sort((a, b) => a.flpName.localeCompare(b.flpName));
+
+    setFilteredListDeans(filteredDeans);
+    setFilteredListTeachers(filteredTeachers);
+  }, [adminMembersState.listDeans, adminMembersState.listTeachers, adminMembersState.searchText]);
+
   return (
       <MembersView 
         adminMembersState={adminMembersState}
         setSearchText={setSearchText}
         setSelectedDean={setSelectedDean}
+        filteredListDeans={filteredListDeans}
+        filteredListTeachers={filteredListTeachers}
         setSelectedTeacher={setSelectedTeacher}
         goToWorkshop={goToWorkshop}
         />

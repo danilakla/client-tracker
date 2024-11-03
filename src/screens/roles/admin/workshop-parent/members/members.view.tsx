@@ -24,6 +24,8 @@ export type MembersViewProps = {
   adminMembersState: MembersState;
   setSelectedDean: (value: DeanInfoState) => void;
   setSelectedTeacher: (value: TeacherInfoState) => void;  
+  filteredListDeans: DeanInfoState[] | undefined;
+  filteredListTeachers: TeacherInfoState[] | undefined;
 };
 
 export const MembersView: FC<MembersViewProps> = memo(({
@@ -31,13 +33,17 @@ export const MembersView: FC<MembersViewProps> = memo(({
   adminMembersState,
   setSelectedDean,
   setSearchText,
-  setSelectedTeacher
+  setSelectedTeacher,
+  filteredListDeans,
+  filteredListTeachers
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
   return (
     isMobile ? 
       (<MembersMobileView
+        filteredListDeans={filteredListDeans}
+        filteredListTeachers={filteredListTeachers}
         setSearchText={setSearchText}
         adminMembersState={adminMembersState}
         setSelectedDean={setSelectedDean}
@@ -45,6 +51,8 @@ export const MembersView: FC<MembersViewProps> = memo(({
         goToWorkshop={goToWorkshop}
         />) :
       (<MembersDesktopView
+        filteredListDeans={filteredListDeans}
+        filteredListTeachers={filteredListTeachers}
         setSearchText={setSearchText}
         adminMembersState={adminMembersState}
         setSelectedDean={setSelectedDean}
@@ -60,7 +68,9 @@ export const MembersMobileView: FC<MembersViewProps> = memo(({
   setSearchText,
   setSelectedTeacher,
   setSelectedDean,
-  adminMembersState
+  adminMembersState,
+  filteredListDeans,
+  filteredListTeachers
 }) => {
   const [toggle, setToggle] = useState<"left" | "right">("left");
   const onClickToggle = useCallback(() => {
@@ -145,12 +155,12 @@ export const MembersMobileView: FC<MembersViewProps> = memo(({
         <Spacing themeSpace={20} variant='Column' />
         {
           toggle === 'left' ? (
-            adminMembersState.listDeans.map((item) => <>
+            filteredListDeans?.map((item) => <>
               <ActionButton onClick={() => openDescriptionDean(item)} text={item.flpName} />
               <Spacing themeSpace={10} variant='Column' />
             </>)
           ) : (
-            adminMembersState.listTeachers.map((item) => <>
+            filteredListTeachers?.map((item) => <>
               <ActionButton onClick={() => openDescriptionTeacher(item)} text={item.flpName} />
               <Spacing themeSpace={10} variant='Column' />
              </>))
@@ -166,7 +176,9 @@ export const MembersDesktopView: FC<MembersViewProps> = memo(({
   setSelectedTeacher,
   setSelectedDean,
   setSearchText,
-  adminMembersState
+  adminMembersState,
+  filteredListDeans,
+  filteredListTeachers
 }) => {
 
   const [toggle, setToggle] = useState<"left" | "right">("left");
@@ -245,10 +257,10 @@ export const MembersDesktopView: FC<MembersViewProps> = memo(({
             <GridContainer columns={4}>
               {
                 toggle === 'left' ? (
-                  adminMembersState.listDeans.map((item) =>
+                  filteredListDeans?.map((item) =>
                     <ActionBlockButton onClick={() => openDescriptionDean(item)} text={item.flpName} />)
                 ) : (
-                  adminMembersState.listTeachers.map((item) =>
+                  filteredListTeachers?.map((item) =>
                     <ActionBlockButton onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
               }
             </GridContainer>
