@@ -19,7 +19,7 @@ export const ActionButton : FC<ActionButtonProps> = memo(({
   text,
   themeColor = theme.colors.surface,
   width,
-  textColor = theme.colors.nothing,
+  textColor = theme.colors.gray,
   themeFont = theme.fonts.ht1,
   isShowArrow = true,
   onClick

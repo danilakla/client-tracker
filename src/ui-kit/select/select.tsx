@@ -9,6 +9,8 @@ import { ActionButton } from "../action-button";
 import { Spacing } from "../spacing";
 import { useMediaQuery } from "react-responsive";
 import { Modal } from "../modal";
+import { Column } from "../column";
+import { Search } from "../search";
 
 export type ItemOfSelectType = {
   name: string,
@@ -17,6 +19,7 @@ export type ItemOfSelectType = {
 
 export type SelectProps = {
   themeColor?: string;
+  includeSearch?: boolean;
   textColor?: string;
   borderColor?: string;
   header?: string;
@@ -30,6 +33,7 @@ export const Select: FC<SelectProps> = memo(({
   borderColor = theme.colors.foreground, 
   themeColor = theme.colors.surface,
   textColor = theme.colors.gray, 
+  includeSearch = false,
   header,
   width,
   items,
@@ -50,6 +54,11 @@ export const Select: FC<SelectProps> = memo(({
 
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
+  const [searchText, setSearchText] = useState<string>('');
+
+  const filteredItems = items?.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   return(
     <SelectWrapper>
       {header && <>
@@ -65,39 +74,141 @@ export const Select: FC<SelectProps> = memo(({
           onClick={toggleSelect}
           borderColor={isOpen ? theme.colors.primary : borderColor}
           {...rest}>
-          <Text themeFont={theme.fonts.ht1}>
+          <Text 
+            style={{
+              width: 'calc(100% - 25px)',
+              whiteSpace: 'nowrap', 
+              overflow: 'hidden', 
+              textOverflow: 'ellipsis'
+            }}
+            themeFont={theme.fonts.ht1}>
               {selectedItem?.name}
           </Text>
           <ArrowButton rotate={isOpen} src={arrowSvg}/>
         </SelectStyled>
       </SelectContainer>
-      {!isMobile ? (<Popup isActive={isOpen} closePopup={toggleSelect}>
-        {header && <>
-          <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-            {header}
-          </Text>
-          <Spacing variant='Column' themeSpace={15}/>
-        </>}
-        {
-          items?.map((item, index) => <>
-            <ActionButton onClick={() => onSet(item)} width="440px" text={item.name}/>
-            {index < items.length - 1 && <Spacing themeSpace={10} variant='Column' />}
-          </>)
-        }
+      {!isMobile ? (
+      <Popup isActive={isOpen} closePopup={toggleSelect}>
+        <PopupContent
+          length={items?.length}
+          header={header}
+          includeSearch={includeSearch}
+          searchText={searchText}
+          setSearchText={setSearchText}
+          filteredItems={filteredItems}
+          onSet={onSet}
+          />
       </Popup>) :(<Modal isActive={isOpen} closeModal={toggleSelect}>
-        {header && <>
-          <Text style={{width: '100%', maxWidth: 440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-            {header}
-          </Text>
-          <Spacing variant='Column' themeSpace={15}/>
-        </>}
-        {
-          items?.map((item, index) => <>
-            <ActionButton onClick={() => onSet(item)} text={item.name}/>
-            {index < items.length - 1 && <Spacing themeSpace={15} variant='Column' />}
-          </>)
-        }
+        <ModalContent 
+          length={items?.length}
+          header={header}
+          includeSearch={includeSearch}
+          searchText={searchText}
+          setSearchText={setSearchText}
+          filteredItems={filteredItems}
+          onSet={onSet}
+          />
       </Modal>)}
     </SelectWrapper>
   );
 });
+
+export type ModalContentProps = {
+  length?: number;
+  header?: string;
+  includeSearch: boolean;
+  searchText: string;
+  setSearchText: (value: string) => void;
+  filteredItems?: ItemOfSelectType[];
+  onSet: (item: ItemOfSelectType) => void;
+}
+
+export const ModalContent: FC<ModalContentProps> = memo(({ 
+  length = 0,
+  header,
+  includeSearch,
+  filteredItems = [],
+  searchText,
+  setSearchText,
+  onSet
+}) => 
+  <>{
+    length === 0 ? (<>
+      <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+        Данные не найдены
+      </Text>
+      </>) : (<>
+        {includeSearch && <>
+            <Search value={searchText} setValue={setSearchText} />
+            <Spacing variant='Column' themeSpace={15}/>
+          </>}
+        {filteredItems?.length === 0 ? (<>
+            <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+              Данные не найдены
+            </Text>
+          </>) : (<>
+            {header && <>
+                <Text style={{width: '100%', maxWidth: 440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+                  {header}
+                </Text>
+                <Spacing variant='Column' themeSpace={10}/>
+            </>}
+            {filteredItems?.map((item, index) => <>
+              <ActionButton onClick={() => onSet(item)} text={item.name}/>
+              {index < filteredItems.length - 1 && <Spacing themeSpace={15} variant='Column' />}
+              </>)}
+            </>)
+          }
+      </>)
+  }</>
+);
+
+export type PopupContentProps = {
+  length?: number;
+  header?: string;
+  includeSearch: boolean;
+  searchText: string;
+  setSearchText: (value: string) => void;
+  filteredItems?: ItemOfSelectType[];
+  onSet: (item: ItemOfSelectType) => void;
+}
+
+export const PopupContent: FC<ModalContentProps> = memo(({ 
+  length = 0,
+  header,
+  includeSearch,
+  filteredItems = [],
+  searchText,
+  setSearchText,
+  onSet
+}) => 
+  <>{
+    length === 0 ? (<>
+      <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+        Данные не найдены
+      </Text>
+      </>) : (<>
+        {includeSearch && <>
+            <Search value={searchText} setValue={setSearchText} />
+            <Spacing variant='Column' themeSpace={15}/>
+          </>}
+        {filteredItems?.length === 0 ? (<>
+            <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+              Данные не найдены
+            </Text>
+          </>) : (<>
+            {header && <>
+                <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+                  {header}
+                </Text>
+                <Spacing variant='Column' themeSpace={10}/>
+            </>}
+            {filteredItems?.map((item, index) => <>
+              <ActionButton onClick={() => onSet(item)} width="440px" text={item.name}/>
+              {index < filteredItems.length - 1 && <Spacing themeSpace={15} variant='Column' />}
+              </>)}
+            </>)
+          }
+      </>)
+  }</>
+);

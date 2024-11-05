@@ -32,4 +32,28 @@ export const adminApi = {
                 return response.data;
             })
     },
+    recoverPassword(authToken: string, id: number) {
+        return instance.post(`/user/recovery-password/${id}`, null, { 
+            headers: {'Authorization' : `Bearer ${authToken}`}, 
+        }).then((response) => {
+                return response.data;
+        })
+    },
+
+    deleteDean(authToken: string, deanId: number, newDeanId: number) {
+        return instance.delete(`/admin/delete/dean`, { 
+            headers: { 'Authorization': `Bearer ${authToken}` },
+            data: { deanId, newDeanId } 
+        }).then((response) => {
+            return response.data;
+        });
+    },
+    deleteTeacher(authToken: string, teacherId: number, newTeacherId: number) {
+        return instance.delete(`/admin/delete/teacher`, { 
+            headers: { 'Authorization': `Bearer ${authToken}` },
+            data: { teacherId, newTeacherId } 
+        }).then((response) => {
+            return response.data;
+        });
+    },
 }

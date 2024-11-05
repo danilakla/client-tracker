@@ -4,7 +4,10 @@ import { MembersView } from './members.view';
 import { useWorkshop } from '../workshop/workshop.props';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { DeanInfoState, initializeMembersDataActionCreator, membersSlice, TeacherInfoState } from '../../../../../store/reducers/roles/admin/members-slice';
+import { DeanInfoState, deleteDeanActionCreator, deleteTeacherActionCreator, initializeMembersDataActionCreator, membersSlice, recoverPasswordActionCreator, TeacherInfoState } from '../../../../../store/reducers/roles/admin/members-slice';
+import { ItemOfSelectType } from '../../../../../ui-kit/select/select';
+import { useNavigate } from 'react-router-dom';
+import { urls } from '../../../../../Root';
 
 export const Members: FC<MembersProps> = memo(() => {
   const goToWorkshop = useWorkshop();
@@ -19,13 +22,18 @@ export const Members: FC<MembersProps> = memo(() => {
     reset,
     setSelectedDeanActionCreater,
     setSearchTextActionCreater,
-    setSelectedTeacherActionCreater
+    setSelectedTeacherActionCreater,
+    setSelectedNewResponsibleActionCreater,
   } = membersSlice.actions;
 
   const isInizialized = useRef(true);
 
   const initializeMembersData = useCallback(()=>{
     dispatch(initializeMembersDataActionCreator({authToken: authToken}));
+  },[dispatch, authToken])
+
+  const recoverPassword = useCallback((id: number, onSuccess: () => void)=>{
+    dispatch(recoverPasswordActionCreator({authToken: authToken, id, onSuccess: onSuccess}));
   },[dispatch, authToken])
 
   useEffect(() => {
@@ -40,6 +48,10 @@ export const Members: FC<MembersProps> = memo(() => {
   const setSelectedDean = useCallback((value: DeanInfoState) => {
     dispatch(setSelectedDeanActionCreater(value));
   }, [dispatch, setSelectedDeanActionCreater])
+
+  const setSelectedNewResponsible = useCallback((value: ItemOfSelectType) => {
+    dispatch(setSelectedNewResponsibleActionCreater(value));
+  }, [dispatch, setSelectedNewResponsibleActionCreater])
 
   const setSelectedTeacher = useCallback((value: TeacherInfoState) => {
     dispatch(setSelectedTeacherActionCreater(value));
@@ -67,15 +79,42 @@ export const Members: FC<MembersProps> = memo(() => {
     setFilteredListTeachers(filteredTeachers);
   }, [adminMembersState.listDeans, adminMembersState.listTeachers, adminMembersState.searchText]);
 
+  const onDelete = useCallback((toggle: 'left' | 'right', onSuccess?: () => void) => {
+    if(toggle === 'left'){
+      dispatch(deleteDeanActionCreator({
+        authToken: authToken,
+        deanId: adminMembersState.selectedDean.idDean,
+        newDeanId: parseInt(adminMembersState.selectedNewResponsible.value),
+        onSuccess: onSuccess
+      }));
+    } else if(toggle === 'right'){
+      dispatch(deleteTeacherActionCreator({
+        authToken: authToken,
+        teacherId: adminMembersState.selectedTeacher.idTeacher,
+        newTeacherId: parseInt(adminMembersState.selectedNewResponsible.value),
+        onSuccess: onSuccess
+      }));
+    }
+  }, [
+    dispatch, 
+    adminMembersState.selectedDean.idDean, 
+    adminMembersState.selectedNewResponsible.value,
+    adminMembersState.selectedTeacher.idTeacher, 
+    authToken
+  ])
+
   return (
       <MembersView 
+        onDelete={onDelete}
         adminMembersState={adminMembersState}
         setSearchText={setSearchText}
+        recoverPassword={recoverPassword}
         setSelectedDean={setSelectedDean}
         filteredListDeans={filteredListDeans}
         filteredListTeachers={filteredListTeachers}
         setSelectedTeacher={setSelectedTeacher}
         goToWorkshop={goToWorkshop}
+        setSelectedNewResponsible={setSelectedNewResponsible}
         />
     );
 });

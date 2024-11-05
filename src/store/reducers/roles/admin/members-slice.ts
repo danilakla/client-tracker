@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { adminApi } from "../../../../api/auth/admin-api";
+import { ItemOfSelectType } from "../../../../ui-kit/select/select";
 
 type ErrorType = string | null;
 
@@ -21,17 +22,28 @@ export type DeanInfoState = {
 };
 
 export type MembersState = {
+    selectedNewResponsible: ItemOfSelectType;
     searchText: string;
+    newPassword: string;
     selectedDean: DeanInfoState;
     selectedTeacher: TeacherInfoState;
     listDeans: DeanInfoState[],
+    itemsForSelectTeachers: ItemOfSelectType[],
+    itemsForSelectDean: ItemOfSelectType[],
     listTeachers: TeacherInfoState[],
     loading: "idle" | "loading" | "success" | "error";
+    loadingNewPassword: "idle" | "loading" | "success" | "error";
+    loadingDelete: "idle" | "loading" | "success" | "error";
     errors: Record<string, ErrorType>;
 };
 
 const initialState: MembersState = {
     searchText: '',
+    selectedNewResponsible: {
+        name: 'Не указано',
+        value: '-1'
+    },
+    newPassword: '',
     selectedDean: {
         idDean: 0,
         flpName: '',
@@ -47,7 +59,11 @@ const initialState: MembersState = {
     },
     listDeans: [],
     listTeachers: [],
+    itemsForSelectTeachers: [],
+    itemsForSelectDean: [],
+    loadingNewPassword: 'idle',
     loading: "idle",
+    loadingDelete: 'idle',
     errors: {},
 };
 
@@ -63,19 +79,49 @@ export const membersSlice = createSlice({
             setErrorByKey(state, action.payload.key, action.payload.error);
         },
         setListDeansActionCreater(state, action: PayloadAction<DeanInfoState[]>){
-            state.listDeans = action.payload;
+            state.listDeans = action.payload.map(teacher => ({
+                ...teacher,
+                flpName: teacher.flpName.replace(/_/g, ' '),
+            }));
         },
         setSearchTextActionCreater(state, action: PayloadAction<string>){
             state.searchText = action.payload;
         },
+        setSelectedNewResponsibleActionCreater(state, action: PayloadAction<ItemOfSelectType>){
+            state.selectedNewResponsible = action.payload;
+        },
         setListTeachersActionCreater(state, action: PayloadAction<TeacherInfoState[]>){
-            state.listTeachers = action.payload;
+            state.listTeachers = action.payload.map(teacher => ({
+                ...teacher,
+                flpName: teacher.flpName.replace(/_/g, ' '),
+            }));
         },
         setSelectedDeanActionCreater(state, action: PayloadAction<DeanInfoState>){
             state.selectedDean = action.payload;
+            state.itemsForSelectDean = state.listDeans
+                .filter((item) => item.idDean !== action.payload.idDean)
+                .map((dean) => ({
+                    name: dean.flpName.replace(/_/g, ' '),
+                    value: dean.idDean.toString()
+                }))
+        },
+        setItemsForSelectTeachersActionCreater(state, action: PayloadAction<ItemOfSelectType[]>){
+            state.itemsForSelectTeachers = action.payload;
+        },
+        setItemsForSelectDeansActionCreater(state, action: PayloadAction<ItemOfSelectType[]>){
+            state.itemsForSelectDean = action.payload;
+        },
+        setNewPasswordActionCreater(state, action: PayloadAction<string>){
+            state.newPassword = action.payload;
         },
         setSelectedTeacherActionCreater(state, action: PayloadAction<TeacherInfoState>){
             state.selectedTeacher = action.payload;
+            state.itemsForSelectTeachers = state.listTeachers
+                .filter((item) => item.idTeacher !== action.payload.idTeacher)
+                .map((teacher) => ({
+                    name: teacher.flpName.replace(/_/g, ' '),
+                    value: teacher.idTeacher.toString()
+                }))
         },
         reset(state) {
             Object.assign(state, initialState);
@@ -95,6 +141,33 @@ export const membersSlice = createSlice({
             .addCase(initializeMembersDataActionCreator.rejected, (state) => {
                 state.loading = "idle";
             })
+            .addCase(recoverPasswordActionCreator.fulfilled, (state) => {
+                state.loadingNewPassword = 'success';
+            })
+            .addCase(recoverPasswordActionCreator.pending, (state) => {
+                state.loadingNewPassword = 'loading';
+            })
+            .addCase(recoverPasswordActionCreator.rejected, (state) => {
+                state.loadingNewPassword = "idle";
+            })
+            .addCase(deleteDeanActionCreator.fulfilled, (state) => {
+                state.loadingDelete = 'success';
+            })
+            .addCase(deleteDeanActionCreator.pending, (state) => {
+                state.loadingDelete = 'loading';
+            })
+            .addCase(deleteDeanActionCreator.rejected, (state) => {
+                state.loadingDelete = "idle";
+            })
+            .addCase(deleteTeacherActionCreator.fulfilled, (state) => {
+                state.loadingDelete = 'success';
+            })
+            .addCase(deleteTeacherActionCreator.pending, (state) => {
+                state.loadingDelete = 'loading';
+            })
+            .addCase(deleteTeacherActionCreator.rejected, (state) => {
+                state.loadingDelete = "idle";
+            })
     },
 });
 
@@ -105,6 +178,60 @@ export const initializeMembersDataActionCreator = createAsyncThunk('admin-member
             const responce = await adminApi.getMembers(authToken);
             thunkApi.dispatch(membersSlice.actions.setListDeansActionCreater(responce.deanList));
             thunkApi.dispatch(membersSlice.actions.setListTeachersActionCreater(responce.teacherList));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
+
+export const recoverPasswordActionCreator = createAsyncThunk('admin-members/recover-password',
+    async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, id, onSuccess } = data;
+        try {
+            const responce = await adminApi.recoverPassword(authToken, id);
+            thunkApi.dispatch(membersSlice.actions.setNewPasswordActionCreater(responce));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
+
+export const deleteDeanActionCreator = createAsyncThunk('admin-members/delete-dean',
+    async (data: { authToken: string, deanId: number, newDeanId: number, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, deanId, newDeanId, onSuccess } = data;
+        try {
+            await adminApi.deleteDean(authToken, deanId, newDeanId);
+            await thunkApi.dispatch(initializeMembersDataActionCreator({authToken: authToken}));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
+
+export const deleteTeacherActionCreator = createAsyncThunk('admin-members/delete-teacher',
+    async (data: { authToken: string, teacherId: number, newTeacherId: number, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, teacherId, newTeacherId, onSuccess } = data;
+        try {
+            await adminApi.deleteDean(authToken, teacherId, newTeacherId);
+            await thunkApi.dispatch(initializeMembersDataActionCreator({authToken: authToken}));
+            onSuccess?.();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
