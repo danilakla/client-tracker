@@ -17,7 +17,8 @@ export const WrapperPopap = styled.div<{
     display: flex;
     justify-content: center;
     align-items: center;
-    display: ${({ isActive }) => isActive? "flex" : "none"};
     pointer-events: ${({ isActive }) => isActive? "all" : "none"};
-    transition: 0.5s;
+    opacity: ${({ isActive }) => (isActive ? "1" : "0")};
+    visibility: ${({ isActive }) => (isActive ? "visible" : "hidden")};
+    transition: opacity 0.3s ease, visibility 0.5s ease;
 `

@@ -15,6 +15,11 @@ import { GeneratorKeys as AdminGeneratorKeys } from "./screens/roles/admin/works
 import { UniversityEditor as AdminUniversityEditor } from "./screens/roles/admin/workshop-parent/university-editor";
 import { Members as AdminMembers } from "./screens/roles/admin/workshop-parent/members";
 
+import { Workshop as DeanWorkshop } from "./screens/roles/dean/workshop-parent/workshop";
+import { ClassFormats as DeanClassFormats } from "./screens/roles/dean/workshop-parent/class-formats";
+import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/workshop-parent/control-subjects";
+import { Specialties as DeanSpecialties } from "./screens/roles/dean/workshop-parent/specialties";
+
 export const urls = {
   logInUser: '/log-in/user',
   logInParent: '/log-in/parent',
@@ -29,7 +34,12 @@ export const urls = {
   adminWorkshop: '/admin/workshop',
   adminGeneratorKeys: '/admin/workshop/generator-keys',
   adminUniversityEditor: '/admin/workshop/university-editor',
-  adminMembers: '/admin/workshop/members'
+  adminMembers: '/admin/workshop/members',
+
+  deanWorkshop: '/dean/workshop',
+  deanClassFormats: '/dean/workshop/class-formats',
+  deanControlSubjects: '/dean/workshop/subjects',
+  deanSpecialities: '/dean/workshop/specialities',
 };
 
 type RootProps = {};
@@ -63,6 +73,11 @@ export const Root: FC<RootProps> = () => {
         </>}
         {user.role === 'ROLE_DEAN' && <>
           <Route index element={<Navigate to={urls.profile} />} />
+
+          <Route path={urls.deanWorkshop} element={<DeanWorkshop/>}/>
+          <Route path={urls.deanClassFormats} element={<DeanClassFormats/>}/>
+          <Route path={urls.deanControlSubjects} element={<DeanControlSubjects/>}/>
+          <Route path={urls.deanSpecialities} element={<DeanSpecialties/>}/>
 
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>

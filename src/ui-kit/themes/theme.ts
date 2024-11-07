@@ -33,6 +33,12 @@ export const theme ={
             mobileSize: "16px",
             weight: "400",
         },
+        h1: {
+            family: "ApplePro-Heavy",
+            desktopSize: "20px",
+            mobileSize: "16px",
+            weight: "700",
+        },
         ht1: {
             family: "ApplePro-Light",
             desktopSize: "16px",
@@ -52,12 +58,7 @@ export const theme ={
             weight: "400",
         },
 
-        h1: {
-            family: "ApplePro-Heavy",
-            desktopSize: "32px",
-            mobileSize: "26px",
-            weight: "700",
-        },
+        
         b1: {
             family: "ApplePro-Bold",
             desktopSize: "31px",

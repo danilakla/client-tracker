@@ -13,10 +13,16 @@ export const WrapperModal = styled.div<{
     position: fixed;
     display: flex;
     align-items: flex-end;
-    display: ${({ isActive }) => isActive? "flex" : "none"};
-    pointer-events: ${({ isActive }) => isActive? "all" : "none"};
-    transition: 0.5s;
+    pointer-events: ${({ isActive }) => (isActive ? "all" : "none")};
     z-index: 1000;
     background: rgba(24, 24, 24, 0.11);
-    background-color: rgba(0,0,0,0.6);
-`
+    background-color: rgba(0, 0, 0, 0.6);
+
+    opacity: ${({ isActive }) => (isActive ? "1" : "0")};
+    transition: opacity 0.1s ease;
+
+    & > .modal-content {
+        transform: ${({ isActive }) => (isActive ? "translateY(0)" : "translateY(100%)")};
+        transition: transform 0.3s ease;
+    }
+`;

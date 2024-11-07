@@ -44,7 +44,7 @@ export const Modal: FC<ModalProps> = memo(({
     
     return (
       <WrapperModal isActive={isActive} onClick={closeModal}>
-        <Surface 
+        <Surface className="modal-content"
           style={{ zIndex: 10000 }} 
           themeColor={themeColor} 
           borderRadius={`${borderRadius}px ${borderRadius}px 0px 0px`} 
