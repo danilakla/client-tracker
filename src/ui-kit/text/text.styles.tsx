@@ -13,9 +13,6 @@ export type TextProps = {
 export const StyledText = styled.div<TextProps>`
     margin: 0;
     width: auto;
-    white-space: nowrap, 
-    overflow: hidden, 
-    textOverflow: ellipsis,
     height: auto;
     text-align: ${props => props.align};
     padding: ${({ padding }) => {

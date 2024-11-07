@@ -2,9 +2,10 @@ import { useUser } from "./user-hook";
 import { useCallback, useEffect, useRef } from "react";
 import { useTypedSelector } from "./use-typed-selector";
 import { useLogInUser } from "../screens/auth/login/login.props";
+import { userSlice } from "../store/reducers/user-slice";
 
 export const useAuthentication = () => {
-    const { getUserInfo } = useUser();
+    const { getUserInfo, resetData } = useUser();
     const { status } = useTypedSelector(state => state.appStatus);
 
     const goToLogin = useLogInUser();
@@ -20,10 +21,10 @@ export const useAuthentication = () => {
 
     const onRedirect = useCallback(() => {
         if (status === "no-autorizate") {
-            localStorage.removeItem("authToken");
+            resetData()
             goToLogin();
         }
-    }, [goToLogin, status])
+    }, [goToLogin, resetData, status])
 
     useEffect(() => {
         getUser()
