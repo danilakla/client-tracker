@@ -15,15 +15,38 @@ import { Button } from '../../../../../ui-kit/button';
 import { Popup } from '../../../../../ui-kit/popup';
 import { Text } from '../../../../../ui-kit/text';
 import { Input } from '../../../../../ui-kit/input';
-import { Surface } from '../../../../../ui-kit/surface';
 import { Modal } from '../../../../../ui-kit/modal';
+import { ClassFormatInfo, ClassFormatsState } from '../../../../../store/reducers/roles/dean/class-formats-slice';
+import { Textarea } from '../../../../../ui-kit/textarea';
+import { CircleLoading } from '../../../../../ui-kit/circle-loading';
+import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-popup';
 
 export type ClassFormatsViewProps = {
   goToWorkshop: () => void;
+  setSearchTextAction: (value: string) => void;
+  deanClassFormatsState: ClassFormatsState;
+  setSelectedClassFormat: (value: ClassFormatInfo) => void;
+  clearAllErrors: () => void;
+  setNewInfoOfClassFormat: (value: string) => void;
+  filteredListFormats: ClassFormatInfo[];
+  addClassFormat: (onSuccess?: () => void) => void
+  setNewNameOfClassFormat: (value: string) => void;
+  updateClassFormat: (onSuccess?: () => void) => void;
+  deleteClassFormat: (onSuccess?: () => void) => void;
 };
 
 export const ClassFormatsView: FC<ClassFormatsViewProps> = memo(({
-  goToWorkshop
+  goToWorkshop,
+  setSelectedClassFormat,
+  setSearchTextAction,
+  setNewInfoOfClassFormat,
+  setNewNameOfClassFormat,
+  updateClassFormat,
+  addClassFormat,
+  clearAllErrors,
+  filteredListFormats,
+  deleteClassFormat,
+  deanClassFormatsState
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -39,37 +62,94 @@ export const ClassFormatsView: FC<ClassFormatsViewProps> = memo(({
     setIsOpenConfirmDelete(false);
   },[])
 
-  const onCancelAdd = useCallback(()=>{
+  const closeAfterDelete = useCallback(()=>{
     setIsOpenConfirmDelete(false);
-  },[])
+    setIsOpenEditor(false);
+    setNewInfoOfClassFormat('');
+    setNewNameOfClassFormat('');
+    clearAllErrors();
+  },[clearAllErrors, setNewNameOfClassFormat, setNewInfoOfClassFormat])
 
-  const onCancelEdit = useCallback(()=>{
-    setIsOpenConfirmDelete(false);
-  },[])
+  const onDelete = useCallback(()=>{
+    deleteClassFormat(closeAfterDelete);
+  },[deleteClassFormat, closeAfterDelete])
+
+  const closeAdd = useCallback(()=>{
+    setIsOpenAdd(false);
+    setNewInfoOfClassFormat('');
+    setNewNameOfClassFormat('');
+    clearAllErrors();
+  },[setNewInfoOfClassFormat, clearAllErrors, setNewNameOfClassFormat])
+
+  const closeEdit = useCallback(()=>{
+    setIsOpenEditor(false);
+    setNewInfoOfClassFormat('');
+    setNewNameOfClassFormat('');
+    clearAllErrors();
+  },[setNewInfoOfClassFormat, clearAllErrors, setNewNameOfClassFormat])
 
   const openConfirmDelete = useCallback(()=>{
     setIsOpenConfirmDelete(true);
   },[])
 
+  const onClickAdd = useCallback(()=>{
+    addClassFormat(closeAdd);
+  },[addClassFormat, closeAdd])
+
+  const openCreator = useCallback(()=>{
+    setIsOpenAdd(true);
+  },[])
+
+  const onClickCard = useCallback((value: ClassFormatInfo)=>{
+    setSelectedClassFormat(value);
+    openEditor();
+  },[setSelectedClassFormat, openEditor])
+  
+  const onClickSave = useCallback(()=>{
+    updateClassFormat(closeEdit);
+  },[updateClassFormat, closeEdit])
+
   return (
     isMobile ? 
       (<ClassFormatsMobileView
+        onClickAdd={onClickAdd}
+        setNewInfoOfClassFormat={setNewInfoOfClassFormat}
+        setNewNameOfClassFormat={setNewNameOfClassFormat}
         isOpenConfirmDelete={isOpenConfirmDelete}
         isOpenEditor={isOpenEditor}
-        onCancelAdd={onCancelAdd}
+        closeAdd={closeAdd}
+        setSearchTextAction={setSearchTextAction}
         onCancelDelete={onCancelDelete}
-        onCancelEdit={onCancelEdit}
+        openCreator={openCreator}
+        onClickCard={onClickCard}
+        openConfirmDelete={openConfirmDelete}
+        onClickSave={onClickSave}
+        filteredListFormats={filteredListFormats}
+        closeEdit={closeEdit}
         isOpenAdd={isOpenAdd}
+        onDelete={onDelete}
         goToWorkshop={goToWorkshop}
+        deanClassFormatsState={deanClassFormatsState}
         />) :
       (<ClassFormatsDesktopView
+        onClickAdd={onClickAdd}
+        onDelete={onDelete}
+        onClickSave={onClickSave}
+        filteredListFormats={filteredListFormats}
+        openConfirmDelete={openConfirmDelete}
+        setNewInfoOfClassFormat={setNewInfoOfClassFormat}
+        setNewNameOfClassFormat={setNewNameOfClassFormat}
+        setSearchTextAction={setSearchTextAction}
         isOpenConfirmDelete={isOpenConfirmDelete}
         isOpenEditor={isOpenEditor}
+        openCreator={openCreator}
+        onClickCard={onClickCard}
         isOpenAdd={isOpenAdd}
-        onCancelAdd={onCancelAdd}
+        closeAdd={closeAdd}
         onCancelDelete={onCancelDelete}
-        onCancelEdit={onCancelEdit}
+        closeEdit={closeEdit}
         goToWorkshop={goToWorkshop}
+        deanClassFormatsState={deanClassFormatsState}
         />)
   );
 });
@@ -77,11 +157,22 @@ export const ClassFormatsView: FC<ClassFormatsViewProps> = memo(({
 type LocalViewData = {
   isOpenEditor: boolean;
   isOpenConfirmDelete: boolean;
+  onClickSave: () => void;
   goToWorkshop: () => void;
   isOpenAdd: boolean;
+  onDelete: () => void;
+  openCreator: () => void;
+  openConfirmDelete: () => void;
+  onClickAdd: () => void;
+  filteredListFormats: ClassFormatInfo[];
+  setNewInfoOfClassFormat: (value: string) => void;
+  setNewNameOfClassFormat: (value: string) => void;
+  setSearchTextAction: (value: string) => void;
   onCancelDelete: () => void;
-  onCancelAdd: () => void;
-  onCancelEdit: () => void;
+  deanClassFormatsState: ClassFormatsState;
+  onClickCard: (value: ClassFormatInfo) => void;
+  closeAdd: () => void;
+  closeEdit: () => void;
 }
 
 export const ClassFormatsMobileView: FC<LocalViewData> = memo(({
@@ -89,111 +180,117 @@ export const ClassFormatsMobileView: FC<LocalViewData> = memo(({
   isOpenConfirmDelete,
   isOpenEditor,
   isOpenAdd,
-  onCancelAdd,
+  openCreator,
+  onClickAdd,
+  filteredListFormats,
+  setSearchTextAction,
+  closeAdd,
   onCancelDelete,
-  onCancelEdit
+  onClickSave,
+  onClickCard,
+  openConfirmDelete,
+  onDelete,
+  closeEdit,
+  setNewNameOfClassFormat,
+  setNewInfoOfClassFormat,
+  deanClassFormatsState
 }) => {
 
   return (
     <WrapperMobile onBack={goToWorkshop} role='ROLE_DEAN' header='Форматы занятий'>
+      {deanClassFormatsState.loading === 'loading' && 
+        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+          <CircleLoading state={deanClassFormatsState.loading}/>
+        </Column>
+      }
       <Row style={{width: '100%', maxWidth: 440}}>
-        <Search value={''} setValue={()=>{}}/>
+        <Search value={deanClassFormatsState.searchText} setValue={setSearchTextAction}/>
         <Spacing themeSpace={10} variant='Row' />
-        <Button borderRaius={10} variant='primary' padding={[12,10]}>
+        <Button onClick={openCreator} borderRaius={10} variant='primary' padding={[12,10]}>
           Добавить
         </Button>
       </Row>
       <Spacing themeSpace={20} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' /> 
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <ActionButton text={'sadasdasd'} />
-      <Spacing themeSpace={10} variant='Column' />
-      <Modal isActive={isOpenAdd} closeModal={onCancelAdd}>
+      {filteredListFormats.map((item) => <>
+          <ActionButton onClick={() => onClickCard(item)} text={item.formatName} />
+          <Spacing themeSpace={10} variant='Column' />
+        </>)}
+      <Modal isActive={isOpenAdd} closeModal={closeAdd}>
         <Column horizontalAlign='center'>
           <Input 
             header='Введите название' 
-            placeholder='Информационных....'
-            value={'sadas'} setValue={() => {}}/>
+            placeholder='Лекция....'
+            error={deanClassFormatsState.errors['newNameOfClassFormatError']}
+            value={deanClassFormatsState.newNameOfClassFormat} 
+            setValue={setNewNameOfClassFormat}/>
+          <Spacing  themeSpace={25} variant='Column' />
+          <Textarea
+            value={deanClassFormatsState.newInfoOfClassFormat} 
+            placeholder='Данный ...' 
+            height={200} setValue={setNewInfoOfClassFormat}
+            error={deanClassFormatsState.errors['newInfoOfClassFormatError']}
+            header='Описание' />
           <Spacing  themeSpace={25} variant='Column' />
           <Row>
-            <Button onClick={()=>{}} state={'idle'} variant='recomended' padding={[12,17]}>
+            <Button 
+              onClick={onClickAdd} 
+              state={deanClassFormatsState.loadingAction} 
+              variant='recomended' padding={[12,17]}>
               Добавить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={onCancelAdd} variant='attentive' padding={[12,17]}>
+            <Button onClick={closeAdd} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
         </Column>
       </Modal>
-      <Modal themeColor={theme.colors.surface} isActive={isOpenEditor} closeModal={onCancelEdit}>
+      <Modal themeColor={theme.colors.surface} isActive={isOpenEditor} closeModal={closeEdit}>
         <Column horizontalAlign='center'>
           <Text themeFont={theme.fonts.h2}  align='center'> 
             Редактирование формата занятия
           </Text>
           <Spacing variant='Column' themeSpace={35}/>
           <Input 
-            header='Изменить название' 
-            placeholder='Информационных....'
-            value={'sadas'} setValue={() => {}}/>
+            header='Название' 
+            placeholder='Лекция....'
+            error={deanClassFormatsState.errors['newNameOfClassFormatError']}
+            value={deanClassFormatsState.newNameOfClassFormat} 
+            setValue={setNewNameOfClassFormat}/>
+          <Spacing  themeSpace={25} variant='Column' />
+          <Textarea
+            value={deanClassFormatsState.newInfoOfClassFormat} 
+            placeholder='Данный ...' 
+            height={100} setValue={setNewInfoOfClassFormat}
+            error={deanClassFormatsState.errors['newInfoOfClassFormatError']}
+            header='Описание' />
           <Spacing  themeSpace={25} variant='Column' />
           <Row>
-            <Button onClick={()=>{}} state={'idle'} variant='recomended' padding={[12,17]}>
+            <Button 
+              onClick={onClickSave} 
+              state={deanClassFormatsState.loadingAction} 
+              variant='recomended' padding={[12,17]}>
               Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={onCancelEdit} variant='attentive' padding={[12,17]}>
+            <Button onClick={closeEdit} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
           <Spacing variant='Column' themeSpace={35}/>
-          <Button style={{width: '100%', maxWidth: 440}} borderRaius={10} onClick={()=>{}} state={'idle'} variant='attentive' padding={[12,17]}>
+          <Button style={{width: '100%', maxWidth: 440}} 
+            borderRaius={10} onClick={openConfirmDelete} 
+            state={'idle'} 
+            variant='attentive' padding={[12,17]}>
             Удалить
           </Button>
         </Column>
       </Modal>
-      <Popup isActive={isOpenConfirmDelete} closePopup={onCancelDelete}>
-        <Column horizontalAlign='center'>
-          <Text themeColor={theme.colors.attentive} themeFont={theme.fonts.h2} align='center'> 
-            Вы уверены, <br/>
-            что хотите удалить?
-          </Text>
-          <Spacing  themeSpace={25} variant='Column' />
-          <Row>
-            <Button onClick={()=>{}} state={'idle'} variant='attentive' padding={[12,17]}>
-              Удалить
-            </Button>
-            <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={onCancelDelete} variant='recomended' padding={[12,17]}>
-              Отмена
-            </Button>
-          </Row>
-        </Column>
-      </Popup>
+      <ConfirmDeletePopup 
+        cancelDelete={onCancelDelete}
+        isActive={isOpenConfirmDelete} 
+        state={deanClassFormatsState.loadingDelete}
+        onDelete={onDelete} />
     </WrapperMobile>
   );
 });
@@ -202,109 +299,124 @@ export const ClassFormatsDesktopView: FC<LocalViewData> = memo(({
   goToWorkshop,
   isOpenConfirmDelete,
   isOpenEditor,
-  onCancelAdd,
+  closeAdd,
+  openCreator,
+  openConfirmDelete,
   isOpenAdd,
+  setSearchTextAction,
+  onDelete,
+  filteredListFormats,
+  setNewNameOfClassFormat,
+  onClickAdd,
+  setNewInfoOfClassFormat,
   onCancelDelete,
-  onCancelEdit
+  onClickCard,
+  onClickSave,
+  closeEdit,
+  deanClassFormatsState
 }) => {
 
   return (
     <WrapperDesktop onBack={goToWorkshop} role='ROLE_DEAN' header='Форматы занятий'>
+      {deanClassFormatsState.loading === 'loading' && 
+        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+          <CircleLoading state={deanClassFormatsState.loading}/>
+        </Column>
+      }
       <Column horizontalAlign='center' style={{width: 695}}>
         <Row style={{width: '100%'}}>
-          <Search isMobile={false} value={''} setValue={()=>{}}/>
+          <Search isMobile={false} 
+            value={deanClassFormatsState.searchText} 
+            setValue={setSearchTextAction}/>
           <Spacing themeSpace={20} variant='Row' />
-          <Button borderRaius={10} variant='primary' padding={[12,17]}>
+          <Button onClick={openCreator} borderRaius={10} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
+          {filteredListFormats.map((item) => <>
+            <ActionBlockButton text={item.formatName} onClick={() => onClickCard(item)} />
+          </>)}
         </GridContainer>
       </Column>
-      <Popup isActive={false} closePopup={onCancelAdd}>
-        <Column horizontalAlign='center'>
+      <Popup isActive={isOpenAdd} closePopup={closeAdd}>
+        <Column horizontalAlign='center' style={{width: 440}}>
           <Input 
-            width={340}
             header='Введите название' 
-            placeholder='Информационных....'
-            value={'sadas'} setValue={() => {}}/>
+            placeholder='Лекция....'
+            error={deanClassFormatsState.errors['newNameOfClassFormatError']}
+            value={deanClassFormatsState.newNameOfClassFormat} 
+            setValue={setNewNameOfClassFormat}/>
+          <Spacing  themeSpace={25} variant='Column' />
+          <Textarea
+            value={deanClassFormatsState.newInfoOfClassFormat} 
+            placeholder='Данный ...' 
+            height={200} setValue={setNewInfoOfClassFormat}
+            error={deanClassFormatsState.errors['newInfoOfClassFormatError']}
+            header='Описание' />
           <Spacing  themeSpace={25} variant='Column' />
           <Row>
-            <Button onClick={()=>{}} state={'idle'} variant='recomended' padding={[12,17]}>
+            <Button 
+              onClick={onClickAdd} 
+              state={deanClassFormatsState.loadingAction} 
+              variant='recomended' padding={[12,17]}>
               Добавить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={onCancelAdd} variant='attentive' padding={[12,17]}>
+            <Button onClick={closeAdd} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
         </Column>
       </Popup>
-      <Popup themeColor={theme.colors.secondary} isActive={isOpenEditor} closePopup={onCancelEdit} padding='35px'>
+      <Popup 
+        themeColor={theme.colors.secondary} 
+        isActive={isOpenEditor} 
+        closePopup={closeEdit} padding='35px'>
         <Column horizontalAlign='center'>
-          <Text themeFont={theme.fonts.h2}  align='center'> 
-            Редактирование формата занятия
-          </Text>
-          <Spacing variant='Column' themeSpace={20}/>
-          <Surface borderColor={theme.colors.foreground}>
-            <Column horizontalAlign='center'>
-              <Input 
-                header='Изменить название' 
-                placeholder='Информационных....'
-                value={'sadas'} setValue={() => {}}/>
-              <Spacing  themeSpace={25} variant='Column' />
-              <Row>
-                <Button onClick={()=>{}} state={'idle'} variant='recomended' padding={[12,17]}>
-                  Сохранить
-                </Button>
-                <Spacing variant='Row' themeSpace={20}/>
-                <Button onClick={onCancelEdit} variant='attentive' padding={[12,17]}>
-                  Отмена
-                </Button>
-              </Row>
-            </Column>
-          </Surface>
-          <Spacing variant='Column' themeSpace={30}/>
-          <Button borderRaius={10} width={340} onClick={()=>{}} state={'idle'} variant='attentive' padding={[12,17]}>
-            Удалить
-          </Button>
-        </Column>
-      </Popup>
-      <Popup isActive={isOpenConfirmDelete} closePopup={onCancelDelete}>
-        <Column horizontalAlign='center'>
-          <Text themeColor={theme.colors.attentive} themeFont={theme.fonts.h2} align='center'> 
-            Вы уверены, <br/>
-            что хотите удалить?
-          </Text>
+          <Column horizontalAlign='center' style={{width: 440}}>
+          <Input 
+            header='Название' 
+            placeholder='Лекция....'
+            error={deanClassFormatsState.errors['newNameOfClassFormatError']}
+            value={deanClassFormatsState.newNameOfClassFormat} 
+            setValue={setNewNameOfClassFormat}/>
+          <Spacing  themeSpace={25} variant='Column' />
+          <Textarea
+            value={deanClassFormatsState.newInfoOfClassFormat} 
+            placeholder='Данный ...' 
+            height={100} setValue={setNewInfoOfClassFormat}
+            error={deanClassFormatsState.errors['newInfoOfClassFormatError']}
+            header='Описание' />
           <Spacing  themeSpace={25} variant='Column' />
           <Row>
-            <Button onClick={()=>{}} state={'idle'} variant='attentive' padding={[12,17]}>
-              Удалить
+            <Button 
+              onClick={onClickSave} 
+              state={deanClassFormatsState.loadingAction} 
+              variant='recomended' padding={[12,17]}>
+              Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={onCancelDelete} variant='recomended' padding={[12,17]}>
+            <Button onClick={closeEdit} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
         </Column>
+        <Spacing variant='Column' themeSpace={30}/>
+        <Button 
+          borderRaius={10} width={340} 
+          onClick={openConfirmDelete} 
+          state={'idle'} variant='attentive' padding={[12,17]}>
+          Удалить
+        </Button>
+        </Column>
       </Popup>
+      <ConfirmDeletePopup 
+        cancelDelete={onCancelDelete}
+        state={deanClassFormatsState.loadingDelete}
+        isActive={isOpenConfirmDelete} 
+        onDelete={onDelete} />
     </WrapperDesktop>
   );
 });

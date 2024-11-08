@@ -142,11 +142,11 @@ const deanSections = [
 		imageActive: workshopActive,
 		imageDisable: workshopDisable,
 	},
-	{
-		link: '/teacher/subjects',
-		imageActive: subjectActive,
-		imageDisable: subjectDisable,
-	},
+	// {
+	// 	link: '/teacher/subjects',
+	// 	imageActive: subjectActive,
+	// 	imageDisable: subjectDisable,
+	// },
 	{
 		link: '/profile',
 		imageActive: profileActive,

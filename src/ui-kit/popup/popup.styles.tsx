@@ -5,7 +5,7 @@ export const WrapperPopap = styled.div<{
 }>`
     width: 100vw;
     height: 100vh;
-    z-index: 100;
+    z-index: 1000;
     box-sizing: border-box;
     top: 0;
     backdrop-filter: blur(3px);

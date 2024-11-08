@@ -1,0 +1,1 @@
+export { ConfirmDeletePopup } from './confirm-delete-popup';

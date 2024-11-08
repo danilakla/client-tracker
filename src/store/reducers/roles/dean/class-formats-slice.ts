@@ -1,4 +1,7 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { appStatusSlice } from "../../app-status-slice";
+import axios from "axios";
+import { deanApi } from "../../../../api/auth/dean-api";
 
 type ErrorType = string | null;
 
@@ -12,8 +15,12 @@ export type ClassFormatInfo = {
 export type ClassFormatsState = {
     searchText: string;
     selectedClassFormat: ClassFormatInfo;
+    newNameOfClassFormat: string;
+    newInfoOfClassFormat: string;
     classFormats: ClassFormatInfo[];
+    loadingAction: "idle" | "loading" | "success" | "error";
     loading: "idle" | "loading" | "success" | "error";
+    loadingDelete: "idle" | "loading" | "success" | "error";
     errors: Record<string, ErrorType>;
 };
 
@@ -25,8 +32,12 @@ const initialState: ClassFormatsState = {
         idDean: 1
     },
     classFormats: [], 
+    newNameOfClassFormat: '',
+    newInfoOfClassFormat: '',
     searchText: '',
-    loading: "idle",
+    loadingAction: 'idle',
+    loadingDelete: 'idle',
+    loading: 'idle',
     errors: {},
 };
 
@@ -41,11 +52,20 @@ export const classFormatsSlice = createSlice({
         setError(state, action: PayloadAction<{ key: string; error: ErrorType }>) {
             setErrorByKey(state, action.payload.key, action.payload.error);
         },
-        setSearchText(state, action: PayloadAction<string>) {
+        setSearchTextActionCreator(state, action: PayloadAction<string>) {
             state.searchText = action.payload;
         },
-        setSelectedClassFormat(state, action: PayloadAction<ClassFormatInfo>) {
+        setSelectedClassFormatActionCreator(state, action: PayloadAction<ClassFormatInfo>) {
             state.selectedClassFormat = action.payload;
+        },
+        setClassFormatsActionCreator(state, action: PayloadAction<ClassFormatInfo[]>) {
+            state.classFormats = action.payload;
+        },
+        setNewInfoOfClassFormatActionCreator(state, action: PayloadAction<string>) {
+            state.newInfoOfClassFormat = action.payload;
+        },
+        setNewNameOfClassFormatActionCreator(state, action: PayloadAction<string>) {
+            state.newNameOfClassFormat = action.payload;
         },
         reset(state) {
             Object.assign(state, initialState);
@@ -55,53 +75,149 @@ export const classFormatsSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // builder
-        //     .addCase(initializeMembersDataActionCreator.fulfilled, (state) => {
-        //         state.loading = 'success';
-        //     })
-        //     .addCase(initializeMembersDataActionCreator.pending, (state) => {
-        //         state.loading = 'loading';
-        //     })
-        //     .addCase(initializeMembersDataActionCreator.rejected, (state) => {
-        //         state.loading = "idle";
-        //     })
+        builder
+            .addCase(initClassFormatsDataActionCreator.fulfilled, (state) => {
+                state.loading = 'success';
+            })
+            .addCase(initClassFormatsDataActionCreator.pending, (state) => {
+                state.loading = 'loading';
+            })
+            .addCase(initClassFormatsDataActionCreator.rejected, (state) => {
+                state.loading = "idle";
+            })
+
+            .addCase(addClassFormatActionCreator.fulfilled, (state) => {
+                state.loadingAction = 'success';
+            })
+            .addCase(addClassFormatActionCreator.pending, (state) => {
+                state.loadingAction = 'loading';
+            })
+            .addCase(addClassFormatActionCreator.rejected, (state) => {
+                state.loadingAction = "idle";
+            })
+            .addCase(updateClassFormatActionCreator.fulfilled, (state) => {
+                state.loadingAction = 'success';
+            })
+            .addCase(updateClassFormatActionCreator.pending, (state) => {
+                state.loadingAction = 'loading';
+            })
+            .addCase(updateClassFormatActionCreator.rejected, (state) => {
+                state.loadingAction = "idle";
+            })
+            .addCase(deleteClassFormatActionCreator.fulfilled, (state) => {
+                state.loadingDelete = 'success';
+            })
+            .addCase(deleteClassFormatActionCreator.pending, (state) => {
+                state.loadingDelete = 'loading';
+            })
+            .addCase(deleteClassFormatActionCreator.rejected, (state) => {
+                state.loadingDelete = "idle";
+            })
     },
 });
 
-// export const initializeMembersDataActionCreator = createAsyncThunk('admin-members/initialize',
-//     async (data: { authToken: string}, thunkApi ) => {
-//         const { authToken } = data;
-//         try {
-//             const responce = await adminApi.getMembers(authToken);
-//             thunkApi.dispatch(membersSlice.actions.setListDeansActionCreater(responce.deanList));
-//             thunkApi.dispatch(membersSlice.actions.setListTeachersActionCreater(responce.teacherList));
-//         }
-//         catch (e) {
-//             if (axios.isAxiosError(e)) {
-//                 if(e.response?.status === 401){
-//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-//                 }
-//             }
-//         }
-//     }
-// )
+export const initClassFormatsDataActionCreator = createAsyncThunk('dean-class-formats/initialize',
+    async (data: { authToken: string}, thunkApi ) => {
+        const { authToken } = data;
+        try {
+            const responce = await deanApi.getClassFormats(authToken);
+            thunkApi.dispatch(classFormatsSlice.actions.setClassFormatsActionCreator(responce));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
 
-// export const recoverPasswordActionCreator = createAsyncThunk('admin-members/recover-password',
-//     async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
-//         const { authToken, id, onSuccess } = data;
-//         try {
-//             const responce = await adminApi.recoverPassword(authToken, id);
-//             thunkApi.dispatch(membersSlice.actions.setNewPasswordActionCreater(responce));
-//             onSuccess?.();
-//         }
-//         catch (e) {
-//             if (axios.isAxiosError(e)) {
-//                 if(e.response?.status === 401){
-//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-//                 }
-//             }
-//         }
-//     }
-// )
+export const addClassFormatActionCreator = createAsyncThunk('dean-class-formats/add-class-format',
+    async (data: { authToken: string, formatName: string, description: string,onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, formatName, description, onSuccess } = data;
+        try {
+            thunkApi.dispatch(classFormatsSlice.actions.clearErrors());
+
+            if(formatName.length < 1){
+                thunkApi.dispatch(classFormatsSlice.actions.setError({
+                    key: "newNameOfClassFormatError",
+                    error: 'Введите корректное название',
+                }));
+                
+                return;
+            }
+
+            await deanApi.createClassFormat(authToken, formatName, description);
+            const responce = await deanApi.getClassFormats(authToken);
+            thunkApi.dispatch(classFormatsSlice.actions.setClassFormatsActionCreator(responce));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else {
+                    thunkApi.dispatch(classFormatsSlice.actions.setError({
+                        key: "newNameOfClassFormatError",
+                        error: e.response?.data.message,
+                    }));
+                }
+            }
+        }
+    }
+)
+
+export const updateClassFormatActionCreator = createAsyncThunk('dean-class-formats/update-class-format',
+    async (data: { authToken: string, id: number, formatName: string, description: string, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, id, formatName, description, onSuccess } = data;
+        try {
+            if(formatName.length < 1){
+                thunkApi.dispatch(classFormatsSlice.actions.setError({
+                    key: "newNameOfClassFormatError",
+                    error: 'Введите корректное название',
+                }));
+                
+                return;
+            }
+
+            await deanApi.updateClassFormat(authToken, id, formatName, description);
+            const responce = await deanApi.getClassFormats(authToken);
+            thunkApi.dispatch(classFormatsSlice.actions.setClassFormatsActionCreator(responce));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else {
+                    thunkApi.dispatch(classFormatsSlice.actions.setError({
+                        key: "newNameOfClassFormatError",
+                        error: e.response?.data.message,
+                    }));
+                }
+            }
+        }
+    }
+)
+
+export const deleteClassFormatActionCreator = createAsyncThunk('dean-class-formats/delete-class-format',
+    async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, id, onSuccess } = data;
+        try {
+            await deanApi.deleteClassFormats(authToken, id);
+            const responce = await deanApi.getClassFormats(authToken);
+            thunkApi.dispatch(classFormatsSlice.actions.setClassFormatsActionCreator(responce));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
 
 export default classFormatsSlice.reducer;

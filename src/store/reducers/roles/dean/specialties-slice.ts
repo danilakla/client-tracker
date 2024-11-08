@@ -1,34 +1,43 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { appStatusSlice } from "../../app-status-slice";
+import axios from "axios";
+import { deanApi } from "../../../../api/auth/dean-api";
 
 type ErrorType = string | null;
 
 export type SpecialtyInfo = {
-    idSpecialty: number,
-    name: string,
-    idDean: number
+    idSpecialty: number;
+    name: string;
+    idDean: number;
 }
 
-export type SpecialtiesState = {
+export type SpecialtyState = {
     searchText: string;
-    specialties: SpecialtyInfo[],
-    selectedSpeciality: SpecialtyInfo;
+    selectedSpecialty: SpecialtyInfo;
+    newNameOfSpecialty: string;
+    specialties: SpecialtyInfo[];
+    loadingAction: "idle" | "loading" | "success" | "error";
     loading: "idle" | "loading" | "success" | "error";
+    loadingDelete: "idle" | "loading" | "success" | "error";
     errors: Record<string, ErrorType>;
 };
 
-const initialState: SpecialtiesState = {
-    specialties: [],
-    selectedSpeciality: {
+const initialState: SpecialtyState = {
+    selectedSpecialty: {
+        idDean: -1,
         idSpecialty: -1,
-        name: '',
-        idDean: -1
+        name: ''
     },
+    specialties: [], 
+    newNameOfSpecialty: '',
     searchText: '',
-    loading: "idle",
+    loadingAction: 'idle',
+    loadingDelete: 'idle',
+    loading: 'idle',
     errors: {},
 };
 
-const setErrorByKey = (state: SpecialtiesState, key: string, error: ErrorType) => {
+const setErrorByKey = (state: SpecialtyState, key: string, error: ErrorType) => {
     state.errors[key] = error;
 };
 
@@ -39,8 +48,17 @@ export const specialtiesSlice = createSlice({
         setError(state, action: PayloadAction<{ key: string; error: ErrorType }>) {
             setErrorByKey(state, action.payload.key, action.payload.error);
         },
-        setSearchText(state, action: PayloadAction<string>) {
+        setSearchTextActionCreator(state, action: PayloadAction<string>) {
             state.searchText = action.payload;
+        },
+        setSelectedSpecialtyActionCreator(state, action: PayloadAction<SpecialtyInfo>) {
+            state.selectedSpecialty = action.payload;
+        },
+        setSpecialtiesActionCreator(state, action: PayloadAction<SpecialtyInfo[]>) {
+            state.specialties = action.payload;
+        },
+        setNewNameOfSpecialtyActionCreator(state, action: PayloadAction<string>) {
+            state.newNameOfSpecialty = action.payload;
         },
         reset(state) {
             Object.assign(state, initialState);
@@ -50,53 +68,149 @@ export const specialtiesSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // builder
-        //     .addCase(initializeMembersDataActionCreator.fulfilled, (state) => {
-        //         state.loading = 'success';
-        //     })
-        //     .addCase(initializeMembersDataActionCreator.pending, (state) => {
-        //         state.loading = 'loading';
-        //     })
-        //     .addCase(initializeMembersDataActionCreator.rejected, (state) => {
-        //         state.loading = "idle";
-        //     })
+        builder
+            .addCase(initSpecialtiesDataActionCreator.fulfilled, (state) => {
+                state.loading = 'success';
+            })
+            .addCase(initSpecialtiesDataActionCreator.pending, (state) => {
+                state.loading = 'loading';
+            })
+            .addCase(initSpecialtiesDataActionCreator.rejected, (state) => {
+                state.loading = "idle";
+            })
+
+            .addCase(addSpecialtyActionCreator.fulfilled, (state) => {
+                state.loadingAction = 'success';
+            })
+            .addCase(addSpecialtyActionCreator.pending, (state) => {
+                state.loadingAction = 'loading';
+            })
+            .addCase(addSpecialtyActionCreator.rejected, (state) => {
+                state.loadingAction = "idle";
+            })
+            .addCase(updateSpecialtyActionCreator.fulfilled, (state) => {
+                state.loadingAction = 'success';
+            })
+            .addCase(updateSpecialtyActionCreator.pending, (state) => {
+                state.loadingAction = 'loading';
+            })
+            .addCase(updateSpecialtyActionCreator.rejected, (state) => {
+                state.loadingAction = "idle";
+            })
+            .addCase(deleteSpecialtyActionCreator.fulfilled, (state) => {
+                state.loadingDelete = 'success';
+            })
+            .addCase(deleteSpecialtyActionCreator.pending, (state) => {
+                state.loadingDelete = 'loading';
+            })
+            .addCase(deleteSpecialtyActionCreator.rejected, (state) => {
+                state.loadingDelete = "idle";
+            })
     },
 });
 
-// export const initializeMembersDataActionCreator = createAsyncThunk('admin-members/initialize',
-//     async (data: { authToken: string}, thunkApi ) => {
-//         const { authToken } = data;
-//         try {
-//             const responce = await adminApi.getMembers(authToken);
-//             thunkApi.dispatch(membersSlice.actions.setListDeansActionCreater(responce.deanList));
-//             thunkApi.dispatch(membersSlice.actions.setListTeachersActionCreater(responce.teacherList));
-//         }
-//         catch (e) {
-//             if (axios.isAxiosError(e)) {
-//                 if(e.response?.status === 401){
-//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-//                 }
-//             }
-//         }
-//     }
-// )
+export const initSpecialtiesDataActionCreator = createAsyncThunk('dean-specialies/initialize',
+    async (data: { authToken: string}, thunkApi ) => {
+        const { authToken } = data;
+        try {
+            const responce = await deanApi.getSpecialties(authToken);
+            thunkApi.dispatch(specialtiesSlice.actions.setSpecialtiesActionCreator(responce));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
 
-// export const recoverPasswordActionCreator = createAsyncThunk('admin-members/recover-password',
-//     async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
-//         const { authToken, id, onSuccess } = data;
-//         try {
-//             const responce = await adminApi.recoverPassword(authToken, id);
-//             thunkApi.dispatch(membersSlice.actions.setNewPasswordActionCreater(responce));
-//             onSuccess?.();
-//         }
-//         catch (e) {
-//             if (axios.isAxiosError(e)) {
-//                 if(e.response?.status === 401){
-//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-//                 }
-//             }
-//         }
-//     }
-// )
+export const addSpecialtyActionCreator = createAsyncThunk('dean-specialies/add-specialty',
+    async (data: { authToken: string, name: string, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, name, onSuccess } = data;
+        try {
+            thunkApi.dispatch(specialtiesSlice.actions.clearErrors());
+
+            if(name.length < 1){
+                thunkApi.dispatch(specialtiesSlice.actions.setError({
+                    key: "newNameOfSpecialtyError",
+                    error: 'Введите корректное название',
+                }));
+                
+                return;
+            }
+
+            await deanApi.createSpecialty(authToken, name);
+            const responce = await deanApi.getSpecialties(authToken);
+            thunkApi.dispatch(specialtiesSlice.actions.setSpecialtiesActionCreator(responce));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else {
+                    thunkApi.dispatch(specialtiesSlice.actions.setError({
+                        key: "newNameOfSpecialtyError",
+                        error: e.response?.data.message,
+                    }));
+                }
+            }
+        }
+    }
+)
+
+export const updateSpecialtyActionCreator = createAsyncThunk('dean-specialies/update-specialty',
+    async (data: { authToken: string, id: number, name: string, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, id, name, onSuccess } = data;
+        try {
+            if(name.length < 1){
+                thunkApi.dispatch(specialtiesSlice.actions.setError({
+                    key: "newNameOfSpecialtyError",
+                    error: 'Введите корректное название',
+                }));
+                
+                return;
+            }
+
+            await deanApi.updateSpecialty(authToken, id, name);
+            const responce = await deanApi.getSpecialties(authToken);
+            thunkApi.dispatch(specialtiesSlice.actions.setSpecialtiesActionCreator(responce));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else {
+                    thunkApi.dispatch(specialtiesSlice.actions.setError({
+                        key: "newNameOfSpecialtyError",
+                        error: e.response?.data.message,
+                    }));
+                }
+            }
+        }
+    }
+)
+
+export const deleteSpecialtyActionCreator = createAsyncThunk('dean-specialies/delete-specialty',
+    async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
+        const { authToken, id, onSuccess } = data;
+        try {
+            await deanApi.deleteSpecialty(authToken, id);
+            const responce = await deanApi.getSpecialties(authToken);
+            thunkApi.dispatch(specialtiesSlice.actions.setSpecialtiesActionCreator(responce));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
 
 export default specialtiesSlice.reducer;
