@@ -18,6 +18,7 @@ export const WrapperModal = styled.div<{
     background: rgba(24, 24, 24, 0.11);
     background-color: rgba(0, 0, 0, 0.6);
 
+    visibility: ${({ isActive }) => (isActive ? "visible" : "hidden")};
     opacity: ${({ isActive }) => (isActive ? "1" : "0")};
     transition: opacity 0.1s ease;
 
