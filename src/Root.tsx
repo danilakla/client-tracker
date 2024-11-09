@@ -20,6 +20,7 @@ import { ClassFormats as DeanClassFormats } from "./screens/roles/dean/workshop-
 import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/workshop-parent/control-subjects";
 import { Specialties as DeanSpecialties } from "./screens/roles/dean/workshop-parent/specialties";
 import { GenerateStudents as DeanGenerateStudents } from "./screens/roles/dean/workshop-parent/generate-students";
+import { Students as DeanStudents } from "./screens/roles/dean/workshop-parent/students";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -42,6 +43,7 @@ export const urls = {
   deanControlSubjects: '/dean/workshop/subjects',
   deanSpecialities: '/dean/workshop/specialities',
   deanGenerateStudents: '/dean/workshop/generate-students',
+  deanStudents: '/dean/workshop/students',
 };
 
 type RootProps = {};
@@ -86,6 +88,7 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
           <Route path={urls.deanGenerateStudents} element={<DeanGenerateStudents/>}/>
+          <Route path={urls.deanStudents} element={<DeanStudents/>}/>
         </>}
         {user.role === 'ROLE_PARENT' && <>
           <Route index element={<Navigate to={urls.profile} />} />

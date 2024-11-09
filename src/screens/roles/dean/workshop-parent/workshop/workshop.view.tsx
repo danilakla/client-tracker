@@ -15,12 +15,14 @@ export type WorkshopViewProps = {
   goToClassFormats: () => void;
   goToControlSubjects: () => void;
   goToGenerateStudents: () => void;
+  goToDeanStudents: () => void;
 };
 
 export const WorkshopView: FC<WorkshopViewProps> = memo(({
   goToSpecialties,
   goToClassFormats,
   goToGenerateStudents,
+  goToDeanStudents,
   goToControlSubjects
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
@@ -30,11 +32,13 @@ export const WorkshopView: FC<WorkshopViewProps> = memo(({
       (<WorkshopMobileView
         goToSpecialties={goToSpecialties}
         goToClassFormats={goToClassFormats}
+        goToDeanStudents={goToDeanStudents}
         goToGenerateStudents={goToGenerateStudents}
         goToControlSubjects={goToControlSubjects}
         />) :
       (<WorkshopDesktopView
         goToSpecialties={goToSpecialties}
+        goToDeanStudents={goToDeanStudents}
         goToClassFormats={goToClassFormats}
         goToGenerateStudents={goToGenerateStudents}
         goToControlSubjects={goToControlSubjects}
@@ -47,7 +51,8 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
   goToSpecialties,
   goToClassFormats,
   goToControlSubjects,
-  goToGenerateStudents
+  goToGenerateStudents,
+  goToDeanStudents
 }) => {
 
   return (
@@ -59,6 +64,8 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
       <ActionButton onClick={goToSpecialties} text='Специальности' />
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToGenerateStudents} text='Генерация студентов' />
+      <Spacing variant='Column' themeSpace={10} />
+      <ActionButton onClick={goToDeanStudents} text='Студенты' />
     </WrapperMobile>
   );
 });
@@ -67,7 +74,8 @@ export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
   goToSpecialties,
   goToClassFormats,
   goToControlSubjects,
-  goToGenerateStudents
+  goToGenerateStudents,
+  goToDeanStudents
 }) => {
 
   return (
@@ -78,6 +86,7 @@ export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
           <ActionBlockButton onClick={goToClassFormats} text='Форматы занятий' />
           <ActionBlockButton onClick={goToSpecialties} text='Специаль- ности' />
           <ActionBlockButton onClick={goToGenerateStudents} text='Генерация студентов' />
+          <ActionBlockButton onClick={goToDeanStudents} text='Студенты' />
         </GridContainer>
       </Column>
     </WrapperDesktop>
