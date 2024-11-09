@@ -19,6 +19,7 @@ import { Workshop as DeanWorkshop } from "./screens/roles/dean/workshop-parent/w
 import { ClassFormats as DeanClassFormats } from "./screens/roles/dean/workshop-parent/class-formats";
 import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/workshop-parent/control-subjects";
 import { Specialties as DeanSpecialties } from "./screens/roles/dean/workshop-parent/specialties";
+import { GenerateStudents as DeanGenerateStudents } from "./screens/roles/dean/workshop-parent/generate-students";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -40,6 +41,7 @@ export const urls = {
   deanClassFormats: '/dean/workshop/class-formats',
   deanControlSubjects: '/dean/workshop/subjects',
   deanSpecialities: '/dean/workshop/specialities',
+  deanGenerateStudents: '/dean/workshop/generate-students',
 };
 
 type RootProps = {};
@@ -70,6 +72,7 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.adminGeneratorKeys} element={<AdminGeneratorKeys/>}/>
           <Route path={urls.adminUniversityEditor} element={<AdminUniversityEditor/>}/>
           <Route path={urls.adminMembers} element={<AdminMembers/>}/>
+          
         </>}
         {user.role === 'ROLE_DEAN' && <>
           <Route index element={<Navigate to={urls.profile} />} />
@@ -82,6 +85,7 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
+          <Route path={urls.deanGenerateStudents} element={<DeanGenerateStudents/>}/>
         </>}
         {user.role === 'ROLE_PARENT' && <>
           <Route index element={<Navigate to={urls.profile} />} />

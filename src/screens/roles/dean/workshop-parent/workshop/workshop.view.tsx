@@ -14,11 +14,13 @@ export type WorkshopViewProps = {
   goToSpecialties: () => void;
   goToClassFormats: () => void;
   goToControlSubjects: () => void;
+  goToGenerateStudents: () => void;
 };
 
 export const WorkshopView: FC<WorkshopViewProps> = memo(({
   goToSpecialties,
   goToClassFormats,
+  goToGenerateStudents,
   goToControlSubjects
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
@@ -28,11 +30,13 @@ export const WorkshopView: FC<WorkshopViewProps> = memo(({
       (<WorkshopMobileView
         goToSpecialties={goToSpecialties}
         goToClassFormats={goToClassFormats}
+        goToGenerateStudents={goToGenerateStudents}
         goToControlSubjects={goToControlSubjects}
         />) :
       (<WorkshopDesktopView
         goToSpecialties={goToSpecialties}
         goToClassFormats={goToClassFormats}
+        goToGenerateStudents={goToGenerateStudents}
         goToControlSubjects={goToControlSubjects}
         />)
   );
@@ -42,7 +46,8 @@ export const WorkshopView: FC<WorkshopViewProps> = memo(({
 export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
   goToSpecialties,
   goToClassFormats,
-  goToControlSubjects
+  goToControlSubjects,
+  goToGenerateStudents
 }) => {
 
   return (
@@ -52,6 +57,8 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
       <ActionButton onClick={goToClassFormats} text='Форматы занятий' />
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToSpecialties} text='Специальности' />
+      <Spacing variant='Column' themeSpace={10} />
+      <ActionButton onClick={goToGenerateStudents} text='Генерация студентов' />
     </WrapperMobile>
   );
 });
@@ -59,16 +66,18 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
 export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
   goToSpecialties,
   goToClassFormats,
-  goToControlSubjects
+  goToControlSubjects,
+  goToGenerateStudents
 }) => {
 
   return (
     <WrapperDesktop role='ROLE_DEAN' header='Мастерская' isCenter={true}>
       <Column style={{width: 'auto'}}>
-        <GridContainer columns={3}>
+        <GridContainer columns={4}>
           <ActionBlockButton onClick={goToControlSubjects} text='Предметы' />
           <ActionBlockButton onClick={goToClassFormats} text='Форматы занятий' />
           <ActionBlockButton onClick={goToSpecialties} text='Специаль- ности' />
+          <ActionBlockButton onClick={goToGenerateStudents} text='Генерация студентов' />
         </GridContainer>
       </Column>
     </WrapperDesktop>

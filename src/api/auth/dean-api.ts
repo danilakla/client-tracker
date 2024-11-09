@@ -1,4 +1,5 @@
 import axios from "axios"
+import { Student } from "../../store/reducers/roles/dean/generate-students-slice";
 
 const instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
@@ -69,5 +70,13 @@ export const deanApi = {
             .then((response) => {
                 return response.data;
             })
+    },
+
+    generateStudents(authToken: string, students: Student[]) {
+        return instance.post(`/dean/generate-student`, students ,{ 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+        .then((response) => {
+            return response.data;
+        })
     },
 }
