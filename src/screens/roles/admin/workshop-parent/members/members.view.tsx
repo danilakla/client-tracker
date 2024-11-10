@@ -137,41 +137,48 @@ export const MembersView: FC<MembersViewProps> = memo(({
   };
 
   return (
-          onClickDelete={onClickDelete}
-          controlConfirmPopup={controlConfirmPopup}
-          resultDean={resultDean}
-          resultTeacher={resultTeacher}
-        />) :
-      (<MembersDesktopView
-          onClickToggle={onClickToggle}
-          toggle={toggle}
-          returnBack={returnBack}
-          isShowDescription={isShowDescription}
-          isOpenConfirmPopup={isOpenConfirmPopup}
-          setSelectedNewResponsible={setSelectedNewResponsible}
-          isOpenDropPopup={isOpenDropPopup}
-          setSearchText={setSearchText}
-          filteredListDeans={filteredListDeans}
-          filteredListTeachers={filteredListTeachers}
-          openDescriptionDean={openDescriptionDean}
-          openDescriptionTeacher={openDescriptionTeacher}
-          openPasswordPopup={openPasswordPopup}
-          isOpenPasswordPopup={isOpenPasswordPopup}
-          goToWorkshop={goToWorkshop}
-          confirmRecovery={confirmRecovery}
-          adminMembersState={adminMembersState}
-          closeDescription={closeDescription}
-          closePopups={closePopups}
-          controlDropPopup={controlDropPopup}
-          onClickDelete={onClickDelete}
-          controlConfirmPopup={controlConfirmPopup}
-          resultDean={resultDean}
-          resultTeacher={resultTeacher}
-        />)
+    <>
+    {
+      isMobile ? 
+      (<WrapperMobile onBack={handleBackActions[currentScreen]} role='ROLE_ADMIN' header={headers[currentScreen]}>
+        <ScreenContainer currentScreen={currentScreen}>
+          <ListOfMembersView
+            isMobile={isMobile}
+            onClickToggle={onClickToggle}
             toggle={toggle}
             setSearchText={setSearchText}
             filteredListDeans={filteredListDeans}
+            filteredListTeachers={filteredListTeachers}
+            openDescriptionDean={openDescriptionDean}
+            openDescriptionTeacher={openDescriptionTeacher}
+            adminMembersState={adminMembersState}
+          />
+          <MemberInfoView
+            isMobile={isMobile}
+            faculty={adminMembersState.selectedDean.faculty}
+            toggle={toggle}
+            closeDescription={closeDescription}
+            controlDropPopup={controlDropPopup}
+            controlConfirmPopup={controlConfirmPopup}
+            resultDean={resultDean}
+            resultTeacher={resultTeacher}
+          />
+        </ScreenContainer>
+      </WrapperMobile>) :
+      (
+        <WrapperDesktop 
+          isCenter={currentScreen === 'details'} 
+          onBack={handleBackActions[currentScreen]} 
+          role='ROLE_ADMIN' header={headers[currentScreen]}>
+          <Column style={{position: 'absolute', height: '100vh', top: 0, zIndex: -1}}>
+            <CircleLoading state={adminMembersState.loading}/>
+          </Column>
+          {adminMembersState.loading !== 'loading' && <Column style={{width: 'auto'}} horizontalAlign='center'>
             {
+              currentScreen === 'members' && <ListOfMembersView
+                  isMobile={isMobile}
+                  onClickToggle={onClickToggle}
+                  toggle={toggle}
                   setSearchText={setSearchText}
                   filteredListDeans={filteredListDeans}
                   filteredListTeachers={filteredListTeachers}
@@ -179,6 +186,76 @@ export const MembersView: FC<MembersViewProps> = memo(({
                   openDescriptionTeacher={openDescriptionTeacher}
                   adminMembersState={adminMembersState}
                 />
+            }
+            {currentScreen === 'details' && <MemberInfoView
+                isMobile={isMobile}
+                faculty={adminMembersState.selectedDean.faculty}
+                toggle={toggle}
+                closeDescription={closeDescription}
+                controlDropPopup={controlDropPopup}
+                controlConfirmPopup={controlConfirmPopup}
+                resultDean={resultDean}
+                resultTeacher={resultTeacher}
+              />}
+          </Column>}
+        </WrapperDesktop>
+      )
+    }
+    <ConfirmRecoveryPopupView
+      isOpenConfirmPopup={isOpenConfirmPopup}
+      controlConfirmPopup={controlConfirmPopup}
+      confirmRecovery={confirmRecovery}
+      state={adminMembersState.loadingNewPassword}/>
+    <NewPasswordPopupView
+      isOpenPasswordPopup={isOpenPasswordPopup}
+      closePopups={closePopups}
+      newPassword={adminMembersState.newPassword}/>
+    <DropPopupView
+      selectedNewResponsible={adminMembersState.selectedNewResponsible}
+      setSelectedNewResponsible={setSelectedNewResponsible}
+      isOpenDropPopup={isOpenDropPopup}
+      state={adminMembersState.loadingDelete}
+      onClickDelete={onClickDelete}
+      itemsForSelect={toggle === 'left' ? 
+        adminMembersState.itemsForSelectDean : 
+        adminMembersState.itemsForSelectTeachers}
+      error={adminMembersState.errors['selectedNewResponsibleError']}
+      controlDropPopup={controlDropPopup}/>
+    </>
+  );
+});
+
+type MemberDescriptionViewProps = {
+  isMobile?: boolean;
+  isDean: boolean;
+  faculty?: string;
+  data: string[];
+}
+
+export const MemberDescriptionView: FC<MemberDescriptionViewProps> = memo(({
+  data,
+  faculty,
+  isDean
+}) => {
+
+  return (
+      <>
+      <Text themeFont={theme.fonts.ht1} style={{
+        paddingLeft: 7,
+        wordBreak: 'break-word'
+      }}>
+        {data[0]}
+      </Text>
+      <Text themeFont={theme.fonts.ht1} style={{
+        paddingLeft: 7,
+        wordBreak: 'break-word'
+      }}>
+        {data[1]}
+      </Text>
+      <Text themeFont={theme.fonts.ht1} style={{
+        paddingLeft: 7,
+        wordBreak: 'break-word'
+      }}>
         {data[2]}
       </Text>
       {isDean && <Text themeFont={theme.fonts.ht1} style={{
