@@ -1,26 +1,24 @@
 import styled from "styled-components";
 
-export const StyledLogo = styled.img`
-    width: 300px;
-    height: 121px;
-    margin-left: -40px;
-  
-    @media (max-width: ${505}px) {
-      width: auto;
-      height: auto;
-      margin-left: -40px;
-    }
-`;
+export const ScreenContainer = styled.div<{ currentScreen: 'members' | 'details' }>`
+  display: flex;
+  width: 200vw; 
+  transition: transform 0.3s ease;
+  touch-action: pan-y; 
 
-export const AuthWrapper = styled.div`
-    display: flex;
-    height: 100vh;
-    box-sizing: border-box;
-    width: 100vw;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 35px;
-    min-height: 660px;
+  transform: ${({ currentScreen }) => {
+    switch (currentScreen) {
+      case 'members':
+        return 'translateX(50vw)';
+      case 'details':
+        return 'translateX(-50vw)';
+      default:
+        return 'translateX(0)';
+    }
+  }};
+
+  > div {
+    flex: 0 0 100vw;
+    padding: 0px 25px;
+  }
 `;
-  

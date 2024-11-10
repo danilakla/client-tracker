@@ -6,8 +6,6 @@ import { useUser } from '../../../../../hooks/user-hook';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
 import { DeanInfoState, deleteDeanActionCreator, deleteTeacherActionCreator, initializeMembersDataActionCreator, membersSlice, recoverPasswordActionCreator, TeacherInfoState } from '../../../../../store/reducers/roles/admin/members-slice';
 import { ItemOfSelectType } from '../../../../../ui-kit/select/select';
-import { useNavigate } from 'react-router-dom';
-import { urls } from '../../../../../Root';
 
 export const Members: FC<MembersProps> = memo(() => {
   const goToWorkshop = useWorkshop();

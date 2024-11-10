@@ -47,6 +47,8 @@ export const ScreenContent = styled.div`
 
 export const Wrapper = styled.div`
     position: relative;
+    /* width: 100vw;
+    overflow: hidden; */
 `;
 
 export const BackButton = styled.div`

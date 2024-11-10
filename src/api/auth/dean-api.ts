@@ -71,12 +71,53 @@ export const deanApi = {
                 return response.data;
             })
     },
-
     generateStudents(authToken: string, students: Student[]) {
         return instance.post(`/dean/generate-student`, students ,{ 
             headers: {'Authorization' : `Bearer ${authToken}`} })
         .then((response) => {
             return response.data;
         })
+    },
+    getMembers(authToken: string) {
+        return instance.get('/dean/members/get', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    updateStudent(authToken: string, id: number, lastname: string, name: string, surname: string){
+        return instance.put(`/dean/students/update/${id}`,{
+            lastname: lastname,
+            name: name,
+            surname: surname
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    recoveryPasswordForStudent(authToken: string, id: number){
+        return instance.put(`/user/recovery-password/${id}`,null, 
+            { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    deleteStudent(authToken: string, id: number) {
+        return instance.delete(`/user/delete/student/${id}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    createStudent(authToken: string, numberOfGroupId: string, lastname: string, name: string, surname: string){
+        return instance.put(`/dean/students/create`,{
+            lastname: lastname,
+            name: name,
+            surname: surname,
+            numberOfGroupId: numberOfGroupId
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
     },
 }

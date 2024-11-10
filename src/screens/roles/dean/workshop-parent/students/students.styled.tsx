@@ -1,26 +1,26 @@
 import styled from "styled-components";
 
-export const StyledLogo = styled.img`
-    width: 300px;
-    height: 121px;
-    margin-left: -40px;
-  
-    @media (max-width: ${505}px) {
-      width: auto;
-      height: auto;
-      margin-left: -40px;
-    }
-`;
+export const ScreenContainer = styled.div<{ currentScreen: 'all' | 'subgroup' | 'student' }>`
+  display: flex;
+  width: 300vw; 
+  transition: transform 0.3s ease;
+  touch-action: pan-y; 
 
-export const AuthWrapper = styled.div`
-    display: flex;
-    height: 100vh;
-    box-sizing: border-box;
-    width: 100vw;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 35px;
-    min-height: 660px;
+  transform: ${({ currentScreen }) => {
+    switch (currentScreen) {
+      case 'all':
+        return 'translateX(100vw)';
+      case 'subgroup':
+        return 'translateX(0vw)';
+      case 'student':
+        return 'translateX(-100vw)';
+      default:
+        return 'translateX(0)';
+    }
+  }};
+
+  > div {
+    flex: 0 0 100vw;
+    padding: 0px 25px;
+  }
 `;
-  

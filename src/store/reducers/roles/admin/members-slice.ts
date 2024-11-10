@@ -40,7 +40,7 @@ export type MembersState = {
 const initialState: MembersState = {
     searchText: '',
     selectedNewResponsible: {
-        name: 'Не указано',
+        name: 'Не выбрано',
         value: '-1'
     },
     newPassword: '',
