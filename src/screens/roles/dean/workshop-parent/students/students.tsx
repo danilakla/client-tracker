@@ -4,7 +4,7 @@ import { StudentsView } from './students.view';
 import { useDeanWorkshop } from '../workshop/workshop.props';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { initDeanMembersActionCreator, StudentInfoState, studentsSlice, SubgroupInfoState } from '../../../../../store/reducers/roles/dean/students-slice';
+import { createStudentActionCreator, deleteStudentActionCreator, initDeanMembersActionCreator, recoverPasswordForStudentActionCreator, StudentInfoState, studentsSlice, SubgroupInfoState, updateStudentActionCreator } from '../../../../../store/reducers/roles/dean/students-slice';
 
 export const Students: FC<StudentsProps> = memo(() => {
   const goToWorkshop = useDeanWorkshop();
@@ -17,15 +17,18 @@ export const Students: FC<StudentsProps> = memo(() => {
   const { 
     setNewLastnameActionCreator,
     setNewNameActionCreator,
-    setNewPasswordActionCreator,
     setNewSurnameActionCreator,
     setSearchStudentsActionCreator,
     setSearchSubgroupsActionCreator,
     setSelectedStudentActionCreator,
     setSelectedSubgroupActionCreator,
-    setSelectedSubgroupFromSelectActionCreator,
+    clearFormActionCreator,
     reset
   } = studentsSlice.actions;
+
+  const clearForm = useCallback(()=>{
+    dispatch(clearFormActionCreator());
+  },[dispatch, clearFormActionCreator])
 
   const setNewLastname = useCallback((value: string)=>{
     dispatch(setNewLastnameActionCreator(value));
@@ -55,6 +58,23 @@ export const Students: FC<StudentsProps> = memo(() => {
     dispatch(setSelectedStudentActionCreator(value));
   },[dispatch, setSelectedStudentActionCreator])
 
+
+  const deleteStudent = useCallback((onSuccess?: () => void)=>{
+    dispatch(deleteStudentActionCreator({
+      authToken: authToken,
+      id: deanStudentsState.selectedStudent.idAccount,
+      onSuccess: onSuccess
+    }));
+  },[dispatch, authToken, deanStudentsState.selectedStudent.idAccount]);
+
+  const recoveryPasswordForStudent = useCallback((onSuccess?: () => void)=>{
+    dispatch(recoverPasswordForStudentActionCreator({
+      authToken: authToken,
+      id: deanStudentsState.selectedStudent.idAccount,
+      onSuccess: onSuccess
+    }));
+  },[dispatch, authToken, deanStudentsState.selectedStudent.idAccount]);
+
   const isInizialized = useRef(true);
 
   const initStudents = useCallback(()=>{
@@ -70,12 +90,53 @@ export const Students: FC<StudentsProps> = memo(() => {
     };
   }, [dispatch, reset, initStudents]);
 
+  const onUpdate = useCallback((onSuccess?: () => void)=>{
+    dispatch(updateStudentActionCreator({
+      authToken: authToken,
+      id: deanStudentsState.selectedStudent.idStudent,
+      lastname: deanStudentsState.newLastname,
+      name: deanStudentsState.newName,
+      surname: deanStudentsState.newSurname,
+      onSuccess: onSuccess
+    }));
+  },[
+    dispatch,
+    authToken, 
+    deanStudentsState.selectedStudent.idStudent,
+    deanStudentsState.newLastname,
+    deanStudentsState.newName,
+    deanStudentsState.newSurname
+  ]);
+
+  const onCreate = useCallback((onSuccess?: () => void)=>{
+    dispatch(createStudentActionCreator({
+      authToken: authToken,
+      numberOfGroupId: deanStudentsState.selectedSubgroup.subgroup.idSubgroup.toString(),
+      lastname: deanStudentsState.newLastname,
+      name: deanStudentsState.newName,
+      surname: deanStudentsState.newSurname,
+      onSuccess: onSuccess
+    }));
+  },[
+    dispatch,
+    authToken, 
+    deanStudentsState.selectedSubgroup.subgroup.idSubgroup,
+    deanStudentsState.newLastname,
+    deanStudentsState.newName,
+    deanStudentsState.newSurname
+  ]);
+
   return (
       <StudentsView 
+        onCreate={onCreate}
         setNewLastname={setNewLastname}
+        clearForm={clearForm}
         setNewName={setNewName}
         setNewSurname={setNewSurname}
+        recoveryPasswordForStudent={recoveryPasswordForStudent}
         setSelectedStudent={setSelectedStudent}
+        deleteStudent={deleteStudent}
+        onUpdate={onUpdate}
         setSelectedSubgroup={setSelectedSubgroup}
         setSearchStudents={setSearchStudents}
         setSearchSubgroups={setSearchSubgroups}

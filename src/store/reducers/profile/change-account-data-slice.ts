@@ -26,18 +26,30 @@ const setErrorByKey = (state: ChangeAccountDataState, key: string, error: ErrorT
     state.errors[key] = error;
 };
 
+const MAX_LENGTH = 15;
+const RUSSIAN_LETTERS_REGEX = /^[А-Яа-яёЁ]+$/;
+
 export const changeAccountDataSlice = createSlice({
     name: "change-account-data",
     initialState: initialState,
     reducers: {
         setLastnameActionCreater(state, action: PayloadAction<string>) {
-            state.lastname = action.payload;
+            const lastname = action.payload;
+            if (lastname === '' || (lastname.length <= MAX_LENGTH && RUSSIAN_LETTERS_REGEX.test(lastname))) {
+                state.lastname = lastname;
+            }
         },
         setNameActionCreater(state, action: PayloadAction<string>) {
-            state.name = action.payload;
+            const name = action.payload;
+            if (name === '' || (name.length <= MAX_LENGTH && RUSSIAN_LETTERS_REGEX.test(name))) {
+                state.name = name;
+            }
         },
         setSurnameActionCreater(state, action: PayloadAction<string>) {
-            state.surname = action.payload;
+            const surname = action.payload;
+            if (surname === '' || (surname.length <= MAX_LENGTH && RUSSIAN_LETTERS_REGEX.test(surname))) {
+                state.surname = surname;
+            }
         },
         setError(state, action: PayloadAction<{ key: string; error: ErrorType }>) {
             setErrorByKey(state, action.payload.key, action.payload.error);

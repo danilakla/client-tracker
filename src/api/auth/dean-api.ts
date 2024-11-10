@@ -86,7 +86,7 @@ export const deanApi = {
             })
     },
     updateStudent(authToken: string, id: number, lastname: string, name: string, surname: string){
-        return instance.put(`/dean/students/update/${id}`,{
+        return instance.post(`/dean/students/update/${id}`,{
             lastname: lastname,
             name: name,
             surname: surname
@@ -96,7 +96,7 @@ export const deanApi = {
             })
     },
     recoveryPasswordForStudent(authToken: string, id: number){
-        return instance.put(`/user/recovery-password/${id}`,null, 
+        return instance.post(`/user/recovery-password/${id}`,null, 
             { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;
@@ -110,7 +110,7 @@ export const deanApi = {
             })
     },
     createStudent(authToken: string, numberOfGroupId: string, lastname: string, name: string, surname: string){
-        return instance.put(`/dean/students/create`,{
+        return instance.post(`/dean/students/create`,{
             lastname: lastname,
             name: name,
             surname: surname,

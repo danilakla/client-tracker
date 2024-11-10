@@ -81,7 +81,11 @@ export const GeneratorKeysMobileView: FC<GeneratorKeysViewProps> = memo(({
           value={adminGeneratorKeysState.facultyName} setValue={setFacultyName}/>
         <Spacing variant='Column' themeSpace={30} />
       </>}
-      <Textarea isCopy={true} value={adminGeneratorKeysState.generatedKey} placeholder='Создайте ключ' disabled={true} header='Ключ' />
+      <Textarea 
+        isCopy={true} 
+        value={adminGeneratorKeysState.generatedKey} 
+        placeholder='Создайте ключ' 
+        disabled={true} header='Ключ' />
       <Spacing variant='Column' themeSpace={40} />
       <Button onClick={onCreate} state={adminGeneratorKeysState.loading} variant='primary' padding={[12,17]}>
         Создать ключ

@@ -419,7 +419,7 @@ export const MemberInfoView: FC<MemberInfoViewProps> = memo(({
       </Surface>
       <Spacing themeSpace={25} variant='Column' />
       <ActionButton onClick={controlConfirmPopup} text='Сбросить пароль' />
-      <Spacing variant='Column' themeSpace={10} />
+      <Spacing variant='Column' themeSpace={15} />
       <ActionButton 
         themeFont={theme.fonts.h2} 
         textColor={theme.colors.attentive} 

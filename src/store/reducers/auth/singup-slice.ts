@@ -40,6 +40,9 @@ const setErrorByKey = (state: SingupState, key: string, error: ErrorType) => {
     state.errors[key] = error;
 };
 
+const MAX_LENGTH = 15;
+const RUSSIAN_LETTERS_REGEX = /^[А-Яа-яёЁ]+$/;
+
 export const singupSlice = createSlice({
     name: "sing-up",
     initialState: initialState,
@@ -53,14 +56,23 @@ export const singupSlice = createSlice({
         setLoginActionCreater(state, action: PayloadAction<string>) {
             state.login = action.payload;
         },
-        setNameActionCreater(state, action: PayloadAction<string>) {
-            state.name = action.payload;
-        },
         setLastnameActionCreater(state, action: PayloadAction<string>) {
-            state.lastname = action.payload;
+            const lastname = action.payload;
+            if (lastname === '' || (lastname.length <= MAX_LENGTH && RUSSIAN_LETTERS_REGEX.test(lastname))) {
+                state.lastname = lastname;
+            }
+        },
+        setNameActionCreater(state, action: PayloadAction<string>) {
+            const name = action.payload;
+            if (name === '' || (name.length <= MAX_LENGTH && RUSSIAN_LETTERS_REGEX.test(name))) {
+                state.name = name;
+            }
         },
         setSurnameActionCreater(state, action: PayloadAction<string>) {
-            state.surname = action.payload;
+            const surname = action.payload;
+            if (surname === '' || (surname.length <= MAX_LENGTH && RUSSIAN_LETTERS_REGEX.test(surname))) {
+                state.surname = surname;
+            }
         },
         setRoleActionCreater(state, action: PayloadAction<ItemOfSelectType>) {
             state.role = action.payload;

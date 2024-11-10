@@ -71,31 +71,31 @@ export const ChangeAccoundDataMobileView: FC<ChangeAccoundDataViewProps> = memo(
   return (
     <WrapperMobile onBack={goToProfile} role={user.role} header='Учётные данные'>
       <Column horizontalAlign='center'>
-          <Input 
-            header='Фамилия' 
-            placeholder='Иванов' error={changeAccountDataState.errors['lastnameError']}
-            value={changeAccountDataState.lastname} setValue={setLastname}/>
-          <Spacing variant='Column' themeSpace={30}/>
-          <Input 
-            header='Имя' 
-            placeholder='Иванов' error={changeAccountDataState.errors['nameError']}
-            value={changeAccountDataState.name} setValue={setName}/>
-          <Spacing variant='Column' themeSpace={30}/>
-          <Input 
-            header='Отчество' 
-            placeholder='Иванов' error={changeAccountDataState.errors['surnameError']}
-            value={changeAccountDataState.surname} setValue={setSurname}/>
-          <Spacing variant='Column' themeSpace={40}/>
-          <Row>
-            <Button onClick={onSave} state={changeAccountDataState.loading} variant='recomended' padding={[12,17]}>
-              Сохранить
-            </Button>
-            <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={goToProfile} state={'idle'} variant='secondary' padding={[12,17]}>
-              Отмена
-            </Button>
-          </Row>
-        </Column>
+        <Input 
+          header='Фамилия' 
+          placeholder='Иванов' error={changeAccountDataState.errors['lastnameError']}
+          value={changeAccountDataState.lastname} setValue={setLastname}/>
+        <Spacing variant='Column' themeSpace={30}/>
+        <Input 
+          header='Имя' 
+          placeholder='Иванов' error={changeAccountDataState.errors['nameError']}
+          value={changeAccountDataState.name} setValue={setName}/>
+        <Spacing variant='Column' themeSpace={30}/>
+        <Input 
+          header='Отчество' 
+          placeholder='Иванов' error={changeAccountDataState.errors['surnameError']}
+          value={changeAccountDataState.surname} setValue={setSurname}/>
+        <Spacing variant='Column' themeSpace={40}/>
+        <Row>
+          <Button onClick={onSave} state={changeAccountDataState.loading} variant='recomended' padding={[12,17]}>
+            Сохранить
+          </Button>
+          <Spacing variant='Row' themeSpace={20}/>
+          <Button onClick={goToProfile} state={'idle'} variant='secondary' padding={[12,17]}>
+            Отмена
+          </Button>
+        </Row>
+      </Column>
     </WrapperMobile>
   );
 });
