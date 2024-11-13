@@ -8,6 +8,7 @@ export type TextProps = {
     padding?: number | [number?, number?, number?, number?];
     transform? : 'lowercase' | 'uppercase';
     align?: 'center' | 'right' | 'left';
+     format?: 'hide' | 'break';
 };
 
 export const StyledText = styled.div<TextProps>`
@@ -32,6 +33,18 @@ export const StyledText = styled.div<TextProps>`
     }
     return "0";
   }};
+
+    ${({ format }) => format === 'hide' && `
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    `}
+
+    ${({ format }) => format === 'break' && `
+        word-break: break-word;
+        white-space: normal;
+    `}  
+
     font-family: ${props => props.font.family};
     font-size: ${props => props.font.desktopSize};
     font-weight: ${props => props.font.weight};

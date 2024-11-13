@@ -79,7 +79,7 @@ const setErrorByKey = (state: StudentsState, key: string, error: ErrorType) => {
     state.errors[key] = error;
 };
 
-const MAX_LENGTH = 15;
+const MAX_LENGTH = 21;
 const RUSSIAN_LETTERS_REGEX = /^[А-Яа-яёЁ]+$/;
 
 export const studentsSlice = createSlice({
@@ -87,13 +87,25 @@ export const studentsSlice = createSlice({
     initialState: initialState,
     reducers: {
         setSubgroupsActionCreator(state, action: PayloadAction<SubgroupInfoState[]>) {
-            state.subgroups = action.payload.map(subgroup => ({
-                ...subgroup,
-                students: subgroup.students.map(student => ({
-                    ...student,
-                    flpName: student.flpName.replace(/_/g, ' ')
-                }))
-            }));
+            const currentYear = new Date().getFullYear();
+
+            state.subgroups = action.payload.map(subgroup => {
+                const admissionYear = new Date(subgroup.subgroup.admissionDate).getFullYear();
+                const course = Math.max(1, currentYear - admissionYear + 1); // Calculate course as "1 курс", "2 курс", etc.
+                    
+                return {
+                    ...subgroup,
+                    subgroup: {
+                        ...subgroup.subgroup,
+                        subgroupNumber: `${course} курс - ${subgroup.subgroup.subgroupNumber} группа` // Preserve original number and add course level
+                    },
+                    students: subgroup.students.map(student => ({
+                        ...student,
+                        flpName: student.flpName.replace(/_/g, ' ') // Replace underscores with spaces
+                    }))
+                };
+            });
+
         },
         deleteStudentByIdActionCreator(state, action: PayloadAction<number>) {
             const studentId = action.payload;

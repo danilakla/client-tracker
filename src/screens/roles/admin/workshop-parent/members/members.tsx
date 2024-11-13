@@ -22,6 +22,7 @@ export const Members: FC<MembersProps> = memo(() => {
     setSearchTextActionCreater,
     setSelectedTeacherActionCreater,
     setSelectedNewResponsibleActionCreater,
+    clearErrors
   } = membersSlice.actions;
 
   const isInizialized = useRef(true);
@@ -101,9 +102,14 @@ export const Members: FC<MembersProps> = memo(() => {
     authToken
   ])
 
+  const clearAllErrors = useCallback(() => {
+    dispatch(clearErrors());
+  },[dispatch, clearErrors])
+
   return (
       <MembersView 
         onDelete={onDelete}
+        clearErrors={clearAllErrors}
         adminMembersState={adminMembersState}
         setSearchText={setSearchText}
         recoverPassword={recoverPassword}

@@ -21,6 +21,8 @@ import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/wor
 import { Specialties as DeanSpecialties } from "./screens/roles/dean/workshop-parent/specialties";
 import { GenerateStudents as DeanGenerateStudents } from "./screens/roles/dean/workshop-parent/generate-students";
 import { Students as DeanStudents } from "./screens/roles/dean/workshop-parent/students";
+import { Loader } from "./screens/loader";
+import { useAuthentication } from "./hooks/authentication-hook";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -51,13 +53,17 @@ type RootProps = {};
 export const Root: FC<RootProps> = () => {
   const { user } = useTypedSelector(state => state.user);
 
+  const { appStatus } = useAuthentication();
+  if (appStatus === 'loading') return <Loader />;
+
   return (
     <Routes>
       <Route path={urls.logInUser} element={<Login typeOfLogin='other' />} />
       <Route path={urls.logInParent} element={<Login typeOfLogin='parent' />} />
       <Route path={urls.signUp} element={<Signup/>} />
 
-      <Route element={<PrivateRoute />} >
+
+      <Route>
         {/* General */}
         <Route path={urls.profile} element={<Profile/>}/>
         <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
@@ -110,8 +116,8 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
         </>}
+        <Route path='*' element={<Navigate to='/' />} />
       </Route>
-      <Route path='*' element={<Navigate to='/' />} />
     </Routes>
   );
 };

@@ -75,12 +75,11 @@ export const Select: FC<SelectProps> = memo(({
           borderColor={isOpen ? theme.colors.primary : borderColor}
           {...rest}>
           <Text 
+            format='hide'
             style={{
               width: 'calc(100% - 25px)',
-              whiteSpace: 'nowrap', 
-              overflow: 'hidden', 
-              textOverflow: 'ellipsis'
             }}
+
             themeFont={theme.fonts.ht1}>
               {selectedItem?.name}
           </Text>

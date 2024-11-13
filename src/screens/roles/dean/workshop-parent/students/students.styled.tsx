@@ -20,7 +20,7 @@ export const ScreenContainer = styled.div<{ currentScreen: 'all' | 'subgroup' | 
   }};
 
   > div {
-    flex: 0 0 100vw;
+    width: 100vw;
     padding: 0px 25px;
   }
 `;

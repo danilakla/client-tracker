@@ -14,7 +14,6 @@ import { ActionBlockButton } from '../../../../../ui-kit/action-block-button';
 import { Column } from '../../../../../ui-kit/column';
 import { Popup } from '../../../../../ui-kit/popup';
 import { Text } from '../../../../../ui-kit/text';
-import { Surface } from '../../../../../ui-kit/surface';
 import { Input } from '../../../../../ui-kit/input';
 import { SpecialtyInfo, SpecialtyState } from '../../../../../store/reducers/roles/dean/specialties-slice';
 import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-popup';

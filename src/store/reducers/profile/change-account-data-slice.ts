@@ -26,7 +26,7 @@ const setErrorByKey = (state: ChangeAccountDataState, key: string, error: ErrorT
     state.errors[key] = error;
 };
 
-const MAX_LENGTH = 15;
+const MAX_LENGTH = 21;
 const RUSSIAN_LETTERS_REGEX = /^[А-Яа-яёЁ]+$/;
 
 export const changeAccountDataSlice = createSlice({

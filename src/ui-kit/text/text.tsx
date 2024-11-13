@@ -9,18 +9,20 @@ export type TextProps = {
     transform?: 'lowercase' | 'uppercase';
     align?: 'center' | 'right' | 'left';
     children? : ReactNode;
+    format?: 'hide' | 'break';
 } & HtmlHTMLAttributes<HTMLElement>;
 
 export const Text : FC<TextProps> = memo(({ 
     themeFont, 
     themeColor = theme.colors.gray, 
     themePadding, 
+    format = 'break',
     transform, 
     align, 
     children, 
     ...rest 
 }) => 
-    <StyledText font={themeFont} color={themeColor} padding={themePadding} transform={transform} align={align} {...rest}>
+    <StyledText format={format} font={themeFont} color={themeColor} padding={themePadding} transform={transform} align={align} {...rest}>
         {children}
     </StyledText>
 );

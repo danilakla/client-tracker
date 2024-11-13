@@ -22,6 +22,8 @@ import { CircleLoading } from '../../../../../ui-kit/circle-loading';
 import { Modal } from '../../../../../ui-kit/modal';
 import { Input } from '../../../../../ui-kit/input';
 import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-popup';
+import { GridContainer } from '../../../../../ui-kit/grid-container';
+import { ActionBlockButton } from '../../../../../ui-kit/action-block-button';
 
 export type StudentsViewProps = {
   goToWorkshop: () => void;
@@ -62,7 +64,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
 
   const headers = {
     all: 'Список групп',
-    subgroup: `Группа - ${deanStudentsState.selectedSubgroup.subgroup.subgroupNumber}`,
+    subgroup: `${deanStudentsState.selectedSubgroup.subgroup.subgroupNumber}`,
     student: 'Студент'
   };
 
@@ -196,9 +198,31 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
         </ScreenContainer>
       </WrapperMobile>) :
       (<WrapperDesktop 
+        isCenter={currentScreen === 'student'}
         onBack={handleBackActions[currentScreen]} 
         role='ROLE_DEAN' header={headers[currentScreen]}>
-      
+          {currentScreen === 'all' && <AllView 
+            search={deanStudentsState.searchSubgroups}
+            setSearch={setSearchSubgroups}
+            isMobile={false} 
+            onClick={goToSubgroupDetails}
+            data={deanStudentsState.subgroups} />}
+          {currentScreen === 'subgroup' && <SubgroupView
+            openCreateStudentPopup={openCreateStudentPopup}
+            search={deanStudentsState.searchStudents}
+            setSearch={setSearchStudents}
+            isMobile={false} 
+            onClick={goToStudentDetails}
+            data={deanStudentsState.selectedSubgroup} />}
+          {currentScreen === 'student' && <StudentDetailsView
+            openUpdateAccountData={openUpdateAccountData}
+            controlConfirmDeletePopup={controlConfirmDeletePopup}
+            controlConfirmRecoveryPopup={controlConfirmRecoveryPopup}
+            keyStudentParents={deanStudentsState.selectedStudent.keyStudentParents}
+            fioFields={fioFields}
+            isMobile={false}
+            group={deanStudentsState.selectedSubgroup.subgroup.subgroupNumber}
+            />}
         </WrapperDesktop>)
     }
     <UserAccountDataView
@@ -295,8 +319,15 @@ export const AllView: FC<AllViewProps> = memo(({
           <Spacing themeSpace={10} variant='Column' />
         </>)
       }
-    </Column>) : (<Column>
-      1
+    </Column>) : (<Column style={{width: 695}}>
+      <Search isMobile={false} value={search} setValue={setSearch}/>
+      <Spacing themeSpace={30} variant='Column' />
+      <GridContainer columns={4}>
+        {
+          filteredData.map((item) =>
+            <ActionBlockButton onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)
+        }
+      </GridContainer>
     </Column>)
   );
 });
@@ -346,9 +377,23 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
           <Spacing themeSpace={10} variant='Column' />
         </>)
       }
-    </Column>) : (<Column>
-      1
-    </Column>)
+    </Column>) : (<Column horizontalAlign='center' style={{width: 695}}>
+        <Row style={{width: '100%'}}>
+          <Search isMobile={false} 
+            value={search} 
+            setValue={setSearch}/>
+          <Spacing themeSpace={20} variant='Row' />
+          <Button onClick={openCreateStudentPopup} borderRaius={10} variant='primary' padding={[12,17]}>
+            Добавить
+          </Button>
+        </Row>
+        <Spacing themeSpace={30} variant='Column' />
+        <GridContainer columns={4}>
+          {filteredData.map((item) => <>
+            <ActionBlockButton text={item.flpName} onClick={() => onClick(item)} />
+          </>)}
+        </GridContainer>
+      </Column>)
   );
 });
 
@@ -378,7 +423,7 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
         <Row verticalAlign='center' style={{width: '100%'}} horizontalAlign='space-between'>
           <Image src={accountLogoSVG} width={95} height={95}/>
           <Spacing themeSpace={10} variant='Row' />
-          <Column style={{gap: 15}} verticalAlign='space-between'>
+          <Column style={{gap: 15, overflow: 'hidden'}} verticalAlign='space-between'>
             <Text themeFont={theme.fonts.h2}> 
             {fioFields[0]}
             </Text>
@@ -389,7 +434,7 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
               {fioFields[2]}
             </Text>
             <Text themeFont={theme.fonts.ht2}> 
-              Группа - {group}
+              {group}
             </Text>
           </Column>
         </Row>
@@ -410,9 +455,46 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
         textColor={theme.colors.attentive} 
         onClick={controlConfirmDeletePopup} 
         text='Удалить' />
-    </Column>) : (<Column>
-      1
-    </Column>)
+    </Column>) : (<Surface padding='40px' style={{width: 'auto'}}>
+      <Column horizontalAlign='center' style={{position: 'relative', width: 440}}>
+        <Surface>
+          <Row verticalAlign='center' style={{width: '100%'}} horizontalAlign='space-between'>
+            <Image src={accountLogoSVG} width={95} height={95}/>
+            <Spacing themeSpace={10} variant='Row' />
+            <Column style={{gap: 15, overflow: 'hidden'}} verticalAlign='space-between'>
+              <Text themeFont={theme.fonts.h2}> 
+              {fioFields[0]}
+              </Text>
+              <Text themeFont={theme.fonts.h2}> 
+                {fioFields[1]}
+              </Text>
+              <Text themeFont={theme.fonts.h2}> 
+                {fioFields[2]}
+              </Text>
+              <Text themeFont={theme.fonts.ht2}> 
+                {group}
+              </Text>
+            </Column>
+          </Row>
+          <Spacing themeSpace={25} variant='Column' />
+          <Textarea 
+            isCopy={true} 
+            value={keyStudentParents} 
+            placeholder='Родительский ключ' 
+            disabled={true} header='Родительский ключ' />
+        </Surface>
+        <Spacing themeSpace={25} variant='Column' />
+        <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
+        <Spacing variant='Column' themeSpace={10} />
+        <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />
+        <Spacing variant='Column' themeSpace={10} />
+        <ActionButton 
+          themeFont={theme.fonts.h2} 
+          textColor={theme.colors.attentive} 
+          onClick={controlConfirmDeletePopup} 
+          text='Удалить' />
+      </Column>
+    </Surface>)
   );
 });
 

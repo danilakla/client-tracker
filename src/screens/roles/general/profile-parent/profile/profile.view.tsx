@@ -88,7 +88,7 @@ export const ProfileMobileView: FC<ProfileViewProps> = memo(({
           <Row style={{width: '100%', maxWidth: 440}} verticalAlign='center' horizontalAlign='flex-start'>
             <Image src={accountLogoSVG} width={95} height={95}/>
             <Spacing variant='Row' themeSpace={10} />
-            <Column style={{height: 95}} verticalAlign='space-between'>
+            <Column style={{gap: 15, overflow: 'hidden'}} verticalAlign='space-between'>
               <Text themeFont={theme.fonts.h2} themeColor={theme.colors.nothing}>
                 {user.lastname} 
               </Text>
@@ -163,7 +163,7 @@ export const ProfileDesktopView: FC<ProfileViewProps> = memo(({
             <Row verticalAlign='center' horizontalAlign='flex-start'>
               <Image src={accountLogoSVG} width={95} height={95}/>
               <Spacing variant='Row' themeSpace={25} />
-              <Column style={{gap: 15}} verticalAlign='space-between'>
+              <Column style={{gap: 15, overflow: 'hidden'}} verticalAlign='space-between'>
                 <Text themeFont={theme.fonts.h2} themeColor={theme.colors.nothing}>
                   {user.lastname}
                 </Text>

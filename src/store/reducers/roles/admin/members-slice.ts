@@ -219,7 +219,10 @@ export const deleteDeanActionCreator = createAsyncThunk('admin-members/delete-de
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
+                } else thunkApi.dispatch(membersSlice.actions.setError({
+                    key: "selectedNewResponsibleError",
+                    error: e.response?.data.message,
+                }));
             }
         }
     }
@@ -237,7 +240,10 @@ export const deleteTeacherActionCreator = createAsyncThunk('admin-members/delete
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
+                } else thunkApi.dispatch(membersSlice.actions.setError({
+                    key: "selectedNewResponsibleError",
+                    error: e.response?.data.message,
+                }));
             }
         }
     }

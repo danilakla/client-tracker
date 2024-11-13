@@ -38,7 +38,10 @@ export const Button: FC<ButtonProps> = memo(({
         { ...rest}
     >
         <CircleLoading size={sizeLoading} state={state} color={theme.colors.surface}/>
-        <Text themeColor={theme.colors.surface} style={{visibility: state === 'loading' ? 'hidden' : 'visible'}} themeFont={theme.fonts.h3}>
+        <Text themeColor={theme.colors.surface} style={{
+            visibility: state === 'loading' ? 'hidden' : 'visible',
+            wordBreak: 'normal'
+            }} themeFont={theme.fonts.h3}>
             {children}
         </Text>
     </StyledButton>

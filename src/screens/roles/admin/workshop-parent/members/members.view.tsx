@@ -35,6 +35,7 @@ export type MembersViewProps = {
   recoverPassword: (id: number, onSuccess: () => void) => void;
   setSelectedTeacher: (value: TeacherInfoState) => void;  
   filteredListDeans: DeanInfoState[] | undefined;
+  clearErrors: () => void;
   filteredListTeachers: TeacherInfoState[] | undefined;
 };
 
@@ -43,6 +44,7 @@ export const MembersView: FC<MembersViewProps> = memo(({
   adminMembersState,
   setSelectedDean,
   setSearchText,
+  clearErrors, 
   setSelectedTeacher,
   filteredListDeans,
   setSelectedNewResponsible,
@@ -80,12 +82,13 @@ export const MembersView: FC<MembersViewProps> = memo(({
   const [isOpenDropPopup, setIsOpenDropPopup] = useState<boolean>(false);
 
   const controlDropPopup = useCallback(() => {
+    clearErrors();
     setIsOpenDropPopup(!isOpenDropPopup);
     setSelectedNewResponsible({
       name: 'Не указано',
       value: '-1'
     })
-  },[setIsOpenDropPopup, setSelectedNewResponsible, isOpenDropPopup])
+  },[clearErrors, setIsOpenDropPopup, setSelectedNewResponsible, isOpenDropPopup])
 
   const controlConfirmPopup = useCallback(() => {
     setIsOpenConfirmPopup(!isOpenConfirmPopup);

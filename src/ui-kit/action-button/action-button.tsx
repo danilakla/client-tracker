@@ -29,11 +29,9 @@ export const ActionButton : FC<ActionButtonProps> = memo(({
       <ButtonContainer width={width} onClick={onClick}>
         <ActionButtonStyled themeColor={themeColor}>
           <Text 
+            format='hide'
             style={{
               width: 'calc(100% - 25px)',
-              whiteSpace: 'nowrap', 
-              overflow: 'hidden', 
-              textOverflow: 'ellipsis'
             }} 
             themeColor={textColor}
             themeFont={themeFont}>
