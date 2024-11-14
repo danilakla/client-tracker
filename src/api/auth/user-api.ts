@@ -13,13 +13,6 @@ export const userApi = {
                 return response.data;
             })
     },
-    getUniversityInfo(authToken: string) {
-        return instance.get('/user/info', { 
-            headers: {'Authorization' : `Bearer ${authToken}`} })
-            .then((response) => {
-                return response.data;
-            })
-    },
     changeAccountData(authToken: string, lastname: string, name: string, surname: string){
         return instance.post('/user/update-user-info',{
             lastname: lastname,

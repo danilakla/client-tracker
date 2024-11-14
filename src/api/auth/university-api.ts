@@ -7,7 +7,7 @@ const instance = axios.create({
 
 export const universityApi = {
     getUniversityInfo(authToken: string) {
-        return instance.get('/admin/university/get', { 
+        return instance.get('/common/get/university', { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;

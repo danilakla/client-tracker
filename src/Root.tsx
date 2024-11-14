@@ -53,9 +53,6 @@ type RootProps = {};
 export const Root: FC<RootProps> = () => {
   const { user } = useTypedSelector(state => state.user);
 
-  const { appStatus } = useAuthentication();
-  if (appStatus === 'loading') return <Loader />;
-
   return (
     <Routes>
       <Route path={urls.logInUser} element={<Login typeOfLogin='other' />} />
@@ -63,7 +60,7 @@ export const Root: FC<RootProps> = () => {
       <Route path={urls.signUp} element={<Signup/>} />
 
 
-      <Route>
+      <Route element={<PrivateRoute/>}>
         {/* General */}
         <Route path={urls.profile} element={<Profile/>}/>
         <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>

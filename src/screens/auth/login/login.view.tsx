@@ -9,10 +9,6 @@ import logoTracker from '../../../images/Logo.svg'
 import { Text } from '../../../ui-kit/text';
 import { theme } from '../../../ui-kit/themes/theme';
 import { Link } from '../../../ui-kit/link';
-import { ActionButton } from '../../../ui-kit/action-button';
-import { ActionBlockButton } from '../../../ui-kit/action-block-button';
-import { Column } from '../../../ui-kit/column';
-import { Surface } from '../../../ui-kit/surface';
 
 export type LoginViewProps = {
   setLogin: (login: string) => void;

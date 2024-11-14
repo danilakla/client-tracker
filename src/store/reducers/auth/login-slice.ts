@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { authApi } from "../../../api/auth/auth-api";
 import axios from "axios";
+import { appStatusSlice } from "../app-status-slice";
 
 type ErrorType = string | null;
 
