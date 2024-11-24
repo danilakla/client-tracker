@@ -1,0 +1,1 @@
+export { ClassGroupsDetails } from './class-groups-details';

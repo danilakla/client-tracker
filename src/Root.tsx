@@ -17,10 +17,12 @@ import { Members as AdminMembers } from "./screens/roles/admin/workshop-parent/m
 
 import { Workshop as DeanWorkshop } from "./screens/roles/dean/workshop-parent/workshop";
 import { ClassFormats as DeanClassFormats } from "./screens/roles/dean/workshop-parent/class-formats";
-import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/workshop-parent/control-subjects";
 import { Specialties as DeanSpecialties } from "./screens/roles/dean/workshop-parent/specialties";
 import { GenerateStudents as DeanGenerateStudents } from "./screens/roles/dean/workshop-parent/generate-students";
 import { Students as DeanStudents } from "./screens/roles/dean/workshop-parent/students";
+import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/workshop-parent/subjects-parent/control-subjects";
+import { ClassGroupsDetails as DeanClassGroupsDetails } from "./screens/roles/dean/workshop-parent/subjects-parent/class-groups-details";
+import { ClassGroups as DeanClassGroups } from "./screens/roles/dean/workshop-parent/subjects-parent/class-groups";
 import { Loader } from "./screens/loader";
 import { useAuthentication } from "./hooks/authentication-hook";
 
@@ -42,10 +44,13 @@ export const urls = {
 
   deanWorkshop: '/dean/workshop',
   deanClassFormats: '/dean/workshop/class-formats',
-  deanControlSubjects: '/dean/workshop/subjects',
   deanSpecialities: '/dean/workshop/specialities',
   deanGenerateStudents: '/dean/workshop/generate-students',
   deanStudents: '/dean/workshop/students',
+  deanSubjects: '/dean/workshop/subjects',
+  deanClassGroups: '/dean/workshop/subjects/class-groups',
+  deanClassGroupAdd: '/dean/workshop/subjects/class-group/add',
+  deanClassGroupEdit: '/dean/workshop/subjects/class-group/edit',
 };
 
 type RootProps = {};
@@ -58,7 +63,6 @@ export const Root: FC<RootProps> = () => {
       <Route path={urls.logInUser} element={<Login typeOfLogin='other' />} />
       <Route path={urls.logInParent} element={<Login typeOfLogin='parent' />} />
       <Route path={urls.signUp} element={<Signup/>} />
-
 
       <Route element={<PrivateRoute/>}>
         {/* General */}
@@ -84,8 +88,12 @@ export const Root: FC<RootProps> = () => {
 
           <Route path={urls.deanWorkshop} element={<DeanWorkshop/>}/>
           <Route path={urls.deanClassFormats} element={<DeanClassFormats/>}/>
-          <Route path={urls.deanControlSubjects} element={<DeanControlSubjects/>}/>
           <Route path={urls.deanSpecialities} element={<DeanSpecialties/>}/>
+
+          <Route path={urls.deanSubjects} element={<DeanControlSubjects/>}/>
+          <Route path={urls.deanClassGroups} element={<DeanClassGroups/>}/>
+          <Route path={urls.deanClassGroupAdd} element={<DeanClassGroupsDetails type='add' />}/>
+          <Route path={urls.deanClassGroupEdit} element={<DeanClassGroupsDetails type='edit' />}/>
 
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>

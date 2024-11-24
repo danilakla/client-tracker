@@ -120,4 +120,51 @@ export const deanApi = {
                 return response.data;
             })
     },
+    getSubjects(authToken: string) {
+        return instance.get('/dean/subject/get/all', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    createSubject(authToken: string, name: string, description: string){
+        return instance.post(`/dean/subject/create`,{
+            name: name,
+            description: description,
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    getClassGroupsBySubject(authToken: string, id: number) {
+        return instance.get(`/dean/get/class-groups/subject/${id}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    deleteSubject(authToken: string, id: number) {
+        return instance.delete(`/dean/subject/delete/${id}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    updateSubject(authToken: string, id: number, name: string, description: string){
+        return instance.put(`/dean/subject/put`,{
+            id: id,
+            name: name,
+            description: description,
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    getTeachers(authToken: string) {
+        return instance.get('/common/teachers', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

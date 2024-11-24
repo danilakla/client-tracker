@@ -137,6 +137,12 @@ export const ModalContent: FC<ModalContentProps> = memo(({
         Данные не найдены
       </Text>
       </>) : (<>
+        {header && <>
+                <Text style={{width: '100%', maxWidth: 440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+                  {header}
+                </Text>
+                <Spacing variant='Column' themeSpace={5}/>
+            </>}
         {includeSearch && <>
             <Search value={searchText} setValue={setSearchText} />
             <Spacing variant='Column' themeSpace={15}/>
@@ -146,15 +152,9 @@ export const ModalContent: FC<ModalContentProps> = memo(({
               Данные не найдены
             </Text>
           </>) : (<>
-            {header && <>
-                <Text style={{width: '100%', maxWidth: 440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-                  {header}
-                </Text>
-                <Spacing variant='Column' themeSpace={10}/>
-            </>}
             {filteredItems?.map((item, index) => <>
               <ActionButton onClick={() => onSet(item)} text={item.name}/>
-              {index < filteredItems.length - 1 && <Spacing themeSpace={15} variant='Column' />}
+              {index < filteredItems.length - 1 && <Spacing themeSpace={10} variant='Column' />}
               </>)}
             </>)
           }

@@ -19,6 +19,7 @@ import { Popup } from '../../../../../ui-kit/popup';
 import { Image } from '../../../../../ui-kit/image';
 
 import successSVG from '../../../../../images/success.svg';
+import { ItemsContainerMobile } from '../subjects-parent/control-subjects/control-subjects.styled';
 
 export type ExcelData = {
   [key: string]: string | number;
@@ -207,11 +208,11 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
         </Column>
         <Spacing variant='Column' themeSpace={25} />
         <Search value={deanGenerateStudentsState.searchText} setValue={setSearchText}/>
+        <ItemsContainerMobile>
+          {filteredStudents.map((item) => 
+            <StudentView data={item}/>)}
+        </ItemsContainerMobile>
         <Spacing variant='Column' themeSpace={25} />
-        {filteredStudents.map((item) => <>
-          <StudentView data={item}/>
-          <Spacing variant='Column' themeSpace={10} />
-        </>)}
       </Column>}
       <Popup isActive={isErrorPopup} closePopup={closeErrorPopup}>
         <Column horizontalAlign='center' style={{width: 290}}>

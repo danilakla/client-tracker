@@ -24,6 +24,7 @@ import { Image } from '../../../../../ui-kit/image';
 import { Select } from '../../../../../ui-kit/select';
 import { ItemOfSelectType } from '../../../../../ui-kit/select/select';
 import { ScreenContainer } from './members.styled';
+import { ItemsContainerMobile } from '../../../dean/workshop-parent/subjects-parent/control-subjects/control-subjects.styled';
 
 export type MembersViewProps = {
   goToWorkshop: () => void;
@@ -319,7 +320,7 @@ type NewPasswordPopupViewProps = {
 export const NewPasswordPopupView: FC<NewPasswordPopupViewProps> = memo(({
   isOpenPasswordPopup,
   closePopups,
-  newPassword,
+  newPassword
 }) => {
 
   return (
@@ -488,18 +489,16 @@ export const ListOfMembersView: FC<ListOfMembersViewProps> = memo(({
         <Spacing themeSpace={10} variant='Column' />
         <Search value={adminMembersState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={20} variant='Column' />
+        <ItemsContainerMobile>
         {
           toggle === 'left' ? (
-            filteredListDeans?.map((item) => <>
-              <ActionButton onClick={() => openDescriptionDean(item)} text={item.flpName} />
-              <Spacing themeSpace={10} variant='Column' />
-            </>)
+            filteredListDeans?.map((item) =>
+              <ActionButton onClick={() => openDescriptionDean(item)} text={item.flpName} />)
           ) : (
-            filteredListTeachers?.map((item) => <>
-              <ActionButton onClick={() => openDescriptionTeacher(item)} text={item.flpName} />
-              <Spacing themeSpace={10} variant='Column' />
-             </>))
+            filteredListTeachers?.map((item) =>
+              <ActionButton onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
         }
+        </ItemsContainerMobile>
         <Spacing themeSpace={75} variant='Column' />
       </Column>)
        : (

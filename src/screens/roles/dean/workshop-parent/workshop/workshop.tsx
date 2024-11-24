@@ -3,9 +3,9 @@ import { WorkshopProps } from './workshop.props';
 import { WorkshopView } from './workshop.view';
 import { useSpecialties } from '../specialties/specialties.props';
 import { useClassFormats } from '../class-formats/class-formats.props';
-import { useControlSubjects } from '../control-subjects/control-subjects.props';
 import { useGenerateStudents } from '../generate-students/generate-students.props';
 import { useDeanStudents } from '../students/students.props';
+import { useControlSubjects } from '../subjects-parent/control-subjects/control-subjects.props';
 
 export const Workshop: FC<WorkshopProps> = memo(() => {
   

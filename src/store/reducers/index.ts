@@ -14,10 +14,14 @@ import adminUniversityEditorReducer from "./roles/admin/university-editor-slice"
 import adminMembersReducer from "./roles/admin/members-slice"
 
 import deanClassFormatsReducer from "./roles/dean/class-formats-slice"
-import deanControlSubjectsReducer from "./roles/dean/control-subjects-slice"
 import deanSpecialtiesReducer from "./roles/dean/specialties-slice"
 import deanGenerateStudentsReducer from "./roles/dean/generate-students-slice"
 import deanStudentsReducer from "./roles/dean/students-slice"
+
+import deanClassGroupDetailsReducer from "./roles/dean/subjects-parent/class-group-details-slice"
+import deanClassGroupsReducer from "./roles/dean/subjects-parent/class-groups-slice"
+import deanControlSubjectsReducer from "./roles/dean/subjects-parent/control-subjects-slice"
+
 // import Reducer from "./roles/dean"
 
 export const rootReducers = combineReducers({
@@ -36,7 +40,9 @@ export const rootReducers = combineReducers({
       deanControlSubjects: deanControlSubjectsReducer,
       deanSpecialties: deanSpecialtiesReducer,
       deanGenerateStudents: deanGenerateStudentsReducer,
-      deanStudents: deanStudentsReducer
+      deanStudents: deanStudentsReducer,
+      deanClassGroupDetails: deanClassGroupDetailsReducer,
+      deanClassGroups: deanClassGroupsReducer
 });
 
 export type RootState = ReturnType<typeof rootReducers>;

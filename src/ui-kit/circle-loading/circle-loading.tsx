@@ -8,7 +8,7 @@ export type CircleLoadingProps = {
 } & HtmlHTMLAttributes<HTMLElement>;
   
 export const CircleLoading: FC<CircleLoadingProps> = memo(({state = 'idle', color, size, ...rest }) => 
-  <ContainerCircleLoading>
+  <ContainerCircleLoading {...rest}>
     { state === 'loading' && <StyledCircleLoading size={size} color={color} {...rest}/>}
   </ContainerCircleLoading>
 );
