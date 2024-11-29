@@ -17,7 +17,6 @@ import { Input } from '../../../../../../ui-kit/input';
 import { Textarea } from '../../../../../../ui-kit/textarea';
 import { ControlSubjectsState, SubjectInfo } from '../../../../../../store/reducers/roles/dean/subjects-parent/control-subjects-slice';
 import { ItemsContainerMobile } from './control-subjects.styled';
-import { CircleLoadingScreen } from '../../../../../../components/circle-loading-screen';
 import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
 
 export type ControlSubjectsViewProps = {
@@ -175,8 +174,7 @@ export const ControlSubjectsMobileView: FC<LocalViewProps> = memo(({
   );
 });
 
-export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(({
-}) => {
+export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(() => {
 
   return (
     <WrapperDesktop onBack={() => {}} role='ROLE_DEAN' header='Предметы'>

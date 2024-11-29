@@ -91,21 +91,20 @@ export const studentsSlice = createSlice({
 
             state.subgroups = action.payload.map(subgroup => {
                 const admissionYear = new Date(subgroup.subgroup.admissionDate).getFullYear();
-                const course = Math.max(1, currentYear - admissionYear + 1); // Calculate course as "1 курс", "2 курс", etc.
+                const course = Math.max(1, currentYear - admissionYear + 1);
                     
                 return {
                     ...subgroup,
                     subgroup: {
                         ...subgroup.subgroup,
-                        subgroupNumber: `${course} курс - ${subgroup.subgroup.subgroupNumber} группа` // Preserve original number and add course level
+                        subgroupNumber: `${course} курс - ${subgroup.subgroup.subgroupNumber} группа`
                     },
                     students: subgroup.students.map(student => ({
                         ...student,
-                        flpName: student.flpName.replace(/_/g, ' ') // Replace underscores with spaces
+                        flpName: student.flpName.replace(/_/g, ' ')
                     }))
                 };
             });
-
         },
         deleteStudentByIdActionCreator(state, action: PayloadAction<number>) {
             const studentId = action.payload;

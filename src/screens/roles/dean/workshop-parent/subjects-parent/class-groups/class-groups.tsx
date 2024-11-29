@@ -24,7 +24,7 @@ export const ClassGroups: FC<ClassGroupsProps> = memo(() => {
   } = classGroupsSlice.actions;
 
   const { 
-    setSelectedClassGroupActionCreator,
+    setSelectedClassGroupIdActionCreator,
   } = classGroupDetailsSlice.actions;
 
   const dispatch = useAppDispatch();
@@ -107,12 +107,12 @@ export const ClassGroups: FC<ClassGroupsProps> = memo(() => {
     };
   }, [dispatch, reset, initClassGroups]);
 
-  const setDataAndGoToClassGroupDetails = useCallback((value: ClassGroupInfo)=>{
-    dispatch(setSelectedClassGroupActionCreator({
+  const setDataAndGoToClassGroupDetails = useCallback((value: number)=>{
+    dispatch(setSelectedClassGroupIdActionCreator({
       value: value,
       onSuccess: goToClassGroupEdit
     }));
-  },[dispatch, setSelectedClassGroupActionCreator, goToClassGroupEdit])
+  },[dispatch, setSelectedClassGroupIdActionCreator, goToClassGroupEdit])
 
   return (
       <ClassGroupsView 

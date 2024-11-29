@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 import './App.css';
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import { Login } from './screens/auth/login';
 import { Signup } from './screens/auth/signup';
 import { PrivateRoute } from "./private-route";

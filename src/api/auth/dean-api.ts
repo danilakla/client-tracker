@@ -143,6 +143,13 @@ export const deanApi = {
                 return response.data;
             })
     },
+    getClassGroupDetails(authToken: string, id: number) {
+        return instance.get(`/dean/get/class-group/${id}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
     deleteSubject(authToken: string, id: number) {
         return instance.delete(`/dean/subject/delete/${id}`, { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
@@ -163,6 +170,63 @@ export const deanApi = {
     getTeachers(authToken: string) {
         return instance.get('/common/teachers', { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    getSubgroups(authToken: string) {
+        return instance.get('/dean/subgroup/get', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    createClassGroup(authToken: string, teacherId: number, subjectId: number, formatClassId: number, description: string){
+        return instance.post('/dean/class-group/create',{
+            teacherId: teacherId,
+            subjectId: subjectId,
+            formatClassId: formatClassId,
+            description: description
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    updateClassGroup(authToken: string, teacherId: string, classGroupId: string, subjectId: string, classFormatId: string, description: string){
+        return instance.put('/dean/class-group/update',{
+            teacherId: teacherId,
+            classGroupId: classGroupId,
+            subjectId: subjectId,
+            classFormatId: classFormatId,
+            description: description
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    assignGroupToClassGroup(authToken: string, classGroupId: number, studentGroupIds: number[]){
+        return instance.post('/dean/assign/groups',{
+            classGroupId: classGroupId,
+            studentGroupIds: studentGroupIds
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    addGroupToClassGroup(authToken: string, classGroupId: number, studentGroupIds: number[]){
+        return instance.post('/dean/add/groups-to-class',{
+            classGroupId: classGroupId,
+            studentGroupIds: studentGroupIds
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    removeGroupToClassGroup(authToken: string, classGroupId: number, studentGroupIds: number[]){
+        return instance.post('/dean/remove/groups-from-class',{
+            classGroupId: classGroupId,
+            studentGroupIds: studentGroupIds
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;
             })

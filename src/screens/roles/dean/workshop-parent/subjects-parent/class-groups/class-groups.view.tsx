@@ -25,7 +25,7 @@ export type ClassGroupsViewProps = {
   goToControlSubjects: () => void;
   deanClassGroupsState: ClassGroupsState;
   setName: (value: string) => void;
-  goToClassGroupEdit: (value: ClassGroupInfo) => void;
+  goToClassGroupEdit: (value: number) => void;
   setDescription: (value: string) => void;
   setSearchText: (value: string) => void;
   goToClassGroupAdd: () => void;
@@ -137,7 +137,7 @@ type LocalViewProps = {
   isOpenUpdateWindow: boolean;
   openUpdateWindow: () => void;
   closeUpdateWindow: () => void;
-  goToClassGroupEdit: (value: ClassGroupInfo) => void;
+  goToClassGroupEdit: (value: number) => void;
   openDeleteConfirm: () => void;
   goToClassGroupAdd: () => void;
   onClickUpdate: () => void;
@@ -189,7 +189,7 @@ export const ClassGroupsMobileView: FC<LocalViewProps> = memo(({
         <Spacing themeSpace={20} variant='Column' />
         <ItemsContainerMobile>
           {filteredClassGroups.map((item) => <>
-            <ActionButton onClick={() => goToClassGroupEdit(item)} text={item.description} />
+            <ActionButton onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />
             </>)}
         </ItemsContainerMobile>
         </>)
@@ -228,8 +228,7 @@ export const ClassGroupsMobileView: FC<LocalViewProps> = memo(({
   );
 });
 
-export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(({
-}) => {
+export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(() => {
 
   return (
     <WrapperDesktop onBack={() => {}} role='ROLE_DEAN' header='Предметы'>
