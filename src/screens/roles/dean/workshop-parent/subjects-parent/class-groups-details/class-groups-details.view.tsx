@@ -240,8 +240,22 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
         (<Column style={{position: 'absolute', height: '100vh', top: 0}}>
           <CircleLoading state={deanClassGroupDetailsState.loading}/>
         </Column>) : (<>
-          <Row verticalAlign='center'>
+          <Row >
             <Column style={{width: 'auto'}}>
+           
+              <Row>
+                  <Button 
+                    state={deanClassGroupDetailsState.loadingAdd} 
+                    onClick={type === 'add' ? createClassGroup : updateClassGroup} 
+                    variant='recomended' padding={[12,17]}>
+                    {type === 'add' ? 'Добавить группу занятий' : 'Сохранить изменения'}
+                  </Button>
+                  <Spacing themeSpace={20} variant='Row' />
+                  <Button onClick={goToClassGroups} variant='attentive' padding={[12,17]}>
+                  Удалить группу занятий
+                  </Button>
+              </Row>
+              <Spacing themeSpace={20} variant='Column' />
               <Surface style={{width: 500}}>
                 <Spacing themeSpace={20} variant='Column' />
                 <Input 
@@ -263,23 +277,6 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                   selectedItem={deanClassGroupDetailsState.selectedClassFormat} 
                   setValue={setSelectedClassFormat}/>
               </Surface>
-              <Spacing themeSpace={20} variant='Column' />
-              <Row>
-                  <Button 
-                    state={deanClassGroupDetailsState.loadingAdd} 
-                    onClick={type === 'add' ? createClassGroup : updateClassGroup} 
-                    variant='recomended' padding={[12,17]}>
-                    {type === 'add' ? 'Добавить группу занятий' : 'Сохранить изменения'}
-                  </Button>
-                  <Spacing themeSpace={20} variant='Row' />
-                  <Button onClick={goToClassGroups} variant='attentive' padding={[12,17]}>
-                    Вернуться назад
-                  </Button>
-              </Row>
-              <Spacing themeSpace={20} variant='Column' />
-              <Button onClick={goToClassGroups} borderRaius={10} variant='attentive' padding={[12,17]}>
-                Удалить группу занятий
-              </Button>
             </Column>
           <Spacing themeSpace={25} variant='Row' />
             <Surface style={{width: 500}}>
