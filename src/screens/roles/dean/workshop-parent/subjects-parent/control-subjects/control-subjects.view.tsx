@@ -18,6 +18,7 @@ import { Textarea } from '../../../../../../ui-kit/textarea';
 import { ControlSubjectsState, SubjectInfo } from '../../../../../../store/reducers/roles/dean/subjects-parent/control-subjects-slice';
 import { ItemsContainerMobile } from './control-subjects.styled';
 import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
+import { Popup } from '../../../../../../ui-kit/popup';
 
 export type ControlSubjectsViewProps = {
   goToWorkshop: () => void;
@@ -174,39 +175,67 @@ export const ControlSubjectsMobileView: FC<LocalViewProps> = memo(({
   );
 });
 
-export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(() => {
+export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(({
+  goToWorkshop,
+  deanControlSubjectsState,
+  goClassGroups,
+  setName,
+  setSearchText,
+  filteredSubjects,
+  setDescription,
+  openAddWindow,
+  closeAddWindow,
+  isOpenAddWindow,
+  onClickAdd
+}) => {
 
   return (
-    <WrapperDesktop onBack={() => {}} role='ROLE_DEAN' header='Предметы'>
+    <WrapperDesktop onBack={goToWorkshop} role='ROLE_DEAN' header='Предметы'>
       <Column horizontalAlign='center' style={{width: 695}}>
         <Row style={{width: '100%'}}>
-          <Search isMobile={false} value={''} setValue={()=>{}}/>
+          <Search isMobile={false} value={deanControlSubjectsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={20} variant='Row' />
-          <Button borderRaius={10} variant='primary' padding={[12,17]}>
+          <Button onClick={openAddWindow} borderRaius={10} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
+          {filteredSubjects.map((item) => <>
+            <ActionBlockButton onClick={() => goClassGroups(item)} text={item.name} />
+            </>)}
         </GridContainer>
       </Column>
-     
+      <Popup isActive={isOpenAddWindow} closePopup={closeAddWindow}> 
+        <Column style={{width: 440}} horizontalAlign='center'>
+          <Input 
+            header='Введите название' 
+            placeholder='Матем....'
+            error={deanControlSubjectsState.errors['nameError']}
+            value={deanControlSubjectsState.name} 
+            setValue={setName}/>
+          <Spacing  themeSpace={25} variant='Column' />
+          <Textarea
+            value={deanControlSubjectsState.description}
+            placeholder='Данный ...' 
+            height={150} setValue={setDescription}
+            error={deanControlSubjectsState.errors['descriptionError']}
+            header='Введите описание' />
+          <Spacing  themeSpace={25} variant='Column' />
+          <Row>
+            <Button 
+              onClick={onClickAdd} 
+              state={deanControlSubjectsState.loadingCreate} 
+              variant='recomended' padding={[12,17]}>
+              Добавить
+            </Button>
+            <Spacing variant='Row' themeSpace={20}/>
+            <Button onClick={closeAddWindow} variant='attentive' padding={[12,17]}>
+              Отмена
+            </Button>
+          </Row>
+        </Column>
+      </Popup>
     </WrapperDesktop>
   );
 });

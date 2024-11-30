@@ -59,3 +59,11 @@ export const ArrowButton = styled.img<{ rotate: boolean }>`
   transform: ${({ rotate }) => (rotate ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: transform 0.3s ease-in-out;
 `;
+
+export const ItemsContainer = styled.div`
+  display: flex;
+  width: 100%;
+  position: relative;
+  flex-direction: column;
+  gap: 10px;
+`;

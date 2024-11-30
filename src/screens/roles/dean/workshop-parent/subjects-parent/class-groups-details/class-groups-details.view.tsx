@@ -21,6 +21,9 @@ import { ActionExistbleButton } from '../../../../../../ui-kit/action-existble-b
 import { ScrollView } from '../../../../../../ui-kit/scroll-view';
 import { ItemsContainerMobile } from '../control-subjects/control-subjects.styled';
 import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
+import { Popup } from '../../../../../../ui-kit/popup';
+import { Text } from '../../../../../../ui-kit/text';
+import { Surface } from '../../../../../../ui-kit/surface';
 
 export type ClassGroupsDetailsViewProps = {
   goToClassGroups: () => void;
@@ -182,67 +185,135 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
             Редактировать группы
           </Button>
           <Spacing themeSpace={15} variant='Column' />
-          {filteredSubgroupsExists.length > 0 && <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>}
+          <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={10} variant='Column' />
           <ItemsContainerMobile>
           {
-            filteredSubgroupsExists.map((item, index) => 
+            filteredSubgroupsExists.map((item) => 
               <ActionButton text={item.subgroupNumber} isShowArrow={false}/>)
           }
           </ItemsContainerMobile>
         </>)
       }
       <Modal padding='none' isActive={isOpenSubgroups} closeModal={controlSubroupsWindow}>
-        <ScrollView style={{maxHeight: 300, position: 'relative'}}>
-          <Column horizontalAlign='center' padding={25}>
+        <Column horizontalAlign='center' padding={25}>
           <Search value={deanClassGroupDetailsState.searchTextWindow} setValue={setSearchTextWindow}/>
           <Spacing themeSpace={10} variant='Column' />
+          <ScrollView style={{maxHeight: 400, position: 'relative'}}>
           <ItemsContainerMobile>
-          {
-            filteredSubgroupsWindow.map((item, index) => 
-              <ActionExistbleButton onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)
-          }
+          {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.h3}>
+              Совпадений не найдено
+            </Text>}
+          {filteredSubgroupsWindow.map((item, index) => 
+              <ActionExistbleButton onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
           </ItemsContainerMobile>
+          </ScrollView>
           </Column>
-        </ScrollView>
       </Modal>
     </WrapperMobile>
   );
 });
 
-export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(() => {
+export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
+  goToClassGroups,
+  createClassGroup,
+  deanClassGroupDetailsState,
+  filteredSubgroups,
+  filteredSubgroupsWindow,
+  setDescription,
+  controlSubroupsWindow,
+  setSelectedClassFormat,
+  setSearchText,
+  setSearchTextWindow,
+  updateClassGroup,
+  isOpenSubgroups,
+  switchIsExistByIndex,
+  type,
+  setSelectedTeacher
+}) => {
+  const filteredSubgroupsExists = filteredSubgroups.filter(item => item.isExist); 
 
   return (
-    <WrapperDesktop onBack={() => {}} role='ROLE_DEAN' header='Предметы'>
-      <Column horizontalAlign='center' style={{width: 695}}>
-        <Row style={{width: '100%'}}>
-          <Search isMobile={false} value={''} setValue={()=>{}}/>
-          <Spacing themeSpace={20} variant='Row' />
-          <Button borderRaius={10} variant='primary' padding={[12,17]}>
-            Добавить
-          </Button>
-        </Row>
-        <Spacing themeSpace={30} variant='Column' />
-        <GridContainer columns={4}>
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-        </GridContainer>
-      </Column>
-     
+    <WrapperDesktop onBack={goToClassGroups} role='ROLE_DEAN' header='Группа занятий' isCenter={true}>
+      {
+        deanClassGroupDetailsState.loading === 'loading' ? 
+        (<Column style={{position: 'absolute', height: '100vh', top: 0}}>
+          <CircleLoading state={deanClassGroupDetailsState.loading}/>
+        </Column>) : (<>
+          <Row verticalAlign='center'>
+            <Column style={{width: 'auto'}}>
+              <Surface style={{width: 500}}>
+                <Spacing themeSpace={20} variant='Column' />
+                <Input 
+                    header='Введите описание' 
+                    placeholder='Белоруccкий....' error={deanClassGroupDetailsState.errors['descriptionError']}
+                    value={deanClassGroupDetailsState.description} setValue={setDescription}/>
+                <Spacing themeSpace={25} variant='Column' />
+                <Select 
+                  header='Выберите преподавателя' 
+                  includeSearch={true}
+                  items={deanClassGroupDetailsState.teachers} 
+                  selectedItem={deanClassGroupDetailsState.selectedTeacher} 
+                  setValue={setSelectedTeacher}/>
+                <Spacing themeSpace={25} variant='Column' />
+                <Select 
+                  header='Выберите формат занятия' 
+                  includeSearch={true}
+                  items={deanClassGroupDetailsState.classFormats} 
+                  selectedItem={deanClassGroupDetailsState.selectedClassFormat} 
+                  setValue={setSelectedClassFormat}/>
+              </Surface>
+              <Spacing themeSpace={20} variant='Column' />
+              <Row>
+                  <Button 
+                    state={deanClassGroupDetailsState.loadingAdd} 
+                    onClick={type === 'add' ? createClassGroup : updateClassGroup} 
+                    variant='recomended' padding={[12,17]}>
+                    {type === 'add' ? 'Добавить группу занятий' : 'Сохранить изменения'}
+                  </Button>
+                  <Spacing themeSpace={20} variant='Row' />
+                  <Button onClick={goToClassGroups} variant='attentive' padding={[12,17]}>
+                    Вернуться назад
+                  </Button>
+              </Row>
+              <Spacing themeSpace={20} variant='Column' />
+              <Button onClick={goToClassGroups} borderRaius={10} variant='attentive' padding={[12,17]}>
+                Удалить группу занятий
+              </Button>
+            </Column>
+          <Spacing themeSpace={25} variant='Row' />
+            <Surface style={{width: 500}}>
+              <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
+                Редактировать группы
+              </Button>
+              <Spacing themeSpace={15} variant='Column' />
+              <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
+              <Spacing themeSpace={15} variant='Column' />
+              <ScrollView style={{height: 300}}>
+                <ItemsContainerMobile>
+                {filteredSubgroupsExists.map((item) => 
+                    <ActionButton text={item.subgroupNumber} isShowArrow={false}/>)}
+                </ItemsContainerMobile>
+              </ScrollView>
+            </Surface>
+          </Row>
+        </>)
+      }
+      <Popup padding='none' isActive={isOpenSubgroups} closePopup={controlSubroupsWindow}>
+          <Column style={{width: 440}} horizontalAlign='center' padding={25}>
+          <Search value={deanClassGroupDetailsState.searchTextWindow} setValue={setSearchTextWindow}/>
+          <Spacing themeSpace={10} variant='Column' />
+          <ScrollView style={{maxHeight: 400, position: 'relative'}}>
+          <ItemsContainerMobile>
+          {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.h3}>
+              Совпадений не найдено
+            </Text>}
+          {filteredSubgroupsWindow.map((item, index) => 
+              <ActionExistbleButton onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
+          </ItemsContainerMobile>
+          </ScrollView>
+          </Column>
+      </Popup>
     </WrapperDesktop>
   );
 });

@@ -1,5 +1,5 @@
 import { FC, HtmlHTMLAttributes, memo, useCallback, useState } from "react";
-import { ArrowButton, SelectContainer, SelectStyled, SelectWrapper } from "./select.styled";
+import { ArrowButton, ItemsContainer, SelectContainer, SelectStyled, SelectWrapper } from "./select.styled";
 import { Text } from "../text";
 import { theme } from "../themes/theme";
 
@@ -11,6 +11,8 @@ import { useMediaQuery } from "react-responsive";
 import { Modal } from "../modal";
 import { Column } from "../column";
 import { Search } from "../search";
+import { ScrollView } from "../scroll-view";
+import { ItemsContainerMobile } from "../../screens/roles/dean/workshop-parent/subjects-parent/control-subjects/control-subjects.styled";
 
 export type ItemOfSelectType = {
   name: string,
@@ -131,35 +133,33 @@ export const ModalContent: FC<ModalContentProps> = memo(({
   setSearchText,
   onSet
 }) => 
-  <>{
+  <Column>{
     length === 0 ? (<>
       <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
         Данные не найдены
       </Text>
       </>) : (<>
-        {header && <>
-                <Text style={{width: '100%', maxWidth: 440}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-                  {header}
-                </Text>
-                <Spacing variant='Column' themeSpace={5}/>
-            </>}
         {includeSearch && <>
             <Search value={searchText} setValue={setSearchText} />
             <Spacing variant='Column' themeSpace={15}/>
-          </>}
-        {filteredItems?.length === 0 ? (<>
+        </>}
+        {header && <>
             <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-              Данные не найдены
+              {header}
             </Text>
-          </>) : (<>
-            {filteredItems?.map((item, index) => <>
-              <ActionButton onClick={() => onSet(item)} text={item.name}/>
-              {index < filteredItems.length - 1 && <Spacing themeSpace={10} variant='Column' />}
-              </>)}
-            </>)
-          }
-      </>)
-  }</>
+            <Spacing variant='Column' themeSpace={10}/>
+        </>}
+        <ScrollView style={{maxHeight: 400}}>
+        <ItemsContainer>
+          {filteredItems?.map((item, index) => 
+            <ActionButton onClick={() => onSet(item)} text={item.name}/>)}
+        </ItemsContainer>
+        { filteredItems.length === 0 && <Text themeColor={theme.colors.gray} themeFont={theme.fonts.ht2}>
+          Совпадений не найдено
+        </Text>}
+        </ScrollView>
+  </>)}
+  </Column>
 );
 
 export type PopupContentProps = {
@@ -181,7 +181,7 @@ export const PopupContent: FC<ModalContentProps> = memo(({
   setSearchText,
   onSet
 }) => 
-  <>{
+  <Column style={{width: 440}}>{
     length === 0 ? (<>
       <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
         Данные не найдены
@@ -190,24 +190,22 @@ export const PopupContent: FC<ModalContentProps> = memo(({
         {includeSearch && <>
             <Search value={searchText} setValue={setSearchText} />
             <Spacing variant='Column' themeSpace={15}/>
-          </>}
-        {filteredItems?.length === 0 ? (<>
+        </>}
+        {header && <>
             <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-              Данные не найдены
+              {header}
             </Text>
-          </>) : (<>
-            {header && <>
-                <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-                  {header}
-                </Text>
-                <Spacing variant='Column' themeSpace={10}/>
-            </>}
-            {filteredItems?.map((item, index) => <>
-              <ActionButton onClick={() => onSet(item)} width="440px" text={item.name}/>
-              {index < filteredItems.length - 1 && <Spacing themeSpace={15} variant='Column' />}
-              </>)}
-            </>)
-          }
-      </>)
-  }</>
+            <Spacing variant='Column' themeSpace={10}/>
+        </>}
+        <ScrollView style={{maxHeight: 400}}>
+        <ItemsContainer>
+          {filteredItems?.map((item, index) => 
+            <ActionButton onClick={() => onSet(item)} text={item.name}/>)}
+        </ItemsContainer>
+        { filteredItems.length === 0 && <Text themeColor={theme.colors.gray} themeFont={theme.fonts.ht1}>
+          Совпадений не найдено
+        </Text>}
+        </ScrollView>
+  </>)}
+  </Column>
 );

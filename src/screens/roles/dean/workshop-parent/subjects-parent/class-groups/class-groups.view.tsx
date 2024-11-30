@@ -20,6 +20,7 @@ import { Input } from '../../../../../../ui-kit/input';
 import { Textarea } from '../../../../../../ui-kit/textarea';
 import { ConfirmDeletePopup } from '../../../../../../components/confirm-delete-popup';
 import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
+import { Popup } from '../../../../../../ui-kit/popup';
 
 export type ClassGroupsViewProps = {
   goToControlSubjects: () => void;
@@ -215,7 +216,7 @@ export const ClassGroupsMobileView: FC<LocalViewProps> = memo(({
               onClick={onClickUpdate} 
               state={deanClassGroupsState.loadingUpdate} 
               variant='recomended' padding={[12,17]}>
-              Добавить
+              Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
             <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
@@ -228,39 +229,82 @@ export const ClassGroupsMobileView: FC<LocalViewProps> = memo(({
   );
 });
 
-export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(() => {
+export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(({
+  goToControlSubjects,
+  deanClassGroupsState,
+  filteredClassGroups,
+  openDeleteConfirm,
+  goToClassGroupAdd,
+  isOpenUpdateWindow,
+  openUpdateWindow,
+  closeUpdateWindow,
+  onClickUpdate,
+  goToClassGroupEdit,
+  setName,
+  setDescription,
+  setSearchText
+}) => {
 
   return (
-    <WrapperDesktop onBack={() => {}} role='ROLE_DEAN' header='Предметы'>
+    <WrapperDesktop onBack={goToControlSubjects} role='ROLE_DEAN' header={deanClassGroupsState.selectedSubject?.name}>
+      <Row style={{width: 695}}>
+        <ActionButton isShowArrow={false} onClick={openUpdateWindow} text={'Информация'} />
+        <Spacing themeSpace={25} variant='Row' />
+        <ActionButton isShowArrow={false} onClick={openDeleteConfirm}
+          themeFont={theme.fonts.h2} 
+          textColor={theme.colors.attentive} 
+          text={'Удалить предмет'} />
+      </Row>
+      <Spacing themeSpace={25} variant='Column' />
+      <Text themeFont={theme.fonts.ht1}> 
+        Группы занятий
+      </Text>
+      <Spacing themeSpace={10} variant='Column' />
       <Column horizontalAlign='center' style={{width: 695}}>
         <Row style={{width: '100%'}}>
-          <Search isMobile={false} value={''} setValue={()=>{}}/>
+          <Search isMobile={false} value={deanClassGroupsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={20} variant='Row' />
-          <Button borderRaius={10} variant='primary' padding={[12,17]}>
+          <Button onClick={goToClassGroupAdd} borderRaius={10} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
-          <ActionBlockButton text={'sadasdas'} />
+          {filteredClassGroups.map((item) => <>
+            <ActionBlockButton onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />
+            </>)}
         </GridContainer>
       </Column>
-     
+      <Popup isActive={isOpenUpdateWindow} closePopup={closeUpdateWindow}> 
+        <Column horizontalAlign='center' style={{width: 440}}>
+          <Input 
+            header='Введите название' 
+            placeholder='Матем....'
+            error={deanClassGroupsState.errors['nameError']}
+            value={deanClassGroupsState.name} 
+            setValue={setName}/>
+          <Spacing  themeSpace={25} variant='Column' />
+          <Textarea
+            value={deanClassGroupsState.description}
+            placeholder='Данный ...' 
+            height={150} setValue={setDescription}
+            error={deanClassGroupsState.errors['descriptionError']}
+            header='Введите описание' />
+          <Spacing  themeSpace={25} variant='Column' />
+          <Row>
+            <Button 
+              onClick={onClickUpdate} 
+              state={deanClassGroupsState.loadingUpdate} 
+              variant='recomended' padding={[12,17]}>
+              Сохранить
+            </Button>
+            <Spacing variant='Row' themeSpace={20}/>
+            <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
+              Отмена
+            </Button>
+          </Row>
+        </Column>
+      </Popup>
     </WrapperDesktop>
   );
 });

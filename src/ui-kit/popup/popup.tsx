@@ -19,18 +19,15 @@ export const Popup: FC<PopupProps> = memo(({ isActive, themeColor, closePopup, c
 
       if (isActive) {
           document.body.style.overflow = "hidden";
-          document.addEventListener("wheel", handleScroll, { passive: false });
           document.addEventListener("touchmove", handleScroll, { passive: false });
       } else {
           document.body.style.overflow = "";
-          document.removeEventListener("wheel", handleScroll);
           document.removeEventListener("touchmove", handleScroll);
       }
 
       return () => {
           document.body.style.overflow = "";
           document.removeEventListener("wheel", handleScroll);
-          document.removeEventListener("touchmove", handleScroll);
       };
     }, [isActive]);
     
