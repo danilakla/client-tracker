@@ -205,12 +205,16 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
         </>)
       }
       <Modal padding='none' isActive={isOpenSubgroups} closeModal={controlSubroupsWindow}>
-        <Column horizontalAlign='center' padding={25}>
+        <Column horizontalAlign='flex-start' padding={25}>
           <Search value={deanClassGroupDetailsState.searchTextWindow} setValue={setSearchTextWindow}/>
-          <Spacing themeSpace={10} variant='Column' />
+          <Spacing themeSpace={15} variant='Column' />
+          <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+            Редактировать группы
+          </Text>
+          <Spacing variant='Column' themeSpace={10}/>
           <ScrollView style={{maxHeight: 400, position: 'relative'}}>
           <ItemsContainerMobile>
-          {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.h3}>
+          {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
               Совпадений не найдено
             </Text>}
           {filteredSubgroupsWindow.map((item, index) => 
@@ -317,10 +321,14 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
       <Popup padding='none' isActive={isOpenSubgroups} closePopup={controlSubroupsWindow}>
           <Column style={{width: 440}} horizontalAlign='center' padding={25}>
           <Search value={deanClassGroupDetailsState.searchTextWindow} setValue={setSearchTextWindow}/>
-          <Spacing themeSpace={10} variant='Column' />
+          <Spacing themeSpace={15} variant='Column' />
+          <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+            Редактировать группы
+          </Text>
+          <Spacing variant='Column' themeSpace={10}/>
           <ScrollView style={{maxHeight: 400, position: 'relative'}}>
           <ItemsContainerMobile>
-          {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.h3}>
+          {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
               Совпадений не найдено
             </Text>}
           {filteredSubgroupsWindow.map((item, index) => 
