@@ -173,13 +173,22 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
             items={deanClassGroupDetailsState.teachers} 
             selectedItem={deanClassGroupDetailsState.selectedTeacher} 
             setValue={setSelectedTeacher}/>
-          <Spacing themeSpace={25} variant='Column' />
+          <Column style={{height: 25}}>
+            <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}>
+              {deanClassGroupDetailsState.errors['teacherError']}
+            </Text>
+          </Column>
           <Select 
             header='Выберите формат занятия' 
             includeSearch={true}
             items={deanClassGroupDetailsState.classFormats} 
             selectedItem={deanClassGroupDetailsState.selectedClassFormat} 
             setValue={setSelectedClassFormat}/>
+          <Column style={{height: 25}}>
+            <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}>
+              {deanClassGroupDetailsState.errors['classFormatError']}
+            </Text>
+          </Column>
           <Spacing themeSpace={25} variant='Column' />
           <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
             Редактировать группы
@@ -252,7 +261,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                   </Button>
                   <Spacing themeSpace={20} variant='Row' />
                   <Button onClick={goToClassGroups} variant='attentive' padding={[12,17]}>
-                  Удалить группу занятий
+                    Удалить группу занятий
                   </Button>
               </Row>
               <Spacing themeSpace={20} variant='Column' />
@@ -269,13 +278,22 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                   items={deanClassGroupDetailsState.teachers} 
                   selectedItem={deanClassGroupDetailsState.selectedTeacher} 
                   setValue={setSelectedTeacher}/>
-                <Spacing themeSpace={25} variant='Column' />
+                <Column style={{height: 25}}>
+                  <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}>
+                    {deanClassGroupDetailsState.errors['teacherError']}
+                  </Text>
+                </Column>
                 <Select 
                   header='Выберите формат занятия' 
                   includeSearch={true}
                   items={deanClassGroupDetailsState.classFormats} 
                   selectedItem={deanClassGroupDetailsState.selectedClassFormat} 
                   setValue={setSelectedClassFormat}/>
+                <Column style={{height: 25}}>
+                  <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}>
+                    {deanClassGroupDetailsState.errors['classFormatError']}
+                  </Text>
+                </Column>
               </Surface>
             </Column>
           <Spacing themeSpace={25} variant='Row' />
@@ -286,7 +304,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
               <Spacing themeSpace={15} variant='Column' />
               <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
               <Spacing themeSpace={15} variant='Column' />
-              <ScrollView style={{height: 300}}>
+              <ScrollView style={{height: 235}}>
                 <ItemsContainerMobile>
                 {filteredSubgroupsExists.map((item) => 
                     <ActionButton text={item.subgroupNumber} isShowArrow={false}/>)}

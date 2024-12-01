@@ -288,6 +288,36 @@ export const createClassGroupActionCreator = createAsyncThunk('dean-class-group-
     }, thunkApi ) => {
         const { authToken, teacherId, subjectId, formatClassId, description, newSubgroups, onSuccess } = data;
         try {
+            thunkApi.dispatch(classGroupDetailsSlice.actions.clearErrors());
+
+            let hasError = false;
+
+            if(description.trim().length === 0){
+                thunkApi.dispatch(classGroupDetailsSlice.actions.setError({
+                    key: "descriptionError",
+                    error: 'Введите описание',
+                }));
+                hasError = true;
+            }
+
+            if(teacherId === -1){
+                thunkApi.dispatch(classGroupDetailsSlice.actions.setError({
+                    key: "teacherError",
+                    error: 'Выберите преподавателя',
+                }));
+                hasError = true;
+            }
+
+            if(formatClassId === -1){
+                thunkApi.dispatch(classGroupDetailsSlice.actions.setError({
+                    key: "classFormatError",
+                    error: 'Выберите формат занятия',
+                }));
+                hasError = true;
+            }
+
+            if(hasError) return;
+
             const responce = await deanApi.createClassGroup(authToken, teacherId, subjectId, formatClassId, description);
             console.log(responce);
             const existingSubgroupIds = newSubgroups
@@ -331,6 +361,36 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
         } = data;
 
         try {
+            thunkApi.dispatch(classGroupDetailsSlice.actions.clearErrors());
+
+            let hasError = false;
+
+            if(description.trim().length === 0){
+                thunkApi.dispatch(classGroupDetailsSlice.actions.setError({
+                    key: "descriptionError",
+                    error: 'Введите описание',
+                }));
+                hasError = true;
+            }
+
+            if(teacherId === '-1'){
+                thunkApi.dispatch(classGroupDetailsSlice.actions.setError({
+                    key: "teacherError",
+                    error: 'Выберите преподавателя',
+                }));
+                hasError = true;
+            }
+
+            if(classFormatId === '-1'){
+                thunkApi.dispatch(classGroupDetailsSlice.actions.setError({
+                    key: "classFormatError",
+                    error: 'Выберите формат занятия',
+                }));
+                hasError = true;
+            }
+
+            if(hasError) return;
+
             await deanApi.updateClassGroup(authToken, teacherId, classGroupId, subjectId , classFormatId, description);
             const existingSubgroupIds = newSubgroups
                 .filter(subgroup => subgroup.isExist)
