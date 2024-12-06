@@ -22,6 +22,11 @@ import deanClassGroupDetailsReducer from "./roles/dean/subjects-parent/class-gro
 import deanClassGroupsReducer from "./roles/dean/subjects-parent/class-groups-slice"
 import deanControlSubjectsReducer from "./roles/dean/subjects-parent/control-subjects-slice"
 
+import teacherSubjectsReducer from "./roles/teacher/subjects-slice"
+import teacherClassGroupsReducer from "./roles/teacher/class-groups-slice"
+import teacherClassGroupControlReducer from "./roles/teacher/class-group-control-slice"
+import teacherClassGroupSubroupsReducer from "./roles/teacher/class-group-subroups-slice"
+
 // import Reducer from "./roles/dean"
 
 export const rootReducers = combineReducers({
@@ -42,7 +47,11 @@ export const rootReducers = combineReducers({
       deanGenerateStudents: deanGenerateStudentsReducer,
       deanStudents: deanStudentsReducer,
       deanClassGroupDetails: deanClassGroupDetailsReducer,
-      deanClassGroups: deanClassGroupsReducer
+      deanClassGroups: deanClassGroupsReducer,
+      teacherSubjects: teacherSubjectsReducer,
+      teacherClassGroups: teacherClassGroupsReducer,
+      teacherClassGroupControl: teacherClassGroupControlReducer,
+      teacherClassGroupSubroups: teacherClassGroupSubroupsReducer
 });
 
 export type RootState = ReturnType<typeof rootReducers>;

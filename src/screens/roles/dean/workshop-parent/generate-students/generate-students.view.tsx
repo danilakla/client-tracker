@@ -208,6 +208,7 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
         </Column>
         <Spacing variant='Column' themeSpace={25} />
         <Search value={deanGenerateStudentsState.searchText} setValue={setSearchText}/>
+        <Spacing variant='Column' themeSpace={15} />
         <ItemsContainerMobile>
           {filteredStudents.map((item) => 
             <StudentView data={item}/>)}

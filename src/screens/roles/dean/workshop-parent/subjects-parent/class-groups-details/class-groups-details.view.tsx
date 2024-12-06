@@ -10,8 +10,6 @@ import { Spacing } from '../../../../../../ui-kit/spacing';
 import { ActionButton } from '../../../../../../ui-kit/action-button';
 import { WrapperDesktop } from '../../../../../../components/wrapper-desktop';
 import { Column } from '../../../../../../ui-kit/column';
-import { GridContainer } from '../../../../../../ui-kit/grid-container';
-import { ActionBlockButton } from '../../../../../../ui-kit/action-block-button';
 import { Select } from '../../../../../../ui-kit/select';
 import { SubgroupDetails, СlassGroupDetailsState } from '../../../../../../store/reducers/roles/dean/subjects-parent/class-group-details-slice';
 import { Input } from '../../../../../../ui-kit/input';
@@ -189,7 +187,6 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
               {deanClassGroupDetailsState.errors['classFormatError']}
             </Text>
           </Column>
-          <Spacing themeSpace={25} variant='Column' />
           <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
             Редактировать группы
           </Button>

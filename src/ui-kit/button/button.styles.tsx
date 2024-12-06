@@ -25,8 +25,6 @@ export const StyledButton = styled.button<StyledButtonProps>`
     switch(variant){
       case 'primary':
         return `${theme.colors.primary}`;
-      case 'secondary':
-        return `${theme.colors.attentive}`;
       case 'recomended':
         return `${theme.colors.success}`;
       case 'attentive':

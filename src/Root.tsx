@@ -23,8 +23,11 @@ import { Students as DeanStudents } from "./screens/roles/dean/workshop-parent/s
 import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/workshop-parent/subjects-parent/control-subjects";
 import { ClassGroupsDetails as DeanClassGroupsDetails } from "./screens/roles/dean/workshop-parent/subjects-parent/class-groups-details";
 import { ClassGroups as DeanClassGroups } from "./screens/roles/dean/workshop-parent/subjects-parent/class-groups";
-import { Loader } from "./screens/loader";
-import { useAuthentication } from "./hooks/authentication-hook";
+
+import { Subjects as TeacherSubjects } from "./screens/roles/teacher/subjects-parent/subjects";
+import { ClassGroups as TeacherClassGroups } from "./screens/roles/teacher/subjects-parent/class-groups";
+import { ClassGroupPanel as TeacherClassGroupPanel } from "./screens/roles/teacher/subjects-parent/class-group-panel";
+import { ClassGroupSubgroups as TeacherClassGroupSubgroups } from "./screens/roles/teacher/subjects-parent/class-group-subgroups";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -51,6 +54,11 @@ export const urls = {
   deanClassGroups: '/dean/workshop/subjects/class-groups',
   deanClassGroupAdd: '/dean/workshop/subjects/class-group/add',
   deanClassGroupEdit: '/dean/workshop/subjects/class-group/edit',
+
+  teacherSubjects: '/teacher/subjects',
+  teacherClassGroups: '/teacher/subjects/class-groups',
+  teacherClassGroupSubgroups: '/teacher/subjects/class-group/subgroups',
+  teacherClassGroupControl: '/teacher/subjects/class-groups-control'
 };
 
 type RootProps = {};
@@ -120,6 +128,11 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
+
+          <Route path={urls.teacherSubjects} element={<TeacherSubjects/>}/>
+          <Route path={urls.teacherClassGroups} element={<TeacherClassGroups/>}/>
+          <Route path={urls.teacherClassGroupSubgroups} element={<TeacherClassGroupSubgroups/>}/>
+          <Route path={urls.teacherClassGroupControl} element={<TeacherClassGroupPanel/>}/>
         </>}
         <Route path='*' element={<Navigate to='/' />} />
       </Route>
