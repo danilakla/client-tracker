@@ -54,6 +54,9 @@ export const subjectsSlice = createSlice({
         reset(state) {
             Object.assign(state, initialState);
         },
+        resetStatus(state) {
+            state.loading = 'idle';
+        },
         clearErrors(state) {
             state.errors = {};
         },

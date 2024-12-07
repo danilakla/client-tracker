@@ -585,7 +585,7 @@ export const UserAccountDataView: FC<UserAccountDataViewProps> = memo(({
               {textButton}
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={cancelAccountData} variant='secondary' padding={[12,17]}>
+            <Button onClick={cancelAccountData} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
@@ -613,7 +613,7 @@ export const UserAccountDataView: FC<UserAccountDataViewProps> = memo(({
               {textButton}
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={cancelAccountData} variant='secondary' padding={[12,17]}>
+            <Button onClick={cancelAccountData} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>

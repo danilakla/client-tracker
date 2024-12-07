@@ -14,13 +14,14 @@ import { ItemsContainerMobile } from '../../../dean/workshop-parent/subjects-par
 import { ActionButton } from '../../../../../ui-kit/action-button';
 import { ClassGroupInfo } from '../../../../../store/reducers/roles/teacher/subjects-slice';
 import { ClassGroupsState } from '../../../../../store/reducers/roles/teacher/class-groups-slice';
-import { ClassGroupSubroupsState } from '../../../../../store/reducers/roles/teacher/class-group-subroups-slice';
-import { SubgroupInfo } from '../../../../../store/reducers/roles/dean/subjects-parent/class-group-details-slice';
+import { ClassGroupSubroupsState, SubgroupInfo } from '../../../../../store/reducers/roles/teacher/class-group-subroups-slice';
+import { ActionBlockButton } from '../../../../../ui-kit/action-block-button';
+import { GridContainer } from '../../../../../ui-kit/grid-container';
 
 export type ClassGroupSubgroupsViewProps = {
   teacherClassGroupSubroupsState: ClassGroupSubroupsState;
   filteredSubgroups: SubgroupInfo[];
-  goToSubjects: () => void;
+  goToTeacherClassGroups: () => void;
   setSearchText: (value: string) => void;
   goToClassGroubBySubgroup: (subgroup: SubgroupInfo) => void;
 };
@@ -29,7 +30,7 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
   teacherClassGroupSubroupsState,
   filteredSubgroups,
   goToClassGroubBySubgroup,
-  goToSubjects,
+  goToTeacherClassGroups,
   setSearchText
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
@@ -38,13 +39,13 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
     isMobile ? 
       (<SubjectsMobileView
         goToClassGroubBySubgroup={goToClassGroubBySubgroup}
-        goToSubjects={goToSubjects}
+        goToTeacherClassGroups={goToTeacherClassGroups}
         teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
         setSearchText={setSearchText}
         filteredSubgroups={filteredSubgroups}
         />) :
       (<SubjectsDesktopView
-        goToSubjects={goToSubjects}
+        goToTeacherClassGroups={goToTeacherClassGroups}
         goToClassGroubBySubgroup={goToClassGroubBySubgroup}
         teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
         setSearchText={setSearchText}
@@ -57,8 +58,8 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
 type LocalViewProps = {
   teacherClassGroupSubroupsState: ClassGroupSubroupsState;
   filteredSubgroups: SubgroupInfo[];
+  goToTeacherClassGroups: () => void;
   setSearchText: (value: string) => void;
-  goToSubjects: () => void;
   goToClassGroubBySubgroup: (subgroup: SubgroupInfo) => void;
 };
 
@@ -66,32 +67,54 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
   teacherClassGroupSubroupsState,
   filteredSubgroups,
   goToClassGroubBySubgroup,
-  goToSubjects,
+  goToTeacherClassGroups,
   setSearchText
 }) => {
 
   return (
-    <WrapperMobile onBack={goToSubjects} role='ROLE_TEACHER' header={''}>
-      {teacherClassGroupSubroupsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
-          <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
-        </Column>}
-      <Search value={teacherClassGroupSubroupsState.searchText} setValue={setSearchText}/>
-      <Spacing themeSpace={20} variant='Column' />
-      <ItemsContainerMobile>
-        {filteredSubgroups.map((item) => <>
-          <ActionButton onClick={() => goToClassGroubBySubgroup(item)} text={item.subgroupNumber} />
-          </>)}
-      </ItemsContainerMobile>
+    <WrapperMobile onBack={goToTeacherClassGroups} role='ROLE_TEACHER' header={'Список подгрупп'}>
+      {teacherClassGroupSubroupsState.loading === 'loading' ?
+      <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
+      </Column> : <>
+        <Search value={teacherClassGroupSubroupsState.searchText} setValue={setSearchText}/>
+        <Spacing themeSpace={20} variant='Column' />
+        <ItemsContainerMobile>
+          {filteredSubgroups.map((item) => <>
+            <ActionButton onClick={() => goToClassGroubBySubgroup(item)} text={item.subgroupNumber} />
+            </>)}
+        </ItemsContainerMobile>
+      </>}
     </WrapperMobile>
   );
 });
 
-export const SubjectsDesktopView: FC<LocalViewProps> = memo(() => {
+export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
+  teacherClassGroupSubroupsState,
+  filteredSubgroups,
+  goToClassGroubBySubgroup,
+  goToTeacherClassGroups,
+  setSearchText
+}) => {
 
   return (
-    <WrapperDesktop role='ROLE_TEACHER' header='Предметы'>
-
+    <WrapperDesktop onBack={goToTeacherClassGroups} role='ROLE_TEACHER' header={'Список подгрупп'}>
+      {teacherClassGroupSubroupsState.loading === 'loading' && 
+        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+          <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
+        </Column>
+      }
+      <Column horizontalAlign='center' style={{width: 695}}>
+        <Search isMobile={false} value={teacherClassGroupSubroupsState.searchText} setValue={setSearchText}/>
+        <Spacing themeSpace={30} variant='Column' />
+        <GridContainer columns={4}>
+          {filteredSubgroups.map((item) => <>
+            <ActionBlockButton 
+              onClick={() => goToClassGroubBySubgroup(item)} 
+              text={item.subgroupNumber} />
+            </>)}
+        </GridContainer>
+      </Column>
     </WrapperDesktop>
   );
 });

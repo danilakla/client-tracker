@@ -10,6 +10,7 @@ import { classGroupSubroupsSlice, initSubgroupOfClassGroupActionCreator, Subgrou
 import { useParams } from 'react-router-dom';
 import { classGroupControlSlice } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useClassGroupPanel } from '../class-group-panel/class-group-panel.props';
+import { useTeacherClassGroups } from '../class-groups/class-groups.props';
 
 export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
   const teacherClassGroupSubroupsState = useTypedSelector(state => state.teacherClassGroupSubroups);
@@ -17,12 +18,20 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
   const {authToken} = useUser();
 
   const goToSubjects = useTeacherSubjects();
+  const goToTeacherClassGroups = useTeacherClassGroups();
   const goToClassGroupPanel = useClassGroupPanel();
-
+  
   const { 
     setSearchTextActionCreator,
+    resetStatus,
     reset
   } = classGroupSubroupsSlice.actions;
+  
+  const goBack = useCallback(() => {
+    goToTeacherClassGroups();
+    dispatch(reset());
+  },[dispatch, goToTeacherClassGroups, reset])
+
   
   const { 
     setClassGroupInfoActionCreator,
@@ -78,9 +87,9 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
       isInizialized.current = false;
       initData();
     } else return () => {
-      // dispatch(reset());
+      
     };
-  }, [dispatch, reset, initData]);
+  }, [dispatch, resetStatus, initData, teacherClassGroupSubroupsState.loading]);
 
   return (
       <ClassGroupSubgroupsView 
@@ -88,7 +97,7 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
         filteredSubgroups={filteredSubgroups}
         teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
         setSearchText={setSearchText}
-        goToSubjects={goToSubjects}
+        goToTeacherClassGroups={goBack}
         />
     );
 });

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { theme } from "../themes/theme";
 
 export type StyledButtonProps = {
-  variant: 'primary' | 'secondary' | 'attentive' | 'recomended';
+  variant: 'primary' | 'attentive' | 'recomended';
   borderRaius?: number;
   width?: number | string;
   height?: number | string;
@@ -29,8 +29,6 @@ export const StyledButton = styled.button<StyledButtonProps>`
         return `${theme.colors.success}`;
       case 'attentive':
         return `${theme.colors.attentive} `;
-      default:
-        return `${theme.colors.gradients.primary}`;
     }
   }};
 

@@ -22,7 +22,7 @@ export const teacherApi = {
             })
     },
     getTableOfSubgroup(authToken: string, idClassGroup: number, idSubgroup: number) {
-        return instance.get(`/common/show/table/${idClassGroup}/${idSubgroup}`, { 
+        return instance.get(`/common/show/table/${idSubgroup}/${idClassGroup}`, { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;
@@ -37,4 +37,32 @@ export const teacherApi = {
                 return response.data;
             })
     },
+    createClass(authToken: string, classGroupToSubgroupId: number, studentship: number[]){
+        return instance.post('/teacher/create/classes',{
+            classGroupToSubgroupId: classGroupToSubgroupId,
+            studentship: studentship
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    deleteClass(authToken: string, id: number) {
+        return instance.delete(`/teacher/delete/class/${id}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    updateGrade(authToken: string, idStudentGrate: number, grade: number, description: string, attendance: 0 | 1 | 2 | 3){
+        return instance.put('/teacher/update/classes',{
+            idStudentGrate: idStudentGrate,
+            grade: grade,
+            description: description,
+            attendance: attendance
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
+

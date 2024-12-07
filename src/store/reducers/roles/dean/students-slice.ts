@@ -91,7 +91,7 @@ export const studentsSlice = createSlice({
 
             state.subgroups = action.payload.map(subgroup => {
                 const admissionYear = new Date(subgroup.subgroup.admissionDate).getFullYear();
-                const course = Math.max(1, currentYear - admissionYear + 1);
+                const course = currentYear - admissionYear + 1;
                     
                 return {
                     ...subgroup,

@@ -4,9 +4,41 @@ import { theme } from "../../../../../ui-kit/themes/theme";
 
 export const ScrollWrapper = styled.div`
   width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: 200px;
+  overflow: auto;
+
+  max-height: 140px;
+
+  @media (min-height: 610px) {
+    max-height: 210px;
+  }
+
+  @media (min-height: 680px) {
+    max-height: 280px;
+  }
+
+  @media (min-height: 750px) {
+    max-height: 350px;
+  }
+
+  @media (min-height: 820px) {
+    max-height: 420px;
+  }
+
+  @media (min-height: 890px) {
+    max-height: 490px;
+  }
+
+  @media (min-height: 960px) {
+    max-height: 560px;
+  }
+
+  @media (min-height: 1030px) {
+    max-height: 630px;
+  }
+
+  @media (min-height: 1100px) {
+    max-height: 700px;
+  }
 `;
 
 export const Table = styled.div`
@@ -115,7 +147,6 @@ export const TableHeader = styled.div`
   box-sizing: border-box;
   flex-shrink: 0;
   width: 100%;
-  height: 100px;
 `;
 
 export const HeaderClasses = styled.div`
@@ -154,4 +185,23 @@ export const ExistMark = styled.div`
   clip-path: polygon(0 0, 100% 0, 0 100%);
   left: 0;
   top: 0;
+`;
+
+export const ColorCircleButton = styled.div<{variant: 0 | 1 | 2 | 3, isSelected: boolean}>`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+
+  background-color: ${({ variant }) => {
+    switch(variant){
+      case 0:
+        return `transparent`;
+      case 1:
+        return `${theme.colors.attentive}`;
+      case 2:
+        return `${theme.colors.neutral}`;
+      case 3:
+        return `${theme.colors.success}`;
+    }
+  }};
 `;

@@ -95,7 +95,7 @@ export const ChangePasswordMobileView: FC<ChangePasswordViewProps> = memo(({
               Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={goToProfile} state={'idle'} variant='secondary' padding={[12,17]}>
+            <Button onClick={goToProfile} state={'idle'} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
@@ -142,7 +142,7 @@ export const ChangePasswordDesktopView: FC<ChangePasswordViewProps> = memo(({
               Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={goToProfile} state={'idle'} variant='secondary' padding={[12,17]}>
+            <Button onClick={goToProfile} state={'idle'} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>

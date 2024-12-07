@@ -14,6 +14,8 @@ import { ItemsContainerMobile } from '../../../dean/workshop-parent/subjects-par
 import { ActionButton } from '../../../../../ui-kit/action-button';
 import { ClassGroupInfo } from '../../../../../store/reducers/roles/teacher/subjects-slice';
 import { ClassGroupsState } from '../../../../../store/reducers/roles/teacher/class-groups-slice';
+import { GridContainer } from '../../../../../ui-kit/grid-container';
+import { ActionBlockButton } from '../../../../../ui-kit/action-block-button';
 
 export type ClassGroupsProps = {
   teacherClassGroupsState: ClassGroupsState;
@@ -70,11 +72,6 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
 
   return (
     <WrapperMobile onBack={goToSubjects} role='ROLE_TEACHER' header={teacherClassGroupsState.subjectName || ''}>
-      {teacherClassGroupsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
-          <CircleLoading state={teacherClassGroupsState.loading}/>
-        </Column>
-      }
       <Search value={teacherClassGroupsState.searchText} setValue={setSearchText}/>
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
@@ -86,11 +83,27 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
   );
 });
 
-export const SubjectsDesktopView: FC<LocalViewProps> = memo(() => {
+export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
+  teacherClassGroupsState,
+  filteredClassGroups,
+  goToClassGroupSubgroups,
+  goToSubjects,
+  setSearchText
+}) => {
 
   return (
-    <WrapperDesktop role='ROLE_TEACHER' header='Предметы'>
-
+    <WrapperDesktop onBack={goToSubjects} role='ROLE_TEACHER' header={teacherClassGroupsState.subjectName || ''}>
+      <Column horizontalAlign='center' style={{width: 695}}>
+        <Search isMobile={false} value={teacherClassGroupsState.searchText} setValue={setSearchText}/>
+        <Spacing themeSpace={30} variant='Column' />
+        <GridContainer columns={4}>
+          {filteredClassGroups.map((item) => <>
+            <ActionBlockButton 
+              onClick={() => goToClassGroupSubgroups(item.idClassGroup)} 
+              text={item.description} />
+            </>)}
+        </GridContainer>
+      </Column>
     </WrapperDesktop>
   );
 });

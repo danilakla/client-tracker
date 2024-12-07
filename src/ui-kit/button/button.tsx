@@ -5,7 +5,7 @@ import { theme } from "../themes/theme";
 import { CircleLoading } from "../circle-loading";
 
 export type ButtonProps = {
-    variant: 'primary' | 'secondary' | 'attentive' | 'recomended'
+    variant: 'primary' | 'attentive' | 'recomended'
     width?: number | string;
     borderRaius?: number;
     children?: string;

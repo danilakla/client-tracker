@@ -6,7 +6,6 @@ export type SubjectsProps = {
 };
 
 export const useTeacherSubjects = () => {
-
     const navigate = useNavigate();
     const subjects = () => {
         navigate(urls.teacherSubjects);

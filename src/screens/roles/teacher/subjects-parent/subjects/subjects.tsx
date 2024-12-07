@@ -6,6 +6,7 @@ import { useUser } from '../../../../../hooks/user-hook';
 import { ClassGroupInfo, initTeacherSubjectsActionCreator, SubjectInfo, subjectsSlice } from '../../../../../store/reducers/roles/teacher/subjects-slice';
 import { classGroupsSlice } from '../../../../../store/reducers/roles/teacher/class-groups-slice';
 import { useTeacherClassGroups } from '../class-groups/class-groups.props';
+import { classGroupSubroupsSlice } from '../../../../../store/reducers/roles/teacher/class-group-subroups-slice';
 
 export const Subjects: FC<SubjectsProps> = memo(() => {
   const teacherSubjectsState = useTypedSelector(state => state.teacherSubjects);
@@ -17,7 +18,8 @@ export const Subjects: FC<SubjectsProps> = memo(() => {
 
   const { 
     setSearchTextActionCreator,
-    reset
+    reset,
+    resetStatus
   } = subjectsSlice.actions;
 
   const [filteredSubjects, setFilteredSubjects] = useState<SubjectInfo[]>([]);
@@ -42,16 +44,21 @@ export const Subjects: FC<SubjectsProps> = memo(() => {
   },[dispatch, authToken])
 
   useEffect(() => {
-    if (isInizialized.current && teacherSubjectsState.loading !== 'success') {
+    if (isInizialized.current) {
       isInizialized.current = false;
       initSubjects();
     } else return () => {
-      // dispatch(reset());
+      dispatch(reset());
     };
-  }, [dispatch, reset, initSubjects, teacherSubjectsState.loading]);
+  }, [dispatch, reset, initSubjects]);
+
+  useEffect(() => {
+    dispatch(classGroupsSlice.actions.reset());
+    dispatch(classGroupSubroupsSlice.actions.reset());
+  },[dispatch])
 
   const { 
-    setClassGroupsActionCreator,
+    setClassGroupsActionCreator
   } = classGroupsSlice.actions;
 
   const goToClassGroups = useCallback((value: ClassGroupInfo[], nameSubject: string) => {

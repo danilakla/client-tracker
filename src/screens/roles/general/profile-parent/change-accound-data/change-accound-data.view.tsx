@@ -91,7 +91,7 @@ export const ChangeAccoundDataMobileView: FC<ChangeAccoundDataViewProps> = memo(
             Сохранить
           </Button>
           <Spacing variant='Row' themeSpace={20}/>
-          <Button onClick={goToProfile} state={'idle'} variant='secondary' padding={[12,17]}>
+          <Button onClick={goToProfile} state={'idle'} variant='attentive' padding={[12,17]}>
             Отмена
           </Button>
         </Row>
@@ -134,7 +134,7 @@ export const ChangeAccoundDataDesktopView: FC<ChangeAccoundDataViewProps> = memo
               Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={goToProfile} state={'idle'} variant='secondary' padding={[12,17]}>
+            <Button onClick={goToProfile} state={'idle'} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
