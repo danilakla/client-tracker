@@ -35,10 +35,6 @@ export const ScrollWrapper = styled.div`
   @media (min-height: 1030px) {
     max-height: 630px;
   }
-
-  @media (min-height: 1100px) {
-    max-height: 700px;
-  }
 `;
 
 export const Table = styled.div`

@@ -265,8 +265,8 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
 }) => {
 
   return (
-    <WrapperDesktop onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' header='Таблица'>
-{teacherClassGroupControlState.loading === 'loading' ?
+    <WrapperDesktop style={{padding: 'none'}} onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' header='Таблица' isCenter={true}>
+      {teacherClassGroupControlState.loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100vh', top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
