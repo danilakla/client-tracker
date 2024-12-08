@@ -43,6 +43,7 @@ export type SubjectsState = {
     studentsStatistics: StatisticOfStudent[];
     errors: Record<string, ErrorType>;
     countClasses: number;
+    classesIds: number[];
     selectedGrade: GradeInfo;
     loadingDelete: "idle" | "loading" | "success" | "error";
     loadingUpdate: "idle" | "loading" | "success" | "error";
@@ -54,6 +55,7 @@ const initialState: SubjectsState = {
     initData: null,
     studentsStatistics: [],
     errors: {},
+    classesIds: [],
     loadingUpdate: 'idle',
     countClasses: 0,
 
@@ -82,6 +84,9 @@ export const classGroupControlSlice = createSlice({
         },
         setStudentsStatisticsActionCreator(state, action: PayloadAction<StatisticOfStudent[]>) {
             state.studentsStatistics = action.payload;
+        },
+        setClassesIdsActionCreator(state, action: PayloadAction<number[]>) {
+            state.classesIds = action.payload;
         },
         updateGradeActionCreator(state, action: PayloadAction<GradeInfo>) {
             const updatedGrade = action.payload;
@@ -231,6 +236,8 @@ export const initTableStatisticsActionCreator = createAsyncThunk('teacher-class-
                 transformAndSortStudentsStatistics(responce)
             ));
             thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
+
+            // thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes.length));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

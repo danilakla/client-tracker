@@ -1,8 +1,7 @@
-import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useState } from 'react';
 import { ClassGroupsProps } from './class-groups.props';
 import { ClassGroupsView } from './class-groups.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { useUser } from '../../../../../hooks/user-hook';
 import { classGroupsSlice } from '../../../../../store/reducers/roles/teacher/class-groups-slice';
 import { ClassGroupInfo } from '../../../../../store/reducers/roles/teacher/subjects-slice';
 import { useTeacherSubjects } from '../subjects/subjects.props';
@@ -17,8 +16,7 @@ export const ClassGroups: FC<ClassGroupsProps> = memo(() => {
   const goToTeacherClassGroupSubgroups = useTeacherClassGroupSubgroups();
   
   const { 
-    setSearchTextActionCreator,
-    reset
+    setSearchTextActionCreator
   } = classGroupsSlice.actions;
 
   const { 

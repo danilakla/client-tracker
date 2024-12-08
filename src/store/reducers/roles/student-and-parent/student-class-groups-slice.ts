@@ -1,11 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ClassGroupInfo } from "./subjects-slice";
+import { ClassGroupInfo } from "./student-subjects-slice";
 
 type ErrorType = string | null;
 
 
 export type ClassGroupsState = {
-    subjectName: string | null,
+    subjectName: string | null;
     searchText: string;
     classGroups: ClassGroupInfo[];
     loading: "idle" | "loading" | "success" | "error";
@@ -13,8 +13,8 @@ export type ClassGroupsState = {
 };
 
 const initialState: ClassGroupsState = {
-    subjectName: null,
     classGroups: [],
+    subjectName: null,
     searchText: '',
     loading: "idle",
     errors: {},
@@ -24,8 +24,8 @@ const setErrorByKey = (state: ClassGroupsState, key: string, error: ErrorType) =
     state.errors[key] = error;
 };
 
-export const classGroupsSlice = createSlice({
-    name: "teacher-class-groups",
+export const studentClassGroupsSlice = createSlice({
+    name: "student-class-groups-slice",
     initialState: initialState,
     reducers: {
         setError(state, action: PayloadAction<{ key: string; error: ErrorType }>) {
@@ -48,4 +48,5 @@ export const classGroupsSlice = createSlice({
     },
 });
 
-export default classGroupsSlice.reducer;
+
+export default studentClassGroupsSlice.reducer;

@@ -3,11 +3,8 @@ import { ClassGroupSubgroupsProps } from './class-group-subgroups.props';
 import { ClassGroupSubgroupsView } from './class-group-subgroups.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
 import { useUser } from '../../../../../hooks/user-hook';
-import { classGroupsSlice } from '../../../../../store/reducers/roles/teacher/class-groups-slice';
-import { ClassGroupInfo } from '../../../../../store/reducers/roles/teacher/subjects-slice';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 import { classGroupSubroupsSlice, initSubgroupOfClassGroupActionCreator, SubgroupInfo } from '../../../../../store/reducers/roles/teacher/class-group-subroups-slice';
-import { useParams } from 'react-router-dom';
 import { classGroupControlSlice } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useClassGroupPanel } from '../class-group-panel/class-group-panel.props';
 import { useTeacherClassGroups } from '../class-groups/class-groups.props';
@@ -56,7 +53,7 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
     dispatch(setClassGroupInfoActionCreator({
       initData: {
         subgroup: subgroup, 
-        classGroup: teacherClassGroupSubroupsState.classGroupInfo
+        classGroup: teacherClassGroupSubroupsState.classGroupInfo,
       },
       onSuccess: goToClassGroupPanel
     }));

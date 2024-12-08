@@ -29,14 +29,14 @@ export type StudentsViewProps = {
   goToWorkshop: () => void;
   deanStudentsState: StudentsState;
   setSearchSubgroups: (value: string) => void;
-  recoveryPasswordForStudent: (onSuccess?: () => void) => void;
+  recoveryPasswordForStudent: (onSuccess: () => void) => void;
   setSearchStudents: (value: string) => void;
-  onCreate: (onSuccess?: () => void) => void;
+  onCreate: (onSuccess: () => void) => void;
   setNewLastname: (value: string) => void;
   setNewName: (value: string) => void;
-  onUpdate: (onSuccess?: () => void) => void;
+  onUpdate: (onSuccess: () => void) => void;
   clearForm: () => void;
-  deleteStudent: (onSuccess?: () => void) => void;
+  deleteStudent: (onSuccess: () => void) => void;
   setNewSurname: (value: string) => void;
   setSelectedSubgroup: (value: SubgroupInfoState) => void;
   setSelectedStudent: (value: StudentInfoState) => void;

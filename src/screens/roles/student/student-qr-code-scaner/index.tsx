@@ -1,0 +1,1 @@
+export { StudentQrCodeScaner } from './student-qr-code-scaner';

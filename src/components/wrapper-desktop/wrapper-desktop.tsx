@@ -15,7 +15,6 @@ import { Spacing } from "../../ui-kit/spacing";
 import { Text } from "../../ui-kit/text";
 import { theme } from "../../ui-kit/themes/theme";
 import backArrowSVG from '../../images/back-arrow.svg';
-import { link } from "fs";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export type WrapperDesktopProps = {

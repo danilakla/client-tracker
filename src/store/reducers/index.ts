@@ -27,20 +27,25 @@ import teacherClassGroupsReducer from "./roles/teacher/class-groups-slice"
 import teacherClassGroupControlReducer from "./roles/teacher/class-group-control-slice"
 import teacherClassGroupSubroupsReducer from "./roles/teacher/class-group-subroups-slice"
 
-// import Reducer from "./roles/dean"
+import studentSubjectsReducer from "./roles/student-and-parent/student-subjects-slice"
+import studentClassGroupsReducer from "./roles/student-and-parent/student-class-groups-slice"
+import studentClassGroupTableReducer from "./roles/student-and-parent/student-class-group-table"
 
 export const rootReducers = combineReducers({
       singup: singupReducer,
       login: loginReducer,
+
       user: userReducer,
       appStatus: appStatusReducer,
       changeAccountData: changeAccountReducer,
       changeLogin: changeLoginReducer,
       changePassword: changePasswordReducer,
       universityInfo: universityInfoReducer,
+
       adminGeneratorKeys: adminGeneratorKeysReducer,
       adminUniversityEditor: adminUniversityEditorReducer,
       adminMembers: adminMembersReducer,
+
       deanClassFormats: deanClassFormatsReducer,
       deanControlSubjects: deanControlSubjectsReducer,
       deanSpecialties: deanSpecialtiesReducer,
@@ -48,10 +53,15 @@ export const rootReducers = combineReducers({
       deanStudents: deanStudentsReducer,
       deanClassGroupDetails: deanClassGroupDetailsReducer,
       deanClassGroups: deanClassGroupsReducer,
+
       teacherSubjects: teacherSubjectsReducer,
       teacherClassGroups: teacherClassGroupsReducer,
       teacherClassGroupControl: teacherClassGroupControlReducer,
-      teacherClassGroupSubroups: teacherClassGroupSubroupsReducer
+      teacherClassGroupSubroups: teacherClassGroupSubroupsReducer,
+
+      studentSubjects: studentSubjectsReducer,
+      studentClassGroups: studentClassGroupsReducer,
+      studentClassGroupTable: studentClassGroupTableReducer
 });
 
 export type RootState = ReturnType<typeof rootReducers>;

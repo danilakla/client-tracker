@@ -136,9 +136,9 @@ export const classGroupDetailsSlice = createSlice({
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.description = action.payload;
         },
-        setSelectedClassGroupIdActionCreator(state, action: PayloadAction<{value: number, onSuccess?: () => void}>) {
+        setSelectedClassGroupIdActionCreator(state, action: PayloadAction<{value: number, onSuccess: () => void}>) {
             state.selectedClassGroupId = action.payload.value;
-            action.payload.onSuccess?.();
+            action.payload.onSuccess();
         },
         setTeachersActionCreator(state, action: PayloadAction<TeacherInfo[]>) {
             state.teachers = action.payload.map((teacher) => ({
@@ -298,7 +298,7 @@ export const createClassGroupActionCreator = createAsyncThunk('dean-class-group-
         formatClassId: number, 
         description: string, 
         newSubgroups: SubgroupDetails[],
-        onSuccess?: () => void
+        onSuccess: () => void
     }, thunkApi ) => {
         const { authToken, teacherId, subjectId, formatClassId, description, newSubgroups, onSuccess } = data;
         try {
@@ -338,7 +338,7 @@ export const createClassGroupActionCreator = createAsyncThunk('dean-class-group-
                 .filter(subgroup => subgroup.isExist)
                 .map(subgroup => subgroup.idSubgroup); 
             await deanApi.assignGroupToClassGroup(authToken, responce.idClassGroup, existingSubgroupIds);
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -360,7 +360,7 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
         description: string, 
         newSubgroups: SubgroupDetails[],
         oldSubgroups: SubgroupDetails[],
-        onSuccess?: () => void
+        onSuccess: () => void
     }, thunkApi ) => {
         const { 
             authToken, 
@@ -424,7 +424,7 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
             if(removedSubgroupIds.length > 0)
                 await deanApi.removeGroupToClassGroup(authToken, Number.parseInt(classGroupId), removedSubgroupIds);
 
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

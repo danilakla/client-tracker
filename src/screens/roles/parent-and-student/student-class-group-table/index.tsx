@@ -1,0 +1,1 @@
+export { StudentClassGroupTable } from './student-class-group-table';

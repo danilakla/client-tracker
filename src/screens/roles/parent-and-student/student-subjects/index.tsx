@@ -1,0 +1,1 @@
+export { StudentSubjects } from './student-subjects';

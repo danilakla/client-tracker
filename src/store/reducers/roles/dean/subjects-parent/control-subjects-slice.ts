@@ -120,7 +120,7 @@ export const initSubjectsActionCreator = createAsyncThunk('dean-control-subjects
 )
 
 export const createSubjectActionCreator = createAsyncThunk('dean-control-subjects/create',
-    async (data: { authToken: string, name: string, description: string ,onSuccess?: () => void}, thunkApi ) => {
+    async (data: { authToken: string, name: string, description: string ,onSuccess: () => void}, thunkApi ) => {
         const { authToken, name, description, onSuccess } = data;
         try {
             thunkApi.dispatch(controlSubjectsSlice.actions.clearErrors());
@@ -136,7 +136,7 @@ export const createSubjectActionCreator = createAsyncThunk('dean-control-subject
 
             const responce = await deanApi.createSubject(authToken, name, description);
             thunkApi.dispatch(controlSubjectsSlice.actions.addSubjectActionCreator(responce));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

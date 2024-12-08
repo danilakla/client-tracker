@@ -74,7 +74,7 @@ export const ControlSubjects: FC<ControlSubjectsProps> = memo(() => {
     };
   }, [dispatch, reset, initSubjects, deanControlSubjectsState.loading]);
 
-  const createSubject = useCallback((onSuccess?: () => void)  => {
+  const createSubject = useCallback((onSuccess: () => void)  => {
     dispatch(createSubjectActionCreator({
       authToken: authToken,
       name: deanControlSubjectsState.name,

@@ -1,11 +1,11 @@
 
-import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, memo, useCallback, useRef, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { theme } from '../../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../../components/wrapper-desktop';
 import { Surface } from '../../../../../ui-kit/surface';
-import {  ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper } from './class-group-panel.styled';
+import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper } from './class-group-panel.styled';
 import { Text } from '../../../../../ui-kit/text';
 import { Spacing } from '../../../../../ui-kit/spacing';
 import { GradeInfo, StatisticOfStudent, SubjectsState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
@@ -63,11 +63,11 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     setIsOpenDeletePopup(true);
   },[])
   const closeDeletePopup = useCallback(() => {
-    
+    setIsOpenDeletePopup(false);
   },[])
   const confirmDeletePopup = useCallback(() => {
-    
-  },[])
+    deleteClass(closeDeletePopup);
+  },[deleteClass, closeDeletePopup])
 
   const [isOpenUpdateWindow, setIsOpenUpdateWindow] = useState<boolean>(false);
   
@@ -97,6 +97,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           setGradeNumber={setGradeNumber}
           openUpdateWindow={openUpdateWindow}
           closeUpdateWindow={closeUpdateWindow}
+          openDeletePopup={openDeletePopup}
           confirmUpdate={confirmUpdate}
           isOpenUpdateWindow={isOpenUpdateWindow}
           />) :
@@ -105,6 +106,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           teacherClassGroupControlState={teacherClassGroupControlState}
           setAttendance={setAttendance}
+          openDeletePopup={openDeletePopup}
           setDescription={setDescription}
           openUpdateWindow={openUpdateWindow}
           setGradeNumber={setGradeNumber}
@@ -145,6 +147,7 @@ type LocalViewProps = {
   teacherClassGroupControlState: SubjectsState;
   goToTeacherClassGroupSubgroups: () => void;
   openAddPopup: () => void;
+  openDeletePopup: () => void;
   setGradeNumber: (value: string) => void;
   setDescription: (value: string) => void;
   setAttendance: (value: 0 | 1 | 2 | 3) => void;
@@ -159,6 +162,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   goToTeacherClassGroupSubgroups,
   openAddPopup,
   isOpenUpdateWindow,
+  openDeletePopup,
   setAttendance,
   setDescription,
   setGradeNumber,
@@ -184,7 +188,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           </Text>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
-            <StudentsTable 
+            <StudentsTable
               onClickGrade={openUpdateWindow}
               length={teacherClassGroupControlState.countClasses}
               data={teacherClassGroupControlState.studentsStatistics}/> :
@@ -257,6 +261,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   openAddPopup,
   isOpenUpdateWindow,
   setAttendance,
+  openDeletePopup,
   setDescription,
   setGradeNumber,
   closeUpdateWindow,
@@ -281,7 +286,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           </Text>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
-            <StudentsTable 
+            <StudentsTable
               onClickGrade={openUpdateWindow}
               length={teacherClassGroupControlState.countClasses}
               data={teacherClassGroupControlState.studentsStatistics}/> :
@@ -348,84 +353,82 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   );
 });
 
-
-
-
 export type StudentsTableProps = {
-  data: StatisticOfStudent[];
-  length: number;
-  onClickGrade: (value: GradeInfo) => void
-};
-
-export const StudentsTable: FC<StudentsTableProps> = memo(({
-  data,
-  length,
-  onClickGrade
-}) => {
-
-  const container1Ref = useRef<HTMLDivElement>(null);
-  const container2Ref = useRef<HTMLDivElement>(null);
-  
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const source = e.target as HTMLDivElement;
-    
-    const target =
-      source === container1Ref.current ? container2Ref.current : container1Ref.current;
-
-    if (target) {
-      target.scrollTop = source.scrollTop;
-      target.scrollLeft = source.scrollLeft;
-    }
+	data: StatisticOfStudent[];
+	length: number;
+	onClickGrade: (value: GradeInfo) => void;
   };
   
-  return (
-    <TableWrapper>
-      <TableHeader>
-        <NameHeader>
-          <Text themeFont={theme.fonts.h3}>
-            Имя студента
-          </Text>
-        </NameHeader>
-        {length !== 0 && <HeaderClasses ref={container1Ref} onScroll={handleScroll}>
-          {Array.from({ length }).map((_, index) => (
-            <HeaderClassItem>
-              <Text themeFont={theme.fonts.h3}>
-                Занятие {index + 1}
-              </Text>
-            </HeaderClassItem>
-          ))}
-        </HeaderClasses>}
-      </TableHeader>
-      <Spacing themeSpace={10} variant='Column' />
-      <ScrollWrapper>
-        <Table>
-          <StudentsContainer>
-            {data.map(item => <StudentItem>
-              <Text themeFont={theme.fonts.ht2}>
-                {item.student.lastname}
-              </Text>
-              <Text themeFont={theme.fonts.ht2}>
-                {item.student.name}
-              </Text>
-              <Text themeFont={theme.fonts.ht2}>
-                {item.student.surname}
-              </Text>
-            </StudentItem>)}
-          </StudentsContainer>
-          <ClassesContainer ref={container2Ref} onScroll={handleScroll}>
-            {data.map(item=> <ClassesRow>
-              {item.grades.map((item) => <ClassItem 
-              onClick={() => onClickGrade(item)} >
-                {item.description !== null && <ExistMark/>}
-                {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
-                  {item.grade}
-                </Text>}
-                <ColorCircle variant={item.attendance} />
-              </ClassItem>)}
-            </ClassesRow>)}
-          </ClassesContainer>
-        </Table>
-      </ScrollWrapper>
-    </TableWrapper>
-  );
-});
+  export const StudentsTable: FC<StudentsTableProps> = memo(({
+	data,
+	length,
+	onClickGrade
+  }) => {
+  
+	const container1Ref = useRef<HTMLDivElement>(null);
+	const container2Ref = useRef<HTMLDivElement>(null);
+	
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+	  const source = e.target as HTMLDivElement;
+	  
+	  const target =
+		source === container1Ref.current ? container2Ref.current : container1Ref.current;
+  
+	  if (target) {
+		target.scrollTop = source.scrollTop;
+		target.scrollLeft = source.scrollLeft;
+	  }
+	};
+	
+	return (
+	  <TableWrapper>
+		  <TableHeader>
+		    <NameHeader>
+		  	<Text themeFont={theme.fonts.h3}>
+		  	  Имя студента
+		  	</Text>
+		    </NameHeader>
+		    {length !== 0 && <HeaderClasses ref={container1Ref} onScroll={handleScroll}>
+		  	{Array.from({ length }).map((_, index) => (
+		  	  <HeaderClassItem>
+		  		<Text themeFont={theme.fonts.h3}>
+		  		  Занятие {index + 1}
+		  		</Text>
+		  	  </HeaderClassItem>
+		  	))}
+		    </HeaderClasses>}
+		  </TableHeader>
+		  <Spacing themeSpace={10} variant='Column' />
+		  <ScrollWrapper>
+		    <Table>
+		  	<StudentsContainer>
+		  	  {data.map(item => <StudentItem>
+		  		<Text themeFont={theme.fonts.ht2}>
+		  		  {item.student.lastname}
+		  		</Text>
+		  		<Text themeFont={theme.fonts.ht2}>
+		  		  {item.student.name}
+		  		</Text>
+		  		<Text themeFont={theme.fonts.ht2}>
+		  		  {item.student.surname}
+		  		</Text>
+		  	  </StudentItem>)}
+		  	</StudentsContainer>
+		  	<ClassesContainer ref={container2Ref} onScroll={handleScroll}>
+		  	  {data.map(item=> <ClassesRow>
+		  		{item.grades.map((item) => 
+          <ClassItem 
+		  		  onClick={() => onClickGrade(item)} >
+		  		  {item.description !== null && <ExistMark/>}
+		  		  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
+		  			{item.grade}
+		  		  </Text>}
+		  		  <ColorCircle variant={item.attendance} />
+		  		</ClassItem>)}
+		  	  </ClassesRow>)}
+		  	</ClassesContainer>
+		    </Table>
+		  </ScrollWrapper>
+	  </TableWrapper>
+	);
+  });

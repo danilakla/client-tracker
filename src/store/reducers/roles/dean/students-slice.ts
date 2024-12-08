@@ -330,12 +330,12 @@ export const initDeanMembersActionCreator = createAsyncThunk('dean-students/init
 )
 
 export const recoverPasswordForStudentActionCreator = createAsyncThunk('dean-students/recover-password',
-    async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
+    async (data: { authToken: string, id: number, onSuccess: () => void}, thunkApi ) => {
         const { authToken, id, onSuccess } = data;
         try {
             const responce = await deanApi.recoveryPasswordForStudent(authToken, id);
             thunkApi.dispatch(studentsSlice.actions.setNewPasswordActionCreator(responce));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -349,12 +349,12 @@ export const recoverPasswordForStudentActionCreator = createAsyncThunk('dean-stu
 
 
 export const deleteStudentActionCreator = createAsyncThunk('dean-students/delete-student',
-    async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
+    async (data: { authToken: string, id: number, onSuccess: () => void}, thunkApi ) => {
         const { authToken, id, onSuccess } = data;
         try {
             await deanApi.deleteStudent(authToken, id);
             thunkApi.dispatch(studentsSlice.actions.deleteStudentByIdActionCreator(id));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -390,7 +390,7 @@ export const createStudentActionCreator = createAsyncThunk('dean-students/create
         lastname: string, 
         name: string, 
         surname: string, 
-        onSuccess?: () => void
+        onSuccess: () => void
     }, thunkApi ) => {
         const { authToken, numberOfGroupId, lastname, name, surname, onSuccess } = data;
         try {
@@ -406,7 +406,7 @@ export const createStudentActionCreator = createAsyncThunk('dean-students/create
 
             const responce = await deanApi.createStudent(authToken, numberOfGroupId, lastname, name, surname);
             thunkApi.dispatch(studentsSlice.actions.addStudentActionCreator(responce));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -425,7 +425,7 @@ export const updateStudentActionCreator = createAsyncThunk('dean-students/update
         lastname: string, 
         name: string, 
         surname: string, 
-        onSuccess?: () => void
+        onSuccess: () => void
     }, thunkApi ) => {
         const { authToken, id, lastname, name, surname, onSuccess } = data;
         try {
@@ -441,7 +441,7 @@ export const updateStudentActionCreator = createAsyncThunk('dean-students/update
 
             const response = await deanApi.updateStudent(authToken, id, lastname, name, surname);
             thunkApi.dispatch(studentsSlice.actions.updateStudentByIdActionCreator(response));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -457,9 +457,9 @@ export const deleteSubgroupActionCreator = createAsyncThunk('dean-students/delet
     async (data: {authToken: string, idSubgroup: number,onSuccess: () => void}, thunkApi ) => {
         const { authToken, idSubgroup, onSuccess } = data;
         try {
-            const response = await deanApi.deleteSubgroup(authToken, idSubgroup);
+            await deanApi.deleteSubgroup(authToken, idSubgroup);
             thunkApi.dispatch(studentsSlice.actions.removeSubgroupByIdActionCreator(idSubgroup));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

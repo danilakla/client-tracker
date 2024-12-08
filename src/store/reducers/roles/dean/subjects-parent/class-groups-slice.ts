@@ -65,9 +65,9 @@ export const classGroupsSlice = createSlice({
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.description = action.payload;
         },
-        setSelectedSubjectActionCreator(state, action: PayloadAction<{value: SubjectInfo, onSuccess?: () => void}>) {
+        setSelectedSubjectActionCreator(state, action: PayloadAction<{value: SubjectInfo, onSuccess: () => void}>) {
             state.selectedSubject = action.payload.value;
-            action.payload.onSuccess?.();
+            action.payload.onSuccess();
         },
         setClassGroupsActionCreator(state, action: PayloadAction<ClassGroupInfo[]>) {
             state.classGroups = action.payload;
@@ -131,13 +131,13 @@ export const initClassGroupsActionCreator = createAsyncThunk('dean-class-groups-
 )
 
 export const updateSubjectActionCreator = createAsyncThunk('dean-control-subjects/update',
-    async (data: { authToken: string, id: number, name: string, description: string ,onSuccess?: () => void}, thunkApi ) => {
+    async (data: { authToken: string, id: number, name: string, description: string ,onSuccess: () => void}, thunkApi ) => {
         const { authToken, name, description, id, onSuccess } = data;
         try {
             const responce = await deanApi.updateSubject(authToken, id, name, description);
             thunkApi.dispatch(controlSubjectsSlice.actions.updateSubjectActionCreator(responce));
             thunkApi.dispatch(classGroupsSlice.actions.updateSubjectActionCreator(responce));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -150,12 +150,12 @@ export const updateSubjectActionCreator = createAsyncThunk('dean-control-subject
 )
 
 export const deleteSubjectActionCreator = createAsyncThunk('dean-control-subjects/delete',
-    async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
+    async (data: { authToken: string, id: number, onSuccess: () => void}, thunkApi ) => {
         const { authToken, id, onSuccess } = data;
         try {
             await deanApi.deleteSubject(authToken, id);
             thunkApi.dispatch(controlSubjectsSlice.actions.removeSubjectActionCreator(id));
-            onSuccess?.();
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -166,23 +166,5 @@ export const deleteSubjectActionCreator = createAsyncThunk('dean-control-subject
         }
     }
 )
-
-// export const recoverPasswordActionCreator = createAsyncThunk('admin-members/recover-password',
-//     async (data: { authToken: string, id: number, onSuccess?: () => void}, thunkApi ) => {
-//         const { authToken, id, onSuccess } = data;
-//         try {
-//             const responce = await adminApi.recoverPassword(authToken, id);
-//             thunkApi.dispatch(membersSlice.actions.setNewPasswordActionCreater(responce));
-//             onSuccess?.();
-//         }
-//         catch (e) {
-//             if (axios.isAxiosError(e)) {
-//                 if(e.response?.status === 401){
-//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-//                 }
-//             }
-//         }
-//     }
-// )
 
 export default classGroupsSlice.reducer;

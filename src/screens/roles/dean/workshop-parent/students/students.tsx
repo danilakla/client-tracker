@@ -59,7 +59,7 @@ export const Students: FC<StudentsProps> = memo(() => {
   },[dispatch, setSelectedStudentActionCreator])
 
 
-  const deleteStudent = useCallback((onSuccess?: () => void)=>{
+  const deleteStudent = useCallback((onSuccess: () => void)=>{
     dispatch(deleteStudentActionCreator({
       authToken: authToken,
       id: deanStudentsState.selectedStudent.idAccount,
@@ -67,7 +67,7 @@ export const Students: FC<StudentsProps> = memo(() => {
     }));
   },[dispatch, authToken, deanStudentsState.selectedStudent.idAccount]);
 
-  const recoveryPasswordForStudent = useCallback((onSuccess?: () => void)=>{
+  const recoveryPasswordForStudent = useCallback((onSuccess: () => void)=>{
     dispatch(recoverPasswordForStudentActionCreator({
       authToken: authToken,
       id: deanStudentsState.selectedStudent.idAccount,
@@ -90,7 +90,7 @@ export const Students: FC<StudentsProps> = memo(() => {
     };
   }, [dispatch, reset, initStudents]);
 
-  const onUpdate = useCallback((onSuccess?: () => void)=>{
+  const onUpdate = useCallback((onSuccess: () => void)=>{
     dispatch(updateStudentActionCreator({
       authToken: authToken,
       id: deanStudentsState.selectedStudent.idStudent,
@@ -108,7 +108,7 @@ export const Students: FC<StudentsProps> = memo(() => {
     deanStudentsState.newSurname
   ]);
 
-  const onCreate = useCallback((onSuccess?: () => void)=>{
+  const onCreate = useCallback((onSuccess: () => void)=>{
     dispatch(createStudentActionCreator({
       authToken: authToken,
       numberOfGroupId: deanStudentsState.selectedSubgroup.subgroup.idSubgroup.toString(),

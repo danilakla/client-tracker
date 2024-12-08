@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 import './App.css';
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import { Login } from './screens/auth/login';
 import { Signup } from './screens/auth/signup';
 import { PrivateRoute } from "./private-route";
@@ -28,6 +28,11 @@ import { Subjects as TeacherSubjects } from "./screens/roles/teacher/subjects-pa
 import { ClassGroups as TeacherClassGroups } from "./screens/roles/teacher/subjects-parent/class-groups";
 import { ClassGroupPanel as TeacherClassGroupPanel } from "./screens/roles/teacher/subjects-parent/class-group-panel";
 import { ClassGroupSubgroups as TeacherClassGroupSubgroups } from "./screens/roles/teacher/subjects-parent/class-group-subgroups";
+
+import { StudentSubjects } from "./screens/roles/parent-and-student/student-subjects";
+import { StudentClassGroups } from "./screens/roles/parent-and-student/student-class-groups";
+import { StudentClassGroupTable } from "./screens/roles/parent-and-student/student-class-group-table";
+import { StudentQrCodeScaner } from "./screens/roles/student/student-qr-code-scaner";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -58,7 +63,12 @@ export const urls = {
   teacherSubjects: '/teacher/subjects',
   teacherClassGroups: '/teacher/subjects/class-groups',
   teacherClassGroupSubgroups: '/teacher/subjects/class-group/subgroups',
-  teacherClassGroupControl: '/teacher/subjects/class-groups-control'
+  teacherClassGroupControl: '/teacher/subjects/class-groups-control',
+
+  studentSubjects: '/student/subjects',
+  studentClassGroups: '/student/subjects/class-groups',
+  studentClassGroupTable: '/student/subjects/class-group/table',
+  studentQrCodeScanner: '/student/scanner',
 };
 
 type RootProps = {};
@@ -114,13 +124,21 @@ export const Root: FC<RootProps> = () => {
 
           <Route path={urls.profile} element={<Profile/>}/>
           <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
-        
+
+          <Route path={urls.studentSubjects} element={<StudentSubjects role='ROLE_PARENT' />} />
+          <Route path={urls.studentClassGroups} element={<StudentClassGroups role='ROLE_PARENT'/>} />
+          <Route path={urls.studentClassGroupTable} element={<StudentClassGroupTable role='ROLE_PARENT'/>} />
         </>}
         {user.role === 'ROLE_STUDENT' && <>
           <Route index element={<Navigate to={urls.profile} />} />
 
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
+
+          <Route path={urls.studentSubjects} element={<StudentSubjects role='ROLE_STUDENT'/>} />
+          <Route path={urls.studentClassGroups} element={<StudentClassGroups role='ROLE_STUDENT'/>} />
+          <Route path={urls.studentClassGroupTable} element={<StudentClassGroupTable role='ROLE_STUDENT'/>} />
+          <Route path={urls.studentQrCodeScanner} element={<StudentQrCodeScaner/>} />
         </>}
         {user.role === 'ROLE_TEACHER' && <>
           <Route index element={<Navigate to={urls.profile} />} />

@@ -1,61 +1,38 @@
 import styled from "styled-components";
-import { theme } from "../../../../../ui-kit/themes/theme";
-
-
-export const ColorCircleButton = styled.div<{variant: 0 | 1 | 2 | 3, isSelected: boolean}>`
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  cursor: pointer;
-
-  border: ${({ isSelected }) => (isSelected ? `5px solid ${theme.colors.gray}` : "none")};
-
-  background-color: ${({ variant }) => {
-    switch(variant){
-      case 0:
-        return `#0000003e`;
-      case 1:
-        return `${theme.colors.attentive}`;
-      case 2:
-        return `${theme.colors.neutral}`;
-      case 3:
-        return `${theme.colors.success}`;
-    }
-  }};
-`;
+import { theme } from "../../../../ui-kit/themes/theme";
 
 export const ScrollWrapper = styled.div`
   width: 100%;
   overflow: auto;
 
-  max-height: 140px;
+  max-height: 210px;
 
   @media (min-height: 610px) {
-    max-height: 210px;
-  }
-
-  @media (min-height: 680px) {
     max-height: 280px;
   }
 
-  @media (min-height: 750px) {
+  @media (min-height: 680px) {
     max-height: 350px;
   }
 
-  @media (min-height: 820px) {
+  @media (min-height: 750px) {
     max-height: 420px;
   }
 
-  @media (min-height: 890px) {
+  @media (min-height: 820px) {
     max-height: 490px;
   }
 
-  @media (min-height: 960px) {
+  @media (min-height: 890px) {
     max-height: 560px;
   }
 
-  @media (min-height: 1030px) {
+  @media (min-height: 960px) {
     max-height: 630px;
+  }
+
+  @media (min-height: 1030px) {
+    max-height: 700px;
   }
 `;
 

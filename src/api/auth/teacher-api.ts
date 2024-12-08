@@ -1,5 +1,4 @@
 import axios from "axios"
-import { Student } from "../../store/reducers/roles/dean/generate-students-slice";
 
 const instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,

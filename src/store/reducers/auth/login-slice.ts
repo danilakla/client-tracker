@@ -1,7 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { authApi } from "../../../api/auth/auth-api";
 import axios from "axios";
-import { appStatusSlice } from "../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -75,13 +74,13 @@ export const loginUserActionCreator = createAsyncThunk('login/user',
     async (data: { login: string, password: string, onSuccess?: () => void}, thunkApi ) => {
         const { login, password, onSuccess } = data;
         try {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(login)) {
-                thunkApi.dispatch(loginSlice.actions.setError(
-                    { key: "loginError", error: 'Введите корректный адрес электронной почты' }
-                ));
-                return;
-            } else thunkApi.dispatch(loginSlice.actions.clearErrors())
+            // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // if (!emailRegex.test(login)) {
+            //     thunkApi.dispatch(loginSlice.actions.setError(
+            //         { key: "loginError", error: 'Введите корректный адрес электронной почты' }
+            //     ));
+            //     return;
+            // } else thunkApi.dispatch(loginSlice.actions.clearErrors())
 
             const responce = await authApi.loginUser(login, password);
             localStorage.setItem('authToken', responce.jwt);

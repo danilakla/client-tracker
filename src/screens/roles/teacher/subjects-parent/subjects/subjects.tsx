@@ -18,8 +18,7 @@ export const Subjects: FC<SubjectsProps> = memo(() => {
 
   const { 
     setSearchTextActionCreator,
-    reset,
-    resetStatus
+    reset
   } = subjectsSlice.actions;
 
   const [filteredSubjects, setFilteredSubjects] = useState<SubjectInfo[]>([]);

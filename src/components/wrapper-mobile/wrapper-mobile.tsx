@@ -1,4 +1,4 @@
-import { FC, memo, ReactNode, useState } from "react";
+import { FC, HtmlHTMLAttributes, memo, ReactNode, useState } from "react";
 
 import profileActive from '../../images/menu-panel/primary/profile.svg';
 import scannerActive from '../../images/menu-panel/primary/scanner.svg';
@@ -26,13 +26,14 @@ export type WrapperMobileProps = {
 	role: UserRole;
 	onBack?: () => void;
 	children?: ReactNode;
-};
+} & HtmlHTMLAttributes<HTMLElement>;
 
 export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 	header,
 	role,
 	children,
-	onBack
+	onBack,
+	...rest
 }) => {
 
   return(
@@ -50,7 +51,7 @@ export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 			</Text>
 		</HeaderContainer>
 
-		<ScreenContent>
+		<ScreenContent {...rest}>
 			{children}
 		</ScreenContent>
 

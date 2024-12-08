@@ -22,7 +22,7 @@ import { Popup } from '../../../../../../ui-kit/popup';
 
 export type ControlSubjectsViewProps = {
   goToWorkshop: () => void;
-  createSubject: (onSuccess?: () => void) => void;
+  createSubject: (onSuccess: () => void) => void;
   deanControlSubjectsState: ControlSubjectsState;
   setName: (value: string) => void;
   filteredSubjects: SubjectInfo[];
