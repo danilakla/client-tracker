@@ -108,6 +108,7 @@ export const ClassesContainer = styled.div`
 export const ClassItem = styled.div`
   display: flex;
   flex-direction: column;
+  cursor: pointer;
   position: relative;
   align-items: center;
   flex-shrink: 0;
@@ -191,11 +192,14 @@ export const ColorCircleButton = styled.div<{variant: 0 | 1 | 2 | 3, isSelected:
   width: 40px;
   height: 40px;
   border-radius: 20px;
+  cursor: pointer;
+
+  border: ${({ isSelected }) => (isSelected ? `5px solid ${theme.colors.gray}` : "none")};
 
   background-color: ${({ variant }) => {
     switch(variant){
       case 0:
-        return `transparent`;
+        return `#0000003e`;
       case 1:
         return `${theme.colors.attentive}`;
       case 2:

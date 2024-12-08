@@ -1,7 +1,6 @@
 import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
-import { useParams } from 'react-router-dom';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
 import { addClassActionCreator, classGroupControlSlice, deleteClassActionCreator, GradeInfo, initTableStatisticsActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
@@ -20,7 +19,11 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
 
   const { 
     reset,
-    setSelectedGradeActionCreator
+    setSelectedGradeActionCreator,
+    setGradeNumberActionCreator,
+    setDescriptionActionCreator,
+    clearSelectedGradeActionCreator,
+    setAttendanceActionCreator
   } = classGroupControlSlice.actions;
 
   const initTableData = useCallback(()=>{
@@ -90,6 +93,22 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
     dispatch(setSelectedGradeActionCreator({gradeInfo, onSuccess}));
   },[dispatch,setSelectedGradeActionCreator])
 
+  const setGradeNumber = useCallback((value: string)=>{
+    dispatch(setGradeNumberActionCreator(value));
+  },[dispatch,setGradeNumberActionCreator])
+
+  const setDescription = useCallback((value: string)=>{
+    dispatch(setDescriptionActionCreator(value));
+  },[dispatch,setDescriptionActionCreator])
+
+  const setAttendance = useCallback((value: 0 | 1 | 2 | 3)=>{
+    dispatch(setAttendanceActionCreator(value));
+  },[dispatch,setAttendanceActionCreator])
+
+  const clearSelectedGrade = useCallback(()=>{
+    dispatch(clearSelectedGradeActionCreator());
+  },[dispatch,clearSelectedGradeActionCreator])
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
@@ -98,6 +117,10 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
         deleteClass={deleteClass}
         teacherClassGroupControlState={teacherClassGroupControlState}
         goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
+        setAttendance={setAttendance}
+        setDescription={setDescription}
+        setGradeNumber={setGradeNumber}
+        clearSelectedGrade={clearSelectedGrade}
         />
     );
 });

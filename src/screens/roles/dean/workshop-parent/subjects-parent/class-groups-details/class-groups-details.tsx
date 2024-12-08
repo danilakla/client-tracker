@@ -3,7 +3,7 @@ import { ClassGroupsDetailsProps } from './class-groups-details.props';
 import { ClassGroupsDetailsView } from './class-groups-details.view';
 import { useClassGroups } from '../class-groups/class-groups.props';
 import { useAppDispatch, useTypedSelector } from '../../../../../../hooks/use-typed-selector';
-import { classGroupDetailsSlice, createClassGroupActionCreator, initClassGroupDetailsActionCreator, SubgroupDetails, updateClassGroupActionCreator } from '../../../../../../store/reducers/roles/dean/subjects-parent/class-group-details-slice';
+import { classGroupDetailsSlice, createClassGroupActionCreator, deleteClassGroupActionCreator, initClassGroupDetailsActionCreator, SubgroupDetails, updateClassGroupActionCreator } from '../../../../../../store/reducers/roles/dean/subjects-parent/class-group-details-slice';
 import { useUser } from '../../../../../../hooks/user-hook';
 import { ItemOfSelectType } from '../../../../../../ui-kit/select/select';
 
@@ -147,6 +147,19 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     deanClassGroupDetailsState.subgroups
   ]);
 
+  const deleteClassGroup = useCallback(() => {
+    dispatch(deleteClassGroupActionCreator({
+      authToken: authToken,
+      classGroupId: deanClassGroupDetailsState.selectedClassGroupId || -1,
+      onSuccess: goToClassGroups
+    }));
+  }, [
+    dispatch, 
+    authToken,
+    deanClassGroupDetailsState.selectedClassGroupId,
+    goToClassGroups
+  ]);
+
   return (
       <ClassGroupsDetailsView 
         deanClassGroupDetailsState={deanClassGroupDetailsState}
@@ -158,6 +171,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
         filteredSubgroupsWindow={filteredSubgroupsWindow}
         setSearchTextWindow={setSearchTextWindow}
         setDescription={setDescription}
+        deleteClassGroup={deleteClassGroup}
         switchIsExistByIndex={switchIsExistByIndex}
         setSelectedClassFormat={setSelectedClassFormat}
         setSelectedTeacher={setSelectedTeacher}

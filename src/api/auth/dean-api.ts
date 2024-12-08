@@ -231,4 +231,18 @@ export const deanApi = {
                 return response.data;
             })
     },
+    deleteClassGroup(authToken: string, id: number) {
+        return instance.delete(`/dean/class-group/delete/${id}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    deleteSubgroup(authToken: string, id: number) {
+        return instance.delete(`/dean/delete/subgroup/${id}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

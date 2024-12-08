@@ -53,7 +53,7 @@ export const teacherApi = {
                 return response.data;
             })
     },
-    updateGrade(authToken: string, idStudentGrate: number, grade: number, description: string, attendance: 0 | 1 | 2 | 3){
+    updateGrade(authToken: string, idStudentGrate: number, grade: number | null, description: string | null, attendance: 0 | 1 | 2 | 3){
         return instance.put('/teacher/update/classes',{
             idStudentGrate: idStudentGrate,
             grade: grade,

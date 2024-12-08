@@ -57,6 +57,7 @@ export type СlassGroupDetailsState = {
     description: string;
     loading: "idle" | "loading" | "success" | "error";
     loadingAdd: "idle" | "loading" | "success" | "error";
+    loadingDelete: "idle" | "loading" | "success" | "error";
     errors: Record<string, ErrorType>;
 };
 
@@ -67,6 +68,7 @@ const initialState: СlassGroupDetailsState = {
     description: '',
     searchTextWindow: '',
     classFormats: [],
+    loadingDelete: 'idle',
     subgroups: [],
     newSubgroups: [],
     loadingAdd: 'idle',
@@ -96,11 +98,12 @@ export const classGroupDetailsSlice = createSlice({
             if (action.payload.existingIds === null) {
                 state.subgroups = action.payload.subgroups.map(subgroup => {
                     const admissionYear = new Date(subgroup.admissionDate).getFullYear();
-                    const course = Math.max(1, currentYear - admissionYear + 1);
-                
+                    const course = currentYear - admissionYear + 1;
+                    const groupInfo = subgroup.subgroupNumber.split('.');
+
                     return {
                         ...subgroup,
-                        subgroupNumber: `${course} курс - ${subgroup.subgroupNumber} группа`,
+                        subgroupNumber: `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
                         isExist: false,
                     };
                 });
@@ -108,11 +111,12 @@ export const classGroupDetailsSlice = createSlice({
                 const existingIds = action.payload.existingIds as number[];
                 state.subgroups = action.payload.subgroups.map(subgroup => {
                     const admissionYear = new Date(subgroup.admissionDate).getFullYear();
-                    const course = Math.max(1, currentYear - admissionYear + 1);
-                
+                    const course = currentYear - admissionYear + 1;
+                    const groupInfo = subgroup.subgroupNumber.split('.');
+                    
                     return {
                         ...subgroup,
-                        subgroupNumber: `${course} курс - ${subgroup.subgroupNumber} группа`,
+                        subgroupNumber: `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
                         isExist: existingIds.includes(subgroup.idSubgroup),
                     };
                 });
@@ -220,6 +224,16 @@ export const classGroupDetailsSlice = createSlice({
             })
             .addCase(updateClassGroupActionCreator.rejected, (state) => {
                 state.loadingAdd = "idle";
+            })
+
+            .addCase(deleteClassGroupActionCreator.fulfilled, (state) => {
+                state.loadingDelete = 'success';
+            })
+            .addCase(deleteClassGroupActionCreator.pending, (state) => {
+                state.loadingDelete = 'loading';
+            })
+            .addCase(deleteClassGroupActionCreator.rejected, (state) => {
+                state.loadingDelete = "idle";
             })
     },
 });
@@ -411,6 +425,27 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
                 await deanApi.removeGroupToClassGroup(authToken, Number.parseInt(classGroupId), removedSubgroupIds);
 
             onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
+
+export const deleteClassGroupActionCreator = createAsyncThunk('dean-class-group-details-slice/delete-class-group',
+    async (data: { 
+        authToken: string,
+        classGroupId: number,
+        onSuccess: () => void
+    }, thunkApi ) => {
+        const { authToken, classGroupId, onSuccess } = data;
+        try {
+            await deanApi.deleteClassGroup(authToken, classGroupId);
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

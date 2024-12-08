@@ -4,7 +4,7 @@ import { StudentsView } from './students.view';
 import { useDeanWorkshop } from '../workshop/workshop.props';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { createStudentActionCreator, deleteStudentActionCreator, initDeanMembersActionCreator, recoverPasswordForStudentActionCreator, StudentInfoState, studentsSlice, SubgroupInfoState, updateStudentActionCreator } from '../../../../../store/reducers/roles/dean/students-slice';
+import { createStudentActionCreator, deleteStudentActionCreator, deleteSubgroupActionCreator, initDeanMembersActionCreator, recoverPasswordForStudentActionCreator, StudentInfoState, studentsSlice, SubgroupInfoState, updateStudentActionCreator } from '../../../../../store/reducers/roles/dean/students-slice';
 
 export const Students: FC<StudentsProps> = memo(() => {
   const goToWorkshop = useDeanWorkshop();
@@ -126,12 +126,27 @@ export const Students: FC<StudentsProps> = memo(() => {
     deanStudentsState.newSurname
   ]);
 
+
+
+  const deleteSubgroup = useCallback((onSuccess: () => void)=>{
+    dispatch(deleteSubgroupActionCreator({
+      authToken: authToken,
+      idSubgroup: deanStudentsState.selectedSubgroup.subgroup.idSubgroup,
+      onSuccess: onSuccess
+    }));
+  },[
+    dispatch,
+    authToken, 
+    deanStudentsState.selectedSubgroup.subgroup.idSubgroup,
+  ]);
+
   return (
       <StudentsView 
         onCreate={onCreate}
         setNewLastname={setNewLastname}
         clearForm={clearForm}
         setNewName={setNewName}
+        deleteSubgroup={deleteSubgroup}
         setNewSurname={setNewSurname}
         recoveryPasswordForStudent={recoveryPasswordForStudent}
         setSelectedStudent={setSelectedStudent}

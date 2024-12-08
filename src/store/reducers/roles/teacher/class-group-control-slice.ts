@@ -9,10 +9,10 @@ type ErrorType = string | null;
 export type GradeInfo = {
     idClass: number,
     idStudentGrate: number,
-    grade: string | null,
+    grade: number | null,
     idStudent: number,
     description: string | null,
-    attendance: 0 | 1 | 2
+    attendance: 0 | 1 | 2 | 3
 }
 
 export type InitScreenData = {
@@ -43,9 +43,9 @@ export type SubjectsState = {
     studentsStatistics: StatisticOfStudent[];
     errors: Record<string, ErrorType>;
     countClasses: number;
-
     selectedGrade: GradeInfo;
     loadingDelete: "idle" | "loading" | "success" | "error";
+    loadingUpdate: "idle" | "loading" | "success" | "error";
     loadingAdd: "idle" | "loading" | "success" | "error";
 };
 
@@ -54,6 +54,7 @@ const initialState: SubjectsState = {
     initData: null,
     studentsStatistics: [],
     errors: {},
+    loadingUpdate: 'idle',
     countClasses: 0,
 
     selectedGrade: {
@@ -62,7 +63,7 @@ const initialState: SubjectsState = {
         idStudentGrate: -1,
         grade: null,
         description: null,
-        attendance: 0 
+        attendance: 0
     },
     loadingAdd: 'idle',
     loadingDelete: 'idle'
@@ -82,7 +83,43 @@ export const classGroupControlSlice = createSlice({
         setStudentsStatisticsActionCreator(state, action: PayloadAction<StatisticOfStudent[]>) {
             state.studentsStatistics = action.payload;
         },
+        updateGradeActionCreator(state, action: PayloadAction<GradeInfo>) {
+            const updatedGrade = action.payload;
 
+            state.studentsStatistics = state.studentsStatistics.map((studentStatistic) => {
+                const updatedGradesForStudent = studentStatistic.grades.map((grade) => {
+                    if (grade.idStudentGrate === updatedGrade.idStudentGrate) {
+                        return { ...grade, ...updatedGrade };
+                    }
+                    return grade;
+                });
+
+                return {
+                    ...studentStatistic,
+                    grades: updatedGradesForStudent,
+                };
+            });
+        },
+        setGradeNumberActionCreator(state, action: PayloadAction<string>) {
+            const parsedGrade = action.payload.trim();
+
+            if (parsedGrade === "") {
+                state.selectedGrade.grade = null;
+            } else {
+                const numericGrade = Number(parsedGrade);
+
+                if (!isNaN(numericGrade))
+                    state.selectedGrade.grade = numericGrade;
+                else
+                    state.selectedGrade.grade = null;
+            }
+        },
+        setDescriptionActionCreator(state, action: PayloadAction<string>) {
+            state.selectedGrade.description = action.payload;
+        },
+        setAttendanceActionCreator(state, action: PayloadAction<0 | 1 | 2 | 3>) {
+            state.selectedGrade.attendance = action.payload;
+        },
         addClassToStudentsStatisticsActionCreator(state, action: PayloadAction<{ idClass: number; studentGrades: GradeInfo[] }>
         ) {
             const { idClass, studentGrades } = action.payload;
@@ -118,6 +155,17 @@ export const classGroupControlSlice = createSlice({
         setSelectedGradeActionCreator(state, action: PayloadAction<{gradeInfo: GradeInfo, onSuccess: () => void}>) {
             state.selectedGrade = action.payload.gradeInfo;
             action.payload.onSuccess();
+        },
+
+        clearSelectedGradeActionCreator(state) {
+            state.selectedGrade = {
+                 idClass: -1,
+                idStudent: -1,
+                idStudentGrate: -1,
+                grade: null,
+                description: null,
+                attendance: 0
+            }
         },
         setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData, onSuccess?: () => void}>) {
             state.initData = action.payload.initData;
@@ -160,6 +208,16 @@ export const classGroupControlSlice = createSlice({
             })
             .addCase(deleteClassActionCreator.rejected, (state) => {
                 state.loadingDelete = "idle";
+            })
+
+            .addCase(updateGradeActionCreator.fulfilled, (state) => {
+                state.loadingUpdate = 'success';
+            })
+            .addCase(updateGradeActionCreator.pending, (state) => {
+                state.loadingUpdate = 'loading';
+            })
+            .addCase(updateGradeActionCreator.rejected, (state) => {
+                state.loadingUpdate = "idle";
             })
     },
 });
@@ -234,9 +292,13 @@ export const addClassActionCreator = createAsyncThunk('teacher-class-add',
 
 export const updateGradeActionCreator = createAsyncThunk('teacher-class-update',
     async (data: { authToken: string, grade: GradeInfo, onSuccess: () => void}, thunkApi ) => {
-        const { authToken, grade } = data;
+        const { authToken, grade, onSuccess } = data;
         try {
+            const desc= grade.description?.trim() || null;
+            const response = await teacherApi.updateGrade(authToken, grade.idStudentGrate, grade.grade, desc === '' ? null : desc , grade.attendance );
             
+            thunkApi.dispatch(classGroupControlSlice.actions.updateGradeActionCreator(response));
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -269,7 +331,7 @@ function transformAndSortStudentsStatistics(input: {
         idStudentGrate: number;
         idStudent: number;
         idClass: number;
-        grade: string | null;
+        grade: number | null;
         description: string | null;
         attendance: 0 | 1 | 2;
     }[];

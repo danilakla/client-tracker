@@ -59,20 +59,36 @@ export const GenerateStudentsView: FC<GenerateStudentsViewProps> = memo(({
           ""
         );
         const workbook = XLSX.read(binaryStr, { type: 'binary' });
-
+  
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
-
+  
         const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: ["name", "lastname", "surname", "numberOfGroup", "specialty"]
-        }) as Student[];
-        
-        setStudents(jsonData);
+          header: ["fio", "numberOfGroup", "subgroup", "specialty"]
+        }) as { fio: string, numberOfGroup: string, subgroup: string, specialty: string }[];
+  
+        const students = jsonData.map((row) => {
+          const fioParts = row.fio.trim().split(" ");
+          const lastname = fioParts[0];
+          const name = fioParts[1];
+          const surname = fioParts[2];
+  
+          const numberOfGroup = `${row.numberOfGroup}.${row.subgroup}`;
+  
+          return {
+            name,
+            lastname,
+            surname,
+            numberOfGroup,
+            specialty: row.specialty,
+          };
+        });
+  
+        setStudents(students);
       };
       reader.readAsArrayBuffer(file);
     }
   }, [setStudents]);
-
 
   const handleButtonClick = useCallback(() => {
     fileInputRef.current?.click();
@@ -341,6 +357,8 @@ export const StudentView: FC<StudentViewProps> = memo(({
   data
 }) => {
 
+  const groupInfo = data.numberOfGroup.split('.');
+
   return (
     <Surface style={isMobile ? undefined : {width: 440}}>
         <Text themeFont={theme.fonts.h2}> 
@@ -356,7 +374,11 @@ export const StudentView: FC<StudentViewProps> = memo(({
         </Text>
         <Spacing themeSpace={10} variant='Column' />
         <Text themeFont={theme.fonts.ht2}> 
-          Группа - {data.numberOfGroup}
+          Группа - {groupInfo[0]}
+        </Text>
+        <Spacing themeSpace={10} variant='Column' />
+        <Text themeFont={theme.fonts.ht2}> 
+          Подгруппа - {groupInfo[1]}
         </Text>
         <Spacing themeSpace={10} variant='Column' />
         <Text themeFont={theme.fonts.ht2}> 

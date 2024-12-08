@@ -2,7 +2,6 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { teacherApi } from "../../../../api/auth/teacher-api";
-import { ClassGroupInfo } from "./subjects-slice";
 
 type ErrorType = string | null;
 
@@ -122,10 +121,11 @@ export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-c
                
                 const admissionYear = new Date(item.admissionDate).getFullYear();
                 const course = currentYear - admissionYear + 1;
+                const groupInfo = item.subgroupNumber.split('.');
             
                 return {
                     ...item,
-                    subgroupNumber: `${course} курс - ${item.subgroupNumber} группа`,
+                    subgroupNumber: `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
                     idClassGroupToSubgroup: classGroupToSubgroup?.idClassGroupToSubgroup || null
                 };
             });

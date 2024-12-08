@@ -17,6 +17,7 @@ import { Modal } from '../../../../../ui-kit/modal';
 import { Input } from '../../../../../ui-kit/input';
 import { Row } from '../../../../../ui-kit/row';
 import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-popup';
+import { Textarea } from '../../../../../ui-kit/textarea';
 
 export type ClassGroupPanelViewProps = {
   teacherClassGroupControlState: SubjectsState;
@@ -25,6 +26,10 @@ export type ClassGroupPanelViewProps = {
   updateGrade: (onSuccess: () => void) => void;
   deleteClass: (onSuccess: () => void) => void;
   createClass: (onSuccess: () => void) => void;
+  setGradeNumber: (value: string) => void;
+  setDescription: (value: string) => void;
+  setAttendance: (value: 0 | 1 | 2 | 3) => void;
+  clearSelectedGrade: () => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -33,7 +38,11 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   createClass,
   updateGrade,
   setSelectedGrade,
-  deleteClass
+  deleteClass,
+  setAttendance,
+  setDescription,
+  setGradeNumber,
+  clearSelectedGrade
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -60,6 +69,21 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     
   },[])
 
+  const [isOpenUpdateWindow, setIsOpenUpdateWindow] = useState<boolean>(false);
+  
+  const closeUpdateWindow = useCallback(() => {
+    setIsOpenUpdateWindow(false);
+    clearSelectedGrade();
+  },[clearSelectedGrade])
+
+  const openUpdateWindow = useCallback((value: GradeInfo) => {
+    setSelectedGrade(value, () => setIsOpenUpdateWindow(true));
+  },[setSelectedGrade])
+
+  const confirmUpdate = useCallback(() => {
+    updateGrade(closeUpdateWindow);
+  },[updateGrade, closeUpdateWindow])
+
   return (
     <>
       {
@@ -68,11 +92,25 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           openAddPopup={openAddPopup}
           teacherClassGroupControlState={teacherClassGroupControlState}
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
+          setAttendance={setAttendance}
+          setDescription={setDescription}
+          setGradeNumber={setGradeNumber}
+          openUpdateWindow={openUpdateWindow}
+          closeUpdateWindow={closeUpdateWindow}
+          confirmUpdate={confirmUpdate}
+          isOpenUpdateWindow={isOpenUpdateWindow}
           />) :
         (<ClassGroupPanelDesktopView
           openAddPopup={openAddPopup}
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           teacherClassGroupControlState={teacherClassGroupControlState}
+          setAttendance={setAttendance}
+          setDescription={setDescription}
+          openUpdateWindow={openUpdateWindow}
+          setGradeNumber={setGradeNumber}
+          closeUpdateWindow={closeUpdateWindow}
+          confirmUpdate={confirmUpdate}
+          isOpenUpdateWindow={isOpenUpdateWindow}
           />)
       }
       <Popup isActive={isOpenAddPopup} closePopup={closeAddPopup}>
@@ -95,7 +133,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
       </Popup>
       <ConfirmDeletePopup 
         cancelDelete={closeDeletePopup}
-        isActive={false} 
+        isActive={isOpenDeletePopup} 
         state={teacherClassGroupControlState.loadingDelete}
         onDelete={confirmDeletePopup} />
     </>
@@ -107,12 +145,26 @@ type LocalViewProps = {
   teacherClassGroupControlState: SubjectsState;
   goToTeacherClassGroupSubgroups: () => void;
   openAddPopup: () => void;
+  setGradeNumber: (value: string) => void;
+  setDescription: (value: string) => void;
+  setAttendance: (value: 0 | 1 | 2 | 3) => void;
+  isOpenUpdateWindow: boolean;
+  closeUpdateWindow: () => void;
+  confirmUpdate: () => void;
+  openUpdateWindow: (value: GradeInfo) => void;
 };
 
 export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   teacherClassGroupControlState,
   goToTeacherClassGroupSubgroups,
-  openAddPopup
+  openAddPopup,
+  isOpenUpdateWindow,
+  setAttendance,
+  setDescription,
+  setGradeNumber,
+  closeUpdateWindow,
+  openUpdateWindow,
+  confirmUpdate
 }) => {
 
   return (
@@ -123,13 +175,17 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface>
           <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
-            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>{teacherClassGroupControlState.initData?.classGroup.subjectName}</span><br/>
-            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>{teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
-            Подгруппа: <span style={{fontFamily: theme.fonts.ht2.family}}>{teacherClassGroupControlState.initData?.subgroup.subgroupNumber}</span>
+            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {teacherClassGroupControlState.initData?.classGroup.subjectName}</span><br/>
+            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
+            Подгруппа: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {teacherClassGroupControlState.initData?.subgroup.subgroupNumber}</span>
           </Text>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
             <StudentsTable 
+              onClickGrade={openUpdateWindow}
               length={teacherClassGroupControlState.countClasses}
               data={teacherClassGroupControlState.studentsStatistics}/> :
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
@@ -142,41 +198,50 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
             </Button>}
         </Surface>
       </>}
-      <Modal isActive={false} closeModal={() => {}}>
+      <Modal isActive={isOpenUpdateWindow} closeModal={closeUpdateWindow}>
         <Column horizontalAlign='center'>
-          <Input 
-            header='Оценка' 
-            placeholder='9' error={teacherClassGroupControlState.errors['universityNameError']}
-            value={''} setValue={() => {}}/>
-          <Spacing themeSpace={25} variant='Column' />
-          <Input 
-            header='Примечание' 
-            placeholder='Ай, красавчик...' error={teacherClassGroupControlState.errors['universityNameError']}
-            value={''} setValue={() => {}}/>
-          <Spacing themeSpace={25} variant='Column' />
-          <Column style={{maxWidth: 440}}>
+          <Column style={{maxWidth: 440}} horizontalAlign='center'>
             <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
               Присутствие
             </Text>
-            <Spacing variant='Column' themeSpace={5}/>
-            <Surface style={{width: 'auto'}} padding='15px'>
-              <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
-                <ColorCircleButton variant={1} isSelected={true} />
-                <ColorCircleButton variant={2} isSelected={true} />
-                <ColorCircleButton variant={3} isSelected={true} />
-              </Row>
-            </Surface>
+            <Spacing variant='Column' themeSpace={15}/>
+            <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
+              <ColorCircleButton 
+                variant={0} onClick={() => setAttendance(0)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 0} />
+              <ColorCircleButton 
+                variant={1} onClick={() => setAttendance(1)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 1} />
+              <ColorCircleButton 
+                variant={2} onClick={() => setAttendance(2)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 2} />
+              <ColorCircleButton 
+                variant={3} onClick={() => setAttendance(3)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 3} />
+            </Row>
           </Column>
+          <Spacing themeSpace={25} variant='Column' />
+          <Input 
+            header='Оценка' 
+            placeholder='9' error={teacherClassGroupControlState.errors['gradeNumberError']}
+            value={teacherClassGroupControlState.selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
+          <Spacing themeSpace={25} variant='Column' />
+          <Textarea
+            value={teacherClassGroupControlState.selectedGrade.description || ''}
+            placeholder='Примечание...' 
+            height={120} setValue={setDescription}
+            error={teacherClassGroupControlState.errors['descriptionError']}
+            header='Примечание' />
           <Spacing themeSpace={25} variant='Column' />
           <Row>
             <Button 
-              onClick={() => {}} 
-              state={'idle'} 
+              onClick={confirmUpdate} 
+              state={teacherClassGroupControlState.loadingUpdate} 
               variant='recomended' padding={[12,17]}>
               Сохранить
             </Button>
             <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={() => {}} variant='attentive' padding={[12,17]}>
+            <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
               Отмена
             </Button>
           </Row>
@@ -186,11 +251,99 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   );
 });
 
-export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(() => {
+export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
+  teacherClassGroupControlState,
+  goToTeacherClassGroupSubgroups,
+  openAddPopup,
+  isOpenUpdateWindow,
+  setAttendance,
+  setDescription,
+  setGradeNumber,
+  closeUpdateWindow,
+  openUpdateWindow,
+  confirmUpdate
+}) => {
 
   return (
-    <WrapperDesktop role='ROLE_TEACHER' header='Предметы'>
-
+    <WrapperDesktop onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' header='Таблица'>
+{teacherClassGroupControlState.loading === 'loading' ?
+      <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <CircleLoading state={teacherClassGroupControlState.loading}/>
+      </Column> : <>
+        <Surface style={{width: 900}}>
+          <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
+            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {teacherClassGroupControlState.initData?.classGroup.subjectName}</span><br/>
+            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
+            Подгруппа: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {teacherClassGroupControlState.initData?.subgroup.subgroupNumber}</span>
+          </Text>
+          <Spacing themeSpace={20} variant='Column' />
+          {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
+            <StudentsTable 
+              onClickGrade={openUpdateWindow}
+              length={teacherClassGroupControlState.countClasses}
+              data={teacherClassGroupControlState.studentsStatistics}/> :
+            <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
+              Студенты не найдены
+            </Text>}
+          <Spacing themeSpace={20} variant='Column' />
+          {teacherClassGroupControlState.studentsStatistics.length !== 0 && 
+            <Button onClick={openAddPopup} variant='primary' padding={[12, 17]}>
+              Добавить занятие
+            </Button>}
+        </Surface>
+      </>}
+      <Popup isActive={isOpenUpdateWindow} closePopup={closeUpdateWindow}>
+        <Column style={{width: 440}} horizontalAlign='center'>
+          <Column style={{maxWidth: 440}} horizontalAlign='center'>
+            <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+              Присутствие
+            </Text>
+            <Spacing variant='Column' themeSpace={15}/>
+            <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
+              <ColorCircleButton 
+                variant={0} onClick={() => setAttendance(0)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 0} />
+              <ColorCircleButton 
+                variant={1} onClick={() => setAttendance(1)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 1} />
+              <ColorCircleButton 
+                variant={2} onClick={() => setAttendance(2)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 2} />
+              <ColorCircleButton 
+                variant={3} onClick={() => setAttendance(3)}
+                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 3} />
+            </Row>
+          </Column>
+          <Spacing themeSpace={25} variant='Column' />
+          <Input 
+            header='Оценка' 
+            placeholder='9' error={teacherClassGroupControlState.errors['gradeNumberError']}
+            value={teacherClassGroupControlState.selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
+          <Spacing themeSpace={25} variant='Column' />
+          <Textarea
+            value={teacherClassGroupControlState.selectedGrade.description || ''}
+            placeholder='Примечание...' 
+            height={120} setValue={setDescription}
+            error={teacherClassGroupControlState.errors['descriptionError']}
+            header='Примечание' />
+          <Spacing themeSpace={25} variant='Column' />
+          <Row>
+            <Button 
+              onClick={confirmUpdate} 
+              state={teacherClassGroupControlState.loadingUpdate} 
+              variant='recomended' padding={[12,17]}>
+              Сохранить
+            </Button>
+            <Spacing variant='Row' themeSpace={20}/>
+            <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
+              Отмена
+            </Button>
+          </Row>
+        </Column>
+      </Popup>
     </WrapperDesktop>
   );
 });
@@ -200,12 +353,14 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(() => {
 
 export type StudentsTableProps = {
   data: StatisticOfStudent[];
-  length: number
+  length: number;
+  onClickGrade: (value: GradeInfo) => void
 };
 
 export const StudentsTable: FC<StudentsTableProps> = memo(({
   data,
-  length
+  length,
+  onClickGrade
 }) => {
 
   const container1Ref = useRef<HTMLDivElement>(null);
@@ -259,7 +414,8 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
           </StudentsContainer>
           <ClassesContainer ref={container2Ref} onScroll={handleScroll}>
             {data.map(item=> <ClassesRow>
-              {item.grades.map(item => <ClassItem key={item.idStudent}>
+              {item.grades.map((item) => <ClassItem 
+              onClick={() => onClickGrade(item)} >
                 {item.description !== null && <ExistMark/>}
                 {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
                   {item.grade}

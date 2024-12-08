@@ -9,7 +9,6 @@ import { UniversityInfoState } from '../../../../../store/reducers/profile/unive
 import { Surface } from '../../../../../ui-kit/surface';
 import { Text } from '../../../../../ui-kit/text';
 import { Column } from '../../../../../ui-kit/column';
-import { ScrollView } from '../../../../../ui-kit/scroll-view';
 import { Spacing } from '../../../../../ui-kit/spacing';
 import { CircleLoading } from '../../../../../ui-kit/circle-loading';
 
@@ -50,45 +49,45 @@ export const UniversityInfoMobileView: FC<UniversityInfoViewProps> = memo(({
 
   return (
     <WrapperMobile onBack={goToProfile} role={user.role} header='Университет'>
-      <Surface padding='25px'>
-        <Column style={{height: 400, position: 'relative'}}>
-          {universityInfoState.loading === 'loading' ?
-          (<CircleLoading state={universityInfoState.loading} />) :
-          (<ScrollView>
-            <Text 
-              themeFont={theme.fonts.h2} 
-              themeColor={theme.colors.gray}>
-              Название
-            </Text>
-            <Spacing themeSpace={10} variant='Column' />
-            <Text 
-              themeFont={theme.fonts.h2} 
-              style={{
-                wordBreak: 'break-word',
-                overflow: 'hidden', 
-                textOverflow: 'ellipsis'
-              }} 
-              themeColor={theme.colors.nothing}>
-              {universityInfoState.university.name}
-            </Text>
-            <Spacing themeSpace={25} variant='Column' />
-            <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
-              Описание
-            </Text>
-            <Spacing themeSpace={10} variant='Column' />
-            <Text 
-              style={{
-                wordBreak: 'break-word',
-                overflow: 'hidden', 
-                textOverflow: 'ellipsis'
-              }} 
-              themeFont={theme.fonts.h2} 
-              themeColor={theme.colors.nothing}>
-              {universityInfoState.university.description === '' ? 'Не указано' : universityInfoState.university.description}
-            </Text>
-          </ScrollView>)}
-        </Column>
-      </Surface>
+      {universityInfoState.loading === 'loading' ?
+        (<Column style={{position: 'absolute', height: '100vh', top: 0}}>
+          <CircleLoading state={universityInfoState.loading}/>
+        </Column>) :
+        (<Surface padding='25px'>
+          <Column>
+              <Text 
+                themeFont={theme.fonts.h2} 
+                themeColor={theme.colors.gray}>
+                Название
+              </Text>
+              <Spacing themeSpace={10} variant='Column' />
+              <Text 
+                themeFont={theme.fonts.h2} 
+                style={{
+                  wordBreak: 'break-word',
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis'
+                }} 
+                themeColor={theme.colors.nothing}>
+                {universityInfoState.university.name}
+              </Text>
+              <Spacing themeSpace={25} variant='Column' />
+              <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
+                Описание
+              </Text>
+              <Spacing themeSpace={10} variant='Column' />
+              <Text 
+                style={{
+                  wordBreak: 'break-word',
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis'
+                }} 
+                themeFont={theme.fonts.h2} 
+                themeColor={theme.colors.nothing}>
+                {universityInfoState.university.description === '' ? 'Не указано' : universityInfoState.university.description}
+              </Text>
+          </Column>
+      </Surface>)}
     </WrapperMobile>
   );
 });
@@ -101,10 +100,12 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
 
   return (
     <WrapperDesktop onBack={goToProfile} isCenter={true} role={user.role} header='Университет'>
-      {universityInfoState.loading === 'loading' ? (<CircleLoading state={universityInfoState.loading} />) :
+      {universityInfoState.loading === 'loading' ? (
+        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+          <CircleLoading state={universityInfoState.loading}/>
+        </Column>) :
       (<Surface padding='40px' style={{width: 'auto'}}>
-        <Column style={{width: 500, height: 440}}>
-          <ScrollView>
+        <Column style={{width: 500}}>
             <Text 
               themeFont={theme.fonts.h2} 
               themeColor={theme.colors.gray}>
@@ -136,7 +137,6 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
               themeColor={theme.colors.nothing}>
               {universityInfoState.university.description === '' ? 'Не указано' : universityInfoState.university.description}
             </Text>
-          </ScrollView>
         </Column>
       </Surface>)}
     </WrapperDesktop>

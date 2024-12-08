@@ -22,6 +22,7 @@ import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
 import { Popup } from '../../../../../../ui-kit/popup';
 import { Text } from '../../../../../../ui-kit/text';
 import { Surface } from '../../../../../../ui-kit/surface';
+import { ConfirmDeletePopup } from '../../../../../../components/confirm-delete-popup';
 
 export type ClassGroupsDetailsViewProps = {
   goToClassGroups: () => void;
@@ -33,6 +34,7 @@ export type ClassGroupsDetailsViewProps = {
   setSearchText: (value: string) => void;
   filteredSubgroups: SubgroupDetails[];
   createClassGroup: () => void;
+  deleteClassGroup: () => void;
   filteredSubgroupsWindow: SubgroupDetails[];
   setSearchTextWindow: (value: string) => void;
   updateClassGroup: () => void;
@@ -45,6 +47,7 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
   setSelectedClassFormat,
   setDescription,
   setSelectedTeacher,
+  deleteClassGroup,
   createClassGroup,
   updateClassGroup,
   setSearchText,
@@ -62,8 +65,17 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
     setSearchTextWindow('');
   },[isOpenSubgroups, setSearchTextWindow])
 
+  const [isOpenDeletePopup, setIsOpenDeletePopup] = useState<boolean>(false);
+  const openDeletePopup = useCallback(() => {
+    setIsOpenDeletePopup(true);
+  },[])
+  const closeDeletePopup = useCallback(() => {
+    setIsOpenDeletePopup(false);
+  },[])
+
   return (
-    isMobile ? 
+    <>{
+      isMobile ? 
       (<ClassGroupsDetailsMobileView
         controlSubroupsWindow={controlSubroupsWindow}
         isOpenSubgroups={isOpenSubgroups}
@@ -78,6 +90,7 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
         filteredSubgroupsWindow={filteredSubgroupsWindow}
         deanClassGroupDetailsState={deanClassGroupDetailsState}
         goToClassGroups={goToClassGroups}
+        openDeletePopup={openDeletePopup}
         createClassGroup={createClassGroup}
         type={type}
         />) :
@@ -89,6 +102,7 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
         switchIsExistByIndex={switchIsExistByIndex}
         updateClassGroup={updateClassGroup}
         filteredSubgroupsWindow={filteredSubgroupsWindow}
+        openDeletePopup={openDeletePopup}
         setSearchText={setSearchText}
         setSearchTextWindow={setSearchTextWindow}
         setSelectedClassFormat={setSelectedClassFormat}
@@ -98,6 +112,13 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
         goToClassGroups={goToClassGroups}
         type={type}
         />)
+    }
+    <ConfirmDeletePopup 
+        cancelDelete={closeDeletePopup}
+        isActive={isOpenDeletePopup} 
+        state={deanClassGroupDetailsState.loadingDelete}
+        onDelete={deleteClassGroup} /></>
+    
   );
 });
 
@@ -117,6 +138,7 @@ type LocalViewProps = {
   filteredSubgroupsWindow: SubgroupDetails[];
   setSearchText: (value: string) => void;
   setSearchTextWindow: (value: string) => void;
+  openDeletePopup: () => void;
 };
 
 export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
@@ -133,6 +155,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
   updateClassGroup,
   isOpenSubgroups,
   switchIsExistByIndex,
+  openDeletePopup,
   type,
   setSelectedTeacher
 }) => {
@@ -199,6 +222,11 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
               <ActionButton text={item.subgroupNumber} isShowArrow={false}/>)
           }
           </ItemsContainerMobile>
+          <Spacing themeSpace={25} variant='Column' />
+         {type === 'edit' && 
+          <Button borderRaius={10} onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
+            Удалить группу занятий
+          </Button>}
         </>)
       }
       <Modal padding='none' isActive={isOpenSubgroups} closeModal={controlSubroupsWindow}>
@@ -237,6 +265,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
   setSearchTextWindow,
   updateClassGroup,
   isOpenSubgroups,
+  openDeletePopup,
   switchIsExistByIndex,
   type,
   setSelectedTeacher
@@ -261,7 +290,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                     {type === 'add' ? 'Добавить группу занятий' : 'Сохранить изменения'}
                   </Button>
                   <Spacing themeSpace={20} variant='Row' />
-                  <Button onClick={goToClassGroups} variant='attentive' padding={[12,17]}>
+                  <Button onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
                     Удалить группу занятий
                   </Button>
               </Row>

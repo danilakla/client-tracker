@@ -40,6 +40,7 @@ export type StudentsViewProps = {
   setNewSurname: (value: string) => void;
   setSelectedSubgroup: (value: SubgroupInfoState) => void;
   setSelectedStudent: (value: StudentInfoState) => void;
+  deleteSubgroup: (onSuccess: () => void) => void;
 };
 
 export const StudentsView: FC<StudentsViewProps> = memo(({
@@ -47,6 +48,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
   deanStudentsState,
   setSearchStudents,
   setSearchSubgroups,
+  deleteSubgroup,
   onCreate,
   setNewLastname,
   clearForm,
@@ -162,6 +164,24 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
     onCreate(cancelCreateAccountData);
   },[onCreate, cancelCreateAccountData])
 
+  const [isOpenDeleteSubgroupPopup, setIsOpenDeleteSubgroupPopup] = useState<boolean>(false);
+
+  const openDeleteSubgroupPopup = useCallback(() => {
+    setIsOpenDeleteSubgroupPopup(true);
+  },[])
+  const closeDeleteSubgroupPopup = useCallback(() => {
+    setIsOpenDeleteSubgroupPopup(false);
+  },[])
+
+  const afterDeleteSubgroupPopup = useCallback(() => {
+    setIsOpenDeleteSubgroupPopup(false);
+    setCurrentScreen('all');
+  },[])
+
+  const onDeleteSubgroup = useCallback(() => {
+    deleteSubgroup(afterDeleteSubgroupPopup);
+  },[deleteSubgroup, afterDeleteSubgroupPopup])
+
   return (
     <>
     <Column style={{position: 'absolute', height: '100vh', top: 0, zIndex: -1}}>
@@ -180,6 +200,8 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
             onClick={goToSubgroupDetails}
             data={deanStudentsState.subgroups} />
           <SubgroupView
+            openDeleteSubgroupPopup={openDeleteSubgroupPopup}
+            loadingDelete={deanStudentsState.loadingDelete}
             openCreateStudentPopup={openCreateStudentPopup}
             search={deanStudentsState.searchStudents}
             setSearch={setSearchStudents}
@@ -208,6 +230,8 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
             onClick={goToSubgroupDetails}
             data={deanStudentsState.subgroups} />}
           {currentScreen === 'subgroup' && <SubgroupView
+            loadingDelete={deanStudentsState.loadingDelete}
+            openDeleteSubgroupPopup={openDeleteSubgroupPopup}
             openCreateStudentPopup={openCreateStudentPopup}
             search={deanStudentsState.searchStudents}
             setSearch={setSearchStudents}
@@ -272,6 +296,11 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
       isActive={isOpenConfirmDeletePopup} 
       state={deanStudentsState.loadingDelete}
       onDelete={onClickDelete} />
+    <ConfirmDeletePopup 
+        cancelDelete={closeDeleteSubgroupPopup}
+        isActive={isOpenDeleteSubgroupPopup} 
+        state={deanStudentsState.loadingDelete}
+        onDelete={onDeleteSubgroup} />
     </>
   );
 });
@@ -339,6 +368,8 @@ type SubgroupViewProps = {
   openCreateStudentPopup: () => void;
   setSearch: (value: string) => void;
   onClick: (value: StudentInfoState) => void; 
+  openDeleteSubgroupPopup: () => void;
+  loadingDelete: "idle" | "loading" | "success" | "error";
 }
 
 export const SubgroupView: FC<SubgroupViewProps> = memo(({
@@ -347,6 +378,8 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
   search,
   openCreateStudentPopup,
   onClick,
+  loadingDelete,
+  openDeleteSubgroupPopup,
   setSearch
 }) => {
   const [filteredData, setFilteredData] = useState<StudentInfoState[]>([]);
@@ -361,32 +394,43 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
       setFilteredData(filteredStudents);
   }, [data.students, search]);
 
+ 
+
   return (
     isMobile ? (<Column horizontalAlign='center'>
-      <Row style={{width: '100%', maxWidth: 440}}>
-        <Search value={search} setValue={setSearch}/>
-        <Spacing themeSpace={10} variant='Row' />
-        <Button onClick={openCreateStudentPopup} borderRaius={10} variant='primary' padding={[12,10]}>
-          Добавить
+        <Row style={{width: '100%', maxWidth: 440}}>
+          <Search value={search} setValue={setSearch}/>
+          <Spacing themeSpace={10} variant='Row' />
+          <Button onClick={openCreateStudentPopup} borderRaius={10} variant='primary' padding={[12,10]}>
+            Добавить
+          </Button>
+        </Row>
+        <Spacing themeSpace={20} variant='Column' />
+        {
+          filteredData.map((item) => <>
+            <ActionButton onClick={() => onClick(item)} text={item.flpName} />
+            <Spacing themeSpace={10} variant='Column' />
+          </>)
+        }
+        <Spacing themeSpace={15} variant='Column' />
+        <Button borderRaius={10} onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
+          Удалить подгруппу
         </Button>
-      </Row>
-      <Spacing themeSpace={20} variant='Column' />
-      {
-        filteredData.map((item) => <>
-          <ActionButton onClick={() => onClick(item)} text={item.flpName} />
-          <Spacing themeSpace={10} variant='Column' />
-        </>)
-      }
-    </Column>) : (<Column horizontalAlign='center' style={{width: 695}}>
+      </Column>) : (
+      <Column horizontalAlign='center' style={{width: 695}}>
         <Row style={{width: '100%'}}>
           <Search isMobile={false} 
             value={search} 
             setValue={setSearch}/>
-          <Spacing themeSpace={20} variant='Row' />
+          <Spacing themeSpace={15} variant='Row' />
           <Button onClick={openCreateStudentPopup} borderRaius={10} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
-        </Row>
+          <Spacing themeSpace={15} variant='Row' />
+          <Button style={{flexShrink: 0}} borderRaius={10} onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
+            Удалить подгруппу
+          </Button>
+          </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
           {filteredData.map((item) => <>

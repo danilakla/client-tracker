@@ -92,12 +92,14 @@ export const studentsSlice = createSlice({
             state.subgroups = action.payload.map(subgroup => {
                 const admissionYear = new Date(subgroup.subgroup.admissionDate).getFullYear();
                 const course = currentYear - admissionYear + 1;
+
+                const groupInfo = subgroup.subgroup.subgroupNumber.split('.');
                     
                 return {
                     ...subgroup,
                     subgroup: {
                         ...subgroup.subgroup,
-                        subgroupNumber: `${course} курс - ${subgroup.subgroup.subgroupNumber} группа`
+                        subgroupNumber: `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`
                     },
                     students: subgroup.students.map(student => ({
                         ...student,
@@ -105,6 +107,24 @@ export const studentsSlice = createSlice({
                     }))
                 };
             });
+        },
+        removeSubgroupByIdActionCreator(state, action: PayloadAction<number>) {
+            const idSubgroupToDelete = action.payload;
+        
+            state.subgroups = state.subgroups.filter(subgroup => subgroup.subgroup.idSubgroup !== idSubgroupToDelete);
+        
+            if (state.selectedSubgroup.subgroup.idSubgroup === idSubgroupToDelete) {
+                state.selectedSubgroup = {
+                    subgroup: {
+                        idSubgroup: -1,
+                        subgroupNumber: '',
+                        admissionDate: '',
+                        idDean: -1,
+                        idSpecialty: -1
+                    },
+                    students: []
+                };
+            }
         },
         deleteStudentByIdActionCreator(state, action: PayloadAction<number>) {
             const studentId = action.payload;
@@ -277,6 +297,16 @@ export const studentsSlice = createSlice({
             .addCase(createStudentActionCreator.rejected, (state) => {
                 state.loadingAdd = "idle";
             })
+
+            .addCase(deleteSubgroupActionCreator.fulfilled, (state) => {
+                state.loadingDelete = 'success';
+            })
+            .addCase(deleteSubgroupActionCreator.pending, (state) => {
+                state.loadingDelete = 'loading';
+            })
+            .addCase(deleteSubgroupActionCreator.rejected, (state) => {
+                state.loadingDelete = "idle";
+            })
             
     },
 });
@@ -411,6 +441,24 @@ export const updateStudentActionCreator = createAsyncThunk('dean-students/update
 
             const response = await deanApi.updateStudent(authToken, id, lastname, name, surname);
             thunkApi.dispatch(studentsSlice.actions.updateStudentByIdActionCreator(response));
+            onSuccess?.();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
+
+export const deleteSubgroupActionCreator = createAsyncThunk('dean-students/delete-subgroup',
+    async (data: {authToken: string, idSubgroup: number,onSuccess: () => void}, thunkApi ) => {
+        const { authToken, idSubgroup, onSuccess } = data;
+        try {
+            const response = await deanApi.deleteSubgroup(authToken, idSubgroup);
+            thunkApi.dispatch(studentsSlice.actions.removeSubgroupByIdActionCreator(idSubgroup));
             onSuccess?.();
         }
         catch (e) {
