@@ -20,5 +20,5 @@ export const WrapperPopap = styled.div<{
     pointer-events: ${({ isActive }) => isActive? "all" : "none"};
     opacity: ${({ isActive }) => (isActive ? "1" : "0")};
     visibility: ${({ isActive }) => (isActive ? "visible" : "hidden")};
-    transition: opacity 0.3s ease, visibility 0.5s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 `

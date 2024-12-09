@@ -1,4 +1,4 @@
-import { FC, memo, useCallback } from 'react';
+import { FC, memo, useCallback, useEffect } from 'react';
 import { LoginProps, useLogInParent, useLogInUser } from './login.props';
 import { LoginView } from './login.view';
 import { useAppDispatch, useTypedSelector } from '../../../hooks/use-typed-selector';
@@ -77,6 +77,12 @@ export const Login: FC<LoginProps> = memo(({typeOfLogin}) => {
         goToLogInUser(); 
     }
   },[typeOfLogin, goToLogInParent, reset, goToLogInUser, dispatch]) 
+
+  useEffect(() => {
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch, reset]);
 
   return (
       <LoginView 

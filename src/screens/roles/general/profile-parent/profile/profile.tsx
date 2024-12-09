@@ -24,6 +24,7 @@ export const Profile: FC<ProfileProps> = memo(() => {
 
   const exitAccount = useCallback(() => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('role');
     dispatch(userSlice.actions.reset());
     goToLogin();
     dispatch(appStatusSlice.actions.setStatusApp({status: 'idle'}));

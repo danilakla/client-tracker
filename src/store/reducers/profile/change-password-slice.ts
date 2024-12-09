@@ -103,7 +103,6 @@ export const changePasswordActionCreator = createAsyncThunk('profile/change-pass
 
             await userApi.changePassword(authToken, oldPassword, newPassword);
             onSuccess?.();
-            thunkApi.dispatch(changePasswordSlice.actions.reset());
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

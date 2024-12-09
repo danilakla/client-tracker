@@ -30,31 +30,31 @@ export const ScrollWrapper = styled.div`
 
   max-height: 140px;
 
-  @media (min-height: 610px) {
+  @media (min-height: 670px) {
     max-height: 210px;
   }
 
-  @media (min-height: 680px) {
+  @media (min-height: 740px) {
     max-height: 280px;
   }
 
-  @media (min-height: 750px) {
+  @media (min-height: 810px) {
     max-height: 350px;
   }
 
-  @media (min-height: 820px) {
+  @media (min-height: 880px) {
     max-height: 420px;
   }
 
-  @media (min-height: 890px) {
+  @media (min-height: 950px) {
     max-height: 490px;
   }
 
-  @media (min-height: 960px) {
+  @media (min-height: 1020px) {
     max-height: 560px;
   }
 
-  @media (min-height: 1030px) {
+  @media (min-height: 1080px) {
     max-height: 630px;
   }
 `;

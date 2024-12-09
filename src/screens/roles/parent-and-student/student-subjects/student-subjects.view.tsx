@@ -15,7 +15,7 @@ import { GridContainer } from '../../../../ui-kit/grid-container';
 import { ActionBlockButton } from '../../../../ui-kit/action-block-button';
 
 export type StudentSubjectsViewProps = {
-  role: "ROLE_PARENT" | "ROLE_STUDENT";
+  role: "ROLE_STUDENT" | "ROLE_PARENTS";
   setSearchText: (value: string) => void;
   studentSubjectsState: StudentSubjectsState;
   goToClassGroups: (value: ClassGroupInfo[], subjectName: string) => void;

@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { studentApi } from "../../../../api/auth/student-api";
+import { parentApi } from "../../../../api/auth/parent-api";
 
 type ErrorType = string | null;
 
@@ -76,10 +77,11 @@ export const studentSubjectsSlice = createSlice({
 });
 
 export const initStudentSubjectsActionCreator = createAsyncThunk('student-subjects-slice/init',
-    async (data: { authToken: string}, thunkApi ) => {
-        const { authToken } = data;
+    async (data: { authToken: string, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
+        const { authToken, role } = data;
         try {
-            const response = await studentApi.getSubjects(authToken);
+            const response = role === 'ROLE_PARENTS' ? 
+                await parentApi.getSubjects(authToken) : await studentApi.getSubjects(authToken)
 
             const groupedSubjects = groupBySubjectName(response);
             thunkApi.dispatch(studentSubjectsSlice.actions.setSubjectsActionCreator(groupedSubjects));

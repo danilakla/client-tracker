@@ -42,6 +42,10 @@ export const getUserInfoActionCreator = createAsyncThunk('user/info',
             const responce = await userApi.getUserInfo(authToken);
             thunkApi.dispatch(userSlice.actions.setAuthTockenActionCreater(authToken));
             thunkApi.dispatch(userSlice.actions.setUserActionCreater(responce));
+
+            if(localStorage.getItem('role') === 'ROLE_PARENTS'){
+                thunkApi.dispatch(userSlice.actions.setUserRoleActionCreater('ROLE_PARENTS'));
+            }
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

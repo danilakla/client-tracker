@@ -9,10 +9,13 @@ import { ItemsContainerMobile } from '../../dean/workshop-parent/subjects-parent
 import { Spacing } from '../../../../ui-kit/spacing';
 import { Search } from '../../../../ui-kit/search';
 import { ActionButton } from '../../../../ui-kit/action-button';
+import { Column } from '../../../../ui-kit/column';
+import { GridContainer } from '../../../../ui-kit/grid-container';
+import { ActionBlockButton } from '../../../../ui-kit/action-block-button';
 
 export type StudentClassGroupsViewProps = {
   filteredClassGroups: ClassGroupInfo[];
-  role: "ROLE_STUDENT" | "ROLE_PARENT";
+  role: "ROLE_STUDENT" | "ROLE_PARENTS";
   nameSubject: string;
   goToTable: (classGroup: ClassGroupInfo) => void;
   setSearchText: (value: string) => void;
@@ -78,11 +81,29 @@ export const StudentClassGroupsMobileView: FC<StudentClassGroupsViewProps> = mem
   );
 });
 
-export const StudentClassGroupsDesktopView: FC<StudentClassGroupsViewProps> = memo(() => {
+export const StudentClassGroupsDesktopView: FC<StudentClassGroupsViewProps> = memo(({
+  filteredClassGroups,
+  setSearchText,
+  nameSubject,
+  searchText,
+  goToTable,
+  role,
+  goToStudentSubjects
+}) => {
 
   return (
-    <WrapperDesktop role='ROLE_ADMIN' header='my profile'>
-
+    <WrapperDesktop onBack={goToStudentSubjects} role={role} header={nameSubject}>
+      <Column horizontalAlign='center' style={{width: 695}}>
+        <Search isMobile={false} value={searchText} setValue={setSearchText}/>
+        <Spacing themeSpace={30} variant='Column' />
+        <GridContainer columns={4}>
+          {filteredClassGroups.map((item) => <>
+            <ActionBlockButton 
+              onClick={() => goToTable(item)} 
+              text={item.description} />
+            </>)}
+        </GridContainer>
+      </Column>
     </WrapperDesktop>
   );
 });

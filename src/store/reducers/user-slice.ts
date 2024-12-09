@@ -6,7 +6,7 @@ export type UserErrors = {
     passwordError: string | null;
 };
 
-export type UserRole = "ROLE_ADMIN" | "ROLE_TEACHER" | "ROLE_STUDENT" | "ROLE_DEAN" | "ROLE_PARENT" | "UNDEFINED";
+export type UserRole = "ROLE_ADMIN" | "ROLE_TEACHER" | "ROLE_STUDENT" | "ROLE_DEAN" | "ROLE_PARENTS" | "UNDEFINED";
 
 export type UserData = {
     login: string,
@@ -39,6 +39,9 @@ export const userSlice = createSlice({
     reducers: {
         setUserActionCreater(state, action: PayloadAction<UserData>) {
             state.user = action.payload;
+        },
+        setUserRoleActionCreater(state, action: PayloadAction<UserRole>) {
+            state.user.role = action.payload;
         },
         setAuthTockenActionCreater(state, action: PayloadAction<string>) {
             state.authToken = action.payload;

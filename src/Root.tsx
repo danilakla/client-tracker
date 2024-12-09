@@ -119,15 +119,15 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.deanGenerateStudents} element={<DeanGenerateStudents/>}/>
           <Route path={urls.deanStudents} element={<DeanStudents/>}/>
         </>}
-        {user.role === 'ROLE_PARENT' && <>
+        {user.role === 'ROLE_PARENTS' && <>
           <Route index element={<Navigate to={urls.profile} />} />
 
           <Route path={urls.profile} element={<Profile/>}/>
           <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
 
-          <Route path={urls.studentSubjects} element={<StudentSubjects role='ROLE_PARENT' />} />
-          <Route path={urls.studentClassGroups} element={<StudentClassGroups role='ROLE_PARENT'/>} />
-          <Route path={urls.studentClassGroupTable} element={<StudentClassGroupTable role='ROLE_PARENT'/>} />
+          <Route path={urls.studentSubjects} element={<StudentSubjects role='ROLE_PARENTS' />} />
+          <Route path={urls.studentClassGroups} element={<StudentClassGroups role='ROLE_PARENTS'/>} />
+          <Route path={urls.studentClassGroupTable} element={<StudentClassGroupTable role='ROLE_PARENTS'/>} />
         </>}
         {user.role === 'ROLE_STUDENT' && <>
           <Route index element={<Navigate to={urls.profile} />} />

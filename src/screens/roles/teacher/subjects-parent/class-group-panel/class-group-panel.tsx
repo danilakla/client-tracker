@@ -22,7 +22,6 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
     setSelectedGradeActionCreator,
     setGradeNumberActionCreator,
     setDescriptionActionCreator,
-    clearSelectedGradeActionCreator,
     setAttendanceActionCreator
   } = classGroupControlSlice.actions;
 
@@ -69,11 +68,12 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
   const deleteClass = useCallback((onSuccess: () => void)=>{
     dispatch(deleteClassActionCreator({
       authToken: authToken, 
-      idClass: -1,
+      idClass: teacherClassGroupControlState.classesIds[teacherClassGroupControlState.classesIds.length - 1],
       onSuccess: onSuccess
     }));
   },[
     dispatch,
+    teacherClassGroupControlState.classesIds,
     authToken
   ])
 
@@ -105,10 +105,6 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
     dispatch(setAttendanceActionCreator(value));
   },[dispatch,setAttendanceActionCreator])
 
-  const clearSelectedGrade = useCallback(()=>{
-    dispatch(clearSelectedGradeActionCreator());
-  },[dispatch,clearSelectedGradeActionCreator])
-
   return (
       <ClassGroupPanelView 
         createClass={createClass}
@@ -120,7 +116,6 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
         setAttendance={setAttendance}
         setDescription={setDescription}
         setGradeNumber={setGradeNumber}
-        clearSelectedGrade={clearSelectedGrade}
         />
     );
 });

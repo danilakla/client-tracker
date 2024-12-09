@@ -1,4 +1,4 @@
-import { FC, memo, useCallback } from 'react';
+import { FC, memo, useCallback, useEffect } from 'react';
 import { SignupProps } from './signup.props';
 import { SignupView } from './signup.view';
 import { signUpActionCreator, signUpAdminAndCreateUniversityActionCreator, singupSlice } from '../../../store/reducers/auth/singup-slice';
@@ -7,8 +7,7 @@ import { useLogInParent, useLogInUser } from '../login/login.props';
 import { ItemOfSelectType } from '../../../ui-kit/select/select';
 import { useNavigate } from 'react-router-dom';
 
-export const Signup: FC<SignupProps> = memo(({
-}) => {
+export const Signup: FC<SignupProps> = memo(() => {
 
   const signupState = useTypedSelector(state => state.singup);
 
@@ -65,6 +64,12 @@ export const Signup: FC<SignupProps> = memo(({
   }, [dispatch, setConfirmPasswordActionCreater])
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      dispatch(reset());
+    };
+  }, [dispatch, reset]);
 
   const onSignup = useCallback(() => {
     switch(signupState.role.value){

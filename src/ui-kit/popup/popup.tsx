@@ -11,28 +11,28 @@ type PopupProps = {
 }  & HtmlHTMLAttributes<HTMLElement>;;
   
 export const Popup: FC<PopupProps> = memo(({ isActive, themeColor, closePopup, children, padding = '25px',...rest }) => {
-  useEffect(() => {
-    const handleScroll = (event: Event) => {
-        event.preventDefault();
-        event.stopPropagation();
-    };
-
-    if (isActive) {
+    useEffect(() => {
+      const handleScroll = (event: Event) => {
+        if (isActive) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      };
+      if (isActive) {
         document.body.style.overflow = "hidden";
-        document.addEventListener("touchmove", handleScroll, { passive: false });
-        document.addEventListener("wheel", handleScroll, { passive: false });
-    } else {
+        document.body.addEventListener("scroll", handleScroll, {
+          passive: false,
+        });
+      } else {
         document.body.style.overflow = "";
-        document.removeEventListener("touchmove", handleScroll);
-        document.removeEventListener("wheel", handleScroll);
-    }
+        document.body.removeEventListener("scroll", handleScroll);
+      }
+      return () => {
+        document.body.style.overflow = "";
+        document.body.removeEventListener("scroll", handleScroll);
+      };
+    }, [isActive]);
 
-    return () => {
-        document.body.style.overflow = "";
-        document.removeEventListener("touchmove", handleScroll);
-        document.removeEventListener("wheel", handleScroll);
-    };
-  }, [isActive]);
     return (
       <WrapperPopap isActive={isActive} onClick={closePopup}>
         <Surface themeColor={themeColor} style={{width: 'auto'}} padding={padding} onClick={(e) => e.stopPropagation()} {...rest}>

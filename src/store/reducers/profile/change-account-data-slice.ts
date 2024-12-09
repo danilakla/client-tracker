@@ -109,7 +109,6 @@ export const changeAccountDataActionCreator = createAsyncThunk('/profile/change-
             
             thunkApi.dispatch(userSlice.actions.setUserActionCreater(responce));
             onSuccess?.();
-            thunkApi.dispatch(changeAccountDataSlice.actions.reset());
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

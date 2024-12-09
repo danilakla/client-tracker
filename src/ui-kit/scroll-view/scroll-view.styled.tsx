@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { theme } from "../themes/theme";
 
 export const ScrollViewContainer = styled.div`
   width: 100%;

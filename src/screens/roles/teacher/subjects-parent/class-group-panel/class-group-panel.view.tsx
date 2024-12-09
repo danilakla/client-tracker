@@ -29,7 +29,6 @@ export type ClassGroupPanelViewProps = {
   setGradeNumber: (value: string) => void;
   setDescription: (value: string) => void;
   setAttendance: (value: 0 | 1 | 2 | 3) => void;
-  clearSelectedGrade: () => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -42,7 +41,6 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setAttendance,
   setDescription,
   setGradeNumber,
-  clearSelectedGrade
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -73,8 +71,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   
   const closeUpdateWindow = useCallback(() => {
     setIsOpenUpdateWindow(false);
-    clearSelectedGrade();
-  },[clearSelectedGrade])
+  },[])
 
   const openUpdateWindow = useCallback((value: GradeInfo) => {
     setSelectedGrade(value, () => setIsOpenUpdateWindow(true));
@@ -195,11 +192,17 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
               Студенты не найдены
             </Text>}
-          <Spacing themeSpace={20} variant='Column' />
+          <Spacing themeSpace={25} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 && 
-            <Button onClick={openAddPopup} variant='primary' padding={[12, 17]}>
-              Добавить занятие
-            </Button>}
+            <Row>
+              <Button onClick={openAddPopup} borderRaius={10} height={45} variant='primary' padding={[12, 10]}>
+                Добавить занятие
+              </Button>
+              <Spacing themeSpace={20} variant='Row' />
+              <Button onClick={openDeletePopup} borderRaius={10} height={45} variant='attentive' padding={[12, 10]}>
+                Удалить занятие
+              </Button>
+            </Row>}
         </Surface>
       </>}
       <Modal isActive={isOpenUpdateWindow} closeModal={closeUpdateWindow}>
@@ -295,9 +298,17 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             </Text>}
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 && 
-            <Button onClick={openAddPopup} variant='primary' padding={[12, 17]}>
-              Добавить занятие
-            </Button>}
+            <Row>
+              <Button onClick={openAddPopup} variant='primary' padding={[12, 17]}>
+                Добавить занятие
+              </Button>
+              <Spacing themeSpace={10} variant='Row' />
+              {teacherClassGroupControlState.classesIds.length !== 0 && 
+                <Button onClick={openDeletePopup} variant='attentive' padding={[12, 17]}>
+                  Удалить занятие
+
+                </Button>}
+            </Row>}
         </Surface>
       </>}
       <Popup isActive={isOpenUpdateWindow} closePopup={closeUpdateWindow}>
@@ -359,26 +370,77 @@ export type StudentsTableProps = {
 	onClickGrade: (value: GradeInfo) => void;
   };
   
-  export const StudentsTable: FC<StudentsTableProps> = memo(({
+export const StudentsTable: FC<StudentsTableProps> = memo(({
 	data,
 	length,
 	onClickGrade
-  }) => {
-  
-	const container1Ref = useRef<HTMLDivElement>(null);
-	const container2Ref = useRef<HTMLDivElement>(null);
-	
-	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-	  const source = e.target as HTMLDivElement;
-	  
-	  const target =
-		source === container1Ref.current ? container2Ref.current : container1Ref.current;
-  
-	  if (target) {
-		target.scrollTop = source.scrollTop;
-		target.scrollLeft = source.scrollLeft;
-	  }
-	};
+}) => {
+  const container1Ref = useRef<HTMLDivElement>(null);
+  const container2Ref = useRef<HTMLDivElement>(null);
+
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const startY = useRef(0);
+  const scrollLeft = useRef(0);
+  const scrollTop = useRef(0);
+
+  const handleStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    isDragging.current = true;
+
+    if ("touches" in e) {
+      startX.current = e.touches[0].pageX;
+      startY.current = e.touches[0].pageY;
+    } else {
+      startX.current = e.pageX;
+      startY.current = e.pageY;
+    }
+
+    const container = container1Ref.current!;
+    scrollLeft.current = container.scrollLeft;
+    scrollTop.current = container.scrollTop;
+
+    document.body.style.cursor = "grabbing";
+    document.body.style.userSelect = "none";
+  };
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+    if (!isDragging.current) return;
+
+    e.preventDefault();
+
+    let dx: number, dy: number;
+    if ("touches" in e) {
+      dx = e.touches[0].pageX - startX.current;
+      dy = e.touches[0].pageY - startY.current;
+    } else {
+      dx = e.pageX - startX.current;
+      dy = e.pageY - startY.current;
+    }
+
+    const container1 = container1Ref.current!;
+    const container2 = container2Ref.current!;
+
+    container1.scrollLeft = scrollLeft.current - dx;
+    container1.scrollTop = scrollTop.current - dy;
+
+    container2.scrollLeft = container1.scrollLeft;
+    container2.scrollTop = container1.scrollTop;
+  };
+
+  const handleEnd = () => {
+    isDragging.current = false;
+
+    document.body.style.cursor = "default";
+    document.body.style.userSelect = "auto";
+  };
+
+  const handleScroll = () => {
+    const container1 = container1Ref.current!;
+    const container2 = container2Ref.current!;
+
+    container2.scrollTop = container1.scrollTop;
+    container2.scrollLeft = container1.scrollLeft;
+  };
 	
 	return (
 	  <TableWrapper>
@@ -388,7 +450,16 @@ export type StudentsTableProps = {
 		  	  Имя студента
 		  	</Text>
 		    </NameHeader>
-		    {length !== 0 && <HeaderClasses ref={container1Ref} onScroll={handleScroll}>
+		    {length !== 0 && <HeaderClasses 
+          ref={container1Ref}
+          onScroll={handleScroll}
+          onMouseDown={handleStart}
+          onMouseMove={handleMove}
+          onMouseUp={handleEnd}
+          onMouseLeave={handleEnd}
+          onTouchStart={handleStart}
+          onTouchMove={handleMove}
+          onTouchEnd={handleEnd}>
 		  	{Array.from({ length }).map((_, index) => (
 		  	  <HeaderClassItem>
 		  		<Text themeFont={theme.fonts.h3}>
@@ -414,7 +485,16 @@ export type StudentsTableProps = {
 		  		</Text>
 		  	  </StudentItem>)}
 		  	</StudentsContainer>
-		  	<ClassesContainer ref={container2Ref} onScroll={handleScroll}>
+		  	<ClassesContainer 
+          ref={container2Ref}
+          onScroll={handleScroll}
+          onMouseDown={handleStart}
+          onMouseMove={handleMove}
+          onMouseUp={handleEnd}
+          onMouseLeave={handleEnd}
+          onTouchStart={handleStart}
+          onTouchMove={handleMove}
+          onTouchEnd={handleEnd}>
 		  	  {data.map(item=> <ClassesRow>
 		  		{item.grades.map((item) => 
           <ClassItem 

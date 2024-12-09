@@ -20,7 +20,7 @@ import { Button } from '../../../../../ui-kit/button';
 const roleView: Record<UserRole, string> = {
   ROLE_ADMIN: 'Администатор',
   ROLE_DEAN: 'Декан',
-  ROLE_PARENT: 'Родительский аккаунт',
+  ROLE_PARENTS: 'Родительский аккаунт',
   ROLE_STUDENT: 'Студент',
   ROLE_TEACHER: 'Преподаватель',
   UNDEFINED: 'Неопределено'
@@ -107,11 +107,11 @@ export const ProfileMobileView: FC<ProfileViewProps> = memo(({
         <Spacing variant='Column' themeSpace={25} />
         <ActionButton onClick={goChangeLogin} text='Сменить логин' />
         <Spacing variant='Column' themeSpace={10} />
-        {(user.role !== 'ROLE_STUDENT' && user.role !== 'ROLE_PARENT') && <>
+        {(user.role !== 'ROLE_STUDENT' && user.role !== 'ROLE_PARENTS') && <>
           <ActionButton onClick={goChangeAccoundData} text='Учётные данные' />
           <Spacing variant='Column' themeSpace={10} />
         </>}
-        {(user.role !== 'ROLE_PARENT') && <>
+        {(user.role !== 'ROLE_PARENTS') && <>
           <ActionButton onClick={goChangePassword} text='Сменить пароль' />
           <Spacing variant='Column' themeSpace={10} />
         </>}
@@ -182,11 +182,11 @@ export const ProfileDesktopView: FC<ProfileViewProps> = memo(({
           <Spacing variant='Column' themeSpace={25} />
           <ActionButton onClick={goChangeLogin} text='Сменить логин' />
           <Spacing variant='Column' themeSpace={15} />
-          {(user.role !== 'ROLE_STUDENT' && user.role !== 'ROLE_PARENT') && <>
+          {(user.role !== 'ROLE_STUDENT' && user.role !== 'ROLE_PARENTS') && <>
             <ActionButton onClick={goChangeAccoundData} text='Учётные данные' />
             <Spacing variant='Column' themeSpace={15} />
           </>}
-          {(user.role !== 'ROLE_PARENT') && <>
+          {(user.role !== 'ROLE_PARENTS') && <>
             <ActionButton onClick={goChangePassword} text='Сменить пароль' />
             <Spacing variant='Column' themeSpace={15} />
           </>}

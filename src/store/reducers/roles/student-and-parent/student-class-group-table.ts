@@ -21,7 +21,7 @@ export type StatisticOfStudent = {
         name: string,
         lastname: string,
         idStudent: number
-    }
+    },
     grades: GradeInfo[]
 }
 
@@ -31,12 +31,21 @@ export type StudentClassGroupTableState = {
     studentsStatistics: StatisticOfStudent[];
     errors: Record<string, ErrorType>;
     countClasses: number;
+    selectedGrade: GradeInfo;
 }
 
 const initialState: StudentClassGroupTableState = {
     loading: "idle",
     classGroup: null,
     studentsStatistics: [],
+    selectedGrade: {
+        idClass: -1,
+        idStudent: -1,
+        idStudentGrate: -1,
+        grade: null,
+        description: null,
+        attendance: 0
+    },
     errors: {},
     countClasses: 0
 };
@@ -62,8 +71,22 @@ export const studentClassGroupTableSlice = createSlice({
             state.classGroup = action.payload.classGroupData;
             action.payload.onSuccess?.();
         },
+        setSelectedGradeActionCreator(state, action: PayloadAction<{gradeInfo: GradeInfo, onSuccess: () => void}>) {
+            state.selectedGrade = action.payload.gradeInfo;
+            action.payload.onSuccess();
+        },
         reset(state) {
             Object.assign(state, initialState);
+        },
+        resetSelectedGrade(state) {
+            state.selectedGrade = {
+                idClass: -1,
+                idStudent: -1,
+                idStudentGrate: -1,
+                grade: null,
+                description: null,
+                attendance: 0
+            };
         },
         clearErrors(state) {
             state.errors = {};
@@ -84,7 +107,7 @@ export const studentClassGroupTableSlice = createSlice({
 });
 
 export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-class-group-table/init',
-    async (data: { authToken: string, idClassGroupToSubgroup: number, idSubgroup: number}, thunkApi ) => {
+    async (data: { authToken: string, idClassGroupToSubgroup: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
         const { authToken, idClassGroupToSubgroup, idSubgroup } = data;
         try {
             const responce = await studentApi.getTableOfSubgroup(authToken, idClassGroupToSubgroup, idSubgroup);

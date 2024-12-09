@@ -5,7 +5,7 @@ import { useAppDispatch, useTypedSelector } from '../../../../hooks/use-typed-se
 import { useUser } from '../../../../hooks/user-hook';
 import { useStudentClassGroups } from '../student-class-groups/student-class-groups.props';
 import { useStudentSubjects } from '../student-subjects/student-subjects.props';
-import { initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { GradeInfo, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   role
@@ -20,7 +20,8 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   const isInizialized = useRef(true);
 
   const { 
-    reset
+    reset,
+    setSelectedGradeActionCreator
   } = studentClassGroupTableSlice.actions;
 
   const initTableData = useCallback(()=>{
@@ -28,10 +29,12 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
       authToken: authToken, 
       idClassGroupToSubgroup: studentClassGroupTableState.classGroup?.idClassGroupToSubgroup || -1, 
       idSubgroup: studentClassGroupTableState.classGroup?.idSubgroup || -1,
+      role: role
     }));
   },[
     studentClassGroupTableState.classGroup,
     dispatch,
+    role,
     authToken
   ])
 
@@ -50,8 +53,13 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
     }
   }, [studentClassGroupTableState.classGroup, goToSubjects]);
 
+  const setSelectedGrade = useCallback((gradeInfo: GradeInfo, onSuccess: () => void)=>{
+    dispatch(setSelectedGradeActionCreator({gradeInfo, onSuccess}));
+  },[dispatch,setSelectedGradeActionCreator])
+
   return (
       <StudentClassGroupTableView 
+        setSelectedGrade={setSelectedGrade}
         goToClassGroups={goToClassGroups}
         studentClassGroupTableState={studentClassGroupTableState}
         role={role}

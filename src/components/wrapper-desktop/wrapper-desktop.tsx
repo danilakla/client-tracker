@@ -61,7 +61,7 @@ export const WrapperDesktop: FC<WrapperDesktopProps> = memo(({
 	  			{role === 'ROLE_DEAN' && deanSections.map(
 	  				(item) => <ImageButton 
         	  			item={item}/>)}
-	  			{role === 'ROLE_PARENT' && parentSections.map(
+	  			{role === 'ROLE_PARENTS' && parentSections.map(
 	  				(item) => <ImageButton 
         	  			item={item}/>)}
 	  			{role === 'ROLE_STUDENT' && studentSections.map(

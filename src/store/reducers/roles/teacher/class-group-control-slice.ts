@@ -85,6 +85,17 @@ export const classGroupControlSlice = createSlice({
         setStudentsStatisticsActionCreator(state, action: PayloadAction<StatisticOfStudent[]>) {
             state.studentsStatistics = action.payload;
         },
+        removeLastClassActionCreator(state) {
+            const lastClassId = state.classesIds.pop();
+        
+            if (lastClassId !== undefined) {
+                state.studentsStatistics = state.studentsStatistics.map((studentStatistic) => ({
+                    ...studentStatistic,
+                    grades: studentStatistic.grades.filter((grade) => grade.idClass !== lastClassId),
+                }));
+                state.countClasses--;
+            }
+        },
         setClassesIdsActionCreator(state, action: PayloadAction<number[]>) {
             state.classesIds = action.payload;
         },
@@ -150,8 +161,11 @@ export const classGroupControlSlice = createSlice({
                     };
                 }
         
+                
+
                 return statistic;
             });
+            state.classesIds.push(idClass);
             state.countClasses++;
         },
         setCountClassesActionCreator(state, action: PayloadAction<number>) {
@@ -160,17 +174,6 @@ export const classGroupControlSlice = createSlice({
         setSelectedGradeActionCreator(state, action: PayloadAction<{gradeInfo: GradeInfo, onSuccess: () => void}>) {
             state.selectedGrade = action.payload.gradeInfo;
             action.payload.onSuccess();
-        },
-
-        clearSelectedGradeActionCreator(state) {
-            state.selectedGrade = {
-                 idClass: -1,
-                idStudent: -1,
-                idStudentGrate: -1,
-                grade: null,
-                description: null,
-                attendance: 0
-            }
         },
         setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData, onSuccess?: () => void}>) {
             state.initData = action.payload.initData;
@@ -236,8 +239,7 @@ export const initTableStatisticsActionCreator = createAsyncThunk('teacher-class-
                 transformAndSortStudentsStatistics(responce)
             ));
             thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
-
-            // thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes.length));
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes.map((item: any) => item.idClass)));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -257,6 +259,7 @@ export const deleteClassActionCreator = createAsyncThunk('teacher-class-delete',
         const { authToken, idClass, onSuccess } = data;
         try {
             await teacherApi.deleteClass(authToken, idClass);
+            thunkApi.dispatch(classGroupControlSlice.actions.removeLastClassActionCreator());
             onSuccess();
         }
         catch (e) {

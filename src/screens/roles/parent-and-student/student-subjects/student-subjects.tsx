@@ -22,8 +22,8 @@ export const StudentSubjects: FC<StudentSubjectsProps> = memo(({
   } = studentSubjectsSlice.actions;
 
   const initData = useCallback(()=>{
-    dispatch(initStudentSubjectsActionCreator({authToken}));
-  },[dispatch, authToken])
+    dispatch(initStudentSubjectsActionCreator({authToken, role}));
+  },[dispatch, authToken, role])
 
   useEffect(() => {
     if (isInizialized.current) {

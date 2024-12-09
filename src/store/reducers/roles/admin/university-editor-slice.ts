@@ -114,7 +114,6 @@ export const changeUniversityInfoActionCreator = createAsyncThunk('admin-univers
             await universityApi.changeUniversityInfo(authToken,id, name, description);
 
             onSuccess?.();
-            thunkApi.dispatch(universityEditorSlice.actions.reset());
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

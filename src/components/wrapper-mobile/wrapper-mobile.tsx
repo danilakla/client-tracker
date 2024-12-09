@@ -46,7 +46,12 @@ export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 					Назад
 				</Text>
 			</BackButton>}
-			<Text themeFont={theme.fonts.h2}>
+			<Text 
+				themeFont={theme.fonts.h2} 
+				format='hide'
+            	style={{
+            	  maxWidth: 'calc(100% - 140px)',
+            	}} >
 				{header}
 			</Text>
 		</HeaderContainer>
@@ -62,7 +67,7 @@ export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 	  		{role === 'ROLE_DEAN' && deanSections.map(
 	  			(item) => <ImageButton 
         			item={item}/>)}
-	  		{role === 'ROLE_PARENT' && parentSections.map(
+	  		{role === 'ROLE_PARENTS' && parentSections.map(
 	  			(item) => <ImageButton 
         			item={item}/>)}
 	  		{role === 'ROLE_STUDENT' && studentSections.map(

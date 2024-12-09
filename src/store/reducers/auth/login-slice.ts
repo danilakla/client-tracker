@@ -85,7 +85,6 @@ export const loginUserActionCreator = createAsyncThunk('login/user',
             const responce = await authApi.loginUser(login, password);
             localStorage.setItem('authToken', responce.jwt);
             onSuccess?.();
-            thunkApi.dispatch(loginSlice.actions.reset());
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -103,8 +102,8 @@ export const loginParentActionCreator = createAsyncThunk('login/parent',
         try {
             const responce = await authApi.loginParent(token);
             localStorage.setItem('authToken', responce.jwt);
+            localStorage.setItem('role', 'ROLE_PARENTS');
             onSuccess?.();
-            thunkApi.dispatch(loginSlice.actions.reset());
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

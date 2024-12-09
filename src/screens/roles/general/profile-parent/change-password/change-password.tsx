@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useEffect, useRef } from 'react';
+import { FC, memo, useCallback, useEffect } from 'react';
 import { ChangePasswordProps } from './change-password.props';
 import { ChangePasswordView } from './change-password.view';
 import { useUser } from '../../../../../hooks/user-hook';
@@ -50,16 +50,10 @@ export const ChangePassword: FC<ChangePasswordProps> = memo(() => {
     goToProfile
   ]);
 
-  const isInizialized = useRef(true);
-
   useEffect(() => {
-    if (isInizialized.current) {
-      isInizialized.current = false;
-      console.log('set');
-    } else return () => {
-      console.log('cleared');
+    return () => {
       dispatch(reset());
-    };
+    }; 
   }, [dispatch,reset]);
 
   return (

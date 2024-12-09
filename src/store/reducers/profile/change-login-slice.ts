@@ -80,7 +80,6 @@ export const changeLoginActionCreator = createAsyncThunk('profile/change-login',
             thunkApi.dispatch(userSlice.actions.setAuthTockenActionCreater(responce.jwt));
 
             onSuccess?.();
-            thunkApi.dispatch(changeLoginSlice.actions.reset());
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
