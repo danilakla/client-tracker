@@ -302,11 +302,10 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
               <Button onClick={openAddPopup} variant='primary' padding={[12, 17]}>
                 Добавить занятие
               </Button>
-              <Spacing themeSpace={10} variant='Row' />
+              <Spacing themeSpace={15} variant='Row' />
               {teacherClassGroupControlState.classesIds.length !== 0 && 
                 <Button onClick={openDeletePopup} variant='attentive' padding={[12, 17]}>
                   Удалить занятие
-
                 </Button>}
             </Row>}
         </Surface>
