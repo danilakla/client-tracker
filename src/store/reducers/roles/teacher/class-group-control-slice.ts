@@ -124,8 +124,10 @@ export const classGroupControlSlice = createSlice({
             } else {
                 const numericGrade = Number(parsedGrade);
 
-                if (!isNaN(numericGrade))
+                if (!isNaN(numericGrade)){
+                    if(numericGrade > 1000) return;
                     state.selectedGrade.grade = numericGrade;
+                }
                 else
                     state.selectedGrade.grade = null;
             }
