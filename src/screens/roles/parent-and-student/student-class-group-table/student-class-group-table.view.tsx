@@ -187,7 +187,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isDragging.current) return;
 
-    e.preventDefault();
     const dx = e.pageX - startX.current;
     const dy = e.pageY - startY.current;
 
