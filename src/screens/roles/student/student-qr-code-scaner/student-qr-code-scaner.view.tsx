@@ -41,7 +41,7 @@ export const StudentQrCodeScanerMobileView: FC<StudentQrCodeScanerViewProps> = m
             container: {
               visibility: 'collapse'
             }
-          }} onScan={(result) => console.log(result)} />;
+          }} onScan={(result) => console.log(result)} />
       </Column>
     </WrapperMobile>
   );
