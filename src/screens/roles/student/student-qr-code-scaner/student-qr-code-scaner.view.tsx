@@ -4,6 +4,8 @@ import { useMediaQuery } from 'react-responsive';
 import { WrapperMobile } from '../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../components/wrapper-desktop';
 import { theme } from '../../../../ui-kit/themes/theme';
+import { Scanner } from '@yudiel/react-qr-scanner';
+import { Column } from '../../../../ui-kit/column';
 
 export type StudentQrCodeScanerViewProps = {
 
@@ -26,7 +28,21 @@ export const StudentQrCodeScanerMobileView: FC<StudentQrCodeScanerViewProps> = m
 
   return (
     <WrapperMobile style={{padding: '50px 0px 60px 0px', height:'100vh'}} role='ROLE_STUDENT' header='QR-code сканер'>
-      {/* <QrCodeScanner/> */}
+      <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
+        <Scanner styles={{
+            video: {
+              position: 'fixed',
+              top: 50,
+              left: 0, 
+              width: '100vw',
+              height: 'calc(100vh - 110px)',
+              objectFit: 'cover',
+            },
+            container: {
+              visibility: 'collapse'
+            }
+          }} onScan={(result) => console.log(result)} />;
+      </Column>
     </WrapperMobile>
   );
 });
