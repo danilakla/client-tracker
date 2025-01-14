@@ -27,7 +27,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   const initTableData = useCallback(()=>{
     dispatch(initStudntTableStatisticsActionCreator({
       authToken: authToken, 
-      idClassGroupToSubgroup: studentClassGroupTableState.classGroup?.idClassGroupToSubgroup || -1, 
+      idHold: studentClassGroupTableState.classGroup?.idHold || -1, 
       idSubgroup: studentClassGroupTableState.classGroup?.idSubgroup || -1,
       role: role
     }));

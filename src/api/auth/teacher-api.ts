@@ -20,25 +20,26 @@ export const teacherApi = {
                 return response.data;
             })
     },
-    getTableOfSubgroup(authToken: string, idClassGroup: number, idSubgroup: number) {
-        return instance.get(`/common/show/table/${idSubgroup}/${idClassGroup}`, { 
+    getTableOfSubgroup(authToken: string, holdId: number) {
+        return instance.get(`/common/show/table/${holdId}`, { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;
             })
     },
-    getSubgroupsByIds(authToken: string, ids: number[]) {
+    getSubgroupsByIds(authToken: string, ids: number[], classGroup: number) {
         return instance.post(`/common/subgroups-by-id`, {
-            ids: ids
+            ids: ids,
+            ClassGroup:classGroup
         },{ 
             headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;
             })
     },
-    createClass(authToken: string, classGroupToSubgroupId: number, studentship: number[]){
+    createClass(authToken: string, holdId: number, studentship: number[]){
         return instance.post('/teacher/create/classes',{
-            classGroupToSubgroupId: classGroupToSubgroupId,
+            holdId: holdId,
             studentship: studentship
             }, { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {

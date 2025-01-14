@@ -4,9 +4,9 @@ import { ClassGroupSubgroupsView } from './class-group-subgroups.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
-import { classGroupSubroupsSlice, initSubgroupOfClassGroupActionCreator, SubgroupInfo } from '../../../../../store/reducers/roles/teacher/class-group-subroups-slice';
-import { classGroupControlSlice } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
-import { useClassGroupPanel } from '../class-group-panel/class-group-panel.props';
+import { ClassGroupData, classGroupSubroupsSlice, initSubgroupOfClassGroupActionCreator, SubgroupInfo } from '../../../../../store/reducers/roles/teacher/class-group-subroups-slice';
+import { initTableStatisticsActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { ClassGroupPanel } from '../class-group-panel';
 import { useTeacherClassGroups } from '../class-groups/class-groups.props';
 
 export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
@@ -15,24 +15,12 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
   const {authToken} = useUser();
 
   const goToSubjects = useTeacherSubjects();
-  const goToTeacherClassGroups = useTeacherClassGroups();
-  const goToClassGroupPanel = useClassGroupPanel();
+  const goToClassGroupPanel = useTeacherClassGroups();
   
   const { 
     setSearchTextActionCreator,
-    resetStatus,
-    reset
+    resetStatus
   } = classGroupSubroupsSlice.actions;
-  
-  const goBack = useCallback(() => {
-    goToTeacherClassGroups();
-    dispatch(reset());
-  },[dispatch, goToTeacherClassGroups, reset])
-
-  
-  const { 
-    setClassGroupInfoActionCreator,
-  } = classGroupControlSlice.actions;
 
   const [filteredSubgroups, setFilteredSubgroups] = useState<SubgroupInfo[]>([]);
 
@@ -40,7 +28,7 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
     const trimmedSearchText = teacherClassGroupSubroupsState.searchText.trim().toLowerCase();
   
     const newFiltered= teacherClassGroupSubroupsState.subgroups
-      .filter(subgroup => !trimmedSearchText || subgroup.subgroupNumber.toLowerCase().includes(trimmedSearchText));
+      .filter(subgroup => !trimmedSearchText || subgroup.subgroup.subgroupNumber.toLowerCase().includes(trimmedSearchText));
   
       setFilteredSubgroups(newFiltered);
   }, [teacherClassGroupSubroupsState.subgroups, teacherClassGroupSubroupsState.searchText]);
@@ -49,22 +37,35 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
     dispatch(setSearchTextActionCreator(value));
   }, [dispatch, setSearchTextActionCreator]);
 
-  const goToClassGroubBySubgroup = useCallback((subgroup: SubgroupInfo) => {
-    dispatch(setClassGroupInfoActionCreator({
-      initData: {
-        subgroup: subgroup, 
-        classGroup: teacherClassGroupSubroupsState.classGroupInfo,
-      },
-      onSuccess: goToClassGroupPanel
-    }));
-  }, [
-    dispatch, 
-    goToClassGroupPanel, 
-    setClassGroupInfoActionCreator, 
-    teacherClassGroupSubroupsState.classGroupInfo
-  ]);
-
   const isInizialized = useRef(true);
+
+  const [currentPage, setCurrentPage] = useState<'subgroups' | 'table'>('subgroups');
+
+  const openStudentTable = useCallback((holdId: number, subgroup: SubgroupInfo) => {
+    setCurrentPage('table')
+    dispatch(initTableStatisticsActionCreator({
+      holdId: holdId,
+      authToken: authToken,
+      initData: {
+        idHold: holdId,
+        subgroup: subgroup.subgroup,
+        classGroup: teacherClassGroupSubroupsState.classGroupInfo
+      }
+    }))
+  },[dispatch, authToken, teacherClassGroupSubroupsState.classGroupInfo])
+
+  const initStudentTable = useCallback((holdId: number, subgroup: SubgroupInfo, classGroupInfo: ClassGroupData) => {
+    setCurrentPage('table')
+    dispatch(initTableStatisticsActionCreator({
+      holdId: holdId,
+      authToken: authToken,
+      initData: {
+        idHold: holdId,
+        subgroup: subgroup.subgroup,
+        classGroup: classGroupInfo
+      }
+    }))
+  },[dispatch, authToken])
 
   const initData = useCallback(()=>{
     if(teacherClassGroupSubroupsState.idClassGroup === null){
@@ -74,10 +75,17 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
 
     dispatch(initSubgroupOfClassGroupActionCreator({
       authToken: authToken, 
-      id: teacherClassGroupSubroupsState.idClassGroup,
+      initStudentTable: initStudentTable,
+      idClassGroup: teacherClassGroupSubroupsState.idClassGroup,
       onError: goToSubjects
     }));
-  },[dispatch, authToken,goToSubjects,  teacherClassGroupSubroupsState.idClassGroup])
+  },[
+    dispatch, 
+    authToken, 
+    teacherClassGroupSubroupsState.idClassGroup,
+    initStudentTable,  
+    goToSubjects
+  ])
 
   useEffect(() => {
     if (isInizialized.current) {
@@ -88,13 +96,35 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
     };
   }, [dispatch, resetStatus, initData, teacherClassGroupSubroupsState.loading]);
 
+  const goToClassGroubBySubgroup = useCallback((subgroup: SubgroupInfo) => {
+    openStudentTable(
+      subgroup.idHold,
+      subgroup
+    )
+  }, [
+    openStudentTable
+  ]);
+
+  const onPrevScreen = useCallback(() => {
+    if(teacherClassGroupSubroupsState.isOneScreen || currentPage === 'subgroups'){
+      goToClassGroupPanel();
+    } setCurrentPage('subgroups');
+  },[currentPage, goToClassGroupPanel, teacherClassGroupSubroupsState.isOneScreen])
+
   return (
-      <ClassGroupSubgroupsView 
-        goToClassGroubBySubgroup={goToClassGroubBySubgroup}
-        filteredSubgroups={filteredSubgroups}
-        teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
-        setSearchText={setSearchText}
-        goToTeacherClassGroups={goBack}
-        />
+    <>
+    {
+      currentPage === 'subgroups' ? 
+        <ClassGroupSubgroupsView 
+          goToClassGroubBySubgroup={goToClassGroubBySubgroup}
+          filteredSubgroups={filteredSubgroups}
+          onPrevScreen={onPrevScreen}
+          teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
+          setSearchText={setSearchText}
+        /> :
+        <ClassGroupPanel onPrevScreen={onPrevScreen}/>
+    }
+    </>
+      
     );
 });

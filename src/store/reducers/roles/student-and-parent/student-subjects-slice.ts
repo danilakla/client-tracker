@@ -10,6 +10,7 @@ export type ClassGroupInfo = {
     idClassGroup: number;
     idClassGroupToSubgroup: number;
     idSubgroup: number;
+    idHold: number;
     subjectName: string;
     description: string;
     formatName: string;
@@ -72,7 +73,7 @@ export const studentSubjectsSlice = createSlice({
             })
             .addCase(initStudentSubjectsActionCreator.rejected, (state) => {
                 state.loading = "idle";
-            })
+            });
     },
 });
 
@@ -81,7 +82,7 @@ export const initStudentSubjectsActionCreator = createAsyncThunk('student-subjec
         const { authToken, role } = data;
         try {
             const response = role === 'ROLE_PARENTS' ? 
-                await parentApi.getSubjects(authToken) : await studentApi.getSubjects(authToken)
+                await parentApi.getSubjects(authToken) : await studentApi.getSubjects(authToken);
 
             const groupedSubjects = groupBySubjectName(response);
             thunkApi.dispatch(studentSubjectsSlice.actions.setSubjectsActionCreator(groupedSubjects));
@@ -89,12 +90,12 @@ export const initStudentSubjectsActionCreator = createAsyncThunk('student-subjec
         catch (e) {
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
-                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }));
                 }
             }
         }
     }
-)
+);
 
 function groupBySubjectName(data: Array<any>): SubjectInfo[] {
     const subjectsMap: Record<string, SubjectInfo> = {};
@@ -107,11 +108,19 @@ function groupBySubjectName(data: Array<any>): SubjectInfo[] {
             };
         }
 
-        subjectsMap[item.subjectName].classGroups.push(item);
+        subjectsMap[item.subjectName].classGroups.push({
+            idClassGroup: item.idClassGroup,
+            idClassGroupToSubgroup: item.idClassGroupToSubgroup,
+            idSubgroup: item.idSubgroup,
+            idHold: item.idHold,
+            description: item.description,
+            subjectName: item.subjectName,
+            formatName: item.formatName,
+            teacherName: item.teacherName
+        });
     });
 
     return Object.values(subjectsMap);
 }
-
 
 export default studentSubjectsSlice.reducer;

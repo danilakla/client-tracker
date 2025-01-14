@@ -6,12 +6,15 @@ import { teacherApi } from "../../../../api/auth/teacher-api";
 type ErrorType = string | null;
 
 export type SubgroupInfo = {
-    idSubgroup: number,
-    subgroupNumber: string,
-    admissionDate: string,
-    idDean: number,
-    idSpecialty: number,
-    idClassGroupToSubgroup: number
+    idHold:  number,
+    subgroup: {
+        idSubgroup: number,
+        subgroupNumber: string,
+        admissionDate: string,
+        idDean: number,
+        idSpecialty: number,
+        idClassGroupToSubgroup: number
+    }
 }
 
 export type ClassGroupData = {
@@ -31,6 +34,7 @@ export type ClassGroupSubroupsState = {
     searchText: string;
     subgroups: SubgroupInfo[];
     classGroupInfo: ClassGroupData;
+    isOneScreen: boolean;
     idClassGroup: number | null;
     loading: "idle" | "loading" | "success" | "error";
     errors: Record<string, ErrorType>;
@@ -52,6 +56,7 @@ const initialState: ClassGroupSubroupsState = {
     },
     searchText: '',
     loading: "idle",
+    isOneScreen: false,
     subgroups: [],
     errors: {},
 };
@@ -80,6 +85,9 @@ export const classGroupSubroupsSlice = createSlice({
         setSubgroupsActionCreator(state, action: PayloadAction<SubgroupInfo[]>) {
             state.subgroups = action.payload;
         },
+        setSIsOneScreenActionCreator(state, action: PayloadAction<boolean>) {
+            state.isOneScreen = action.payload;
+        },
         reset(state) {
             Object.assign(state, initialState);
         },
@@ -100,35 +108,68 @@ export const classGroupSubroupsSlice = createSlice({
             })
             .addCase(initSubgroupOfClassGroupActionCreator.rejected, (state) => {
                 state.loading = "idle";
-            })
+            })        
     },
 });
 
 export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-class-group-subroups',
-    async (data: { authToken: string, id: number, onError: () => void}, thunkApi ) => {
-        const { authToken, id, onError } = data;
+    async (data: {
+        authToken: string, 
+        idClassGroup: number, 
+        onError: () => void,
+        initStudentTable: (holdId: number, subgroup: SubgroupInfo, classGroupInfo: ClassGroupData) => void
+    }, thunkApi ) => {
+        const { authToken, onError, initStudentTable, idClassGroup } = data;
         try {
-            const responce = await teacherApi.getClassGroupSubgroups(authToken, id);
+            const responce = await teacherApi.getClassGroupSubgroups(authToken, idClassGroup);
             thunkApi.dispatch(classGroupSubroupsSlice.actions.setClassGroupInfoActionCreator(responce.classGroup));
 
             const idSubgroups: number[] = responce.subgroupsId.map((subgroup: any) => subgroup.idSubgroup);
             const currentYear = new Date().getFullYear();
             
-            const subgroups = (await teacherApi.getSubgroupsByIds(authToken, idSubgroups)).map((item: any) => {
+            const subgroupsData = await teacherApi.getSubgroupsByIds(authToken, idSubgroups, idClassGroup);
+        
+            const subgroups: SubgroupInfo[] = subgroupsData.classHoldSubgroupDTO.map((item: any) => {
                 const classGroupToSubgroup = responce.subgroupsId.find(
-                    (subgroup: any) => subgroup.idSubgroup === item.idSubgroup
+                  (subgroup: any) => subgroup.idSubgroup === item.subgroup.idSubgroup
                 );
-               
-                const admissionYear = new Date(item.admissionDate).getFullYear();
+        
+                const admissionYear = new Date(item.subgroup.admissionDate).getFullYear();
                 const course = currentYear - admissionYear + 1;
-                const groupInfo = item.subgroupNumber.split('.');
-            
+        
+                const groupInfo = item.subgroup.subgroupNumber?.split('.') || ['0', '0'];
+        
                 return {
-                    ...item,
+                  idHold: item.idHold, 
+                  subgroup: {
+                    idSubgroup: item.subgroup.idSubgroup,
                     subgroupNumber: `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
-                    idClassGroupToSubgroup: classGroupToSubgroup?.idClassGroupToSubgroup || null
+                    admissionDate: item.subgroup.admissionDate,
+                    idDean: item.subgroup.idDean,
+                    idSpecialty: item.subgroup.idSpecialty,
+                    idClassGroupToSubgroup: classGroupToSubgroup?.idClassGroupToSubgroup || 0,
+                  },
                 };
-            });
+              });
+
+              if(subgroupsData.isOneClass && subgroups.length > 0){
+                thunkApi.dispatch(classGroupSubroupsSlice.actions.setSIsOneScreenActionCreator(true));
+
+                initStudentTable(subgroups[0].idHold, {
+                    idHold: subgroups[0].idHold,
+                    subgroup: {
+                        idSubgroup: 0,
+                        subgroupNumber: '',
+                        admissionDate: '',
+                        idDean: 0,
+                        idSpecialty: 0,
+                        idClassGroupToSubgroup: 0
+                    }
+                },
+                responce.classGroup)
+
+                return;
+            }
 
             thunkApi.dispatch(classGroupSubroupsSlice.actions.setSubgroupsActionCreator(subgroups));
         }

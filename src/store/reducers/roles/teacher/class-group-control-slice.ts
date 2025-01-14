@@ -23,7 +23,8 @@ export type InitScreenData = {
         idDean: number,
         idSpecialty: number,
         idClassGroupToSubgroup: number
-    }
+    },
+    idHold: number | null,
     classGroup: ClassGroupData
 }
 
@@ -43,6 +44,7 @@ export type SubjectsState = {
     studentsStatistics: StatisticOfStudent[];
     errors: Record<string, ErrorType>;
     countClasses: number;
+    idHold: number | null,
     classesIds: number[];
     selectedGrade: GradeInfo;
     loadingDelete: "idle" | "loading" | "success" | "error";
@@ -53,6 +55,7 @@ export type SubjectsState = {
 const initialState: SubjectsState = {
     loading: "idle",
     initData: null,
+    idHold: null,
     studentsStatistics: [],
     errors: {},
     classesIds: [],
@@ -177,9 +180,11 @@ export const classGroupControlSlice = createSlice({
             state.selectedGrade = action.payload.gradeInfo;
             action.payload.onSuccess();
         },
-        setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData, onSuccess?: () => void}>) {
+        setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData}>) {
             state.initData = action.payload.initData;
-            action.payload.onSuccess?.();
+        },
+        setIdHoldActionCreator(state, action: PayloadAction<number>) {
+            state.idHold = action.payload;
         },
         reset(state) {
             Object.assign(state, initialState);
@@ -233,10 +238,13 @@ export const classGroupControlSlice = createSlice({
 });
 
 export const initTableStatisticsActionCreator = createAsyncThunk('teacher-class-group-control-init',
-    async (data: { authToken: string, idClassGroupToSubgroup: number, idSubgroup: number}, thunkApi ) => {
-        const { authToken, idClassGroupToSubgroup, idSubgroup } = data;
+    async (data: { authToken: string, holdId: number, initData: InitScreenData}, thunkApi ) => {
+        const { authToken, holdId, initData } = data;
         try {
-            const responce = await teacherApi.getTableOfSubgroup(authToken, idClassGroupToSubgroup, idSubgroup);
+            thunkApi.dispatch(classGroupControlSlice.actions.setIdHoldActionCreator(holdId))
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassGroupInfoActionCreator({initData}))
+
+            const responce = await teacherApi.getTableOfSubgroup(authToken, holdId);
             thunkApi.dispatch(classGroupControlSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));
@@ -276,13 +284,13 @@ export const deleteClassActionCreator = createAsyncThunk('teacher-class-delete',
 )
 
 export const addClassActionCreator = createAsyncThunk('teacher-class-add',
-    async (data: { authToken: string, classGroupToSubgroupId: number, studentsStatistics: StatisticOfStudent[], onSuccess: () => void}, thunkApi ) => {
-        const { authToken, classGroupToSubgroupId, studentsStatistics, onSuccess } = data;
+    async (data: { authToken: string, holdId: number, studentsStatistics: StatisticOfStudent[], onSuccess: () => void}, thunkApi ) => {
+        const { authToken, holdId, studentsStatistics, onSuccess } = data;
         try {
             const studentIds = studentsStatistics.map((statistic) => statistic.student.idStudent);
 
 
-            const responce = await teacherApi.createClass(authToken,classGroupToSubgroupId, studentIds);
+            const responce = await teacherApi.createClass(authToken,holdId, studentIds);
 
             thunkApi.dispatch(classGroupControlSlice.actions.addClassToStudentsStatisticsActionCreator({
                 studentGrades: responce.studentGrades,

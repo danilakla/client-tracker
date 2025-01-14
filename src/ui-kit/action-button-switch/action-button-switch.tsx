@@ -1,44 +1,46 @@
 import { FC, memo } from "react";
-import { ActionButtonStyled, ArrowButton, ButtonContainer, ButtonWrapper } from "./action-button.styles";
+import { ActionButtonStyled, SwitchWrapper, ButtonContainer, ButtonWrapper, SwitcherCircle } from "./action-button-switch.styles";
 import { Text } from "../text";
 import { FontProps, theme } from "../themes/theme";
 
-import arrowActiveButtonSVG from "../assets/arrow-button.svg";
-
-export type ActionButtonProps = {
+export type ActionButtonSwitchProps = {
   text?: string;
   width?: string;
   onClick?: () => void;
+  disable?: boolean;
   textColor?: string;
   themeFont?: FontProps;
-  isShowArrow?: boolean;
   themeColor?: string;
+  isLeft: boolean;
 };
 
-export const ActionButton : FC<ActionButtonProps> = memo(({
+export const ActionButtonSwitch : FC<ActionButtonSwitchProps> = memo(({
   text,
   themeColor = theme.colors.surface,
   width,
+  disable = false,
   textColor = theme.colors.gray,
+  isLeft,
   themeFont = theme.fonts.ht1,
-  isShowArrow = true,
   onClick
 }) => {
   return(
     <ButtonWrapper width={width}>
-      <ButtonContainer width={width} onClick={onClick}>
+      <ButtonContainer width={width} onClick={disable ? () => {} : onClick}>
         <ActionButtonStyled themeColor={themeColor}>
           <Text 
             format='hide'
             style={{
-              width: isShowArrow ? 'calc(100% - 25px)' : '100%',
+              width: 'calc(100% - 53px)',
             }} 
             themeColor={textColor}
             themeFont={themeFont}>
             {text}
           </Text>
         </ActionButtonStyled>
-        {isShowArrow && <ArrowButton src={arrowActiveButtonSVG}/>}
+        <SwitchWrapper isLeft={isLeft}>
+          <SwitcherCircle isLeft={isLeft}/>
+        </SwitchWrapper>
       </ButtonContainer>
     </ButtonWrapper>
 )});

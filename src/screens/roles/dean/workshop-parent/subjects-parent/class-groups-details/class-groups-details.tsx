@@ -26,6 +26,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     setSelectedClassFormatActionCreator,
     setSelectedTeacherActionCreator,
     setDescriptionActionCreator,
+    switchIsManyActionCreator,
     setSearchTextActionCreator,
     setSearchTextWindowActionCreator,
     switchIsExistByIndexActionCreator,
@@ -80,6 +81,10 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     dispatch(switchIsExistByIndexActionCreator(value));
   }, [dispatch, switchIsExistByIndexActionCreator]);
 
+  const switchIsMany = useCallback(() => {
+    dispatch(switchIsManyActionCreator());
+  }, [dispatch, switchIsManyActionCreator]);
+
   const [filteredSubgroups, setFilteredSubgroups] = useState<SubgroupDetails[]>([]);
   const [filteredSubgroupsWindow, setFilteredSubgroupsWindow] = useState<SubgroupDetails[]>([]);
 
@@ -104,6 +109,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
   const createClassGroup = useCallback(() => {
     dispatch(createClassGroupActionCreator({
       authToken: authToken,
+      isMany: deanClassGroupDetailsState.isMany,
       teacherId: Number.parseInt(deanClassGroupDetailsState.selectedTeacher.value),
       subjectId: deanClassGroupsState.selectedSubject?.idSubject || -1,
       newSubgroups: deanClassGroupDetailsState.newSubgroups,
@@ -117,6 +123,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     deanClassGroupDetailsState.selectedClassFormat,
     deanClassGroupDetailsState.description,
     deanClassGroupDetailsState.newSubgroups,
+    deanClassGroupDetailsState.isMany,
     deanClassGroupsState.selectedSubject?.idSubject,
     authToken,
     goToClassGroups
@@ -167,6 +174,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
         setSearchText={setSearchText}
         updateClassGroup={updateClassGroup}
         filteredSubgroups={filteredSubgroups}
+        switchIsMany={switchIsMany}
         createClassGroup={createClassGroup}
         filteredSubgroupsWindow={filteredSubgroupsWindow}
         setSearchTextWindow={setSearchTextWindow}

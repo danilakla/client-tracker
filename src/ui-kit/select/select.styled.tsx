@@ -63,6 +63,7 @@ export const ArrowButton = styled.img<{ rotate: boolean }>`
 export const ItemsContainer = styled.div`
   display: flex;
   width: 100%;
+  align-items: center;
   position: relative;
   flex-direction: column;
   gap: 10px;

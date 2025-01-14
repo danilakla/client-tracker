@@ -2,18 +2,16 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { addClassActionCreator, classGroupControlSlice, deleteClassActionCreator, GradeInfo, initTableStatisticsActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { addClassActionCreator, classGroupControlSlice, deleteClassActionCreator, GradeInfo, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
-import { useTeacherClassGroupSubgroups } from '../class-group-subgroups/class-group-subgroups.props';
 
-export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
+export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) => {
   const teacherClassGroupControlState = useTypedSelector(state => state.teacherClassGroupControl);
   const dispatch = useAppDispatch();
   const {authToken} = useUser();
 
   const goToSubjects = useTeacherSubjects();
-  const goToTeacherClassGroupSubgroups= useTeacherClassGroupSubgroups();
 
   const isInizialized = useRef(true);
 
@@ -25,25 +23,14 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
     setAttendanceActionCreator
   } = classGroupControlSlice.actions;
 
-  const initTableData = useCallback(()=>{
-    dispatch(initTableStatisticsActionCreator({
-      authToken: authToken, 
-      idClassGroupToSubgroup: teacherClassGroupControlState.initData?.subgroup.idClassGroupToSubgroup || -1, 
-      idSubgroup: teacherClassGroupControlState.initData?.subgroup.idSubgroup || -1,
-    }));
-  },[
-    teacherClassGroupControlState.initData,
-    dispatch,
-    authToken])
-
   useEffect(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
-      initTableData();
+      // initTableData();
     } else return () => {
       dispatch(reset());
     };
-  }, [dispatch, reset, initTableData]);
+  }, [dispatch, reset]);
 
   useEffect(() => {
     if(teacherClassGroupControlState.initData === null){
@@ -54,14 +41,14 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
   const createClass = useCallback((onSuccess: () => void)=>{
     dispatch(addClassActionCreator({
       authToken: authToken, 
-      classGroupToSubgroupId: teacherClassGroupControlState.initData?.subgroup.idClassGroupToSubgroup || -1,
+      holdId: teacherClassGroupControlState.idHold || -1,
       studentsStatistics: teacherClassGroupControlState.studentsStatistics,
       onSuccess: onSuccess
     }));
   },[
     dispatch,
     authToken,
-    teacherClassGroupControlState.initData?.subgroup.idClassGroupToSubgroup,
+    teacherClassGroupControlState.idHold,
     teacherClassGroupControlState.studentsStatistics
   ])
 
@@ -112,7 +99,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(() => {
         setSelectedGrade={setSelectedGrade}
         deleteClass={deleteClass}
         teacherClassGroupControlState={teacherClassGroupControlState}
-        goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
+        goToTeacherClassGroupSubgroups={onPrevScreen}
         setAttendance={setAttendance}
         setDescription={setDescription}
         setGradeNumber={setGradeNumber}

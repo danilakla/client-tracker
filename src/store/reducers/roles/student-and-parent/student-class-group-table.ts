@@ -107,10 +107,10 @@ export const studentClassGroupTableSlice = createSlice({
 });
 
 export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-class-group-table/init',
-    async (data: { authToken: string, idClassGroupToSubgroup: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
-        const { authToken, idClassGroupToSubgroup, idSubgroup } = data;
+    async (data: { authToken: string, idHold: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
+        const { authToken, idHold } = data;
         try {
-            const responce = await studentApi.getTableOfSubgroup(authToken, idClassGroupToSubgroup, idSubgroup);
+            const responce = await studentApi.getTableOfSubgroup(authToken, idHold);
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));

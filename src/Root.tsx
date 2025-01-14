@@ -26,7 +26,6 @@ import { ClassGroups as DeanClassGroups } from "./screens/roles/dean/workshop-pa
 
 import { Subjects as TeacherSubjects } from "./screens/roles/teacher/subjects-parent/subjects";
 import { ClassGroups as TeacherClassGroups } from "./screens/roles/teacher/subjects-parent/class-groups";
-import { ClassGroupPanel as TeacherClassGroupPanel } from "./screens/roles/teacher/subjects-parent/class-group-panel";
 import { ClassGroupSubgroups as TeacherClassGroupSubgroups } from "./screens/roles/teacher/subjects-parent/class-group-subgroups";
 
 import { StudentSubjects } from "./screens/roles/parent-and-student/student-subjects";
@@ -150,7 +149,7 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.teacherSubjects} element={<TeacherSubjects/>}/>
           <Route path={urls.teacherClassGroups} element={<TeacherClassGroups/>}/>
           <Route path={urls.teacherClassGroupSubgroups} element={<TeacherClassGroupSubgroups/>}/>
-          <Route path={urls.teacherClassGroupControl} element={<TeacherClassGroupPanel/>}/>
+          {/* <Route path={urls.teacherClassGroupControl} element={<TeacherClassGroupPanel/>}/> */}
         </>}
         <Route path='*' element={<Navigate to='/' />} />
       </Route>

@@ -102,11 +102,11 @@ export const ImageButton: FC<ImageButtonProps> = memo(({
 )})
 
 const studentSections = [
-	{
-		link: '/student/statistics',
-		imageActive: statisticsActive,
-		imageDisable: statisticsDisable,
-	},
+	// {
+	// 	link: '/student/statistics',
+	// 	imageActive: statisticsActive,
+	// 	imageDisable: statisticsDisable,
+	// },
 	{
 		link: '/student/subjects',
 		imageActive: subjectActive,
@@ -125,11 +125,11 @@ const studentSections = [
 ]
 
 const parentSections = [
-	{
-		link: '/student/statistics',
-		imageActive: statisticsActive,
-		imageDisable: statisticsDisable,
-	},
+	// {
+	// 	link: '/student/statistics',
+	// 	imageActive: statisticsActive,
+	// 	imageDisable: statisticsDisable,
+	// },
 	{
 		link: '/student/subjects',
 		imageActive: subjectActive,

@@ -17,7 +17,7 @@ import { GridContainer } from '../../../../../ui-kit/grid-container';
 export type ClassGroupSubgroupsViewProps = {
   teacherClassGroupSubroupsState: ClassGroupSubroupsState;
   filteredSubgroups: SubgroupInfo[];
-  goToTeacherClassGroups: () => void;
+  onPrevScreen: () => void;
   setSearchText: (value: string) => void;
   goToClassGroubBySubgroup: (subgroup: SubgroupInfo) => void;
 };
@@ -26,22 +26,22 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
   teacherClassGroupSubroupsState,
   filteredSubgroups,
   goToClassGroubBySubgroup,
-  goToTeacherClassGroups,
-  setSearchText
+  setSearchText,
+  onPrevScreen
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
   return (
     isMobile ? 
       (<SubjectsMobileView
+        onPrevScreen={onPrevScreen}
         goToClassGroubBySubgroup={goToClassGroubBySubgroup}
-        goToTeacherClassGroups={goToTeacherClassGroups}
         teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
         setSearchText={setSearchText}
         filteredSubgroups={filteredSubgroups}
         />) :
       (<SubjectsDesktopView
-        goToTeacherClassGroups={goToTeacherClassGroups}
+        onPrevScreen={onPrevScreen}
         goToClassGroubBySubgroup={goToClassGroubBySubgroup}
         teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
         setSearchText={setSearchText}
@@ -54,7 +54,7 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
 type LocalViewProps = {
   teacherClassGroupSubroupsState: ClassGroupSubroupsState;
   filteredSubgroups: SubgroupInfo[];
-  goToTeacherClassGroups: () => void;
+  onPrevScreen: () => void;
   setSearchText: (value: string) => void;
   goToClassGroubBySubgroup: (subgroup: SubgroupInfo) => void;
 };
@@ -63,12 +63,14 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
   teacherClassGroupSubroupsState,
   filteredSubgroups,
   goToClassGroubBySubgroup,
-  goToTeacherClassGroups,
+  onPrevScreen,
   setSearchText
 }) => {
 
   return (
-    <WrapperMobile onBack={goToTeacherClassGroups} role='ROLE_TEACHER' header={'Список подгрупп'}>
+    <WrapperMobile onBack={onPrevScreen} role='ROLE_TEACHER' header={
+      teacherClassGroupSubroupsState.loading === 'loading' ? 'Загрузка...' : 'Список подгрупп'
+    }>
       {teacherClassGroupSubroupsState.loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100vh', top: 0}}>
         <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
@@ -77,7 +79,7 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
         <Spacing themeSpace={20} variant='Column' />
         <ItemsContainerMobile>
           {filteredSubgroups.map((item) => <>
-            <ActionButton onClick={() => goToClassGroubBySubgroup(item)} text={item.subgroupNumber} />
+            <ActionButton onClick={() => goToClassGroubBySubgroup(item)} text={item.subgroup.subgroupNumber} />
             </>)}
         </ItemsContainerMobile>
       </>}
@@ -89,12 +91,14 @@ export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
   teacherClassGroupSubroupsState,
   filteredSubgroups,
   goToClassGroubBySubgroup,
-  goToTeacherClassGroups,
+  onPrevScreen,
   setSearchText
 }) => {
 
   return (
-    <WrapperDesktop onBack={goToTeacherClassGroups} role='ROLE_TEACHER' header={'Список подгрупп'}>
+    <WrapperDesktop onBack={onPrevScreen} role='ROLE_TEACHER' header={
+      teacherClassGroupSubroupsState.loading === 'loading' ? 'Загрузка...' : 'Список подгрупп'
+    }>
       {teacherClassGroupSubroupsState.loading === 'loading' && 
         <Column style={{position: 'absolute', height: '100vh', top: 0}}>
           <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
@@ -107,7 +111,7 @@ export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
           {filteredSubgroups.map((item) => <>
             <ActionBlockButton 
               onClick={() => goToClassGroubBySubgroup(item)} 
-              text={item.subgroupNumber} />
+              text={item.subgroup.subgroupNumber} />
             </>)}
         </GridContainer>
       </Column>

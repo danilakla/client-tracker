@@ -13,8 +13,8 @@ export const studentApi = {
                 return response.data;
             })
     },
-    getTableOfSubgroup(authToken: string, idClassGroup: number, idSubgroup: number) {
-        return instance.get(`/common/show/table/${idSubgroup}/${idClassGroup}`, { 
+    getTableOfSubgroup(authToken: string, idHold: number) {
+        return instance.get(`/common/show/table/${idHold}`, { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;

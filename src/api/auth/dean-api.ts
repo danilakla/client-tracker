@@ -204,10 +204,11 @@ export const deanApi = {
                 return response.data;
             })
     },
-    assignGroupToClassGroup(authToken: string, classGroupId: number, studentGroupIds: number[]){
+    assignGroupToClassGroup(authToken: string, classGroupId: number, isMany: boolean, studentGroupIds: number[]){
         return instance.post('/dean/assign/groups',{
             classGroupId: classGroupId,
-            studentGroupIds: studentGroupIds
+            studentGroupIds: studentGroupIds,
+            isMany: isMany
             }, { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;
