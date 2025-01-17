@@ -64,5 +64,15 @@ export const teacherApi = {
                 return response.data;
             })
     },
+
+    saveKeyForQr(authToken: string, classId: number, expiration: number){
+        return instance.post('/qr/teacher/save/key',{
+            classId: classId,
+            expiration: expiration,
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 

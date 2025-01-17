@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { addClassActionCreator, classGroupControlSlice, deleteClassActionCreator, GradeInfo, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, classGroupControlSlice, deleteClassActionCreator, GradeInfo, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -20,7 +20,12 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     setSelectedGradeActionCreator,
     setGradeNumberActionCreator,
     setDescriptionActionCreator,
-    setAttendanceActionCreator
+    setAttendanceActionCreator,
+
+    setSelectedClassActionCreator,
+    setExpirationOfQrCodeUpdateKeyActionCreator,
+    setExpirationOfKeyActionCreator,
+    setExpirationOfReviewActionCreator
   } = classGroupControlSlice.actions;
 
   useEffect(() => {
@@ -92,6 +97,38 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(setAttendanceActionCreator(value));
   },[dispatch,setAttendanceActionCreator])
 
+  // qr-code-part
+
+  const setSelectedClass = useCallback((value: {id: number, position: number}, onSuccess: () => void)=>{
+    dispatch(setSelectedClassActionCreator({value, onSuccess}));
+  },[dispatch,setSelectedClassActionCreator])
+
+  const setExpirationOfQrCodeUpdateKey = useCallback((value: number)=>{
+    dispatch(setExpirationOfQrCodeUpdateKeyActionCreator(value));
+  },[dispatch,setExpirationOfQrCodeUpdateKeyActionCreator])
+
+  const setExpirationOfKey = useCallback((value: number)=>{
+    dispatch(setExpirationOfKeyActionCreator(value));
+  },[dispatch,setExpirationOfKeyActionCreator])
+
+  const setExpirationOfReview = useCallback((value: number)=>{
+    dispatch(setExpirationOfReviewActionCreator(value));
+  },[dispatch,setExpirationOfReviewActionCreator])
+
+  const activateKeyForClass = useCallback((onSuccess: () => void)=>{
+    dispatch(activateKeyForClassActionCreator({
+      authToken: authToken, 
+      expiration: teacherClassGroupControlState.generateKeyPopup.expiration,
+      classId: teacherClassGroupControlState.selectedClass.id,
+      onSuccess: onSuccess
+    }));
+  },[
+    dispatch,
+    teacherClassGroupControlState.generateKeyPopup.expiration,
+    authToken,
+    teacherClassGroupControlState.selectedClass.id
+  ])
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
@@ -103,6 +140,13 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         setAttendance={setAttendance}
         setDescription={setDescription}
         setGradeNumber={setGradeNumber}
+
+        setExpirationOfQrCodeUpdateKey={setExpirationOfQrCodeUpdateKey}
+        setExpirationOfKey={setExpirationOfKey}
+        setSelectedClass={setSelectedClass}
+        setExpirationOfReview={setExpirationOfReview}
+
+        activateKeyForClass={activateKeyForClass}
         />
     );
 });

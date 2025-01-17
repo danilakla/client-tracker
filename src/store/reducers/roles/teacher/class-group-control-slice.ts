@@ -38,7 +38,7 @@ export type StatisticOfStudent = {
     grades: GradeInfo[]
 }
 
-export type SubjectsState = {
+export type СlassGroupControlState = {
     loading: "idle" | "loading" | "success" | "error";
     initData: InitScreenData | null;
     studentsStatistics: StatisticOfStudent[];
@@ -50,9 +50,29 @@ export type SubjectsState = {
     loadingDelete: "idle" | "loading" | "success" | "error";
     loadingUpdate: "idle" | "loading" | "success" | "error";
     loadingAdd: "idle" | "loading" | "success" | "error";
+
+    selectedClass: {
+        id: number,
+        position: number,
+    };
+    qrCodePopup: {
+        expiration: number;
+        isOpenQrCode: boolean;
+        loadingQrCode: "idle" | "loading" | "success" | "error";
+        loadingStart: "idle" | "loading" | "success" | "error";
+        loadingStop: "idle" | "loading" | "success" | "error";
+    };
+    generateKeyPopup: {
+        expiration: number;
+        loadingActivate: "idle" | "loading" | "success" | "error";
+    };
+    reviewPopup: {
+        expiration: number;
+        loadingStart: "idle" | "loading" | "success" | "error";
+    };
 };
 
-const initialState: SubjectsState = {
+const initialState: СlassGroupControlState = {
     loading: "idle",
     initData: null,
     idHold: null,
@@ -61,7 +81,6 @@ const initialState: SubjectsState = {
     classesIds: [],
     loadingUpdate: 'idle',
     countClasses: 0,
-
     selectedGrade: {
         idClass: -1,
         idStudent: -1,
@@ -71,10 +90,30 @@ const initialState: SubjectsState = {
         attendance: 0
     },
     loadingAdd: 'idle',
-    loadingDelete: 'idle'
+    loadingDelete: 'idle',
+
+    selectedClass: {
+        id: -1,
+        position: -1
+    },
+    qrCodePopup: {
+        expiration: 5,
+        isOpenQrCode: false,
+        loadingStart: "idle",
+        loadingQrCode: 'idle',
+        loadingStop: "idle"
+    },
+    generateKeyPopup: {
+        expiration: 90,
+        loadingActivate: "idle"
+    },
+    reviewPopup: {
+        expiration: 90,
+        loadingStart: "idle"
+    }
 };
 
-const setErrorByKey = (state: SubjectsState, key: string, error: ErrorType) => {
+const setErrorByKey = (state: СlassGroupControlState, key: string, error: ErrorType) => {
     state.errors[key] = error;
 };
 
@@ -192,6 +231,23 @@ export const classGroupControlSlice = createSlice({
         clearErrors(state) {
             state.errors = {};
         },
+
+        setExpirationOfKeyActionCreator(state, action: PayloadAction<number>) {
+            state.generateKeyPopup.expiration = action.payload;
+        },
+        setExpirationOfQrCodeUpdateKeyActionCreator(state, action: PayloadAction<number>) {
+            state.qrCodePopup.expiration = action.payload;
+        },
+        setIsOpenQrCodeActionCreator(state, action: PayloadAction<boolean>) {
+            state.qrCodePopup.isOpenQrCode = action.payload;
+        },
+        setExpirationOfReviewActionCreator(state, action: PayloadAction<number>) {
+            state.reviewPopup.expiration = action.payload;
+        },
+        setSelectedClassActionCreator(state, action: PayloadAction<{value: {id: number, position: number}, onSuccess: () => void}>) {
+            state.selectedClass = action.payload.value;
+            action.payload.onSuccess();
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -233,6 +289,16 @@ export const classGroupControlSlice = createSlice({
             })
             .addCase(updateGradeActionCreator.rejected, (state) => {
                 state.loadingUpdate = "idle";
+            })
+
+            .addCase(activateKeyForClassActionCreator.fulfilled, (state) => {
+                state.generateKeyPopup.loadingActivate = 'success';
+            })
+            .addCase(activateKeyForClassActionCreator.pending, (state) => {
+                state.generateKeyPopup.loadingActivate = 'loading';
+            })
+            .addCase(activateKeyForClassActionCreator.rejected, (state) => {
+                state.generateKeyPopup.loadingActivate = "idle";
             })
     },
 });
@@ -384,3 +450,63 @@ function transformAndSortStudentsStatistics(input: {
 
     return result;
 }
+
+
+
+
+
+
+
+export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',
+    async (data: { authToken: string, classId: number, expiration: number, onSuccess: () => void}, thunkApi ) => {
+        const { authToken, classId, expiration, onSuccess } = data;
+        try {
+            await teacherApi.saveKeyForQr(authToken, classId, expiration);
+            thunkApi.dispatch(classGroupControlSlice.actions.setExpirationOfKeyActionCreator(90));
+            onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
+
+// export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',
+//     async (data: { authToken: string, idClass: number, onSuccess: () => void}, thunkApi ) => {
+//         const { authToken, idClass, onSuccess } = data;
+//         try {
+//             // await teacherApi.deleteClass(authToken, idClass);
+//             // thunkApi.dispatch(classGroupControlSlice.actions.removeLastClassActionCreator());
+//             // onSuccess();
+//         }
+//         catch (e) {
+//             if (axios.isAxiosError(e)) {
+//                 if(e.response?.status === 401){
+//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+//                 }
+//             }
+//         }
+//     }
+// )
+
+// export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',
+//     async (data: { authToken: string, idClass: number, onSuccess: () => void}, thunkApi ) => {
+//         const { authToken, idClass, onSuccess } = data;
+//         try {
+//             // await teacherApi.deleteClass(authToken, idClass);
+//             // thunkApi.dispatch(classGroupControlSlice.actions.removeLastClassActionCreator());
+//             // onSuccess();
+//         }
+//         catch (e) {
+//             if (axios.isAxiosError(e)) {
+//                 if(e.response?.status === 401){
+//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+//                 }
+//             }
+//         }
+//     }
+// )
