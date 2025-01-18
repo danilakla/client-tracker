@@ -74,5 +74,14 @@ export const teacherApi = {
                 return response.data;
             })
     },
+    createQrCode(authToken: string, classId: number, expiration: number){
+        return instance.post('/qr/teacher/start',{
+            classId: classId,
+            expiration: expiration,
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 

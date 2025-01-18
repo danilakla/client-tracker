@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { theme } from "../themes/theme";
   
-export const SliderInput = styled.input`
+export const SliderInput = styled.input<{disabled: boolean}>`
   appearance: none;
   width: 100%;
   height: 5px;
@@ -20,7 +20,7 @@ export const SliderInput = styled.input`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: ${theme.colors.primary};
+    background: ${({ disabled }) => (disabled ? theme.colors.gray : theme.colors.primary)};
     cursor: pointer;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
   }
@@ -29,7 +29,7 @@ export const SliderInput = styled.input`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #007bff;
+    background: ${theme.colors.primary};
     cursor: pointer;
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
   }

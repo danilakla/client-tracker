@@ -8,7 +8,7 @@ import { Surface } from '../../../../../ui-kit/surface';
 import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper } from './class-group-panel.styled';
 import { Text } from '../../../../../ui-kit/text';
 import { Spacing } from '../../../../../ui-kit/spacing';
-import { GradeInfo, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { GradeInfo, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { Button } from '../../../../../ui-kit/button';
 import { Column } from '../../../../../ui-kit/column';
 import { CircleLoading } from '../../../../../ui-kit/circle-loading';
@@ -22,6 +22,7 @@ import { RangeSlider } from '../../../../../ui-kit/range-slider';
 
 import ShieldLogo from '../../../../../ui-kit/assets/security-shield.svg';
 import { Image } from '../../../../../ui-kit/image';
+import QRCode from 'react-qr-code';
 
 export type ClassGroupPanelViewProps = {
   teacherClassGroupControlState: СlassGroupControlState;
@@ -40,6 +41,9 @@ export type ClassGroupPanelViewProps = {
   setExpirationOfReview: (value: number) => void;
 
   activateKeyForClass: (onSuccess: () => void) => void;
+
+  clearQrCodeData: () => void;
+  createQrCode: () => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -58,7 +62,10 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setSelectedClass,
   setExpirationOfReview,
 
-  activateKeyForClass
+  activateKeyForClass,
+
+  createQrCode,
+  clearQrCodeData
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -192,12 +199,11 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
         isActive={isOpenDeletePopup} 
         state={teacherClassGroupControlState.loadingDelete}
         onDelete={confirmDeletePopup} />
-      <QrCodeControlPopup 
+      <QrCodeControlPopup qrCodeData={teacherClassGroupControlState.qrCodePopup.qrCodeData}
         stateQrCode={teacherClassGroupControlState.qrCodePopup.loadingQrCode} 
         stateStart={teacherClassGroupControlState.qrCodePopup.loadingStart} 
         stateStop={teacherClassGroupControlState.qrCodePopup.loadingStop} 
-        isOpenQrCode={teacherClassGroupControlState.qrCodePopup.isOpenQrCode} 
-        onStartClick={() => {}} onStopClick={() => {}}
+        generateQrCode={createQrCode} clearDataQrCode={clearQrCodeData}
         setTimeValue={setExpirationOfQrCodeUpdateKey} 
         timeValue={teacherClassGroupControlState.qrCodePopup.expiration} 
         closePopup={controlQrCodePopup} isActive={isOpenQrCodePopup}/>
@@ -724,27 +730,70 @@ export type QrCodeControlPopupProps = {
   closePopup: () => void;
   setTimeValue: (value: number) => void;
   timeValue: number;
-  onStartClick: () => void;
-  onStopClick: () => void;
-  isOpenQrCode: boolean;
+  generateQrCode: () => void;
+  clearDataQrCode: () => void;
   stateStart: "idle" | "loading" | "success" | "error";
   stateStop: "idle" | "loading" | "success" | "error";
   stateQrCode: "idle" | "loading" | "success" | "error";
+  qrCodeData: QrCodeDataType | null;
 };
     
 export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
   isActive,
-  isOpenQrCode,
   closePopup,
   timeValue,
-  onStopClick,
+  generateQrCode,
   stateQrCode,
   stateStop,
   stateStart,
-  onStartClick,
+  qrCodeData,
+  clearDataQrCode,
   setTimeValue
 }) => {
   
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isStarted, setIsStarted] = useState<boolean>(false);
+
+  const handleStart = useCallback(() => {
+    generateQrCode();
+    setIsStarted(true);
+    console.log(new Date());
+
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(() => {
+      generateQrCode();
+      console.log(new Date());
+    }, timeValue * 1000);
+  },[generateQrCode, timeValue]);
+
+  const handleStop = useCallback(() => {
+    clearDataQrCode();
+    setIsStarted(false);
+    
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  },[]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  const onClose = useCallback(() => {
+    closePopup();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    setIsStarted(false);
+  },[closePopup]) 
+
   return (
     <Popup isActive={isActive} closePopup={() => {}}>
       <Column horizontalAlign='center'>
@@ -754,39 +803,50 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
         <Spacing variant='Column' themeSpace={15}/>
         <RangeSlider
           minValue={1}
+          disabled={isStarted}
           maxValue={10}
           value={timeValue} 
           step={0.5}
           setValue={setTimeValue}/>
         <Spacing variant='Column' themeSpace={25}/>
         <Row>
-          <Button 
-            onClick={onStartClick} 
-            width={100}
-            borderRaius={15} state={stateStart}
-            variant="primary" padding={[12,17]}>
-            Старт
-          </Button>
-          <Spacing variant='Row' themeSpace={15}/>
-          <Button 
-            onClick={onStopClick} 
-            width={100}
-            borderRaius={15} state={stateStop}
-            variant='attentive' padding={[12,17]}>
-            Стоп
-          </Button>
+          {isStarted ? 
+            <Button 
+              onClick={handleStop} 
+              width={100}
+              borderRaius={15} state={stateStop}
+              variant='attentive' padding={[12,17]}>
+              Стоп
+            </Button> : 
+            <Button 
+              onClick={handleStart} 
+              width={100}
+              borderRaius={15} state={stateStart}
+              variant="primary" padding={[12,17]}>
+              Старт
+            </Button>}
         </Row>
       </Column>
       <Spacing variant='Column' themeSpace={30}/>
       <Surface padding='10px' borderRadius='10px' borderColor={theme.colors.foreground} height={300} width={300}>
-        <Column style={{height: '100%'}} horizontalAlign='center' verticalAlign='center'>
-          {!isOpenQrCode && <Image src={ShieldLogo} width={250} height={250}/>}
+        <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
+          {!isStarted ? <Image src={ShieldLogo} width={250} height={250}/> : <>
+            {
+              (stateQrCode === 'idle' || stateQrCode === 'loading') ? 
+                (<CircleLoading state={'loading'}/>) :
+                (<>
+                  <QRCode
+                    value={JSON.stringify(qrCodeData)}
+                    />
+                </>)
+            }
+            </>}
         </Column>
       </Surface>
       <Spacing variant='Column' themeSpace={25}/>
       <Column horizontalAlign='center'>
         <Button 
-          onClick={closePopup} 
+          onClick={onClose} 
           width={120}
           borderRaius={15} state={stateStop}
           variant='attentive' padding={[12,17]}>

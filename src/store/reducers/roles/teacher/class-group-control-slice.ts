@@ -38,6 +38,12 @@ export type StatisticOfStudent = {
     grades: GradeInfo[]
 }
 
+export type QrCodeDataType = {
+    date: string,
+    idClass: number,
+    expiration: number
+}
+
 export type СlassGroupControlState = {
     loading: "idle" | "loading" | "success" | "error";
     initData: InitScreenData | null;
@@ -57,10 +63,11 @@ export type СlassGroupControlState = {
     };
     qrCodePopup: {
         expiration: number;
-        isOpenQrCode: boolean;
         loadingQrCode: "idle" | "loading" | "success" | "error";
         loadingStart: "idle" | "loading" | "success" | "error";
         loadingStop: "idle" | "loading" | "success" | "error";
+
+        qrCodeData: QrCodeDataType | null;
     };
     generateKeyPopup: {
         expiration: number;
@@ -98,10 +105,11 @@ const initialState: СlassGroupControlState = {
     },
     qrCodePopup: {
         expiration: 5,
-        isOpenQrCode: false,
         loadingStart: "idle",
         loadingQrCode: 'idle',
-        loadingStop: "idle"
+        loadingStop: "idle",
+
+        qrCodeData: null
     },
     generateKeyPopup: {
         expiration: 90,
@@ -205,8 +213,6 @@ export const classGroupControlSlice = createSlice({
                     };
                 }
         
-                
-
                 return statistic;
             });
             state.classesIds.push(idClass);
@@ -238,15 +244,19 @@ export const classGroupControlSlice = createSlice({
         setExpirationOfQrCodeUpdateKeyActionCreator(state, action: PayloadAction<number>) {
             state.qrCodePopup.expiration = action.payload;
         },
-        setIsOpenQrCodeActionCreator(state, action: PayloadAction<boolean>) {
-            state.qrCodePopup.isOpenQrCode = action.payload;
-        },
         setExpirationOfReviewActionCreator(state, action: PayloadAction<number>) {
             state.reviewPopup.expiration = action.payload;
         },
         setSelectedClassActionCreator(state, action: PayloadAction<{value: {id: number, position: number}, onSuccess: () => void}>) {
             state.selectedClass = action.payload.value;
             action.payload.onSuccess();
+        },
+        clearQrCodeDataActionCreator(state){
+            state.qrCodePopup.qrCodeData = null;
+            state.qrCodePopup.loadingQrCode = 'idle';
+        },
+        setQrCodeDataActionCreator(state, action: PayloadAction<QrCodeDataType | null>) {
+            state.qrCodePopup.qrCodeData = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -299,6 +309,16 @@ export const classGroupControlSlice = createSlice({
             })
             .addCase(activateKeyForClassActionCreator.rejected, (state) => {
                 state.generateKeyPopup.loadingActivate = "idle";
+            })
+
+            .addCase(createQrCodeActionCreator.fulfilled, (state) => {
+                state.qrCodePopup.loadingQrCode = 'success';
+            })
+            .addCase(createQrCodeActionCreator.pending, (state) => {
+                state.qrCodePopup.loadingQrCode = 'loading';
+            })
+            .addCase(createQrCodeActionCreator.rejected, (state) => {
+                state.qrCodePopup.loadingQrCode = "idle";
             })
     },
 });
@@ -475,23 +495,26 @@ export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-
     }
 )
 
-// export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',
-//     async (data: { authToken: string, idClass: number, onSuccess: () => void}, thunkApi ) => {
-//         const { authToken, idClass, onSuccess } = data;
-//         try {
-//             // await teacherApi.deleteClass(authToken, idClass);
-//             // thunkApi.dispatch(classGroupControlSlice.actions.removeLastClassActionCreator());
-//             // onSuccess();
-//         }
-//         catch (e) {
-//             if (axios.isAxiosError(e)) {
-//                 if(e.response?.status === 401){
-//                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-//                 }
-//             }
-//         }
-//     }
-// )
+export const createQrCodeActionCreator = createAsyncThunk('teacher-class-control/create-qr-code',
+    async (data: { authToken: string, classId: number, expiration: number}, thunkApi ) => {
+        const { authToken, classId, expiration } = data;
+        try {
+            await teacherApi.createQrCode(authToken, classId, expiration);
+            thunkApi.dispatch(classGroupControlSlice.actions.setQrCodeDataActionCreator({
+                date: (new Date()).toString(),
+                idClass: classId,
+                expiration: expiration
+            }));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
 
 // export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',
 //     async (data: { authToken: string, idClass: number, onSuccess: () => void}, thunkApi ) => {
@@ -510,3 +533,4 @@ export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-
 //         }
 //     }
 // )
+

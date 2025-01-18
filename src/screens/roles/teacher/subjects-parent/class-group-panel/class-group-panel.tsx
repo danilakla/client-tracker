@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, classGroupControlSlice, deleteClassActionCreator, GradeInfo, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -25,7 +25,8 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     setSelectedClassActionCreator,
     setExpirationOfQrCodeUpdateKeyActionCreator,
     setExpirationOfKeyActionCreator,
-    setExpirationOfReviewActionCreator
+    setExpirationOfReviewActionCreator,
+    clearQrCodeDataActionCreator
   } = classGroupControlSlice.actions;
 
   useEffect(() => {
@@ -129,6 +130,25 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.selectedClass.id
   ])
 
+  const clearQrCodeData = useCallback(()=>{
+    dispatch(clearQrCodeDataActionCreator());
+  },[dispatch,clearQrCodeDataActionCreator])
+
+  const createQrCode = useCallback(()=>{
+    dispatch(createQrCodeActionCreator({
+      authToken: authToken,
+      expiration: teacherClassGroupControlState.generateKeyPopup.expiration,
+      classId: teacherClassGroupControlState.selectedClass.id,
+    }));
+  },[
+    dispatch,
+    teacherClassGroupControlState.generateKeyPopup.expiration,
+    teacherClassGroupControlState.selectedClass.id,
+    authToken
+  ])
+
+  
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
@@ -147,6 +167,9 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         setExpirationOfReview={setExpirationOfReview}
 
         activateKeyForClass={activateKeyForClass}
+
+        createQrCode={createQrCode}
+        clearQrCodeData={clearQrCodeData}
         />
     );
 });

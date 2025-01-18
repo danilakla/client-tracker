@@ -1,9 +1,5 @@
-import { FC, HtmlHTMLAttributes, memo, ReactNode, useState } from "react";
+import { FC, HtmlHTMLAttributes, memo, ReactNode } from "react";
 import { SliderContainer, SliderInput } from "./range-slider.styles";
-import { Text } from "../text";
-import { theme } from "../themes/theme";
-import { Spacing } from "../spacing";
-import { Row } from "../row";
 
 export type RangeSliderProps = {
   maxValue?: number;
@@ -12,6 +8,7 @@ export type RangeSliderProps = {
   children?: ReactNode;
   width?: number;
   value: number;
+  disabled?: boolean;
   setValue: (value: number) => void;
 } & HtmlHTMLAttributes<HTMLElement>;
 
@@ -20,6 +17,7 @@ export const RangeSlider: FC<RangeSliderProps> = memo(({
   maxValue = 180,
   step=10,
   width,
+  disabled=false,
   value,
   children, 
   setValue,
@@ -34,6 +32,7 @@ export const RangeSlider: FC<RangeSliderProps> = memo(({
       <SliderInput
         type="range"
         min={minValue}
+        disabled={disabled}
         max={maxValue}
         step={step} 
         value={value}
