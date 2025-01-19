@@ -235,7 +235,11 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
       </Column>}
       <ErrorPopup
         isOpen={isErrorPopup}
-        textError={deanGenerateStudentsState.errors['createError']}
+        textError={
+          <>
+          Проверьте правильность введённых <br /> данных в документе и убедитесь, <br />
+          что такие специальности<br />существуют в системе.
+        </>}
         closePopup={closeErrorPopup}
       />
       <SuccessfulPopup

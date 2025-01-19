@@ -19,15 +19,15 @@ export const ErrorPopup: FC<ErrorPopupProps> = memo(({
 }) => {
 
     return (<Popup isActive={isOpen} closePopup={closePopup}>
-            <Column horizontalAlign='center' style={{width: 290}}>
-              <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}> 
-                {textError}
-              </Text>
-              <Spacing variant='Column' themeSpace={25} />
-              <Button onClick={closePopup} borderRaius={10} variant='attentive' padding={[12, 17]}>
-                Вернуться назад
-              </Button>
-            </Column>
-          </Popup>)
+      <Column horizontalAlign='center' style={{width: 'auto'}}>
+        <Text align='center' themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}> 
+          {textError}
+        </Text>
+        <Spacing variant='Column' themeSpace={25} />
+        <Button onClick={closePopup} borderRaius={10} variant='attentive' padding={[12, 17]}>
+          Вернуться назад
+        </Button>
+      </Column>
+    </Popup>)
 })
 

@@ -18,6 +18,8 @@ import { Button } from '../../../../ui-kit/button';
 import ShieldLogo from '../../../../ui-kit/assets/security-shield.svg';
 import { Image } from '../../../../ui-kit/image';
 import { Scanner } from '@yudiel/react-qr-scanner';
+import { ErrorPopup } from '../../../../ui-kit/error-popup';
+import { SuccessfulPopup } from '../../../../ui-kit/successful-popup';
 
 export type StudentClassGroupTableViewProps = {
   role: "ROLE_STUDENT" | "ROLE_PARENTS";
@@ -74,31 +76,64 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
   },[])
 
   return (
-    isMobile ? 
-      (<StudentClassGroupTableMobileView
-        role={role}
-        goToClassGroups={goToClassGroups}
-		    setSelectedGrade={setSelectedGrade}
-        closeClassControl={closeClassControl}
-        openClassControl={openClassControl}
-        hasCameraAccess={hasCameraAccess}
-        setErrorAccessCamera={setErrorAccessCamera}
-        isClassControlPopup={isClassControlPopup}
-        getKeyForQr={getKeyForQr}
-        studentClassGroupTableState={studentClassGroupTableState}
-        />) :
-      (<StudentClassGroupTableDesktopView
-        role={role}
-        hasCameraAccess={hasCameraAccess}
-        setErrorAccessCamera={setErrorAccessCamera}
-        closeClassControl={closeClassControl}
-        openClassControl={openClassControl}
-        getKeyForQr={getKeyForQr}
-        isClassControlPopup={isClassControlPopup}
-		    setSelectedGrade={setSelectedGrade}
-        goToClassGroups={goToClassGroups}
-        studentClassGroupTableState={studentClassGroupTableState}
-        />)
+    <>
+      {isMobile ? 
+        (<StudentClassGroupTableMobileView
+          role={role}
+          goToClassGroups={goToClassGroups}
+		      setSelectedGrade={setSelectedGrade}
+          closeClassControl={closeClassControl}
+          openClassControl={openClassControl}
+          hasCameraAccess={hasCameraAccess}
+          setErrorAccessCamera={setErrorAccessCamera}
+          isClassControlPopup={isClassControlPopup}
+          getKeyForQr={getKeyForQr}
+          studentClassGroupTableState={studentClassGroupTableState}
+          />) :
+        (<StudentClassGroupTableDesktopView
+          role={role}
+          hasCameraAccess={hasCameraAccess}
+          setErrorAccessCamera={setErrorAccessCamera}
+          closeClassControl={closeClassControl}
+          openClassControl={openClassControl}
+          getKeyForQr={getKeyForQr}
+          isClassControlPopup={isClassControlPopup}
+		      setSelectedGrade={setSelectedGrade}
+          goToClassGroups={goToClassGroups}
+          studentClassGroupTableState={studentClassGroupTableState}
+          />)}
+        <ErrorPopup
+          isOpen={false}
+          textError={
+            <>Срок действия кода истек<br/>
+              или код не был создан
+            </>}
+          closePopup={() => {}}
+        />
+        <ErrorPopup
+          isOpen={false}
+          textError={<>Время пересмотра истекло</>}
+          closePopup={() => {}}
+        />
+        <ErrorPopup
+          isOpen={false}
+          textError={<></>}
+          closePopup={() => {}}
+        />
+        <SuccessfulPopup
+          text={<>Присутствие подтверждено</>}
+          isOpen={false}
+          closePopup={() =>{}}
+        />
+        <SuccessfulPopup
+          text={<>
+            Заявка на пересмотр<br/>
+            успешно отправлена
+          </>}
+          isOpen={false}
+          closePopup={() =>{}}
+        />
+      </>
   );
 });
 
