@@ -20,6 +20,8 @@ import { Image } from '../../../../../ui-kit/image';
 
 import successSVG from '../../../../../images/success.svg';
 import { ItemsContainerMobile } from '../subjects-parent/control-subjects/control-subjects.styled';
+import { SuccessfulPopup } from '../../../../../ui-kit/successful-popup';
+import { ErrorPopup } from '../../../../../ui-kit/error-popup';
 
 export type ExcelData = {
   [key: string]: string | number;
@@ -231,30 +233,16 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
         </ItemsContainerMobile>
         <Spacing variant='Column' themeSpace={25} />
       </Column>}
-      <Popup isActive={isErrorPopup} closePopup={closeErrorPopup}>
-        <Column horizontalAlign='center' style={{width: 290}}>
-          <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}> 
-            {deanGenerateStudentsState.errors['createError']}
-          </Text>
-          <Spacing variant='Column' themeSpace={25} />
-          <Button onClick={closeErrorPopup} borderRaius={10} variant='attentive' padding={[12, 17]}>
-            Вернуться назад
-          </Button>
-        </Column>
-      </Popup>
-      <Popup isActive={isSuccessPopup} closePopup={closeSuccessPopup}>
-        <Column horizontalAlign='center'>
-          <Text themeFont={theme.fonts.h2} themeColor={theme.colors.success}> 
-            Операция прошла успешно
-          </Text>
-          <Spacing variant='Column' themeSpace={20} />
-          <Image src={successSVG} width={150} height={150}/> 
-          <Spacing variant='Column' themeSpace={25} />
-          <Button onClick={closeSuccessPopup} borderRaius={10} variant='recomended' padding={[12, 17]}>
-            Вернуться назад
-          </Button>
-        </Column>
-      </Popup>
+      <ErrorPopup
+        isOpen={isErrorPopup}
+        textError={deanGenerateStudentsState.errors['createError']}
+        closePopup={closeErrorPopup}
+      />
+      <SuccessfulPopup
+        text={'Операция прошла успешно'}
+        isOpen={isSuccessPopup}
+        closePopup={closeSuccessPopup}
+      />
     </WrapperMobile>
   );
 });
