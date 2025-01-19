@@ -152,7 +152,7 @@ export const ModalContent: FC<ModalContentProps> = memo(({
         <ScrollView style={{maxHeight: 400}}>
         <ItemsContainer>
           {filteredItems?.map((item, index) => 
-            <ActionButton onClick={() => onSet(item)} text={item.name}/>)}
+            <ActionButton key={index} onClick={() => onSet(item)} text={item.name}/>)}
         </ItemsContainer>
         { filteredItems.length === 0 && <Text themeColor={theme.colors.gray} themeFont={theme.fonts.ht2}>
           Совпадений не найдено
@@ -200,7 +200,7 @@ export const PopupContent: FC<ModalContentProps> = memo(({
         <ScrollView style={{maxHeight: 400}}>
         <ItemsContainer>
           {filteredItems?.map((item, index) => 
-            <ActionButton onClick={() => onSet(item)} text={item.name}/>)}
+            <ActionButton key={index} onClick={() => onSet(item)} text={item.name}/>)}
         </ItemsContainer>
         { filteredItems.length === 0 && <Text themeColor={theme.colors.gray} themeFont={theme.fonts.ht1}>
           Совпадений не найдено

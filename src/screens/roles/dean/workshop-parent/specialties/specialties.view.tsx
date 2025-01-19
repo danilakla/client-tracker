@@ -202,8 +202,8 @@ export const SpecialtiesMobileView: FC<LocalViewData> = memo(({
         </Button>
       </Row>
       <Spacing themeSpace={20} variant='Column' />
-      {filteredSpecialities.map((item) => <>
-          <ActionButton onClick={() => onClickCard(item)} text={item.name} />
+      {filteredSpecialities.map((item, index) => <>
+          <ActionButton key={index} onClick={() => onClickCard(item)} text={item.name} />
           <Spacing themeSpace={10} variant='Column' />
         </>)}
       <Modal isActive={isOpenAdd} closeModal={closeAdd}>
@@ -311,8 +311,8 @@ export const SpecialtiesDesktopView: FC<LocalViewData> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSpecialities.map((item) => <>
-            <ActionBlockButton text={item.name} onClick={() => onClickCard(item)} />
+          {filteredSpecialities.map((item, index) => <>
+            <ActionBlockButton key={index} text={item.name} onClick={() => onClickCard(item)} />
           </>)}
         </GridContainer>
       </Column>

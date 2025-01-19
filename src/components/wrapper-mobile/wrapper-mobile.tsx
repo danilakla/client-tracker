@@ -62,19 +62,19 @@ export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 
 		<BottomContainer>
 			{role === 'ROLE_ADMIN' && adminSections.map(
-	  			(item) => <ImageButton 
+	  			(item, index) => <ImageButton key={index}
 					item={item}/>)}
 	  		{role === 'ROLE_DEAN' && deanSections.map(
-	  			(item) => <ImageButton 
+	  			(item, index) => <ImageButton key={index}
         			item={item}/>)}
 	  		{role === 'ROLE_PARENTS' && parentSections.map(
-	  			(item) => <ImageButton 
+	  			(item, index) => <ImageButton key={index}
         			item={item}/>)}
 	  		{role === 'ROLE_STUDENT' && studentSections.map(
-	  			(item) => <ImageButton 
+	  			(item, index) => <ImageButton key={index}
         			item={item}/>)}
 	  		{role === 'ROLE_TEACHER' && teacherSections.map(
-	  			(item) => <ImageButton 
+	  			(item, index) => <ImageButton key={index}
         			item={item}/>)}
 		</BottomContainer>
     </Wrapper>
@@ -102,20 +102,10 @@ export const ImageButton: FC<ImageButtonProps> = memo(({
 )})
 
 const studentSections = [
-	// {
-	// 	link: '/student/statistics',
-	// 	imageActive: statisticsActive,
-	// 	imageDisable: statisticsDisable,
-	// },
 	{
 		link: '/student/subjects',
 		imageActive: subjectActive,
 		imageDisable: subjectDisable,
-	},
-	{
-		link: '/student/scanner',
-		imageActive: scannerActive,
-		imageDisable: scannerDisable,
 	},
 	{
 		link: '/profile',
@@ -125,11 +115,6 @@ const studentSections = [
 ]
 
 const parentSections = [
-	// {
-	// 	link: '/student/statistics',
-	// 	imageActive: statisticsActive,
-	// 	imageDisable: statisticsDisable,
-	// },
 	{
 		link: '/student/subjects',
 		imageActive: subjectActive,
@@ -148,11 +133,6 @@ const deanSections = [
 		imageActive: workshopActive,
 		imageDisable: workshopDisable,
 	},
-	// {
-	// 	link: '/teacher/subjects',
-	// 	imageActive: subjectActive,
-	// 	imageDisable: subjectDisable,
-	// },
 	{
 		link: '/profile',
 		imageActive: profileActive,

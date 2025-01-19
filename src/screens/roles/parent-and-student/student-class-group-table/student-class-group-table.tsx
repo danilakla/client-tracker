@@ -5,7 +5,7 @@ import { useAppDispatch, useTypedSelector } from '../../../../hooks/use-typed-se
 import { useUser } from '../../../../hooks/user-hook';
 import { useStudentClassGroups } from '../student-class-groups/student-class-groups.props';
 import { useStudentSubjects } from '../student-subjects/student-subjects.props';
-import { GradeInfo, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   role
@@ -21,7 +21,9 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
 
   const { 
     reset,
-    setSelectedGradeActionCreator
+    setSelectedGradeActionCreator,
+    setSelectedClassActionCreator,
+    clearRedisKeyActionCreator
   } = studentClassGroupTableSlice.actions;
 
   const initTableData = useCallback(()=>{
@@ -57,12 +59,36 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
     dispatch(setSelectedGradeActionCreator({gradeInfo, onSuccess}));
   },[dispatch,setSelectedGradeActionCreator])
 
+  // qr-code-logic
+
+  const setSelectedClass = useCallback((value: HeaderClassType, onSuccess: () => void)=>{
+      dispatch(setSelectedClassActionCreator({value, onSuccess}));
+    },[dispatch,setSelectedClassActionCreator])
+
+    const getKeyForQr = useCallback(()=>{
+      console.log(studentClassGroupTableState.selectedClass);
+
+      dispatch(getKeyForQrActionCreator(
+        {
+          authToken: authToken,
+          id: studentClassGroupTableState.selectedClass.id
+        }
+      ));
+    },[dispatch, authToken, studentClassGroupTableState.selectedClass])
+
+    const clearRedisKey = useCallback(()=>{
+      dispatch(clearRedisKeyActionCreator());
+    },[dispatch,clearRedisKeyActionCreator])
+
   return (
       <StudentClassGroupTableView 
         setSelectedGrade={setSelectedGrade}
         goToClassGroups={goToClassGroups}
+        setSelectedClass={setSelectedClass}
+        getKeyForQr={getKeyForQr}
         studentClassGroupTableState={studentClassGroupTableState}
         role={role}
+        clearRedisKey={clearRedisKey}
         />
     );
 });

@@ -1,10 +1,10 @@
 
-import { FC, memo, useCallback, useRef, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { theme } from '../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../components/wrapper-desktop';
-import { GradeInfo, StatisticOfStudent, StudentClassGroupTableState } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { GradeInfo, HeaderClassType, StatisticOfStudent, StudentClassGroupTableState } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 import { Column } from '../../../../ui-kit/column';
 import { CircleLoading } from '../../../../ui-kit/circle-loading';
 import { Surface } from '../../../../ui-kit/surface';
@@ -14,21 +14,64 @@ import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ExistMark, Header
 import { Popup } from '../../../../ui-kit/popup';
 import { Modal } from '../../../../ui-kit/modal';
 import { ScrollView } from '../../../../ui-kit/scroll-view';
+import { Button } from '../../../../ui-kit/button';
+import ShieldLogo from '../../../../ui-kit/assets/security-shield.svg';
+import { Image } from '../../../../ui-kit/image';
+import { Scanner } from '@yudiel/react-qr-scanner';
 
 export type StudentClassGroupTableViewProps = {
   role: "ROLE_STUDENT" | "ROLE_PARENTS";
   studentClassGroupTableState: StudentClassGroupTableState;
   goToClassGroups: () => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
+  setSelectedClass: (value: HeaderClassType, onSuccess: () => void) => void;
+  getKeyForQr: () => void;
+  clearRedisKey: () => void;
 };
 
 export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = memo(({
   role,
   setSelectedGrade,
+  getKeyForQr,
   goToClassGroups,
+  clearRedisKey,
+  setSelectedClass,
   studentClassGroupTableState
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
+
+  const [isClassControlPopup, setIsClassControlPopup] = useState<boolean>(false);
+  const controlClassControlPopup = useCallback(() => {
+    setIsClassControlPopup(!isClassControlPopup);
+  },[isClassControlPopup])
+  const openClassControl = useCallback((value: HeaderClassType) => {
+    setSelectedClass(value, controlClassControlPopup);
+  },[setSelectedClass, controlClassControlPopup])
+  const closeClassControl = useCallback(() => {
+    setSelectedClass({id: -1, position: -1},controlClassControlPopup);
+    clearRedisKey();
+  },[setSelectedClass, controlClassControlPopup,clearRedisKey])
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        clearRedisKey();
+      } else if (document.visibilityState === 'visible') {
+        clearRedisKey();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [clearRedisKey]);
+
+  const [hasCameraAccess, setHasCameraAccess] = useState<boolean>(true);
+  const setErrorAccessCamera = useCallback(() => {
+    setHasCameraAccess(false);
+  },[])
 
   return (
     isMobile ? 
@@ -36,10 +79,22 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
         role={role}
         goToClassGroups={goToClassGroups}
 		    setSelectedGrade={setSelectedGrade}
+        closeClassControl={closeClassControl}
+        openClassControl={openClassControl}
+        hasCameraAccess={hasCameraAccess}
+        setErrorAccessCamera={setErrorAccessCamera}
+        isClassControlPopup={isClassControlPopup}
+        getKeyForQr={getKeyForQr}
         studentClassGroupTableState={studentClassGroupTableState}
         />) :
       (<StudentClassGroupTableDesktopView
         role={role}
+        hasCameraAccess={hasCameraAccess}
+        setErrorAccessCamera={setErrorAccessCamera}
+        closeClassControl={closeClassControl}
+        openClassControl={openClassControl}
+        getKeyForQr={getKeyForQr}
+        isClassControlPopup={isClassControlPopup}
 		    setSelectedGrade={setSelectedGrade}
         goToClassGroups={goToClassGroups}
         studentClassGroupTableState={studentClassGroupTableState}
@@ -47,11 +102,29 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
   );
 });
 
+type LocalViewProps = {
+  role: "ROLE_STUDENT" | "ROLE_PARENTS";
+  studentClassGroupTableState: StudentClassGroupTableState;
+  goToClassGroups: () => void;
+  closeClassControl: () => void;
+  isClassControlPopup: boolean;
+  hasCameraAccess: boolean | null;
+  openClassControl: (value: HeaderClassType) => void;
+  setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
+  getKeyForQr: () => void;
+  setErrorAccessCamera: () => void;
+};
 
-export const StudentClassGroupTableMobileView: FC<StudentClassGroupTableViewProps> = memo(({
+export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   goToClassGroups,
   studentClassGroupTableState,
+  getKeyForQr,
   setSelectedGrade,
+  hasCameraAccess,
+  setErrorAccessCamera,
+  isClassControlPopup,
+  closeClassControl,
+  openClassControl, 
   role
 }) => {
   const [isOpenDescription, setIsOpenDescription] = useState<boolean>(false);
@@ -78,8 +151,8 @@ export const StudentClassGroupTableMobileView: FC<StudentClassGroupTableViewProp
           </Text>
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
-            <StudentsTable onClickGrade={openDescription}
-              length={studentClassGroupTableState.countClasses}
+            <StudentsTable onClickGrade={openDescription} openClassControl={openClassControl}
+              classesIds={studentClassGroupTableState.classesIds}
               data={studentClassGroupTableState.studentsStatistics}/> :
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
               Студенты не найдены
@@ -94,13 +167,70 @@ export const StudentClassGroupTableMobileView: FC<StudentClassGroupTableViewProp
           </Text>
         </ScrollView>
       </Modal>
+      <Modal isActive={isClassControlPopup} closeModal={closeClassControl}>
+        <Text themeFont={theme.fonts.h1}>
+          Занятие {studentClassGroupTableState.selectedClass.position}
+        </Text>
+        <Spacing themeSpace={15} variant='Column' />
+        <Button 
+          onClick={studentClassGroupTableState.redisKeyData === null ? getKeyForQr : () => {}} 
+          width={200}
+          borderRaius={10}
+          variant={studentClassGroupTableState.redisKeyData === null ? 'primary' : 'recomended'} padding={[12,17]}>
+          {studentClassGroupTableState.redisKeyData === null ? "Получить ключ" : "✓"}
+        </Button>
+        <Spacing themeSpace={15} variant='Column' />
+        <Surface 
+          padding='10px' borderRadius='10px' 
+          borderColor={theme.colors.foreground} height={357} width={300}>
+            {studentClassGroupTableState.redisKeyData === null ? (
+              <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
+                <Image src={ShieldLogo} width={250} height={250}/>
+              </Column>) : (<>
+              <Surface 
+                padding='0px' 
+                borderColor={theme.colors.surface} 
+                style={{borderRadius: 10, overflow: 'hidden', borderWidth: 5}}>
+                  {hasCameraAccess ? <Scanner 
+                  onError={() => setErrorAccessCamera()}
+                  styles={{
+                  video: {
+                    height: 268,
+                    width: 268
+                  },
+                  container: {
+                    height: 268,
+                    width: 268
+                  }
+                }} onScan={(result) => console.log(result)} /> : 
+                <Column style={{height: 268}} horizontalAlign='center' verticalAlign='center'>
+                  <Text align='center' themeFont={theme.fonts.h3} themeColor={theme.colors.gray}>
+                    При подключении к камере произошла ошибка, перезагрузите страницу или проверте доступ
+                  </Text>
+              </Column>}
+              </Surface>
+              <Spacing themeSpace={15} variant='Column' />
+              <Column horizontalAlign='center'>
+                <Button 
+                  onClick={() => {}} 
+                  width={270}
+                  borderRaius={10}
+                  variant="primary" padding={[12,17]}>
+                  Запросить пересмотр
+                </Button>
+              </Column>
+              </>)}
+        </Surface>
+      </Modal>
     </WrapperMobile>
   );
 });
 
-export const StudentClassGroupTableDesktopView: FC<StudentClassGroupTableViewProps> = memo(({
+export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
   studentClassGroupTableState,
   goToClassGroups,
+  openClassControl,
+  getKeyForQr,
   setSelectedGrade,
   role
 }) => {
@@ -129,8 +259,8 @@ export const StudentClassGroupTableDesktopView: FC<StudentClassGroupTableViewPro
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
             <StudentsTable
-              onClickGrade={openDescription}
-              length={studentClassGroupTableState.countClasses}
+              onClickGrade={openDescription} openClassControl={openClassControl}
+              classesIds={studentClassGroupTableState.classesIds}
               data={studentClassGroupTableState.studentsStatistics}/> :
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
               Студенты не найдены
@@ -152,69 +282,17 @@ export const StudentClassGroupTableDesktopView: FC<StudentClassGroupTableViewPro
 
 export type StudentsTableProps = {
 	data: StatisticOfStudent[];
-	length: number;
+	classesIds: number[];
   onClickGrade: (value: GradeInfo) => void;
+  openClassControl: (value: HeaderClassType) => void;
 };
   
 export const StudentsTable: FC<StudentsTableProps> = memo(({
 	data,
   onClickGrade,
-	length,
+  openClassControl,
+	classesIds,
 }) => {
-  
-  const container1Ref = useRef<HTMLDivElement>(null);
-  const container2Ref = useRef<HTMLDivElement>(null);
-
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startY = useRef(0);
-  const scrollLeft = useRef(0);
-  const scrollTop = useRef(0);
-
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    isDragging.current = true;
-    startX.current = e.pageX;
-    startY.current = e.pageY;
-
-    const container = container1Ref.current!;
-    scrollLeft.current = container.scrollLeft;
-    scrollTop.current = container.scrollTop;
-
-    document.body.style.cursor = "grabbing";
-    document.body.style.userSelect = "none";
-  };
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isDragging.current) return;
-
-    const dx = e.pageX - startX.current;
-    const dy = e.pageY - startY.current;
-
-    const container1 = container1Ref.current!;
-    const container2 = container2Ref.current!;
-
-    container1.scrollLeft = scrollLeft.current - dx;
-    container1.scrollTop = scrollTop.current - dy;
-
-    container2.scrollLeft = container1.scrollLeft;
-    container2.scrollTop = container1.scrollTop;
-  };
-
-  const handleMouseUpOrLeave = () => {
-    isDragging.current = false;
-
-    document.body.style.cursor = "default";
-    document.body.style.userSelect = "auto";
-  };
-
-  const handleScroll = () => {
-    const container1 = container1Ref.current!;
-    const container2 = container2Ref.current!;
-
-    container2.scrollTop = container1.scrollTop;
-    container2.scrollLeft = container1.scrollLeft;
-  };
-	
 	return (
 	  <TableWrapper>
 		  <TableHeader>
@@ -223,27 +301,21 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		  	  Имя студента
 		  	</Text>
 		    </NameHeader>
-		    {length !== 0 && <HeaderClasses 
-          ref={container1Ref}
-          onScroll={handleScroll}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUpOrLeave}
-          onMouseLeave={handleMouseUpOrLeave}>
-		  	{Array.from({ length }).map((_, index) => (
-		  	  <HeaderClassItem>
-		  		<Text themeFont={theme.fonts.h3}>
-		  		  Занятие {index + 1}
-		  		</Text>
-		  	  </HeaderClassItem>
-		  	))}
-		    </HeaderClasses>}
+		    {classesIds.length !== 0 && <HeaderClasses>
+        {classesIds.map((item, index) => (
+          <HeaderClassItem key={index} onClick={() => openClassControl({id: item, position: index + 1})}>
+          <Text themeFont={theme.fonts.h3}>
+            Занятие {index + 1}
+          </Text>
+          </HeaderClassItem>
+        ))}
+        </HeaderClasses>}
 		  </TableHeader>
 		  <Spacing themeSpace={10} variant='Column' />
 		  <ScrollWrapper>
 		    <Table>
 		  	  <StudentsContainer>
-		  	    {data.map(item => <StudentItem>
+		  	    {data.map((item, index) => <StudentItem key={index}>
 		  	  	<Text themeFont={theme.fonts.ht2}>
 		  	  	  {item.student.lastname}
 		  	  	</Text>
@@ -255,15 +327,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		  	  	</Text>
 		  	    </StudentItem>)}
 		  	  </StudentsContainer>
-		  	  <ClassesContainer
-            ref={container2Ref}
-            onScroll={handleScroll}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUpOrLeave}
-            onMouseLeave={handleMouseUpOrLeave}>
-		  	    {data.map(item=> <ClassesRow>
-		  	  	{item.grades.map((item) => <ClassItem onClick={() => onClickGrade(item)}>
+		  	  <ClassesContainer>
+		  	    {data.map((item, index)=> <ClassesRow key={index}>
+		  	  	{item.grades.map((item, index) => <ClassItem key={index} onClick={() => onClickGrade(item)}>
 		  	  	  {item.description !== null && <ExistMark/>}
 		  	  	  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
 		  	  		{item.grade}

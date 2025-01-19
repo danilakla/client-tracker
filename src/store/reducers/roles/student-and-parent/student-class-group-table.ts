@@ -25,13 +25,27 @@ export type StatisticOfStudent = {
     grades: GradeInfo[]
 }
 
+export type RedisKeyDataType = {
+    classId: number,
+    expiration: number,
+} 
+
 export type StudentClassGroupTableState = {
     loading: "idle" | "loading" | "success" | "error";
     classGroup: ClassGroupInfo | null;
     studentsStatistics: StatisticOfStudent[];
     errors: Record<string, ErrorType>;
-    countClasses: number;
+    classesIds: number[];
     selectedGrade: GradeInfo;
+    selectedClass: HeaderClassType;
+
+    redisKeyData: RedisKeyDataType | null;
+    loadingKey: "idle" | "loading" | "success" | "error";
+}
+
+export type HeaderClassType = {
+    id: number;
+    position: number
 }
 
 const initialState: StudentClassGroupTableState = {
@@ -47,7 +61,14 @@ const initialState: StudentClassGroupTableState = {
         attendance: 0
     },
     errors: {},
-    countClasses: 0
+    classesIds: [],
+
+    redisKeyData: null,
+    selectedClass: {
+        id: -1,
+        position: -1
+    },
+    loadingKey: 'idle'
 };
 
 const setErrorByKey = (state: StudentClassGroupTableState, key: string, error: ErrorType) => {
@@ -64,9 +85,6 @@ export const studentClassGroupTableSlice = createSlice({
         setStudentsStatisticsActionCreator(state, action: PayloadAction<StatisticOfStudent[]>) {
             state.studentsStatistics = action.payload;
         },
-        setCountClassesActionCreator(state, action: PayloadAction<number>) {
-            state.countClasses = action.payload;
-        },
         setClassGroupInfoActionCreator(state, action: PayloadAction<{classGroupData: ClassGroupInfo, onSuccess?: () => void}>) {
             state.classGroup = action.payload.classGroupData;
             action.payload.onSuccess?.();
@@ -74,6 +92,16 @@ export const studentClassGroupTableSlice = createSlice({
         setSelectedGradeActionCreator(state, action: PayloadAction<{gradeInfo: GradeInfo, onSuccess: () => void}>) {
             state.selectedGrade = action.payload.gradeInfo;
             action.payload.onSuccess();
+        },
+        setSelectedClassActionCreator(state, action: PayloadAction<{value: HeaderClassType, onSuccess: () => void}>) {
+            state.selectedClass = action.payload.value;
+            action.payload.onSuccess();
+        },
+        setClassesIdsActionCreator(state, action: PayloadAction<number[]>) {
+            state.classesIds = action.payload;
+        },
+        setRedisKeyDataActionCreator(state, action: PayloadAction<RedisKeyDataType | null>) {
+            state.redisKeyData = action.payload;
         },
         reset(state) {
             Object.assign(state, initialState);
@@ -91,6 +119,9 @@ export const studentClassGroupTableSlice = createSlice({
         clearErrors(state) {
             state.errors = {};
         },
+        clearRedisKeyActionCreator(state) {
+            state.redisKeyData = null;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -103,6 +134,16 @@ export const studentClassGroupTableSlice = createSlice({
             .addCase(initStudntTableStatisticsActionCreator.rejected, (state) => {
                 state.loading = "idle";
             })
+
+            .addCase(getKeyForQrActionCreator.fulfilled, (state) => {
+                state.loadingKey = 'success';
+            })
+            .addCase(getKeyForQrActionCreator.pending, (state) => {
+                state.loadingKey = 'loading';
+            })
+            .addCase(getKeyForQrActionCreator.rejected, (state) => {
+                state.loadingKey = "idle";
+            })
     },
 });
 
@@ -114,7 +155,7 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));
-            thunkApi.dispatch(studentClassGroupTableSlice.actions.setCountClassesActionCreator(responce.classes.length));
+            thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(responce.classes.map((item: any) => item.idClass)));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -179,3 +220,24 @@ function transformAndSortStudentsStatistics(input: {
 
     return result;
 }
+
+
+
+export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-table/get-key-for-qr',
+    async (data: { authToken: string, id: number}, thunkApi ) => {
+        const { authToken, id } = data;
+        try {
+            const responce = await studentApi.getKeyForQr(authToken, id);
+            thunkApi.dispatch(studentClassGroupTableSlice.actions.setRedisKeyDataActionCreator(
+                responce
+            ));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)

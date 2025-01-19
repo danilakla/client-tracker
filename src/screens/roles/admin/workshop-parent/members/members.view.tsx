@@ -492,11 +492,11 @@ export const ListOfMembersView: FC<ListOfMembersViewProps> = memo(({
         <ItemsContainerMobile>
         {
           toggle === 'left' ? (
-            filteredListDeans?.map((item) =>
-              <ActionButton onClick={() => openDescriptionDean(item)} text={item.flpName} />)
+            filteredListDeans?.map((item, index) =>
+              <ActionButton key={index} onClick={() => openDescriptionDean(item)} text={item.flpName} />)
           ) : (
-            filteredListTeachers?.map((item) =>
-              <ActionButton onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
+            filteredListTeachers?.map((item, index) =>
+              <ActionButton key={index} onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
         }
         </ItemsContainerMobile>
         <Spacing themeSpace={75} variant='Column' />
@@ -510,11 +510,11 @@ export const ListOfMembersView: FC<ListOfMembersViewProps> = memo(({
         <GridContainer columns={4}>
           {
             toggle === 'left' ? (
-              filteredListDeans?.map((item) =>
-                <ActionBlockButton onClick={() => openDescriptionDean(item)} text={item.flpName} />)
+              filteredListDeans?.map((item, index) =>
+                <ActionBlockButton key={index} onClick={() => openDescriptionDean(item)} text={item.flpName} />)
             ) : (
-              filteredListTeachers?.map((item) =>
-                <ActionBlockButton onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
+              filteredListTeachers?.map((item, index) =>
+                <ActionBlockButton key={index} onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
           }
         </GridContainer>
       </Column>)

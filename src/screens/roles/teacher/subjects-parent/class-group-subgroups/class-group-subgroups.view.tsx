@@ -78,8 +78,8 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
         <Search value={teacherClassGroupSubroupsState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={20} variant='Column' />
         <ItemsContainerMobile>
-          {filteredSubgroups.map((item) => <>
-            <ActionButton onClick={() => goToClassGroubBySubgroup(item)} text={item.subgroup.subgroupNumber} />
+          {filteredSubgroups.map((item, index) => <>
+            <ActionButton key={index} onClick={() => goToClassGroubBySubgroup(item)} text={item.subgroup.subgroupNumber} />
             </>)}
         </ItemsContainerMobile>
       </>}
@@ -108,8 +108,8 @@ export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
         <Search isMobile={false} value={teacherClassGroupSubroupsState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSubgroups.map((item) => <>
-            <ActionBlockButton 
+          {filteredSubgroups.map((item, index) => <>
+            <ActionBlockButton key={index}
               onClick={() => goToClassGroubBySubgroup(item)} 
               text={item.subgroup.subgroupNumber} />
             </>)}

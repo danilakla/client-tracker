@@ -31,7 +31,6 @@ import { ClassGroupSubgroups as TeacherClassGroupSubgroups } from "./screens/rol
 import { StudentSubjects } from "./screens/roles/parent-and-student/student-subjects";
 import { StudentClassGroups } from "./screens/roles/parent-and-student/student-class-groups";
 import { StudentClassGroupTable } from "./screens/roles/parent-and-student/student-class-group-table";
-import { StudentQrCodeScaner } from "./screens/roles/student/student-qr-code-scaner";
 
 export const urls = {
   logInUser: '/log-in/user',
@@ -137,7 +136,6 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.studentSubjects} element={<StudentSubjects role='ROLE_STUDENT'/>} />
           <Route path={urls.studentClassGroups} element={<StudentClassGroups role='ROLE_STUDENT'/>} />
           <Route path={urls.studentClassGroupTable} element={<StudentClassGroupTable role='ROLE_STUDENT'/>} />
-          <Route path={urls.studentQrCodeScanner} element={<StudentQrCodeScaner/>} />
         </>}
         {user.role === 'ROLE_TEACHER' && <>
           <Route index element={<Navigate to={urls.profile} />} />

@@ -73,8 +73,8 @@ export const StudentClassGroupsMobileView: FC<StudentClassGroupsViewProps> = mem
       <Search value={searchText} setValue={setSearchText}/>
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
-        {filteredClassGroups.map((item) => <>
-          <ActionButton onClick={() => goToTable(item)} text={item.description} />
+        {filteredClassGroups.map((item, index) => <>
+          <ActionButton key={index} onClick={() => goToTable(item)} text={item.description} />
           </>)}
       </ItemsContainerMobile>
     </WrapperMobile>
@@ -97,8 +97,8 @@ export const StudentClassGroupsDesktopView: FC<StudentClassGroupsViewProps> = me
         <Search isMobile={false} value={searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredClassGroups.map((item) => <>
-            <ActionBlockButton 
+          {filteredClassGroups.map((item, index) => <>
+            <ActionBlockButton  key={index}
               onClick={() => goToTable(item)} 
               text={item.description} />
             </>)}

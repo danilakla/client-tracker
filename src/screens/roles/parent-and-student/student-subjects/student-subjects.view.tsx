@@ -68,8 +68,8 @@ export const StudentSubjectsMobileView: FC<StudentSubjectsViewProps> = memo(({
       <Search value={studentSubjectsState.searchText} setValue={setSearchText}/>
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
-        {filteredSubjects.map((item) => <>
-          <ActionButton onClick={() => goToClassGroups(item.classGroups, item.subjectName)} text={item.subjectName} />
+        {filteredSubjects.map((item, index) => <>
+          <ActionButton key={index} onClick={() => goToClassGroups(item.classGroups, item.subjectName)} text={item.subjectName} />
           </>)}
       </ItemsContainerMobile>
     </WrapperMobile>
@@ -95,8 +95,8 @@ export const StudentSubjectsDesktopView: FC<StudentSubjectsViewProps> = memo(({
         <Search isMobile={false} value={studentSubjectsState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSubjects.map((item) => <>
-            <ActionBlockButton 
+          {filteredSubjects.map((item, index) => <>
+            <ActionBlockButton key={index}
               onClick={() => goToClassGroups(item.classGroups, item.subjectName)} 
               text={item.subjectName} />
             </>)}

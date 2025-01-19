@@ -211,8 +211,8 @@ export const ClassFormatsMobileView: FC<LocalViewData> = memo(({
         </Button>
       </Row>
       <Spacing themeSpace={20} variant='Column' />
-      {filteredListFormats.map((item) => <>
-          <ActionButton onClick={() => onClickCard(item)} text={item.formatName} />
+      {filteredListFormats.map((item, index) => <>
+          <ActionButton key={index} onClick={() => onClickCard(item)} text={item.formatName} />
           <Spacing themeSpace={10} variant='Column' />
         </>)}
       <Modal isActive={isOpenAdd} closeModal={closeAdd}>
@@ -335,8 +335,8 @@ export const ClassFormatsDesktopView: FC<LocalViewData> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredListFormats.map((item) => <>
-            <ActionBlockButton text={item.formatName} onClick={() => onClickCard(item)} />
+          {filteredListFormats.map((item, index) => <>
+            <ActionBlockButton key={index} text={item.formatName} onClick={() => onClickCard(item)} />
           </>)}
         </GridContainer>
       </Column>

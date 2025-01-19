@@ -20,5 +20,15 @@ export const studentApi = {
                 return response.data;
             })
     },
+    getKeyForQr(authToken: string, id: number) {
+        return instance.get(`/qr/student/key`, { 
+            params: {
+                id: id
+            },
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 

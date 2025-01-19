@@ -237,8 +237,8 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={10} variant='Column' />
           <ItemsContainerMobile>
           {
-            filteredSubgroupsExists.map((item) => 
-              <ActionButton text={item.subgroupNumber} isShowArrow={false}/>)
+            filteredSubgroupsExists.map((item, index) => 
+              <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)
           }
           </ItemsContainerMobile>
           <Spacing themeSpace={25} variant='Column' />
@@ -262,7 +262,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
               Совпадений не найдено
             </Text>}
           {filteredSubgroupsWindow.map((item, index) => 
-              <ActionExistbleButton onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
+              <ActionExistbleButton key={index} onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
           </ItemsContainerMobile>
           </ScrollView>
           </Column>
@@ -364,8 +364,8 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
               <Spacing themeSpace={15} variant='Column' />
               <ScrollView style={{height: 235}}>
                 <ItemsContainerMobile>
-                {filteredSubgroupsExists.map((item) => 
-                    <ActionButton text={item.subgroupNumber} isShowArrow={false}/>)}
+                {filteredSubgroupsExists.map((item, index) => 
+                    <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)}
                 </ItemsContainerMobile>
               </ScrollView>
             </Surface>
@@ -386,7 +386,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
               Совпадений не найдено
             </Text>}
           {filteredSubgroupsWindow.map((item, index) => 
-              <ActionExistbleButton onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
+              <ActionExistbleButton key={index} onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
           </ItemsContainerMobile>
           </ScrollView>
           </Column>

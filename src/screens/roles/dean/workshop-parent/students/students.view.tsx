@@ -343,8 +343,8 @@ export const AllView: FC<AllViewProps> = memo(({
       <Search value={search} setValue={setSearch}/>
       <Spacing themeSpace={20} variant='Column' />
       {
-        filteredData.map((item) => <>
-          <ActionButton onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />
+        filteredData.map((item, index) => <>
+          <ActionButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />
           <Spacing themeSpace={10} variant='Column' />
         </>)
       }
@@ -353,8 +353,8 @@ export const AllView: FC<AllViewProps> = memo(({
       <Spacing themeSpace={30} variant='Column' />
       <GridContainer columns={4}>
         {
-          filteredData.map((item) =>
-            <ActionBlockButton onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)
+          filteredData.map((item, index) =>
+            <ActionBlockButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)
         }
       </GridContainer>
     </Column>)
@@ -407,8 +407,8 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
         </Row>
         <Spacing themeSpace={20} variant='Column' />
         {
-          filteredData.map((item) => <>
-            <ActionButton onClick={() => onClick(item)} text={item.flpName} />
+          filteredData.map((item, index) => <>
+            <ActionButton key={index} onClick={() => onClick(item)} text={item.flpName} />
             <Spacing themeSpace={10} variant='Column' />
           </>)
         }
@@ -433,8 +433,8 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
           </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredData.map((item) => <>
-            <ActionBlockButton text={item.flpName} onClick={() => onClick(item)} />
+          {filteredData.map((item, index) => <>
+            <ActionBlockButton key={index} text={item.flpName} onClick={() => onClick(item)} />
           </>)}
         </GridContainer>
       </Column>)

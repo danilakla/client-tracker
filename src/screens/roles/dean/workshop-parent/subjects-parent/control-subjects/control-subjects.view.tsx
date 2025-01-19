@@ -137,8 +137,8 @@ export const ControlSubjectsMobileView: FC<LocalViewProps> = memo(({
       </Row>
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
-        {filteredSubjects.map((item) => <>
-          <ActionButton onClick={() => goClassGroups(item)} text={item.name} />
+        {filteredSubjects.map((item, index) => <>
+          <ActionButton key={index} onClick={() => goClassGroups(item)} text={item.name} />
           </>)}
       </ItemsContainerMobile>
       <Modal isActive={isOpenAddWindow} closeModal={closeAddWindow}> 
@@ -201,8 +201,8 @@ export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSubjects.map((item) => <>
-            <ActionBlockButton onClick={() => goClassGroups(item)} text={item.name} />
+          {filteredSubjects.map((item, index) => <>
+            <ActionBlockButton key={index} onClick={() => goClassGroups(item)} text={item.name} />
             </>)}
         </GridContainer>
       </Column>

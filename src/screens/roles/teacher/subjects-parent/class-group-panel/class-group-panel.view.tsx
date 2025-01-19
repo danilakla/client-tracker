@@ -8,7 +8,7 @@ import { Surface } from '../../../../../ui-kit/surface';
 import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper } from './class-group-panel.styled';
 import { Text } from '../../../../../ui-kit/text';
 import { Spacing } from '../../../../../ui-kit/spacing';
-import { GradeInfo, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { GradeInfo, HeaderClassType, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { Button } from '../../../../../ui-kit/button';
 import { Column } from '../../../../../ui-kit/column';
 import { CircleLoading } from '../../../../../ui-kit/circle-loading';
@@ -35,8 +35,8 @@ export type ClassGroupPanelViewProps = {
   setDescription: (value: string) => void;
   setAttendance: (value: 0 | 1 | 2 | 3) => void;
 
-  setSelectedClass: (value: {id: number, position: number}, onSuccess: () => void) => void;
-  setExpirationOfQrCodeUpdateKey: (value: number) => void;
+  setSelectedClass: (value: HeaderClassType, onSuccess: () => void) => void;
+  setExpirationOfRefresh: (value: number) => void
   setExpirationOfKey: (value: number) => void;
   setExpirationOfReview: (value: number) => void;
 
@@ -57,7 +57,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setDescription,
   setGradeNumber,
 
-  setExpirationOfQrCodeUpdateKey,
+  setExpirationOfRefresh,
   setExpirationOfKey,
   setSelectedClass,
   setExpirationOfReview,
@@ -106,16 +106,11 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     updateGrade(closeUpdateWindow);
   },[updateGrade, closeUpdateWindow])
 
-  // logic of qr-code-part
-
   const [isOpenGenerateKeyPopup, setIsOpenGenerateKeyPopup] = useState<boolean>(false);
   const controlGenerateKeyPopup = useCallback(() => {
+    if(isOpenGenerateKeyPopup) setExpirationOfKey(90); 
     setIsOpenGenerateKeyPopup(!isOpenGenerateKeyPopup);
-  },[isOpenGenerateKeyPopup])
-  const [isOpenControlReviewPopup, setIsOpenControlReviewPopup] = useState<boolean>(false);
-  const controlControlReviewPopup = useCallback(() => {
-    setIsOpenControlReviewPopup(!isOpenControlReviewPopup);
-  },[isOpenControlReviewPopup])
+  },[setExpirationOfKey, isOpenGenerateKeyPopup])
   const [isOpenQrCodePopup, setIsOpenQrCodePopup] = useState<boolean>(false);
   const controlQrCodePopup = useCallback(() => {
     setIsOpenQrCodePopup(!isOpenQrCodePopup);
@@ -125,9 +120,14 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   const controlClassControlPopup = useCallback(() => {
     setIsClassControlPopup(!isClassControlPopup);
   },[isClassControlPopup])
-  const openClassControlForStudents = useCallback((value: {id: number, position: number}) => {
+  const openClassControlForStudents = useCallback((value: HeaderClassType) => {
     setSelectedClass(value, controlClassControlPopup);
   },[setSelectedClass, controlClassControlPopup])
+  const closeClassControlForStudents = useCallback(() => {
+    setSelectedClass({id: -1, position: -1}, controlClassControlPopup);
+    setExpirationOfReview(90);
+    setExpirationOfRefresh(5);
+  },[setExpirationOfReview, setExpirationOfRefresh, setSelectedClass, controlClassControlPopup])
 
   const confirmActivateKeyForClass = useCallback(() => {
     activateKeyForClass(controlGenerateKeyPopup);
@@ -150,20 +150,18 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           confirmUpdate={confirmUpdate}
           isClassControlPopup={isClassControlPopup}
           isOpenUpdateWindow={isOpenUpdateWindow}
-          controlControlReviewPopup={controlControlReviewPopup}
           controlGenerateKeyPopup={controlGenerateKeyPopup}
           controlQrCodePopup={controlQrCodePopup}
-          controlClassControlPopup={controlClassControlPopup}
+          closeClassControlForStudents={closeClassControlForStudents}
           openClassControlForStudents={openClassControlForStudents}
           />) :
         (<ClassGroupPanelDesktopView
           openAddPopup={openAddPopup}
-          controlClassControlPopup={controlClassControlPopup}
+          closeClassControlForStudents={closeClassControlForStudents}
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           teacherClassGroupControlState={teacherClassGroupControlState}
           setAttendance={setAttendance}
           openDeletePopup={openDeletePopup}
-          controlControlReviewPopup={controlControlReviewPopup}
           controlGenerateKeyPopup={controlGenerateKeyPopup}
           controlQrCodePopup={controlQrCodePopup}
           setDescription={setDescription}
@@ -199,19 +197,16 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
         isActive={isOpenDeletePopup} 
         state={teacherClassGroupControlState.loadingDelete}
         onDelete={confirmDeletePopup} />
-      <QrCodeControlPopup qrCodeData={teacherClassGroupControlState.qrCodePopup.qrCodeData}
+      <QrCodeControlPopup 
+        qrCodeData={teacherClassGroupControlState.qrCodePopup.qrCodeData}
         stateQrCode={teacherClassGroupControlState.qrCodePopup.loadingQrCode} 
         stateStart={teacherClassGroupControlState.qrCodePopup.loadingStart} 
-        stateStop={teacherClassGroupControlState.qrCodePopup.loadingStop} 
         generateQrCode={createQrCode} clearDataQrCode={clearQrCodeData}
-        setTimeValue={setExpirationOfQrCodeUpdateKey} 
-        timeValue={teacherClassGroupControlState.qrCodePopup.expiration} 
+        setTimeValueForRefresh={setExpirationOfRefresh}
+        setTimeValueForReview={setExpirationOfReview} 
+        timeValueForRefresh={teacherClassGroupControlState.qrCodePopup.expirationOfRefresh} 
+        timeValueForReview={teacherClassGroupControlState.qrCodePopup.expirationOfReview} 
         closePopup={controlQrCodePopup} isActive={isOpenQrCodePopup}/>
-      <ReviewControlPopup 
-        onStartClick={() => {}} stateStart={teacherClassGroupControlState.reviewPopup.loadingStart}
-        setTimeValue={setExpirationOfReview} 
-        timeValue={teacherClassGroupControlState.reviewPopup.expiration} 
-        closePopup={controlControlReviewPopup} isActive={isOpenControlReviewPopup}/>
       <GenerateKeyPopup 
         stateActivate={teacherClassGroupControlState.generateKeyPopup.loadingActivate} 
         onActivateClick={confirmActivateKeyForClass}
@@ -228,7 +223,7 @@ type LocalViewProps = {
   goToTeacherClassGroupSubgroups: () => void;
   openAddPopup: () => void;
   openDeletePopup: () => void;
-  openClassControlForStudents: (value: {id: number, position: number}) => void;
+  openClassControlForStudents: (value: HeaderClassType) => void;
   setGradeNumber: (value: string) => void;
   setDescription: (value: string) => void;
   setAttendance: (value: 0 | 1 | 2 | 3) => void;
@@ -237,10 +232,9 @@ type LocalViewProps = {
   confirmUpdate: () => void;
   isClassControlPopup: boolean;
   openUpdateWindow: (value: GradeInfo) => void;
-  controlClassControlPopup: () => void;
+  closeClassControlForStudents: () => void;
 
   controlQrCodePopup: () => void;
-  controlControlReviewPopup: () => void;
   controlGenerateKeyPopup: () => void;
 };
 
@@ -248,7 +242,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   teacherClassGroupControlState,
   goToTeacherClassGroupSubgroups,
   openAddPopup,
-  controlClassControlPopup,
+  closeClassControlForStudents,
   isOpenUpdateWindow,
   openDeletePopup,
   setAttendance,
@@ -260,7 +254,6 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   openUpdateWindow,
   confirmUpdate,
 
-  controlControlReviewPopup,
   controlGenerateKeyPopup,
   controlQrCodePopup
 }) => {
@@ -351,11 +344,11 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           </Row>
         </Column>
       </Modal>
-      <Modal isActive={isClassControlPopup} closeModal={controlClassControlPopup}>
+      <Modal isActive={isClassControlPopup} closeModal={closeClassControlForStudents}>
         <Text themeFont={theme.fonts.h1}>
 		  		Занятие {teacherClassGroupControlState.selectedClass.position}
 		  	</Text>
-        <Spacing themeSpace={25} variant='Column' />
+        <Spacing themeSpace={15} variant='Column' />
         <Button 
           onClick={controlGenerateKeyPopup} 
           width={200}
@@ -371,14 +364,6 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           variant="primary" padding={[12,17]}>
           Генерация QR-code
         </Button>
-        <Spacing themeSpace={15} variant='Column' />
-        <Button 
-          onClick={controlControlReviewPopup} 
-          width={200}
-          borderRaius={10}
-          variant="primary" padding={[12,17]}>
-          Пересмотр занятия
-        </Button>
       </Modal>
     </WrapperMobile>
   );
@@ -388,7 +373,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
 export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   teacherClassGroupControlState,
   goToTeacherClassGroupSubgroups,
-  controlClassControlPopup,
+  closeClassControlForStudents,
   openAddPopup,
   isOpenUpdateWindow,
   setAttendance,
@@ -401,7 +386,6 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   isClassControlPopup,
   confirmUpdate,
 
-  controlControlReviewPopup,
   controlGenerateKeyPopup,
   controlQrCodePopup
 }) => {
@@ -493,7 +477,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           </Row>
         </Column>
       </Popup>
-      <Popup padding='25px' isActive={isClassControlPopup} closePopup={controlClassControlPopup}>
+      <Popup padding='25px' isActive={isClassControlPopup} closePopup={closeClassControlForStudents}>
         <Column horizontalAlign='center'>
           <Text themeFont={theme.fonts.h1}>
 		  	  	Занятие {teacherClassGroupControlState.selectedClass.position}
@@ -514,14 +498,6 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             variant="primary" padding={[12,17]}>
             Генерация QR-code
           </Button>
-          <Spacing themeSpace={15} variant='Column' />
-          <Button 
-            onClick={controlControlReviewPopup} 
-            width={240}
-            borderRaius={10}
-            variant="primary" padding={[12,17]}>
-            Пересмотр занятия
-          </Button>
         </Column>
       </Popup>
     </WrapperDesktop>
@@ -532,7 +508,7 @@ export type StudentsTableProps = {
 	data: StatisticOfStudent[];
 	classesIds: number[];
 	onClickGrade: (value: GradeInfo) => void;
-  openClassControlForStudents: (value: {id: number, position: number}) => void;
+  openClassControlForStudents: (value: HeaderClassType) => void;
   };
   
 export const StudentsTable: FC<StudentsTableProps> = memo(({
@@ -541,119 +517,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 	onClickGrade,
   openClassControlForStudents
 }) => {
-  const container1Ref = useRef<HTMLDivElement>(null);
-  const container2Ref = useRef<HTMLDivElement>(null);
-
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startY = useRef(0);
-  const scrollLeft = useRef(0);
-  const scrollTop = useRef(0);
-
-  const handleStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    isDragging.current = true;
-
-    if ("touches" in e) {
-      startX.current = e.touches[0].pageX;
-      startY.current = e.touches[0].pageY;
-    } else {
-      startX.current = e.pageX;
-      startY.current = e.pageY;
-    }
-
-    const container = container1Ref.current!;
-    scrollLeft.current = container.scrollLeft;
-    scrollTop.current = container.scrollTop;
-
-    document.body.style.cursor = "grabbing";
-    document.body.style.userSelect = "none";
-  };
-
-  const handleMove = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    if (!isDragging.current) return;
-
-    e.preventDefault();
-
-    let dx: number, dy: number;
-    if ("touches" in e) {
-      dx = e.touches[0].pageX - startX.current;
-      dy = e.touches[0].pageY - startY.current;
-    } else {
-      dx = e.pageX - startX.current;
-      dy = e.pageY - startY.current;
-    }
-
-    const container1 = container1Ref.current!;
-    const container2 = container2Ref.current!;
-
-    container1.scrollLeft = scrollLeft.current - dx;
-    container1.scrollTop = scrollTop.current - dy;
-
-    container2.scrollLeft = container1.scrollLeft;
-    container2.scrollTop = container1.scrollTop;
-  };
-
-  const handleEnd = () => {
-    isDragging.current = false;
-
-    document.body.style.cursor = "default";
-    document.body.style.userSelect = "auto";
-  };
-
-  const handleScroll = () => {
-    const container1 = container1Ref.current!;
-    const container2 = container2Ref.current!;
-
-    container2.scrollTop = container1.scrollTop;
-    container2.scrollLeft = container1.scrollLeft;
-  };
-
-  useEffect(() => {
-    const container1 = container1Ref.current!;
-    const container2 = container2Ref.current!;
-  
-    // Add non-passive event listeners
-    const addListeners = (container: HTMLDivElement) => {
-      container.addEventListener(
-        "touchstart",
-        handleStart as unknown as EventListener,
-        { passive: false }
-      );
-      container.addEventListener(
-        "touchmove",
-        handleMove as unknown as EventListener,
-        { passive: false }
-      );
-      container.addEventListener(
-        "touchend",
-        handleEnd as unknown as EventListener
-      );
-    };
-  
-    const removeListeners = (container: HTMLDivElement) => {
-      container.removeEventListener(
-        "touchstart",
-        handleStart as unknown as EventListener
-      );
-      container.removeEventListener(
-        "touchmove",
-        handleMove as unknown as EventListener
-      );
-      container.removeEventListener(
-        "touchend",
-        handleEnd as unknown as EventListener
-      );
-    };
-  
-    addListeners(container1);
-    addListeners(container2);
-  
-    return () => {
-      removeListeners(container1);
-      removeListeners(container2);
-    };
-  }, []);
-	
 	return (
 	  <TableWrapper>
 		  <TableHeader>
@@ -662,16 +525,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		  	  Имя студента
 		  	</Text>
 		    </NameHeader>
-		    {classesIds.length !== 0 && <HeaderClasses 
-          ref={container1Ref}
-          onScroll={handleScroll}
-          onMouseDown={handleStart}
-          onMouseMove={handleMove}
-          onMouseUp={handleEnd}
-          onMouseLeave={handleEnd}
-          onTouchStart={handleStart}
-          onTouchMove={handleMove}
-          onTouchEnd={handleEnd}>
+		    {classesIds.length !== 0 && <HeaderClasses>
 		  	{classesIds.map((item, index) => (
 		  	  <HeaderClassItem onClick={() => openClassControlForStudents({id: item, position: index + 1})}>
 		  		<Text themeFont={theme.fonts.h3}>
@@ -685,7 +539,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		  <ScrollWrapper>
 		    <Table>
 		  	<StudentsContainer>
-		  	  {data.map(item => <StudentItem>
+		  	  {data.map((item, index) => <StudentItem key={index}>
 		  		<Text themeFont={theme.fonts.ht2}>
 		  		  {item.student.lastname}
 		  		</Text>
@@ -697,19 +551,10 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		  		</Text>
 		  	  </StudentItem>)}
 		  	</StudentsContainer>
-		  	<ClassesContainer 
-          ref={container2Ref}
-          onScroll={handleScroll}
-          onMouseDown={handleStart}
-          onMouseMove={handleMove}
-          onMouseUp={handleEnd}
-          onMouseLeave={handleEnd}
-          onTouchStart={handleStart}
-          onTouchMove={handleMove}
-          onTouchEnd={handleEnd}>
-		  	  {data.map(item=> <ClassesRow>
-		  		{item.grades.map((item) => 
-          <ClassItem 
+		  	<ClassesContainer>
+		  	  {data.map((item, index)=> <ClassesRow key={index}>
+		  		{item.grades.map((item, index) => 
+          <ClassItem key={index}
 		  		  onClick={() => onClickGrade(item)} >
 		  		  {item.description !== null && <ExistMark/>}
 		  		  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
@@ -728,12 +573,13 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 export type QrCodeControlPopupProps = {
   isActive: boolean;
   closePopup: () => void;
-  setTimeValue: (value: number) => void;
-  timeValue: number;
+  setTimeValueForRefresh: (value: number) => void;
+  setTimeValueForReview: (value: number) => void;
+  timeValueForRefresh: number;
+  timeValueForReview: number;
   generateQrCode: () => void;
   clearDataQrCode: () => void;
   stateStart: "idle" | "loading" | "success" | "error";
-  stateStop: "idle" | "loading" | "success" | "error";
   stateQrCode: "idle" | "loading" | "success" | "error";
   qrCodeData: QrCodeDataType | null;
 };
@@ -741,14 +587,15 @@ export type QrCodeControlPopupProps = {
 export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
   isActive,
   closePopup,
-  timeValue,
-  generateQrCode,
+  timeValueForRefresh,
+  timeValueForReview,
+  setTimeValueForRefresh,
+  setTimeValueForReview,
   stateQrCode,
-  stateStop,
+  generateQrCode,
   stateStart,
   qrCodeData,
-  clearDataQrCode,
-  setTimeValue
+  clearDataQrCode
 }) => {
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -757,15 +604,13 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
   const handleStart = useCallback(() => {
     generateQrCode();
     setIsStarted(true);
-    console.log(new Date());
 
     if (intervalRef.current) return;
 
     intervalRef.current = setInterval(() => {
       generateQrCode();
-      console.log(new Date());
-    }, timeValue * 1000);
-  },[generateQrCode, timeValue]);
+    }, timeValueForRefresh * 1000);
+  },[generateQrCode, timeValueForRefresh]);
 
   const handleStop = useCallback(() => {
     clearDataQrCode();
@@ -798,23 +643,35 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
     <Popup isActive={isActive} closePopup={() => {}}>
       <Column horizontalAlign='center'>
         <Text themeFont={theme.fonts.h2}>
-          Время обновления: <span style={{width: 70, display: 'inline-block'}}><b> {timeValue} cек.</b> </span>
+          Время обновления: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForRefresh} cек.</b> </span>
         </Text>
         <Spacing variant='Column' themeSpace={15}/>
         <RangeSlider
           minValue={1}
           disabled={isStarted}
           maxValue={10}
-          value={timeValue} 
+          value={timeValueForRefresh} 
           step={0.5}
-          setValue={setTimeValue}/>
+          setValue={setTimeValueForRefresh}/>
+        <Spacing variant='Column' themeSpace={25}/>
+        <Text themeFont={theme.fonts.h2}>
+          Время для пересмотра: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForReview} cек.</b> </span>
+        </Text>
+        <Spacing variant='Column' themeSpace={15}/>
+        <RangeSlider
+          minValue={10}
+          maxValue={180}
+          disabled={isStarted}
+          value={timeValueForReview} 
+          step={10}
+          setValue={setTimeValueForReview}/>
         <Spacing variant='Column' themeSpace={25}/>
         <Row>
           {isStarted ? 
             <Button 
               onClick={handleStop} 
               width={100}
-              borderRaius={15} state={stateStop}
+              borderRaius={15}
               variant='attentive' padding={[12,17]}>
               Стоп
             </Button> : 
@@ -848,57 +705,10 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
         <Button 
           onClick={onClose} 
           width={120}
-          borderRaius={15} state={stateStop}
+          borderRaius={15}
           variant='attentive' padding={[12,17]}>
           Закрыть 
         </Button>
-      </Column>
-    </Popup>
-  );
-});
-
-export type ReviewControlPopupProps = {
-  isActive: boolean;
-  closePopup: () => void;
-  setTimeValue: (value: number) => void;
-  timeValue: number;
-  onStartClick: () => void;
-  stateStart: "idle" | "loading" | "success" | "error";
-};
-
-export const ReviewControlPopup: FC<ReviewControlPopupProps> = memo(({
-  isActive,
-  closePopup,
-  stateStart,
-  setTimeValue,
-  onStartClick,
-  timeValue
-}) => {
-  
-  return (
-    <Popup isActive={isActive} closePopup={closePopup}>
-      <Column horizontalAlign='center'>
-        <Text themeFont={theme.fonts.h2}>
-          Время для пересмотра: <span style={{width: 70, display: 'inline-block'}}><b> {timeValue} cек.</b> </span>
-        </Text>
-        <Spacing variant='Column' themeSpace={15}/>
-        <RangeSlider
-          minValue={1}
-          maxValue={10}
-          value={timeValue} 
-          step={0.5}
-          setValue={setTimeValue}/>
-        <Spacing variant='Column' themeSpace={25}/>
-        <Row>
-          <Button 
-            onClick={onStartClick} 
-            width={100}
-            state={stateStart}
-            borderRaius={15}
-            variant="primary" padding={[12,17]}>
-            Запустить
-          </Button>
-        </Row>
       </Column>
     </Popup>
   );

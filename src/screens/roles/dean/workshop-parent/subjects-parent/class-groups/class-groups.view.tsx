@@ -189,8 +189,8 @@ export const ClassGroupsMobileView: FC<LocalViewProps> = memo(({
         </Row>
         <Spacing themeSpace={20} variant='Column' />
         <ItemsContainerMobile>
-          {filteredClassGroups.map((item) => <>
-            <ActionButton onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />
+          {filteredClassGroups.map((item, index) => <>
+            <ActionButton key={index} onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />
             </>)}
         </ItemsContainerMobile>
         </>)
@@ -270,8 +270,8 @@ export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredClassGroups.map((item) => <>
-            <ActionBlockButton onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />
+          {filteredClassGroups.map((item, index) => <>
+            <ActionBlockButton key={index} onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />
             </>)}
         </GridContainer>
       </Column>
