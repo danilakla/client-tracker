@@ -23,6 +23,7 @@ import { RangeSlider } from '../../../../../ui-kit/range-slider';
 import ShieldLogo from '../../../../../ui-kit/assets/security-shield.svg';
 import { Image } from '../../../../../ui-kit/image';
 import QRCode from 'react-qr-code';
+import React from 'react';
 
 export type ClassGroupPanelViewProps = {
   teacherClassGroupControlState: СlassGroupControlState;
@@ -133,6 +134,11 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     activateKeyForClass(controlGenerateKeyPopup);
   },[activateKeyForClass, controlGenerateKeyPopup])
 
+  const [isOpenDescriptionClass, setIsOpenDescriptionClass] = useState<boolean>(false);
+  const controlDescriptionClass = useCallback(() => {
+    setIsOpenDescriptionClass(!isOpenDescriptionClass);
+  },[isOpenDescriptionClass])
+
   return (
     <>
       {
@@ -143,6 +149,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           setAttendance={setAttendance}
           setDescription={setDescription}
+          controlDescriptionClass={controlDescriptionClass}
           setGradeNumber={setGradeNumber}
           openUpdateWindow={openUpdateWindow}
           closeUpdateWindow={closeUpdateWindow}
@@ -151,6 +158,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           isClassControlPopup={isClassControlPopup}
           isOpenUpdateWindow={isOpenUpdateWindow}
           controlGenerateKeyPopup={controlGenerateKeyPopup}
+          isOpenDescriptionClass={isOpenDescriptionClass}
           controlQrCodePopup={controlQrCodePopup}
           closeClassControlForStudents={closeClassControlForStudents}
           openClassControlForStudents={openClassControlForStudents}
@@ -161,7 +169,9 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           teacherClassGroupControlState={teacherClassGroupControlState}
           setAttendance={setAttendance}
+          isOpenDescriptionClass={isOpenDescriptionClass}
           openDeletePopup={openDeletePopup}
+          controlDescriptionClass={controlDescriptionClass}
           controlGenerateKeyPopup={controlGenerateKeyPopup}
           controlQrCodePopup={controlQrCodePopup}
           setDescription={setDescription}
@@ -236,6 +246,9 @@ type LocalViewProps = {
 
   controlQrCodePopup: () => void;
   controlGenerateKeyPopup: () => void;
+
+  controlDescriptionClass: () => void;
+  isOpenDescriptionClass: boolean;
 };
 
 export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
@@ -255,7 +268,10 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   confirmUpdate,
 
   controlGenerateKeyPopup,
-  controlQrCodePopup
+  controlQrCodePopup,
+
+  controlDescriptionClass,
+  isOpenDescriptionClass
 }) => {
 
   return (
@@ -265,15 +281,10 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface>
-          <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
-            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {teacherClassGroupControlState.initData?.classGroup.subjectName}</span><br/>
-            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
-            Подгруппа: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {teacherClassGroupControlState.initData?.subgroup.subgroupNumber}</span>
-          </Text>
-          <Spacing themeSpace={20} variant='Column' />
+          <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
+            Информация о группе занятий 🛈
+          </Button>
+          <Spacing themeSpace={25} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
             <StudentsTable
               onClickGrade={openUpdateWindow} openClassControlForStudents={openClassControlForStudents}
@@ -365,6 +376,25 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           Генерация QR-code
         </Button>
       </Modal>
+      <Modal isActive={isOpenDescriptionClass} closeModal={controlDescriptionClass} >
+        <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
+          Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {teacherClassGroupControlState.initData?.classGroup.subjectName}</span><br/>
+          Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {teacherClassGroupControlState.initData?.classGroup.classGroup.description}</span><br/>
+          Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
+          Подгруппы: <span style={{fontFamily: theme.fonts.ht2.family}}> <br/>
+          {teacherClassGroupControlState.initData?.subgroup.subgroupNumber
+            ?.split('#')
+            .map((subgroup, index) => (
+              <React.Fragment key={index}>
+                {subgroup}
+                <br />
+              </React.Fragment>
+            ))}</span>
+        </Text>
+      </Modal>
     </WrapperMobile>
   );
 });
@@ -387,7 +417,10 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   confirmUpdate,
 
   controlGenerateKeyPopup,
-  controlQrCodePopup
+  controlQrCodePopup,
+
+  isOpenDescriptionClass,
+  controlDescriptionClass
 }) => {
 
   return (
@@ -397,14 +430,9 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface style={{width: 900}}>
-          <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
-            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {teacherClassGroupControlState.initData?.classGroup.subjectName}</span><br/>
-            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
-            Подгруппа: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {teacherClassGroupControlState.initData?.subgroup.subgroupNumber}</span>
-          </Text>
+          <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
+            Информация о группе занятий 🛈
+          </Button>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
             <StudentsTable
@@ -499,6 +527,25 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             Генерация QR-code
           </Button>
         </Column>
+      </Popup>
+      <Popup style={{width: 440}} isActive={isOpenDescriptionClass} closePopup={controlDescriptionClass} >
+        <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
+          Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {teacherClassGroupControlState.initData?.classGroup.subjectName}</span><br/>
+          Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {teacherClassGroupControlState.initData?.classGroup.classGroup.description}</span><br/>
+          Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
+            Подгруппы: <span style={{fontFamily: theme.fonts.ht2.family}}> <br/>
+          {teacherClassGroupControlState.initData?.subgroup.subgroupNumber
+            ?.split('#') // Разделяем строку по символу #
+            .map((subgroup, index) => (
+              <React.Fragment key={index}>
+                {subgroup}
+                <br />
+              </React.Fragment>
+            ))}</span>
+        </Text>
       </Popup>
     </WrapperDesktop>
   );

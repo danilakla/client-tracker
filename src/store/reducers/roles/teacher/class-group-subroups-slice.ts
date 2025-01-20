@@ -159,7 +159,7 @@ export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-c
                     idHold: subgroups[0].idHold,
                     subgroup: {
                         idSubgroup: 0,
-                        subgroupNumber: '',
+                        subgroupNumber:  subgroups.map((item) => item.subgroup.subgroupNumber).join('#'),
                         admissionDate: '',
                         idDean: 0,
                         idSpecialty: 0,

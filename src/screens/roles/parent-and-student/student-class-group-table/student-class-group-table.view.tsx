@@ -182,7 +182,10 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
         />
         <ErrorPopup
           isOpen={isOpenErrorReviewPopup}
-          textError={<>Время пересмотра истекло</>}
+          textError={<>
+            Время пересмотра истекло <br/> или
+             преподаватель не <br/>запустил ещё процесс
+          </>}
           closePopup={closeErrorReviewPopup}
         />
         <ErrorPopup
@@ -281,7 +284,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
         <Spacing themeSpace={15} variant='Column' />
         <Button 
           onClick={studentClassGroupTableState.redisKeyData === null ? getKeyForQr : () => {}} 
-          width={200}
+          width={200} state={studentClassGroupTableState.loadingKey}
           borderRaius={10}
           variant={studentClassGroupTableState.redisKeyData === null ? 'primary' : 'recomended'} padding={[12,17]}>
           {studentClassGroupTableState.redisKeyData === null ? "Получить ключ" : "✓"}
