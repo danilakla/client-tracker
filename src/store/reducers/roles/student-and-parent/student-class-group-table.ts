@@ -41,6 +41,8 @@ export type StudentClassGroupTableState = {
 
     redisKeyData: RedisKeyDataType | null;
     loadingKey: "idle" | "loading" | "success" | "error";
+    loadingReview: "idle" | "loading" | "success" | "error";
+    loadingScan: "idle" | "loading" | "success" | "error";
 }
 
 export type HeaderClassType = {
@@ -68,6 +70,8 @@ const initialState: StudentClassGroupTableState = {
         id: -1,
         position: -1
     },
+    loadingReview: 'idle',
+    loadingScan: 'idle',
     loadingKey: 'idle'
 };
 
@@ -143,6 +147,16 @@ export const studentClassGroupTableSlice = createSlice({
             })
             .addCase(getKeyForQrActionCreator.rejected, (state) => {
                 state.loadingKey = "idle";
+            })
+
+            .addCase(askReviewActionCreator.fulfilled, (state) => {
+                state.loadingReview = 'success';
+            })
+            .addCase(askReviewActionCreator.pending, (state) => {
+                state.loadingReview = 'loading';
+            })
+            .addCase(askReviewActionCreator.rejected, (state) => {
+                state.loadingReview = "idle";
             })
     },
 });
@@ -224,8 +238,8 @@ function transformAndSortStudentsStatistics(input: {
 
 
 export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-table/get-key-for-qr',
-    async (data: { authToken: string, id: number}, thunkApi ) => {
-        const { authToken, id } = data;
+    async (data: { authToken: string, id: number, onError: () => void}, thunkApi ) => {
+        const { authToken, id, onError } = data;
         try {
             const responce = await studentApi.getKeyForQr(authToken, id);
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setRedisKeyDataActionCreator(
@@ -236,6 +250,34 @@ export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-ta
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+                else onError();
+            }
+        }
+    }
+)
+
+export const askReviewActionCreator = createAsyncThunk('student-class-group-table/ask-review',
+    async (data: { 
+            authToken: string, classId: number, userId: number, studentStatistics: StatisticOfStudent[],
+            onSuccess: () => void, onError: () => void}, thunkApi ) => {
+        const { authToken, classId, userId, studentStatistics, onSuccess, onError } = data;
+        try {
+            const studentStats = studentStatistics.find(stat => stat.student.idStudent === userId);
+            if (!studentStats) return;
+        
+            const gradeInfo = studentStats.grades.find(grade => grade.idClass === classId);
+            if (!gradeInfo) return;
+
+            await studentApi.askReview(authToken, classId, gradeInfo.idStudentGrate);
+            onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else {
+                    onError();
                 }
             }
         }

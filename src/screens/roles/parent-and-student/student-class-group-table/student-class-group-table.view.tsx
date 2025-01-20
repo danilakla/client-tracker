@@ -20,6 +20,7 @@ import { Image } from '../../../../ui-kit/image';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { ErrorPopup } from '../../../../ui-kit/error-popup';
 import { SuccessfulPopup } from '../../../../ui-kit/successful-popup';
+import { Row } from '../../../../ui-kit/row';
 
 export type StudentClassGroupTableViewProps = {
   role: "ROLE_STUDENT" | "ROLE_PARENTS";
@@ -27,8 +28,9 @@ export type StudentClassGroupTableViewProps = {
   goToClassGroups: () => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
   setSelectedClass: (value: HeaderClassType, onSuccess: () => void) => void;
-  getKeyForQr: () => void;
+  getKeyForQr: (onError: () => void) => void;
   clearRedisKey: () => void;
+  askReview: (onSuccess: () => void, onError: () => void) => void;
 };
 
 export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = memo(({
@@ -38,6 +40,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
   goToClassGroups,
   clearRedisKey,
   setSelectedClass,
+  askReview,
   studentClassGroupTableState
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
@@ -75,6 +78,52 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     setHasCameraAccess(false);
   },[])
 
+  const [isReviewSuccessPopup, setIsReviewSuccessPopup] = useState<boolean>(false);
+  const openReviewSuccessPopup = useCallback(() => {
+    setIsReviewSuccessPopup(true);
+  },[])
+  const closeReviewSuccessPopup = useCallback(() => {
+    setIsOpenConfirmReviewPopup(false);
+    setIsReviewSuccessPopup(false);
+    closeClassControl();
+  },[setIsReviewSuccessPopup, closeClassControl])
+
+  const [isOpenErrorReviewPopup , setIsOpenErrorReviewPopup] = useState<boolean>(false);
+  const openErrorReviewPopup = useCallback(() => {
+    setIsOpenErrorReviewPopup(true);
+  },[])
+  const closeErrorReviewPopup = useCallback(() => {
+    setIsOpenConfirmReviewPopup(false);
+    setIsOpenErrorReviewPopup(false);
+  },[])
+
+  const [isOpenSuccessQrCodePopup, setIsOpenSuccessQrCodePopup] = useState<boolean>(false);
+  const openSuccessQrCodePopup = useCallback(() => {
+    setIsOpenSuccessQrCodePopup(true);
+  },[])
+  const closeSuccessQrCodePopup = useCallback(() => {
+    setIsOpenSuccessQrCodePopup(false);
+    closeClassControl();
+  },[setIsOpenSuccessQrCodePopup, closeClassControl])
+
+  const onAskReview = useCallback(() => {
+    askReview(openReviewSuccessPopup, openErrorReviewPopup);
+  },[askReview, openReviewSuccessPopup, openErrorReviewPopup])
+
+  const [isOpenConfirmReviewPopup, setIsOpenConfirmReviewPopup] = useState<boolean>(false);
+  const controlConfirmReviewPopup = useCallback(() => {
+    setIsOpenConfirmReviewPopup(!isOpenConfirmReviewPopup);
+  },[isOpenConfirmReviewPopup])
+
+  const [isOpenErrorKeyPopup, setIsOpenErrorKeyPopup] = useState<boolean>(false);
+  const controlErrorKeyPopup = useCallback(() => {
+    setIsOpenErrorKeyPopup(!isOpenErrorKeyPopup);
+  },[isOpenErrorKeyPopup])
+
+  const onGetKeyForQr = useCallback(() => {
+    getKeyForQr(controlErrorKeyPopup);
+  },[getKeyForQr, controlErrorKeyPopup])
+
   return (
     <>
       {isMobile ? 
@@ -87,33 +136,64 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           hasCameraAccess={hasCameraAccess}
           setErrorAccessCamera={setErrorAccessCamera}
           isClassControlPopup={isClassControlPopup}
-          getKeyForQr={getKeyForQr}
+          getKeyForQr={onGetKeyForQr}
+          onAskReview={controlConfirmReviewPopup}
           studentClassGroupTableState={studentClassGroupTableState}
           />) :
         (<StudentClassGroupTableDesktopView
           role={role}
           hasCameraAccess={hasCameraAccess}
+          onAskReview={controlConfirmReviewPopup}
           setErrorAccessCamera={setErrorAccessCamera}
           closeClassControl={closeClassControl}
           openClassControl={openClassControl}
-          getKeyForQr={getKeyForQr}
+          getKeyForQr={onGetKeyForQr}
           isClassControlPopup={isClassControlPopup}
 		      setSelectedGrade={setSelectedGrade}
           goToClassGroups={goToClassGroups}
           studentClassGroupTableState={studentClassGroupTableState}
           />)}
-        <ErrorPopup
-          isOpen={false}
-          textError={
-            <>Срок действия кода истек<br/>
-              или код не был создан
-            </>}
-          closePopup={() => {}}
+        <Popup isActive={isOpenConfirmReviewPopup} closePopup={controlConfirmReviewPopup}>
+          <Column horizontalAlign='center'>
+            <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h2} align='center'> 
+              Вы уверены, что хотите<br/>
+               запросить пересмотр?
+            </Text>
+            <Spacing  themeSpace={25} variant='Column' />
+            <Row>
+              <Button 
+                onClick={onAskReview} 
+                state={studentClassGroupTableState.loadingReview} 
+                variant='recomended' padding={[12,17]}>
+                Запросить
+              </Button>
+              <Spacing variant='Row' themeSpace={20}/>
+              <Button onClick={controlConfirmReviewPopup} variant='attentive' padding={[12,17]}>
+                Отмена
+              </Button>
+            </Row>
+          </Column>
+        </Popup>
+        <SuccessfulPopup
+          text={<>
+            Заявка на пересмотр<br/>
+            успешно отправлена
+          </>}
+          isOpen={isReviewSuccessPopup}
+          closePopup={closeReviewSuccessPopup}
         />
         <ErrorPopup
-          isOpen={false}
+          isOpen={isOpenErrorReviewPopup}
           textError={<>Время пересмотра истекло</>}
-          closePopup={() => {}}
+          closePopup={closeErrorReviewPopup}
+        />
+        <ErrorPopup
+          isOpen={isOpenErrorKeyPopup}
+          textError={
+            <>Срок действия ключа истек<br/>
+              или ключа не был создан
+            </>}
+          closePopup={controlErrorKeyPopup}
         />
         <ErrorPopup
           isOpen={false}
@@ -123,15 +203,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
         <SuccessfulPopup
           text={<>Присутствие подтверждено</>}
           isOpen={false}
-          closePopup={() =>{}}
-        />
-        <SuccessfulPopup
-          text={<>
-            Заявка на пересмотр<br/>
-            успешно отправлена
-          </>}
-          isOpen={false}
-          closePopup={() =>{}}
+          closePopup={closeSuccessQrCodePopup}
         />
       </>
   );
@@ -143,6 +215,7 @@ type LocalViewProps = {
   goToClassGroups: () => void;
   closeClassControl: () => void;
   isClassControlPopup: boolean;
+  onAskReview: () => void;
   hasCameraAccess: boolean | null;
   openClassControl: (value: HeaderClassType) => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
@@ -154,6 +227,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   goToClassGroups,
   studentClassGroupTableState,
   getKeyForQr,
+  onAskReview,
   setSelectedGrade,
   hasCameraAccess,
   setErrorAccessCamera,
@@ -247,7 +321,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
               <Spacing themeSpace={15} variant='Column' />
               <Column horizontalAlign='center'>
                 <Button 
-                  onClick={() => {}} 
+                  onClick={onAskReview} 
                   width={270}
                   borderRaius={10}
                   variant="primary" padding={[12,17]}>

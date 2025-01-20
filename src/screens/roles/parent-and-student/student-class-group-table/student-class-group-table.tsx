@@ -5,14 +5,14 @@ import { useAppDispatch, useTypedSelector } from '../../../../hooks/use-typed-se
 import { useUser } from '../../../../hooks/user-hook';
 import { useStudentClassGroups } from '../student-class-groups/student-class-groups.props';
 import { useStudentSubjects } from '../student-subjects/student-subjects.props';
-import { getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { askReviewActionCreator, getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   role
 }) => {
   const studentClassGroupTableState = useTypedSelector(state => state.studentClassGroupTable);
   const dispatch = useAppDispatch();
-  const {authToken} = useUser();
+  const {authToken, user} = useUser();
 
   const goToClassGroups = useStudentClassGroups();
   const goToSubjects= useStudentSubjects();
@@ -62,26 +62,44 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   // qr-code-logic
 
   const setSelectedClass = useCallback((value: HeaderClassType, onSuccess: () => void)=>{
-      dispatch(setSelectedClassActionCreator({value, onSuccess}));
-    },[dispatch,setSelectedClassActionCreator])
+    dispatch(setSelectedClassActionCreator({value, onSuccess}));
+  },[dispatch,setSelectedClassActionCreator])
 
-    const getKeyForQr = useCallback(()=>{
-      console.log(studentClassGroupTableState.selectedClass);
+  const getKeyForQr = useCallback((onError: () => void)=>{
+    dispatch(getKeyForQrActionCreator(
+      {
+        authToken: authToken,
+        id: studentClassGroupTableState.selectedClass.id,
+        onError: onError
+      }
+    ));
+  },[dispatch, authToken, studentClassGroupTableState.selectedClass])
 
-      dispatch(getKeyForQrActionCreator(
-        {
-          authToken: authToken,
-          id: studentClassGroupTableState.selectedClass.id
-        }
-      ));
-    },[dispatch, authToken, studentClassGroupTableState.selectedClass])
+  const clearRedisKey = useCallback(()=>{
+    dispatch(clearRedisKeyActionCreator());
+  },[dispatch,clearRedisKeyActionCreator])
 
-    const clearRedisKey = useCallback(()=>{
-      dispatch(clearRedisKeyActionCreator());
-    },[dispatch,clearRedisKeyActionCreator])
+  // to-do Ilya
+
+  const askReview = useCallback((onSuccess: () => void, onError: () => void) => {
+    dispatch(askReviewActionCreator({
+      authToken: authToken,
+      classId: studentClassGroupTableState.selectedClass.id,
+      studentStatistics: studentClassGroupTableState.studentsStatistics,
+      userId: 1,
+      onSuccess: onSuccess,
+      onError: onError
+    }));
+  }, [
+    dispatch, 
+    authToken, 
+    studentClassGroupTableState.selectedClass.id, 
+    studentClassGroupTableState.studentsStatistics
+  ]);
 
   return (
       <StudentClassGroupTableView 
+        askReview={askReview}
         setSelectedGrade={setSelectedGrade}
         goToClassGroups={goToClassGroups}
         setSelectedClass={setSelectedClass}

@@ -30,5 +30,15 @@ export const studentApi = {
                 return response.data;
             })
     },
+    askReview(authToken: string, classId: number, studentGradeId: number) {
+        return instance.post(`/qr/student/ask/review`, {
+            classId: classId,
+            studentGradeId: studentGradeId
+        },{ 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 
