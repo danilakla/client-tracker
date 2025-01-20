@@ -12,7 +12,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
 }) => {
   const studentClassGroupTableState = useTypedSelector(state => state.studentClassGroupTable);
   const dispatch = useAppDispatch();
-  const {authToken, user} = useUser();
+  const {authToken, userAccountId} = useUser();
 
   const goToClassGroups = useStudentClassGroups();
   const goToSubjects= useStudentSubjects();
@@ -79,20 +79,20 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
     dispatch(clearRedisKeyActionCreator());
   },[dispatch,clearRedisKeyActionCreator])
 
-  // to-do Ilya
-
-  const askReview = useCallback((onSuccess: () => void, onError: () => void) => {
+  const askReview = useCallback((onSuccess: () => void, onError: () => void, closePrewPopup: () => void ) => {
     dispatch(askReviewActionCreator({
       authToken: authToken,
       classId: studentClassGroupTableState.selectedClass.id,
       studentStatistics: studentClassGroupTableState.studentsStatistics,
-      userId: 1,
+      userId: userAccountId,
       onSuccess: onSuccess,
-      onError: onError
+      onError: onError,
+      closePrewPopup: closePrewPopup
     }));
   }, [
     dispatch, 
     authToken, 
+    userAccountId,
     studentClassGroupTableState.selectedClass.id, 
     studentClassGroupTableState.studentsStatistics
   ]);

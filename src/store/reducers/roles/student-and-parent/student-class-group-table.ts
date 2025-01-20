@@ -20,7 +20,8 @@ export type StatisticOfStudent = {
         surname: string,
         name: string,
         lastname: string,
-        idStudent: number
+        idStudent: number,
+        idAccount: number
     },
     grades: GradeInfo[]
 }
@@ -211,6 +212,7 @@ function transformAndSortStudentsStatistics(input: {
     const result: StatisticOfStudent[] = students.map((student) => {
         const [surname, name, lastname] = student.flpName.split("_");
         const idStudent = student.idStudent;
+        const idAccount = student.idAccount;
 
         const grades = studentGrades
             .filter((grade) => grade.idStudent === student.idStudent)
@@ -225,7 +227,7 @@ function transformAndSortStudentsStatistics(input: {
             .sort((a, b) => a.idClass - b.idClass); 
 
         return {
-            student: { surname, name, lastname, idStudent },
+            student: { idAccount, surname, name, lastname, idStudent },
             grades,
         };
     });
@@ -260,16 +262,17 @@ export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-ta
 export const askReviewActionCreator = createAsyncThunk('student-class-group-table/ask-review',
     async (data: { 
             authToken: string, classId: number, userId: number, studentStatistics: StatisticOfStudent[],
-            onSuccess: () => void, onError: () => void}, thunkApi ) => {
-        const { authToken, classId, userId, studentStatistics, onSuccess, onError } = data;
+            onSuccess: () => void, onError: () => void, closePrewPopup: () => void}, thunkApi ) => {
+        const { authToken, classId, userId, studentStatistics, onSuccess, onError, closePrewPopup} = data;
         try {
-            const studentStats = studentStatistics.find(stat => stat.student.idStudent === userId);
+            const studentStats = studentStatistics.find(stat => stat.student.idAccount === userId);
             if (!studentStats) return;
         
             const gradeInfo = studentStats.grades.find(grade => grade.idClass === classId);
             if (!gradeInfo) return;
 
             await studentApi.askReview(authToken, classId, gradeInfo.idStudentGrate);
+            closePrewPopup();
             onSuccess();
         }
         catch (e) {
@@ -277,6 +280,7 @@ export const askReviewActionCreator = createAsyncThunk('student-class-group-tabl
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
                 } else {
+                    closePrewPopup();
                     onError();
                 }
             }

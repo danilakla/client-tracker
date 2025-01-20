@@ -9,6 +9,7 @@ export type UserErrors = {
 export type UserRole = "ROLE_ADMIN" | "ROLE_TEACHER" | "ROLE_STUDENT" | "ROLE_DEAN" | "ROLE_PARENTS" | "UNDEFINED";
 
 export type UserData = {
+    idAccount: number;
     login: string,
     role: UserRole,
     name: string,
@@ -23,6 +24,7 @@ export type UserState = {
 
 const initialState: UserState = {
     user: {
+        idAccount: -1,
         login: '',
         role: 'ROLE_ADMIN',
         name: '',

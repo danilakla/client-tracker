@@ -30,7 +30,7 @@ export type StudentClassGroupTableViewProps = {
   setSelectedClass: (value: HeaderClassType, onSuccess: () => void) => void;
   getKeyForQr: (onError: () => void) => void;
   clearRedisKey: () => void;
-  askReview: (onSuccess: () => void, onError: () => void) => void;
+  askReview: (onSuccess: () => void, onError: () => void, closePrewPopup: () => void) => void;
 };
 
 export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = memo(({
@@ -83,7 +83,6 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     setIsReviewSuccessPopup(true);
   },[])
   const closeReviewSuccessPopup = useCallback(() => {
-    setIsOpenConfirmReviewPopup(false);
     setIsReviewSuccessPopup(false);
     closeClassControl();
   },[setIsReviewSuccessPopup, closeClassControl])
@@ -93,7 +92,6 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     setIsOpenErrorReviewPopup(true);
   },[])
   const closeErrorReviewPopup = useCallback(() => {
-    setIsOpenConfirmReviewPopup(false);
     setIsOpenErrorReviewPopup(false);
   },[])
 
@@ -105,10 +103,6 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     setIsOpenSuccessQrCodePopup(false);
     closeClassControl();
   },[setIsOpenSuccessQrCodePopup, closeClassControl])
-
-  const onAskReview = useCallback(() => {
-    askReview(openReviewSuccessPopup, openErrorReviewPopup);
-  },[askReview, openReviewSuccessPopup, openErrorReviewPopup])
 
   const [isOpenConfirmReviewPopup, setIsOpenConfirmReviewPopup] = useState<boolean>(false);
   const controlConfirmReviewPopup = useCallback(() => {
@@ -123,6 +117,10 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
   const onGetKeyForQr = useCallback(() => {
     getKeyForQr(controlErrorKeyPopup);
   },[getKeyForQr, controlErrorKeyPopup])
+
+  const onAskReview = useCallback(() => {
+    askReview(openReviewSuccessPopup, openErrorReviewPopup, controlConfirmReviewPopup);
+  },[askReview, openReviewSuccessPopup, openErrorReviewPopup, controlConfirmReviewPopup])
 
   return (
     <>

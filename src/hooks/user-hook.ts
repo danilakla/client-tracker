@@ -32,6 +32,7 @@ export const useUser = () => {
         user: userState.user,
         getUserInfo: getUserInfo,
         authToken: userState.authToken,
+        userAccountId: userState.user.idAccount,
         redirectToLogin: redirectToLogin,
     }
 }
