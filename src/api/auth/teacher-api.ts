@@ -1,4 +1,5 @@
 import axios from "axios"
+import { AttendanceCodeType } from "../../store/reducers/roles/teacher/class-group-control-slice";
 
 const instance = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
@@ -53,7 +54,7 @@ export const teacherApi = {
                 return response.data;
             })
     },
-    updateGrade(authToken: string, idStudentGrate: number, grade: number | null, description: string | null, attendance: 0 | 1 | 2 | 3){
+    updateGrade(authToken: string, idStudentGrate: number, grade: number | null, description: string | null, attendance: AttendanceCodeType){
         return instance.put('/teacher/update/classes',{
             idStudentGrate: idStudentGrate,
             grade: grade,

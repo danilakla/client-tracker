@@ -153,23 +153,12 @@ export const HeaderClasses = styled.div`
 `;
 
 
-export const ColorCircle = styled.div<{variant: 0 | 1 | 2 | 3}>`
+export const ColorCircle = styled.div<{color: string}>`
   width: 10px;
   height: 10px;
   border-radius: 5px;
 
-  background-color: ${({ variant }) => {
-    switch(variant){
-      case 0:
-        return `transparent`;
-      case 1:
-        return `${theme.colors.attentive}`;
-      case 2:
-        return `${theme.colors.neutral}`;
-      case 3:
-        return `${theme.colors.success}`;
-    }
-  }};
+  background-color: ${({ color }) => color};
 `;
 
 

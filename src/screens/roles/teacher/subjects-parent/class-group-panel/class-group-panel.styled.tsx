@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { theme } from "../../../../../ui-kit/themes/theme";
+import { AttendanceCodeType } from "../../../../../store/reducers/roles/teacher/class-group-control-slice";
 
 
-export const ColorCircleButton = styled.div<{variant: 0 | 1 | 2 | 3, isSelected: boolean}>`
+export const ColorCircleButton = styled.div<{color: string, isSelected: boolean}>`
   width: 40px;
   height: 40px;
   border-radius: 20px;
@@ -10,18 +11,7 @@ export const ColorCircleButton = styled.div<{variant: 0 | 1 | 2 | 3, isSelected:
 
   border: ${({ isSelected }) => (isSelected ? `5px solid ${theme.colors.gray}` : "none")};
 
-  background-color: ${({ variant }) => {
-    switch(variant){
-      case 0:
-        return `#0000003e`;
-      case 1:
-        return `${theme.colors.attentive}`;
-      case 2:
-        return `${theme.colors.neutral}`;
-      case 3:
-        return `${theme.colors.success}`;
-    }
-  }};
+  background-color: ${({ color }) => color};
 `;
 
 export const ScrollWrapper = styled.div`
@@ -176,7 +166,7 @@ export const HeaderClasses = styled.div`
 `;
 
 
-export const ColorCircle = styled.div<{variant: 0 | 1 | 2 | 3}>`
+export const ColorCircle = styled.div<{variant: AttendanceCodeType}>`
   width: 10px;
   height: 10px;
   border-radius: 5px;

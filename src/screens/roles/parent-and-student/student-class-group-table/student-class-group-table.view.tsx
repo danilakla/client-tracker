@@ -4,7 +4,7 @@ import { useMediaQuery } from 'react-responsive';
 import { theme } from '../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../components/wrapper-desktop';
-import { GradeInfo, HeaderClassType, StatisticOfStudent, StudentClassGroupTableState } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { GradeInfo, HeaderClassType, RedisKeyDataType, StatisticOfStudent, StudentClassGroupTableState } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 import { Column } from '../../../../ui-kit/column';
 import { CircleLoading } from '../../../../ui-kit/circle-loading';
 import { Surface } from '../../../../ui-kit/surface';
@@ -17,10 +17,11 @@ import { ScrollView } from '../../../../ui-kit/scroll-view';
 import { Button } from '../../../../ui-kit/button';
 import ShieldLogo from '../../../../ui-kit/assets/security-shield.svg';
 import { Image } from '../../../../ui-kit/image';
-import { Scanner } from '@yudiel/react-qr-scanner';
+import { IDetectedBarcode, Scanner } from '@yudiel/react-qr-scanner';
 import { ErrorPopup } from '../../../../ui-kit/error-popup';
 import { SuccessfulPopup } from '../../../../ui-kit/successful-popup';
 import { Row } from '../../../../ui-kit/row';
+import { attendanceColorsForStudents } from '../../../../store/reducers/roles/teacher/class-group-control-slice';
 
 export type StudentClassGroupTableViewProps = {
   role: "ROLE_STUDENT" | "ROLE_PARENTS";
@@ -31,6 +32,7 @@ export type StudentClassGroupTableViewProps = {
   getKeyForQr: (onError: () => void) => void;
   clearRedisKey: () => void;
   askReview: (onSuccess: () => void, onError: () => void, closePrewPopup: () => void) => void;
+  checkQrCode: (value: string, onSuccess: () => void, onError: () => void) => void;
 };
 
 export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = memo(({
@@ -40,6 +42,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
   goToClassGroups,
   clearRedisKey,
   setSelectedClass,
+  checkQrCode,
   askReview,
   studentClassGroupTableState
 }) => {
@@ -53,7 +56,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     setSelectedClass(value, controlClassControlPopup);
   },[setSelectedClass, controlClassControlPopup])
   const closeClassControl = useCallback(() => {
-    setSelectedClass({id: -1, position: -1},controlClassControlPopup);
+    setSelectedClass({id: -1, position: -1, gradeId: -1},controlClassControlPopup);
     clearRedisKey();
   },[setSelectedClass, controlClassControlPopup,clearRedisKey])
 
@@ -95,6 +98,14 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     setIsOpenErrorReviewPopup(false);
   },[])
 
+  const [isOpenErrorQrCodePopup , setIsOpenErrorQrCodePopup] = useState<boolean>(false);
+  const openErrorQrCodePopup = useCallback(() => {
+    setIsOpenErrorQrCodePopup(true);
+  },[])
+  const closeErrorQrCodePopup = useCallback(() => {
+    setIsOpenErrorQrCodePopup(false);
+  },[])
+
   const [isOpenSuccessQrCodePopup, setIsOpenSuccessQrCodePopup] = useState<boolean>(false);
   const openSuccessQrCodePopup = useCallback(() => {
     setIsOpenSuccessQrCodePopup(true);
@@ -122,6 +133,10 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     askReview(openReviewSuccessPopup, openErrorReviewPopup, controlConfirmReviewPopup);
   },[askReview, openReviewSuccessPopup, openErrorReviewPopup, controlConfirmReviewPopup])
 
+  const onHandleQrCode = useCallback((value: string) => {
+    checkQrCode(value, openSuccessQrCodePopup, openErrorQrCodePopup);
+  },[checkQrCode, openSuccessQrCodePopup, openErrorQrCodePopup])
+
   return (
     <>
       {isMobile ? 
@@ -131,6 +146,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
 		      setSelectedGrade={setSelectedGrade}
           closeClassControl={closeClassControl}
           openClassControl={openClassControl}
+          onHandleQrCode={onHandleQrCode}
           hasCameraAccess={hasCameraAccess}
           setErrorAccessCamera={setErrorAccessCamera}
           isClassControlPopup={isClassControlPopup}
@@ -144,6 +160,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           onAskReview={controlConfirmReviewPopup}
           setErrorAccessCamera={setErrorAccessCamera}
           closeClassControl={closeClassControl}
+          onHandleQrCode={onHandleQrCode}
           openClassControl={openClassControl}
           getKeyForQr={onGetKeyForQr}
           isClassControlPopup={isClassControlPopup}
@@ -197,13 +214,13 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           closePopup={controlErrorKeyPopup}
         />
         <ErrorPopup
-          isOpen={false}
-          textError={<></>}
-          closePopup={() => {}}
+          isOpen={isOpenErrorQrCodePopup}
+          textError={<>шО ТЫ ДЕЛАЕШЬ</>}
+          closePopup={closeErrorQrCodePopup}
         />
         <SuccessfulPopup
           text={<>Присутствие подтверждено</>}
-          isOpen={false}
+          isOpen={isOpenSuccessQrCodePopup}
           closePopup={closeSuccessQrCodePopup}
         />
       </>
@@ -215,6 +232,7 @@ type LocalViewProps = {
   studentClassGroupTableState: StudentClassGroupTableState;
   goToClassGroups: () => void;
   closeClassControl: () => void;
+  onHandleQrCode: (value: string) => void;
   isClassControlPopup: boolean;
   onAskReview: () => void;
   hasCameraAccess: boolean | null;
@@ -233,6 +251,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   hasCameraAccess,
   setErrorAccessCamera,
   isClassControlPopup,
+  onHandleQrCode,
   closeClassControl,
   openClassControl, 
   role
@@ -245,6 +264,11 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   const closeDescription = useCallback(()=> {
     setIsOpenDescription(false);
   },[])
+  
+  const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
+  const controlInfoWindow = useCallback(()=> {
+    setIsOpenInfo(!isOpenInfo);
+  },[isOpenInfo])
 
   return (
     <WrapperMobile onBack={goToClassGroups} role={role} header='Таблица'>
@@ -253,12 +277,11 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
         <CircleLoading state={studentClassGroupTableState.loading}/>
       </Column> : <>
         <Surface>
-          <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
-            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
-            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {studentClassGroupTableState.classGroup?.formatName}</span><br/>
-          </Text>
+          <Button onClick={controlInfoWindow} 
+            borderRaius={10} 
+            variant='recomended' padding={[10, 10]}>
+            Информация 🛈
+          </Button>
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
             <StudentsTable onClickGrade={openDescription} openClassControl={openClassControl}
@@ -278,70 +301,41 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
         </ScrollView>
       </Modal>
       <Modal isActive={isClassControlPopup} closeModal={closeClassControl}>
-        <Text themeFont={theme.fonts.h1}>
-          Занятие {studentClassGroupTableState.selectedClass.position}
+        <QrcCodePart
+          redisKeyData={studentClassGroupTableState.redisKeyData}
+          loadingKey={studentClassGroupTableState.loadingKey}
+          getKeyForQr={getKeyForQr}
+          loadingScan={studentClassGroupTableState.loadingScan}
+          hasCameraAccess={hasCameraAccess}
+          setErrorAccessCamera={setErrorAccessCamera}
+          onHandleQrCode={onHandleQrCode}
+          onAskReview={onAskReview}
+          position={studentClassGroupTableState.selectedClass.position}/>
+      </Modal>
+      <Modal isActive={isOpenInfo} closeModal={controlInfoWindow} >
+        <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
+          Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
+          Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.formatName}</span><br/>
         </Text>
-        <Spacing themeSpace={15} variant='Column' />
-        <Button 
-          onClick={studentClassGroupTableState.redisKeyData === null ? getKeyForQr : () => {}} 
-          width={200} state={studentClassGroupTableState.loadingKey}
-          borderRaius={10}
-          variant={studentClassGroupTableState.redisKeyData === null ? 'primary' : 'recomended'} padding={[12,17]}>
-          {studentClassGroupTableState.redisKeyData === null ? "Получить ключ" : "✓"}
-        </Button>
-        <Spacing themeSpace={15} variant='Column' />
-        <Surface 
-          padding='10px' borderRadius='10px' 
-          borderColor={theme.colors.foreground} height={357} width={300}>
-            {studentClassGroupTableState.redisKeyData === null ? (
-              <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
-                <Image src={ShieldLogo} width={250} height={250}/>
-              </Column>) : (<>
-              <Surface 
-                padding='0px' 
-                borderColor={theme.colors.surface} 
-                style={{borderRadius: 10, overflow: 'hidden', borderWidth: 5}}>
-                  {hasCameraAccess ? <Scanner 
-                  onError={() => setErrorAccessCamera()}
-                  styles={{
-                  video: {
-                    height: 268,
-                    width: 268
-                  },
-                  container: {
-                    height: 268,
-                    width: 268
-                  }
-                }} onScan={(result) => console.log(result)} /> : 
-                <Column style={{height: 268}} horizontalAlign='center' verticalAlign='center'>
-                  <Text align='center' themeFont={theme.fonts.h3} themeColor={theme.colors.gray}>
-                    При подключении к камере произошла ошибка, перезагрузите страницу или проверте доступ
-                  </Text>
-              </Column>}
-              </Surface>
-              <Spacing themeSpace={15} variant='Column' />
-              <Column horizontalAlign='center'>
-                <Button 
-                  onClick={onAskReview} 
-                  width={270}
-                  borderRaius={10}
-                  variant="primary" padding={[12,17]}>
-                  Запросить пересмотр
-                </Button>
-              </Column>
-              </>)}
-        </Surface>
       </Modal>
     </WrapperMobile>
   );
 });
 
 export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
-  studentClassGroupTableState,
   goToClassGroups,
-  openClassControl,
+  studentClassGroupTableState,
   getKeyForQr,
+  onAskReview,
   setSelectedGrade,
+  hasCameraAccess,
+  setErrorAccessCamera,
+  isClassControlPopup,
+  onHandleQrCode,
+  closeClassControl,
+  openClassControl, 
   role
 }) => {
   const [isOpenDescription, setIsOpenDescription] = useState<boolean>(false);
@@ -353,6 +347,11 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
     setIsOpenDescription(false);
   },[])
 
+  const [isOpenInfo, setIsOpenInfo] = useState<boolean>(false);
+  const controlInfoWindow = useCallback(()=> {
+    setIsOpenInfo(!isOpenInfo);
+  },[isOpenInfo])
+
   return (
     <WrapperDesktop style={{padding: 'none'}}  onBack={goToClassGroups} role={role} header='Таблица' isCenter={true}>
 	    {studentClassGroupTableState.loading === 'loading' ?
@@ -360,12 +359,11 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           <CircleLoading state={studentClassGroupTableState.loading}/>
         </Column> : <>
         <Surface style={{width: 900}}>
-          <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
-            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
-            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
-              {studentClassGroupTableState.classGroup?.formatName}</span><br/>
-          </Text>
+          <Button onClick={controlInfoWindow} 
+            borderRaius={10} 
+            variant='recomended' padding={[10, 10]}>
+            Информация 🛈
+          </Button>
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
             <StudentsTable
@@ -386,13 +384,33 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           </ScrollView>
         </Column>
       </Popup>
+      <Popup style={{width: 440}} isActive={isOpenInfo} closePopup={controlInfoWindow} >
+        <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
+          Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
+          Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.formatName}</span><br/>
+        </Text>
+      </Popup>
+      <Popup isActive={isClassControlPopup} closePopup={closeClassControl}>
+        <QrcCodePart
+          redisKeyData={studentClassGroupTableState.redisKeyData}
+          loadingKey={studentClassGroupTableState.loadingKey}
+          getKeyForQr={getKeyForQr}
+          loadingScan={studentClassGroupTableState.loadingScan}
+          hasCameraAccess={hasCameraAccess}
+          setErrorAccessCamera={setErrorAccessCamera}
+          onHandleQrCode={onHandleQrCode}
+          onAskReview={onAskReview}
+          position={studentClassGroupTableState.selectedClass.position}/>
+      </Popup>
     </WrapperDesktop>
   );
 });
 
 export type StudentsTableProps = {
 	data: StatisticOfStudent[];
-	classesIds: number[];
+	classesIds: HeaderClassType[];
   onClickGrade: (value: GradeInfo) => void;
   openClassControl: (value: HeaderClassType) => void;
 };
@@ -413,7 +431,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		    </NameHeader>
 		    {classesIds.length !== 0 && <HeaderClasses>
         {classesIds.map((item, index) => (
-          <HeaderClassItem key={index} onClick={() => openClassControl({id: item, position: index + 1})}>
+          <HeaderClassItem key={index} onClick={() => openClassControl(item)}>
           <Text themeFont={theme.fonts.h3}>
             Занятие {index + 1}
           </Text>
@@ -444,12 +462,99 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		  	  	  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
 		  	  		{item.grade}
 		  	  	  </Text>}
-		  	  	  <ColorCircle variant={item.attendance} />
+		  	  	  <ColorCircle color={attendanceColorsForStudents[item.attendance]} />
 		  	  	</ClassItem>)}
 		  	    </ClassesRow>)}
 		  	  </ClassesContainer>
 		    </Table>
 		  </ScrollWrapper>
 	  </TableWrapper>
+	);
+});
+
+export type QrcCodePartProps = {
+  position: number;
+  redisKeyData: RedisKeyDataType | null;
+  getKeyForQr: () => void;
+  setErrorAccessCamera: () => void;
+  onHandleQrCode: (value: string) => void;
+  onAskReview: () => void;
+  hasCameraAccess: boolean | null;
+  loadingKey: "idle" | "loading" | "success" | "error";
+  loadingScan: "loading" | "idle" | "success" | "error";
+};
+  
+export const QrcCodePart: FC<QrcCodePartProps> = memo(({
+  position,
+  redisKeyData,
+  getKeyForQr,
+  setErrorAccessCamera,
+  hasCameraAccess,
+  onHandleQrCode,
+  onAskReview,
+  loadingKey,
+  loadingScan
+}) => {
+	return (
+	  <Column horizontalAlign='center'>
+      <Text themeFont={theme.fonts.h1}>
+        Занятие {position}
+      </Text>
+      <Spacing themeSpace={15} variant='Column' />
+      <Button 
+        onClick={redisKeyData === null ? getKeyForQr : () => {}} 
+        width={200} state={loadingKey}
+        borderRaius={10}
+        variant={redisKeyData === null ? 'primary' : 'recomended'} padding={[12,17]}>
+        {redisKeyData === null ? "Получить ключ" : "✓"}
+      </Button>
+      <Spacing themeSpace={15} variant='Column' />
+      <Surface 
+        padding='10px' borderRadius='10px' 
+        borderColor={theme.colors.foreground} height={357} width={300}>
+          {redisKeyData === null ? (
+            <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
+              <Image src={ShieldLogo} width={250} height={250}/>
+            </Column>) : (<>
+            <Surface 
+              padding='0px' 
+              borderColor={theme.colors.surface} 
+              style={{borderRadius: 10, overflow: 'hidden', borderWidth: 5}}>
+                {hasCameraAccess ? loadingScan === 'loading' ? 
+                  (<Column style={{height: 268, position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
+                    <CircleLoading state={'loading'}/>
+                  </Column>) : 
+                (<Scanner 
+                onError={() => setErrorAccessCamera()}
+                styles={{
+                video: {
+                  height: 268,
+                  width: 268
+                },
+                container: {
+                  height: 268,
+                  width: 268
+                }
+              }} onScan={(result: IDetectedBarcode[]) => onHandleQrCode(result[0].rawValue)} />)
+                : 
+              <Column style={{height: 268}} horizontalAlign='center' verticalAlign='center'>
+                <Text align='center' themeFont={theme.fonts.h3} themeColor={theme.colors.gray}>
+                  При подключении к камере произошла ошибка, перезагрузите страницу или проверте доступ
+                </Text>
+            </Column>}
+            </Surface>
+            <Spacing themeSpace={15} variant='Column' />
+            <Column horizontalAlign='center'>
+              <Button 
+                onClick={onAskReview} 
+                width={270}
+                borderRaius={10}
+                variant="primary" padding={[12,17]}>
+                Запросить пересмотр
+              </Button>
+            </Column>
+            </>)}
+      </Surface>
+    </Column>
 	);
 });

@@ -5,7 +5,7 @@ import { useAppDispatch, useTypedSelector } from '../../../../hooks/use-typed-se
 import { useUser } from '../../../../hooks/user-hook';
 import { useStudentClassGroups } from '../student-class-groups/student-class-groups.props';
 import { useStudentSubjects } from '../student-subjects/student-subjects.props';
-import { askReviewActionCreator, getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { askReviewActionCreator, checkQrCodeActionCreator, getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   role
@@ -31,13 +31,15 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
       authToken: authToken, 
       idHold: studentClassGroupTableState.classGroup?.idHold || -1, 
       idSubgroup: studentClassGroupTableState.classGroup?.idSubgroup || -1,
-      role: role
+      role: role,
+      accountId: userAccountId
     }));
   },[
     studentClassGroupTableState.classGroup,
     dispatch,
     role,
-    authToken
+    authToken,
+    userAccountId
   ])
 
   useEffect(() => {
@@ -82,9 +84,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   const askReview = useCallback((onSuccess: () => void, onError: () => void, closePrewPopup: () => void ) => {
     dispatch(askReviewActionCreator({
       authToken: authToken,
-      classId: studentClassGroupTableState.selectedClass.id,
-      studentStatistics: studentClassGroupTableState.studentsStatistics,
-      userId: userAccountId,
+      selectedClass: studentClassGroupTableState.selectedClass,
       onSuccess: onSuccess,
       onError: onError,
       closePrewPopup: closePrewPopup
@@ -92,15 +92,26 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   }, [
     dispatch, 
     authToken, 
-    userAccountId,
-    studentClassGroupTableState.selectedClass.id, 
-    studentClassGroupTableState.studentsStatistics
+    studentClassGroupTableState.selectedClass
   ]);
+
+  const checkQrCode = useCallback((value: string, onSuccess: () => void, onError: () => void)=>{
+    dispatch(
+      checkQrCodeActionCreator({
+        authToken: authToken,
+        onSuccess: onSuccess,
+        onError: onError,
+        keyRedux: studentClassGroupTableState.redisKeyData?.classId || -1,
+        value: value
+      })
+    );
+  },[dispatch, authToken, studentClassGroupTableState.redisKeyData?.classId])
 
   return (
       <StudentClassGroupTableView 
         askReview={askReview}
         setSelectedGrade={setSelectedGrade}
+        checkQrCode={checkQrCode}
         goToClassGroups={goToClassGroups}
         setSelectedClass={setSelectedClass}
         getKeyForQr={getKeyForQr}

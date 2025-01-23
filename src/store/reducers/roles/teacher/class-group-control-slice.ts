@@ -3,6 +3,29 @@ import { teacherApi } from "../../../../api/auth/teacher-api";
 import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { ClassGroupData } from "./class-group-subroups-slice";
+import { theme } from "../../../../ui-kit/themes/theme";
+
+export type AttendanceCodeType = 0 | 1 | 2 | 3 | 4
+
+export type AttendanceOption = {
+  id: AttendanceCodeType;
+  name: string;
+  color: string;
+}
+
+export const attendanceOptions: AttendanceOption[] = [
+  { id: 0, name: 'Не ук.', color: '#0000003e' },
+  { id: 1, name: 'Проп.', color: theme.colors.attentive},
+  { id: 2, name: 'Уваж.', color: theme.colors.neutral },
+  { id: 3, name: 'Посещ.', color: theme.colors.success },
+];
+
+export const attendanceColorsForStudents: Record<number, string> = {
+    0: 'transparent',
+    1: theme.colors.attentive,
+    2: theme.colors.neutral,
+    3: theme.colors.success,
+  };
 
 type ErrorType = string | null;
 
@@ -12,7 +35,7 @@ export type GradeInfo = {
     grade: number | null,
     idStudent: number,
     description: string | null,
-    attendance: 0 | 1 | 2 | 3
+    attendance: AttendanceCodeType
 }
 
 export type InitScreenData = {
@@ -182,7 +205,7 @@ export const classGroupControlSlice = createSlice({
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.selectedGrade.description = action.payload;
         },
-        setAttendanceActionCreator(state, action: PayloadAction<0 | 1 | 2 | 3>) {
+        setAttendanceActionCreator(state, action: PayloadAction<AttendanceCodeType>) {
             state.selectedGrade.attendance = action.payload;
         },
         addClassToStudentsStatisticsActionCreator(state, action: PayloadAction<{ idClass: number; studentGrades: GradeInfo[] }>
@@ -436,7 +459,7 @@ function transformAndSortStudentsStatistics(input: {
         idClass: number;
         grade: number | null;
         description: string | null;
-        attendance: 0 | 1 | 2;
+        attendance: AttendanceCodeType;
     }[];
 }): StatisticOfStudent[] {
     const { students, studentGrades } = input;
@@ -492,7 +515,7 @@ export const createQrCodeActionCreator = createAsyncThunk('teacher-class-control
         try {
             await teacherApi.createQrCode(authToken, classId, expirationOfReview);
             thunkApi.dispatch(classGroupControlSlice.actions.setQrCodeDataActionCreator({
-                date: (new Date()).toString(),
+                date: (new Date()).toISOString(),
                 idClass: classId,
                 expiration: expirationOfRefresh
             }));
@@ -511,6 +534,10 @@ export const startReviewForClassActionCreator = createAsyncThunk('teacher-class-
     async (data: { authToken: string, classId: number, expiration: number, onSuccess: () => void}, thunkApi ) => {
         const { authToken, classId, expiration, onSuccess } = data;
         try {
+
+
+
+            
             // await teacherApi.deleteClass(authToken, idClass);
             // thunkApi.dispatch(classGroupControlSlice.actions.removeLastClassActionCreator());
             // onSuccess();

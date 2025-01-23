@@ -8,7 +8,7 @@ import { Surface } from '../../../../../ui-kit/surface';
 import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper } from './class-group-panel.styled';
 import { Text } from '../../../../../ui-kit/text';
 import { Spacing } from '../../../../../ui-kit/spacing';
-import { GradeInfo, HeaderClassType, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { AttendanceCodeType, attendanceOptions, GradeInfo, HeaderClassType, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { Button } from '../../../../../ui-kit/button';
 import { Column } from '../../../../../ui-kit/column';
 import { CircleLoading } from '../../../../../ui-kit/circle-loading';
@@ -34,7 +34,7 @@ export type ClassGroupPanelViewProps = {
   createClass: (onSuccess: () => void) => void;
   setGradeNumber: (value: string) => void;
   setDescription: (value: string) => void;
-  setAttendance: (value: 0 | 1 | 2 | 3) => void;
+  setAttendance: (value: AttendanceCodeType) => void;
 
   setSelectedClass: (value: HeaderClassType, onSuccess: () => void) => void;
   setExpirationOfRefresh: (value: number) => void
@@ -236,7 +236,7 @@ type LocalViewProps = {
   openClassControlForStudents: (value: HeaderClassType) => void;
   setGradeNumber: (value: string) => void;
   setDescription: (value: string) => void;
-  setAttendance: (value: 0 | 1 | 2 | 3) => void;
+  setAttendance: (value: AttendanceCodeType) => void;
   isOpenUpdateWindow: boolean;
   closeUpdateWindow: () => void;
   confirmUpdate: () => void;
@@ -282,7 +282,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface>
           <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
-            Информация о группе занятий 🛈
+            Информация 🛈
           </Button>
           <Spacing themeSpace={25} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
@@ -307,53 +307,18 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
         </Surface>
       </>}
       <Modal isActive={isOpenUpdateWindow} closeModal={closeUpdateWindow}>
-        <Column horizontalAlign='center'>
-          <Column style={{maxWidth: 440}} horizontalAlign='center'>
-            <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-              Присутствие
-            </Text>
-            <Spacing variant='Column' themeSpace={15}/>
-            <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
-              <ColorCircleButton 
-                variant={0} onClick={() => setAttendance(0)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 0} />
-              <ColorCircleButton 
-                variant={1} onClick={() => setAttendance(1)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 1} />
-              <ColorCircleButton 
-                variant={2} onClick={() => setAttendance(2)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 2} />
-              <ColorCircleButton 
-                variant={3} onClick={() => setAttendance(3)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 3} />
-            </Row>
-          </Column>
-          <Spacing themeSpace={25} variant='Column' />
-          <Input 
-            header='Оценка' 
-            placeholder='9' error={teacherClassGroupControlState.errors['gradeNumberError']}
-            value={teacherClassGroupControlState.selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
-          <Spacing themeSpace={25} variant='Column' />
-          <Textarea
-            value={teacherClassGroupControlState.selectedGrade.description || ''}
-            placeholder='Примечание...' 
-            height={120} setValue={setDescription}
-            error={teacherClassGroupControlState.errors['descriptionError']}
-            header='Примечание' />
-          <Spacing themeSpace={25} variant='Column' />
-          <Row>
-            <Button 
-              onClick={confirmUpdate} 
-              state={teacherClassGroupControlState.loadingUpdate} 
-              variant='recomended' padding={[12,17]}>
-              Сохранить
-            </Button>
-            <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
-              Отмена
-            </Button>
-          </Row>
-        </Column>
+        <ControlStudentGrade
+          selectedGrade={teacherClassGroupControlState.selectedGrade}
+          setAttendance={setAttendance}
+          isMobile={true}
+          errorNote={teacherClassGroupControlState.errors['gradeNumberError']}
+          errorDescription={teacherClassGroupControlState.errors['descriptionError']}
+          setGradeNumber={setGradeNumber}
+          setDescription={setDescription}
+          confirmUpdate={confirmUpdate}
+          loadingUpdate={teacherClassGroupControlState.loadingUpdate}
+          closeUpdateWindow={closeUpdateWindow}
+          />
       </Modal>
       <Modal isActive={isClassControlPopup} closeModal={closeClassControlForStudents}>
         <Text themeFont={theme.fonts.h1}>
@@ -431,7 +396,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface style={{width: 900}}>
           <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
-            Информация о группе занятий 🛈
+            Информация 🛈
           </Button>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
@@ -457,53 +422,18 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
         </Surface>
       </>}
       <Popup isActive={isOpenUpdateWindow} closePopup={closeUpdateWindow}>
-        <Column style={{width: 440}} horizontalAlign='center'>
-          <Column style={{maxWidth: 440}} horizontalAlign='center'>
-            <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-              Присутствие
-            </Text>
-            <Spacing variant='Column' themeSpace={15}/>
-            <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
-              <ColorCircleButton 
-                variant={0} onClick={() => setAttendance(0)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 0} />
-              <ColorCircleButton 
-                variant={1} onClick={() => setAttendance(1)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 1} />
-              <ColorCircleButton 
-                variant={2} onClick={() => setAttendance(2)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 2} />
-              <ColorCircleButton 
-                variant={3} onClick={() => setAttendance(3)}
-                isSelected={teacherClassGroupControlState.selectedGrade.attendance === 3} />
-            </Row>
-          </Column>
-          <Spacing themeSpace={25} variant='Column' />
-          <Input 
-            header='Оценка' 
-            placeholder='9' error={teacherClassGroupControlState.errors['gradeNumberError']}
-            value={teacherClassGroupControlState.selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
-          <Spacing themeSpace={25} variant='Column' />
-          <Textarea
-            value={teacherClassGroupControlState.selectedGrade.description || ''}
-            placeholder='Примечание...' 
-            height={120} setValue={setDescription}
-            error={teacherClassGroupControlState.errors['descriptionError']}
-            header='Примечание' />
-          <Spacing themeSpace={25} variant='Column' />
-          <Row>
-            <Button 
-              onClick={confirmUpdate}
-              state={teacherClassGroupControlState.loadingUpdate} 
-              variant='recomended' padding={[12,17]}>
-              Сохранить
-            </Button>
-            <Spacing variant='Row' themeSpace={20}/>
-            <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
-              Отмена
-            </Button>
-          </Row>
-        </Column>
+        <ControlStudentGrade
+          selectedGrade={teacherClassGroupControlState.selectedGrade}
+          setAttendance={setAttendance}
+          isMobile={false}
+          errorNote={teacherClassGroupControlState.errors['gradeNumberError']}
+          errorDescription={teacherClassGroupControlState.errors['descriptionError']}
+          setGradeNumber={setGradeNumber}
+          setDescription={setDescription}
+          confirmUpdate={confirmUpdate}
+          loadingUpdate={teacherClassGroupControlState.loadingUpdate}
+          closeUpdateWindow={closeUpdateWindow}
+          />
       </Popup>
       <Popup padding='25px' isActive={isClassControlPopup} closePopup={closeClassControlForStudents}>
         <Column horizontalAlign='center'>
@@ -538,7 +468,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
             Подгруппы: <span style={{fontFamily: theme.fonts.ht2.family}}> <br/>
           {teacherClassGroupControlState.initData?.subgroup.subgroupNumber
-            ?.split('#') // Разделяем строку по символу #
+            ?.split('#') 
             .map((subgroup, index) => (
               <React.Fragment key={index}>
                 {subgroup}
@@ -667,7 +597,7 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  },[]);
+  },[clearDataQrCode]);
 
   useEffect(() => {
     return () => {
@@ -800,7 +730,81 @@ export const GenerateKeyPopup: FC<GenerateKeyPopupProps> = memo(({
   );
 });
 
-
-
-
-      
+export type ControlStudentGradeProps = {
+  closeUpdateWindow: () => void;
+  setAttendance: (value: AttendanceCodeType) => void;
+  setGradeNumber: (value: string) => void;
+  setDescription: (value: string) => void;
+  confirmUpdate: () => void;
+  errorNote?: string | null;
+  isMobile: boolean;
+  errorDescription?: string | null;
+  selectedGrade: GradeInfo;
+  loadingUpdate: "idle" | "loading" | "success" | "error";
+};
+    
+export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
+  closeUpdateWindow,
+  setAttendance,
+  setDescription,
+  setGradeNumber,
+  confirmUpdate,
+  isMobile,
+  errorNote,
+  selectedGrade,
+  loadingUpdate,
+  errorDescription
+}) => {
+  
+  return (
+    <Column style={isMobile ? {} : {width: 440}} horizontalAlign='center'>
+      <Column style={{maxWidth: 440}} horizontalAlign='center'>
+        <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+          Статус
+        </Text>
+        <Spacing variant='Column' themeSpace={25}/>
+        <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
+          {attendanceOptions.map((option) => (
+            <Column style={{width: 'auto'}} horizontalAlign='center'>
+              <ColorCircleButton
+                key={option.id}
+                color={option.color}
+                onClick={() => setAttendance(option.id)}
+                isSelected={selectedGrade.attendance === option.id}
+              />
+              <Spacing variant='Column' themeSpace={10}/>
+              <Text align='center' themeColor={theme.colors.gray} themeFont={theme.fonts.ht2}>
+                {option.name}
+              </Text>
+            </Column>
+          ))}
+        </Row>
+      </Column>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+        header='Оценка' 
+        placeholder='9' error={errorNote}
+        value={selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Textarea
+        value={selectedGrade.description || ''}
+        placeholder='Примечание...' 
+        height={120} setValue={setDescription}
+        error={errorDescription}
+        header='Примечание' />
+      <Spacing themeSpace={25} variant='Column' />
+      <Row>
+        <Button 
+          onClick={confirmUpdate}
+          state={loadingUpdate} 
+          variant='recomended' padding={[12,17]}>
+          Сохранить
+        </Button>
+        <Spacing variant='Row' themeSpace={20}/>
+        <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
+          Отмена
+        </Button>
+      </Row>
+    </Column>
+  );
+});

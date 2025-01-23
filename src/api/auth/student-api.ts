@@ -40,5 +40,15 @@ export const studentApi = {
                 return response.data;
             })
     },
+    acceptAttendance(authToken: string, studentGrateId: number, attendanceCode: number) {
+        return instance.post(`/teacher/accept/attendance`, {
+            studentGrateId: studentGrateId,
+            attendanceCode: attendanceCode
+        },{ 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 

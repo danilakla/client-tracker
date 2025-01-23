@@ -3,6 +3,7 @@ import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { studentApi } from "../../../../api/auth/student-api";
 import { ClassGroupInfo } from "./student-subjects-slice";
+import { AttendanceCodeType } from "../teacher/class-group-control-slice";
 
 type ErrorType = string | null;
 
@@ -12,7 +13,7 @@ export type GradeInfo = {
     grade: number | null,
     idStudent: number,
     description: string | null,
-    attendance: 0 | 1 | 2 | 3
+    attendance: AttendanceCodeType
 }
 
 export type StatisticOfStudent = {
@@ -36,9 +37,12 @@ export type StudentClassGroupTableState = {
     classGroup: ClassGroupInfo | null;
     studentsStatistics: StatisticOfStudent[];
     errors: Record<string, ErrorType>;
-    classesIds: number[];
+    classesIds: HeaderClassType[];
     selectedGrade: GradeInfo;
     selectedClass: HeaderClassType;
+
+    currentStudentId: number;
+    gradesIds: number[];
 
     redisKeyData: RedisKeyDataType | null;
     loadingKey: "idle" | "loading" | "success" | "error";
@@ -48,12 +52,14 @@ export type StudentClassGroupTableState = {
 
 export type HeaderClassType = {
     id: number;
-    position: number
+    position: number;
+    gradeId: number;
 }
 
 const initialState: StudentClassGroupTableState = {
     loading: "idle",
     classGroup: null,
+    currentStudentId: -1,
     studentsStatistics: [],
     selectedGrade: {
         idClass: -1,
@@ -66,10 +72,12 @@ const initialState: StudentClassGroupTableState = {
     errors: {},
     classesIds: [],
 
+    gradesIds: [],
     redisKeyData: null,
     selectedClass: {
         id: -1,
-        position: -1
+        position: -1,
+        gradeId: -1
     },
     loadingReview: 'idle',
     loadingScan: 'idle',
@@ -102,11 +110,17 @@ export const studentClassGroupTableSlice = createSlice({
             state.selectedClass = action.payload.value;
             action.payload.onSuccess();
         },
-        setClassesIdsActionCreator(state, action: PayloadAction<number[]>) {
+        setClassesIdsActionCreator(state, action: PayloadAction<HeaderClassType[]>) {
             state.classesIds = action.payload;
         },
         setRedisKeyDataActionCreator(state, action: PayloadAction<RedisKeyDataType | null>) {
             state.redisKeyData = action.payload;
+        },
+        setGradesIdsActionCreator(state, action: PayloadAction<number[]>) {
+            state.gradesIds = action.payload;
+        },
+        setCurrentStudentIdActionCreator(state, action: PayloadAction<number>) {
+            state.currentStudentId = action.payload;
         },
         reset(state) {
             Object.assign(state, initialState);
@@ -159,18 +173,46 @@ export const studentClassGroupTableSlice = createSlice({
             .addCase(askReviewActionCreator.rejected, (state) => {
                 state.loadingReview = "idle";
             })
+
+            .addCase(checkQrCodeActionCreator.fulfilled, (state) => {
+                state.loadingScan = 'success';
+            })
+            .addCase(checkQrCodeActionCreator.pending, (state) => {
+                state.loadingScan = 'loading';
+            })
+            .addCase(checkQrCodeActionCreator.rejected, (state) => {
+                state.loadingScan = "idle";
+            })
     },
 });
 
 export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-class-group-table/init',
-    async (data: { authToken: string, idHold: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
-        const { authToken, idHold } = data;
+    async (data: { authToken: string, accountId : number, idHold: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
+        const { authToken, idHold, accountId } = data;
         try {
+
             const responce = await studentApi.getTableOfSubgroup(authToken, idHold);
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));
-            thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(responce.classes.map((item: any) => item.idClass)));
+
+            const currentStudent = responce.students.find((student: any) => student.idAccount === accountId);
+            
+            thunkApi.dispatch(studentClassGroupTableSlice.actions.setCurrentStudentIdActionCreator(currentStudent.idStudent));
+
+            const currentStudentClasses = responce.studentGrades
+            .filter((grade: any) => grade.idStudent === currentStudent.idStudent)
+            .map((grade: any) => grade.idClass);
+
+            const classesIds = responce.classes
+                .filter((cls: any) => currentStudentClasses.includes(cls.idClass))
+                .map((cls: any, index: any) => ({
+                    id: cls.idClass,
+                    position: index + 1,
+                    gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
+                }));
+            
+            thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(classesIds));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -261,17 +303,12 @@ export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-ta
 
 export const askReviewActionCreator = createAsyncThunk('student-class-group-table/ask-review',
     async (data: { 
-            authToken: string, classId: number, userId: number, studentStatistics: StatisticOfStudent[],
+            authToken: string, selectedClass: HeaderClassType,
             onSuccess: () => void, onError: () => void, closePrewPopup: () => void}, thunkApi ) => {
-        const { authToken, classId, userId, studentStatistics, onSuccess, onError, closePrewPopup} = data;
+        const { authToken, selectedClass, onSuccess, onError, closePrewPopup} = data;
         try {
-            const studentStats = studentStatistics.find(stat => stat.student.idAccount === userId);
-            if (!studentStats) return;
-        
-            const gradeInfo = studentStats.grades.find(grade => grade.idClass === classId);
-            if (!gradeInfo) return;
 
-            await studentApi.askReview(authToken, classId, gradeInfo.idStudentGrate);
+            await studentApi.askReview(authToken, selectedClass.id, selectedClass.gradeId);
             closePrewPopup();
             onSuccess();
         }
@@ -287,3 +324,93 @@ export const askReviewActionCreator = createAsyncThunk('student-class-group-tabl
         }
     }
 )
+
+export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-table/check=qr-code-st',
+    async (data: { 
+            authToken: string, value: string, keyRedux: number, onSuccess: () => void, onError: () => void}, thunkApi ) => {
+        const { authToken, keyRedux, value, onSuccess, onError} = data;
+        try {
+
+            let parsedDate: Date | null = null;
+            let parsedExpiration: number | null = null;
+
+            const jsonData = JSON.parse(value);
+            
+            if (typeof jsonData.date === 'string' &&
+                typeof jsonData.idClass === 'number' &&
+                typeof jsonData.expiration === 'number') {
+                    parsedDate = new Date(jsonData.date);
+                    parsedExpiration = jsonData.expiration;
+
+                    if (isNaN(parsedDate.getTime()) || jsonData.idClass !== keyRedux) {
+                        onError();
+                        return;
+                    }
+            } else {
+                onError();
+                return;
+            }
+
+            if(parsedDate == null || parsedExpiration == null){
+                onError();
+                return;
+            }
+
+            let currentTime = await getAccurateTime();
+
+
+            const timeDifference = currentTime.getTime() - parsedDate.getTime();
+
+            if (timeDifference / 1000 <= parsedExpiration) {
+                await studentApi.acceptAttendance(authToken, jsonData.idClass, 3);
+                onSuccess();
+                return;
+            } else {
+                onError();
+                return;
+            }
+            // const studentStats = studentStatistics.find(stat => stat.student.idAccount === userId);
+            // if (!studentStats) return;
+        
+            // const gradeInfo = studentStats.grades.find(grade => grade.idClass === classId);
+            // if (!gradeInfo) return;
+
+            // await studentApi.askReview(authToken, classId, gradeInfo.idStudentGrate);
+            // closePrewPopup();
+            // onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else {
+                    onError();
+                }
+            }
+            onError();
+        }
+    }
+)
+
+
+interface WorldTimeApiResponse {
+    datetime: string;
+    [key: string]: unknown;
+}
+
+type AccurateTime = Date;
+
+async function getAccurateTime(): Promise<AccurateTime> {
+    const start = Date.now();
+    // const response = await fetch('http://worldtimeapi.org/api/timezone/Etc/UTC');
+    const response = await fetch('https://cors-anywhere.herokuapp.com/http://worldtimeapi.org/api/timezone/Etc/UTC');
+    const end = Date.now();
+
+    const data: WorldTimeApiResponse = await response.json();
+
+    const latency = (end - start) / 2;
+    const serverTime = new Date(data.datetime);
+    const accurateTime = new Date(serverTime.getTime() + latency);
+
+    return accurateTime;
+}

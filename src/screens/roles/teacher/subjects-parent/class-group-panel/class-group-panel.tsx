@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, HeaderClassType, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, HeaderClassType, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -94,7 +94,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(setDescriptionActionCreator(value));
   },[dispatch,setDescriptionActionCreator])
 
-  const setAttendance = useCallback((value: 0 | 1 | 2 | 3)=>{
+  const setAttendance = useCallback((value: AttendanceCodeType)=>{
     dispatch(setAttendanceActionCreator(value));
   },[dispatch,setAttendanceActionCreator])
 
