@@ -861,16 +861,17 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
           </Table>
         </ScrollWrapper>
       </Row>
-      <Spacing variant="Column" themeSpace={10} />
-      <Column horizontalAlign="flex-end">
-        {isHorizontalScrollNeeded && <HorizontalTrack ref={horizontalTrackRef}>
-          <HorizontalSlider
-            ref={horizontalSliderRef}
-            onMouseDown={handleHorizontalStart}
-            onTouchStart={handleHorizontalStart}
-          />
-        </HorizontalTrack>}
-      </Column>
+      {isHorizontalScrollNeeded && 
+            <Column horizontalAlign="flex-end">
+              <Spacing variant="Column" themeSpace={10} />
+              <HorizontalTrack ref={horizontalTrackRef}>
+                <HorizontalSlider
+                  ref={horizontalSliderRef}
+                  onMouseDown={handleHorizontalStart}
+                  onTouchStart={handleHorizontalStart}
+                />
+              </HorizontalTrack>
+            </Column>}
     </TableWrapper>
   );
 });

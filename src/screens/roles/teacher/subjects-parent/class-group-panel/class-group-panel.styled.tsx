@@ -18,7 +18,7 @@ export const ScrollWrapper = styled.div`
   width: 100%;
   overflow: auto;
 
-  max-height: 140px;
+  max-height: 210px;
 
   @media (min-height: 670px) {
     max-height: 210px;
@@ -130,14 +130,12 @@ export const TableWrapper = styled.div`
 
 `;
 
-
-export const NameHeader = styled.div`
+export const NameHeader = styled.div<{isHide: boolean}>`
   display: flex;
   align-items: center;
-  width: 140px;
+  width: ${({ isHide }) => isHide ? "162px" : "140px"};
   flex-shrink: 0;
 `;
-
 
 
 export const HeaderClassItem = styled.div`
@@ -197,3 +195,43 @@ export const ExistMark = styled.div`
 `;
 
 
+
+export const HorizontalTrack = styled.div`
+  position: relative;
+  height: 12px;
+  width: calc(100% - 162px);
+  background: #eee;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+export const HorizontalSlider = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: ${theme.colors.primary};
+  border-radius: 10px;
+  cursor: grab;
+`;
+
+
+export const VerticalTrack = styled.div`
+  position: relative;
+  width: 12px;
+  background: #eee;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+export const VerticalSlider = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: ${theme.colors.primary};
+  border-radius: 10px;
+  cursor: grab;
+`;

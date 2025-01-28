@@ -117,7 +117,7 @@ export const TableWrapper = styled.div`
 export const NameHeader = styled.div<{isHide: boolean}>`
   display: flex;
   align-items: center;
-  width: ${({ isHide }) => isHide ? "162px" : "150px"};
+  width: ${({ isHide }) => isHide ? "162px" : "140px"};
   flex-shrink: 0;
 `;
 

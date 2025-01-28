@@ -5,7 +5,7 @@ import { theme } from '../../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../../components/wrapper-desktop';
 import { Surface } from '../../../../../ui-kit/surface';
-import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper } from './class-group-panel.styled';
+import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, HorizontalSlider, HorizontalTrack, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper, VerticalSlider, VerticalTrack } from './class-group-panel.styled';
 import { Text } from '../../../../../ui-kit/text';
 import { Spacing } from '../../../../../ui-kit/spacing';
 import { AttendanceCodeType, attendanceOptions, GradeInfo, HeaderClassType, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
@@ -481,12 +481,275 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   );
 });
 
+export type QrCodeControlPopupProps = {
+  isActive: boolean;
+  closePopup: () => void;
+  setTimeValueForRefresh: (value: number) => void;
+  setTimeValueForReview: (value: number) => void;
+  timeValueForRefresh: number;
+  timeValueForReview: number;
+  generateQrCode: () => void;
+  clearDataQrCode: () => void;
+  stateStart: "idle" | "loading" | "success" | "error";
+  stateQrCode: "idle" | "loading" | "success" | "error";
+  qrCodeData: QrCodeDataType | null;
+};
+    
+export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
+  isActive,
+  closePopup,
+  timeValueForRefresh,
+  timeValueForReview,
+  setTimeValueForRefresh,
+  setTimeValueForReview,
+  stateQrCode,
+  generateQrCode,
+  stateStart,
+  qrCodeData,
+  clearDataQrCode
+}) => {
+  
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [isStarted, setIsStarted] = useState<boolean>(false);
+
+  const handleStart = useCallback(() => {
+    generateQrCode();
+    setIsStarted(true);
+
+    if (intervalRef.current) return;
+
+    intervalRef.current = setInterval(() => {
+      generateQrCode();
+    }, timeValueForRefresh * 1000);
+  },[generateQrCode, timeValueForRefresh]);
+
+  const handleStop = useCallback(() => {
+    clearDataQrCode();
+    setIsStarted(false);
+    
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  },[clearDataQrCode]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  const onClose = useCallback(() => {
+    closePopup();
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    setIsStarted(false);
+  },[closePopup]) 
+
+  return (
+    <Popup isActive={isActive} closePopup={() => {}}>
+      <Column horizontalAlign='center'>
+        <Text themeFont={theme.fonts.h2}>
+          Время обновления: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForRefresh} cек.</b> </span>
+        </Text>
+        <Spacing variant='Column' themeSpace={15}/>
+        <RangeSlider
+          minValue={1}
+          disabled={isStarted}
+          maxValue={10}
+          value={timeValueForRefresh} 
+          step={0.5}
+          setValue={setTimeValueForRefresh}/>
+        <Spacing variant='Column' themeSpace={25}/>
+        <Text themeFont={theme.fonts.h2}>
+          Время для пересмотра: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForReview} cек.</b> </span>
+        </Text>
+        <Spacing variant='Column' themeSpace={15}/>
+        <RangeSlider
+          minValue={10}
+          maxValue={180}
+          disabled={isStarted}
+          value={timeValueForReview} 
+          step={10}
+          setValue={setTimeValueForReview}/>
+        <Spacing variant='Column' themeSpace={25}/>
+        <Row>
+          {isStarted ? 
+            <Button 
+              onClick={handleStop} 
+              width={100}
+              borderRaius={15}
+              variant='attentive' padding={[12,17]}>
+              Стоп
+            </Button> : 
+            <Button 
+              onClick={handleStart} 
+              width={100}
+              borderRaius={15} state={stateStart}
+              variant="primary" padding={[12,17]}>
+              Старт
+            </Button>}
+        </Row>
+      </Column>
+      <Spacing variant='Column' themeSpace={30}/>
+      <Surface padding='10px' borderRadius='10px' borderColor={theme.colors.foreground} height={300} width={300}>
+        <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
+          {!isStarted ? <Image src={ShieldLogo} width={250} height={250}/> : <>
+            {
+              (stateQrCode === 'idle' || stateQrCode === 'loading') ? 
+                (<CircleLoading state={'loading'}/>) :
+                (<>
+                  <QRCode
+                    value={JSON.stringify(qrCodeData)}
+                    />
+                </>)
+            }
+            </>}
+        </Column>
+      </Surface>
+      <Spacing variant='Column' themeSpace={25}/>
+      <Column horizontalAlign='center'>
+        <Button 
+          onClick={onClose} 
+          width={120}
+          borderRaius={15}
+          variant='attentive' padding={[12,17]}>
+          Закрыть 
+        </Button>
+      </Column>
+    </Popup>
+  );
+});
+
+export type GenerateKeyPopupProps = {
+  isActive: boolean;
+  closePopup: () => void;
+  setTimeValue: (value: number) => void;
+  timeValue: number;
+  onActivateClick: () => void;
+  stateActivate: "idle" | "loading" | "success" | "error";
+};
+    
+export const GenerateKeyPopup: FC<GenerateKeyPopupProps> = memo(({
+  isActive,
+  closePopup,
+  setTimeValue,
+  stateActivate,
+  onActivateClick,
+  timeValue,
+}) => {
+  
+  return (
+    <Popup isActive={isActive} closePopup={closePopup}>
+      <Text themeFont={theme.fonts.h2}>
+        Срок действия: <span style={{width: 110, display: 'inline-block'}}><b> {timeValue} cекунд</b> </span>
+      </Text>
+      <Spacing variant='Column' themeSpace={15}/>
+      <RangeSlider value={timeValue} setValue={setTimeValue}/>
+      <Spacing variant='Column' themeSpace={30}/>
+      <Column horizontalAlign='center'>
+        <Button 
+          onClick={onActivateClick} 
+          width={140}
+          borderRaius={15} state={stateActivate}
+          variant="primary" padding={[12,17]}>
+          Активировать
+        </Button>
+      </Column>
+    </Popup>
+  );
+});
+
+export type ControlStudentGradeProps = {
+  closeUpdateWindow: () => void;
+  setAttendance: (value: AttendanceCodeType) => void;
+  setGradeNumber: (value: string) => void;
+  setDescription: (value: string) => void;
+  confirmUpdate: () => void;
+  errorNote?: string | null;
+  isMobile: boolean;
+  errorDescription?: string | null;
+  selectedGrade: GradeInfo;
+  loadingUpdate: "idle" | "loading" | "success" | "error";
+};
+    
+export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
+  closeUpdateWindow,
+  setAttendance,
+  setDescription,
+  setGradeNumber,
+  confirmUpdate,
+  isMobile,
+  errorNote,
+  selectedGrade,
+  loadingUpdate,
+  errorDescription
+}) => {
+  
+  return (
+    <Column style={isMobile ? {} : {width: 440}} horizontalAlign='center'>
+      <Column style={{maxWidth: 440}} horizontalAlign='center'>
+        <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+          Статус
+        </Text>
+        <Spacing variant='Column' themeSpace={25}/>
+        <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
+          {attendanceOptions.map((option) => (
+            <Column style={{width: 'auto'}} horizontalAlign='center'>
+              <ColorCircleButton
+                key={option.id}
+                color={option.color}
+                onClick={() => setAttendance(option.id)}
+                isSelected={selectedGrade.attendance === option.id}
+              />
+              <Spacing variant='Column' themeSpace={10}/>
+              <Text align='center' themeColor={theme.colors.gray} themeFont={theme.fonts.ht2}>
+                {option.name}
+              </Text>
+            </Column>
+          ))}
+        </Row>
+      </Column>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+        header='Оценка' 
+        placeholder='9' error={errorNote}
+        value={selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Textarea
+        value={selectedGrade.description || ''}
+        placeholder='Примечание...' 
+        height={120} setValue={setDescription}
+        error={errorDescription}
+        header='Примечание' />
+      <Spacing themeSpace={25} variant='Column' />
+      <Row>
+        <Button 
+          onClick={confirmUpdate}
+          state={loadingUpdate} 
+          variant='recomended' padding={[12,17]}>
+          Сохранить
+        </Button>
+        <Spacing variant='Row' themeSpace={20}/>
+        <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
+          Отмена
+        </Button>
+      </Row>
+    </Column>
+  );
+});
+
+
 export type StudentsTableProps = {
 	data: StatisticOfStudent[];
 	classesIds: number[];
 	onClickGrade: (value: GradeInfo) => void;
   openClassControlForStudents: (value: HeaderClassType) => void;
-  };
+};
   
 export const StudentsTable: FC<StudentsTableProps> = memo(({
 	data,
@@ -784,12 +1047,12 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 	return (
 	  <TableWrapper>
 		  <TableHeader>
-		    <NameHeader>
+		    <NameHeader isHide={isVerticalScrollNeeded}>
 		  	<Text themeFont={theme.fonts.h3}>
 		  	  Имя студента
 		  	</Text>
 		    </NameHeader>
-		    {classesIds.length !== 0 && <HeaderClasses>
+		    {classesIds.length !== 0 && <HeaderClasses ref={horizontalScrollRef1}>
 		  	{classesIds.map((item, index) => (
 		  	  <HeaderClassItem onClick={() => openClassControlForStudents({id: item, position: index + 1})}>
 		  		<Text themeFont={theme.fonts.h3}>
@@ -800,298 +1063,57 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		    </HeaderClasses>}
 		  </TableHeader>
 		  <Spacing themeSpace={10} variant='Column' />
-		  <ScrollWrapper>
-		    <Table>
-		  	<StudentsContainer>
-		  	  {data.map((item, index) => <StudentItem key={index}>
-		  		<Text themeFont={theme.fonts.ht2}>
-		  		  {item.student.lastname}
-		  		</Text>
-		  		<Text themeFont={theme.fonts.ht2}>
-		  		  {item.student.name}
-		  		</Text>
-		  		<Text themeFont={theme.fonts.ht2}>
-		  		  {item.student.surname}
-		  		</Text>
-		  	  </StudentItem>)}
-		  	</StudentsContainer>
-		  	<ClassesContainer>
-		  	  {data.map((item, index)=> <ClassesRow key={index}>
-		  		{item.grades.map((item, index) => 
-          <ClassItem key={index}
-		  		  onClick={() => onClickGrade(item)} >
-		  		  {item.description !== null && <ExistMark/>}
-		  		  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
-		  			{item.grade}
-		  		  </Text>}
-		  		  <ColorCircle variant={item.attendance} />
-		  		</ClassItem>)}
-		  	  </ClassesRow>)}
-		  	</ClassesContainer>
-		    </Table>
-		  </ScrollWrapper>
+      <Row style={{ alignItems: "stretch" }}>
+        {isVerticalScrollNeeded && <VerticalTrack ref={verticalTrackRef}>
+          <VerticalSlider
+            ref={verticalSliderRef}
+            onMouseDown={handleVerticalStart}
+            onTouchStart={handleVerticalStart}
+          />
+        </VerticalTrack>}
+        {isVerticalScrollNeeded && <Spacing variant="Row" themeSpace={10} />}
+		    <ScrollWrapper ref={verticalScrollRef}>
+		      <Table>
+		    	<StudentsContainer>
+		    	  {data.map((item, index) => <StudentItem key={index}>
+		    		<Text themeFont={theme.fonts.ht2}>
+		    		  {item.student.lastname}
+		    		</Text>
+		    		<Text themeFont={theme.fonts.ht2}>
+		    		  {item.student.name}
+		    		</Text>
+		    		<Text themeFont={theme.fonts.ht2}>
+		    		  {item.student.surname}
+		    		</Text>
+		    	  </StudentItem>)}
+		    	</StudentsContainer>
+		    	<ClassesContainer ref={horizontalScrollRef2}>
+		    	  {data.map((item, index)=> <ClassesRow key={index}>
+		    		{item.grades.map((item, index) => 
+            <ClassItem key={index}
+		    		  onClick={() => onClickGrade(item)} >
+		    		  {item.description !== null && <ExistMark/>}
+		    		  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
+		    			{item.grade}
+		    		  </Text>}
+		    		  <ColorCircle variant={item.attendance} />
+		    		</ClassItem>)}
+		    	  </ClassesRow>)}
+		    	</ClassesContainer>
+		      </Table>
+		    </ScrollWrapper>
+      </Row>
+      {isHorizontalScrollNeeded && 
+      <Column horizontalAlign="flex-end">
+        <Spacing variant="Column" themeSpace={10} />
+        <HorizontalTrack ref={horizontalTrackRef}>
+          <HorizontalSlider
+            ref={horizontalSliderRef}
+            onMouseDown={handleHorizontalStart}
+            onTouchStart={handleHorizontalStart}
+          />
+        </HorizontalTrack>
+      </Column>}
 	  </TableWrapper>
 	);
-});
-
-export type QrCodeControlPopupProps = {
-  isActive: boolean;
-  closePopup: () => void;
-  setTimeValueForRefresh: (value: number) => void;
-  setTimeValueForReview: (value: number) => void;
-  timeValueForRefresh: number;
-  timeValueForReview: number;
-  generateQrCode: () => void;
-  clearDataQrCode: () => void;
-  stateStart: "idle" | "loading" | "success" | "error";
-  stateQrCode: "idle" | "loading" | "success" | "error";
-  qrCodeData: QrCodeDataType | null;
-};
-    
-export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
-  isActive,
-  closePopup,
-  timeValueForRefresh,
-  timeValueForReview,
-  setTimeValueForRefresh,
-  setTimeValueForReview,
-  stateQrCode,
-  generateQrCode,
-  stateStart,
-  qrCodeData,
-  clearDataQrCode
-}) => {
-  
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const [isStarted, setIsStarted] = useState<boolean>(false);
-
-  const handleStart = useCallback(() => {
-    generateQrCode();
-    setIsStarted(true);
-
-    if (intervalRef.current) return;
-
-    intervalRef.current = setInterval(() => {
-      generateQrCode();
-    }, timeValueForRefresh * 1000);
-  },[generateQrCode, timeValueForRefresh]);
-
-  const handleStop = useCallback(() => {
-    clearDataQrCode();
-    setIsStarted(false);
-    
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  },[clearDataQrCode]);
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
-
-  const onClose = useCallback(() => {
-    closePopup();
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    setIsStarted(false);
-  },[closePopup]) 
-
-  return (
-    <Popup isActive={isActive} closePopup={() => {}}>
-      <Column horizontalAlign='center'>
-        <Text themeFont={theme.fonts.h2}>
-          Время обновления: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForRefresh} cек.</b> </span>
-        </Text>
-        <Spacing variant='Column' themeSpace={15}/>
-        <RangeSlider
-          minValue={1}
-          disabled={isStarted}
-          maxValue={10}
-          value={timeValueForRefresh} 
-          step={0.5}
-          setValue={setTimeValueForRefresh}/>
-        <Spacing variant='Column' themeSpace={25}/>
-        <Text themeFont={theme.fonts.h2}>
-          Время для пересмотра: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForReview} cек.</b> </span>
-        </Text>
-        <Spacing variant='Column' themeSpace={15}/>
-        <RangeSlider
-          minValue={10}
-          maxValue={180}
-          disabled={isStarted}
-          value={timeValueForReview} 
-          step={10}
-          setValue={setTimeValueForReview}/>
-        <Spacing variant='Column' themeSpace={25}/>
-        <Row>
-          {isStarted ? 
-            <Button 
-              onClick={handleStop} 
-              width={100}
-              borderRaius={15}
-              variant='attentive' padding={[12,17]}>
-              Стоп
-            </Button> : 
-            <Button 
-              onClick={handleStart} 
-              width={100}
-              borderRaius={15} state={stateStart}
-              variant="primary" padding={[12,17]}>
-              Старт
-            </Button>}
-        </Row>
-      </Column>
-      <Spacing variant='Column' themeSpace={30}/>
-      <Surface padding='10px' borderRadius='10px' borderColor={theme.colors.foreground} height={300} width={300}>
-        <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
-          {!isStarted ? <Image src={ShieldLogo} width={250} height={250}/> : <>
-            {
-              (stateQrCode === 'idle' || stateQrCode === 'loading') ? 
-                (<CircleLoading state={'loading'}/>) :
-                (<>
-                  <QRCode
-                    value={JSON.stringify(qrCodeData)}
-                    />
-                </>)
-            }
-            </>}
-        </Column>
-      </Surface>
-      <Spacing variant='Column' themeSpace={25}/>
-      <Column horizontalAlign='center'>
-        <Button 
-          onClick={onClose} 
-          width={120}
-          borderRaius={15}
-          variant='attentive' padding={[12,17]}>
-          Закрыть 
-        </Button>
-      </Column>
-    </Popup>
-  );
-});
-
-export type GenerateKeyPopupProps = {
-  isActive: boolean;
-  closePopup: () => void;
-  setTimeValue: (value: number) => void;
-  timeValue: number;
-  onActivateClick: () => void;
-  stateActivate: "idle" | "loading" | "success" | "error";
-};
-    
-export const GenerateKeyPopup: FC<GenerateKeyPopupProps> = memo(({
-  isActive,
-  closePopup,
-  setTimeValue,
-  stateActivate,
-  onActivateClick,
-  timeValue,
-}) => {
-  
-  return (
-    <Popup isActive={isActive} closePopup={closePopup}>
-      <Text themeFont={theme.fonts.h2}>
-        Срок действия: <span style={{width: 110, display: 'inline-block'}}><b> {timeValue} cекунд</b> </span>
-      </Text>
-      <Spacing variant='Column' themeSpace={15}/>
-      <RangeSlider value={timeValue} setValue={setTimeValue}/>
-      <Spacing variant='Column' themeSpace={30}/>
-      <Column horizontalAlign='center'>
-        <Button 
-          onClick={onActivateClick} 
-          width={140}
-          borderRaius={15} state={stateActivate}
-          variant="primary" padding={[12,17]}>
-          Активировать
-        </Button>
-      </Column>
-    </Popup>
-  );
-});
-
-export type ControlStudentGradeProps = {
-  closeUpdateWindow: () => void;
-  setAttendance: (value: AttendanceCodeType) => void;
-  setGradeNumber: (value: string) => void;
-  setDescription: (value: string) => void;
-  confirmUpdate: () => void;
-  errorNote?: string | null;
-  isMobile: boolean;
-  errorDescription?: string | null;
-  selectedGrade: GradeInfo;
-  loadingUpdate: "idle" | "loading" | "success" | "error";
-};
-    
-export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
-  closeUpdateWindow,
-  setAttendance,
-  setDescription,
-  setGradeNumber,
-  confirmUpdate,
-  isMobile,
-  errorNote,
-  selectedGrade,
-  loadingUpdate,
-  errorDescription
-}) => {
-  
-  return (
-    <Column style={isMobile ? {} : {width: 440}} horizontalAlign='center'>
-      <Column style={{maxWidth: 440}} horizontalAlign='center'>
-        <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-          Статус
-        </Text>
-        <Spacing variant='Column' themeSpace={25}/>
-        <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
-          {attendanceOptions.map((option) => (
-            <Column style={{width: 'auto'}} horizontalAlign='center'>
-              <ColorCircleButton
-                key={option.id}
-                color={option.color}
-                onClick={() => setAttendance(option.id)}
-                isSelected={selectedGrade.attendance === option.id}
-              />
-              <Spacing variant='Column' themeSpace={10}/>
-              <Text align='center' themeColor={theme.colors.gray} themeFont={theme.fonts.ht2}>
-                {option.name}
-              </Text>
-            </Column>
-          ))}
-        </Row>
-      </Column>
-      <Spacing themeSpace={25} variant='Column' />
-      <Input 
-        header='Оценка' 
-        placeholder='9' error={errorNote}
-        value={selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
-      <Spacing themeSpace={25} variant='Column' />
-      <Textarea
-        value={selectedGrade.description || ''}
-        placeholder='Примечание...' 
-        height={120} setValue={setDescription}
-        error={errorDescription}
-        header='Примечание' />
-      <Spacing themeSpace={25} variant='Column' />
-      <Row>
-        <Button 
-          onClick={confirmUpdate}
-          state={loadingUpdate} 
-          variant='recomended' padding={[12,17]}>
-          Сохранить
-        </Button>
-        <Spacing variant='Row' themeSpace={20}/>
-        <Button onClick={closeUpdateWindow} variant='attentive' padding={[12,17]}>
-          Отмена
-        </Button>
-      </Row>
-    </Column>
-  );
 });
