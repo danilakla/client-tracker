@@ -5,33 +5,29 @@ export const ScrollWrapper = styled.div`
   width: 100%;
   overflow: auto;
 
-  max-height: 210px;
+  max-height: 280px;
 
-  @media (min-height: 610px) {
-    max-height: 280px;
-  }
-
-  @media (min-height: 680px) {
+  @media (min-height: 740px) {
     max-height: 350px;
   }
 
-  @media (min-height: 750px) {
+  @media (min-height: 810px) {
     max-height: 420px;
   }
 
-  @media (min-height: 820px) {
+  @media (min-height: 880px) {
     max-height: 490px;
   }
 
-  @media (min-height: 890px) {
+  @media (min-height: 950px) {
     max-height: 560px;
   }
 
-  @media (min-height: 960px) {
+  @media (min-height: 1020px) {
     max-height: 630px;
   }
 
-  @media (min-height: 1030px) {
+  @media (min-height: 1090px) {
     max-height: 700px;
   }
 `;
@@ -114,14 +110,14 @@ export const ClassItem = styled.div`
 `;
 
 export const TableWrapper = styled.div`
-
+  
 `;
 
 
-export const NameHeader = styled.div`
+export const NameHeader = styled.div<{isHide: boolean}>`
   display: flex;
   align-items: center;
-  width: 140px;
+  width: ${({ isHide }) => isHide ? "162px" : "150px"};
   flex-shrink: 0;
 `;
 
@@ -170,4 +166,43 @@ export const ExistMark = styled.div`
   clip-path: polygon(0 0, 100% 0, 0 100%);
   left: 0;
   top: 0;
+`;
+
+export const HorizontalTrack = styled.div`
+  position: relative;
+  height: 12px;
+  width: calc(100% - 162px);
+  background: #eee;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+export const HorizontalSlider = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: ${theme.colors.primary};
+  border-radius: 10px;
+  cursor: grab;
+`;
+
+export const VerticalTrack = styled.div`
+  position: relative;
+  width: 12px;
+  background: #eee;
+  border-radius: 10px;
+  cursor: pointer;
+`;
+
+export const VerticalSlider = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: ${theme.colors.primary};
+  border-radius: 10px;
+  cursor: grab;
 `;

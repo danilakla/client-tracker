@@ -246,7 +246,7 @@ function transformAndSortStudentsStatistics(input: {
         idClass: number;
         grade: number | null;
         description: string | null;
-        attendance: 0 | 1 | 2;
+        attendance: AttendanceCodeType;
     }[];
 }): StatisticOfStudent[] {
     const { students, studentGrades } = input;
