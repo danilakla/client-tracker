@@ -84,11 +84,14 @@ export const teacherApi = {
                 return response.data;
             })
     },
-    startReviewForClass(authToken: string, classId: number, expiration: number){
-        return instance.post('/qr/teacher/review/student',{
-            classId: classId,
-            expiration: expiration,
-            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+    startReviewForClass(authToken: string, classId: number){
+        return instance.get('/qr/teacher/review/student', 
+            { 
+                params: {
+                    classId: classId
+                },
+                headers: {'Authorization' : `Bearer ${authToken}`} 
+            })
             .then((response) => {
                 return response.data;
             })

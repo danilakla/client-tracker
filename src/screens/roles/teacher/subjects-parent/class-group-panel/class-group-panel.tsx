@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, HeaderClassType, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, HeaderClassType, startReviewForClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -24,7 +24,6 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
 
     setSelectedClassActionCreator,
     setExpirationOfRefreshActionCreator,
-    setExpirationOfKeyActionCreator,
     setExpirationOfReviewActionCreator,
     clearQrCodeDataActionCreator
   } = classGroupControlSlice.actions;
@@ -108,24 +107,19 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(setExpirationOfRefreshActionCreator(value));
   },[dispatch,setExpirationOfRefreshActionCreator])
 
-  const setExpirationOfKey = useCallback((value: number)=>{
-    dispatch(setExpirationOfKeyActionCreator(value));
-  },[dispatch,setExpirationOfKeyActionCreator])
-
   const setExpirationOfReview = useCallback((value: number)=>{
     dispatch(setExpirationOfReviewActionCreator(value));
   },[dispatch,setExpirationOfReviewActionCreator])
 
-  const activateKeyForClass = useCallback((onSuccess: () => void)=>{
+  const activateKeyForClass = useCallback((expiration: number, onSuccess: () => void)=>{
     dispatch(activateKeyForClassActionCreator({
       authToken: authToken, 
-      expiration: teacherClassGroupControlState.generateKeyPopup.expiration,
+      expiration: expiration,
       classId: teacherClassGroupControlState.selectedClass.id,
       onSuccess: onSuccess
     }));
   },[
     dispatch,
-    teacherClassGroupControlState.generateKeyPopup.expiration,
     authToken,
     teacherClassGroupControlState.selectedClass.id
   ])
@@ -150,8 +144,12 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   ])
 
   const onReview = useCallback((onSuccess: () => void)=>{
-    onSuccess();
-  },[])
+    dispatch(startReviewForClassActionCreator({
+      authToken: authToken,
+      onSuccess: onSuccess,
+      classId: teacherClassGroupControlState.selectedClass.id
+    }));
+  },[dispatch, authToken, teacherClassGroupControlState.selectedClass.id])
 
   return (
       <ClassGroupPanelView 
@@ -167,7 +165,6 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         setGradeNumber={setGradeNumber}
 
         setExpirationOfRefresh={setExpirationOfRefresh}
-        setExpirationOfKey={setExpirationOfKey}
         setSelectedClass={setSelectedClass}
         setExpirationOfReview={setExpirationOfReview}
 

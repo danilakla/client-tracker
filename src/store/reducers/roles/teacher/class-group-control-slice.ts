@@ -93,7 +93,6 @@ export type СlassGroupControlState = {
         qrCodeData: QrCodeDataType | null;
     };
     generateKeyPopup: {
-        expiration: number;
         loadingActivate: "idle" | "loading" | "success" | "error";
     };
 };
@@ -138,7 +137,6 @@ const initialState: СlassGroupControlState = {
         qrCodeData: null
     },
     generateKeyPopup: {
-        expiration: 90,
         loadingActivate: "idle"
     }
 };
@@ -259,10 +257,6 @@ export const classGroupControlSlice = createSlice({
         clearErrors(state) {
             state.errors = {};
         },
-
-        setExpirationOfKeyActionCreator(state, action: PayloadAction<number>) {
-            state.generateKeyPopup.expiration = action.payload;
-        },
         setExpirationOfRefreshActionCreator(state, action: PayloadAction<number>) {
             state.qrCodePopup.expirationOfRefresh = action.payload;
         },
@@ -341,6 +335,16 @@ export const classGroupControlSlice = createSlice({
             })
             .addCase(createQrCodeActionCreator.rejected, (state) => {
                 state.qrCodePopup.loadingQrCode = "idle";
+            })
+
+            .addCase(startReviewForClassActionCreator.fulfilled, (state) => {
+                state.loadingReview = 'success';
+            })
+            .addCase(startReviewForClassActionCreator.pending, (state) => {
+                state.loadingReview = 'loading';
+            })
+            .addCase(startReviewForClassActionCreator.rejected, (state) => {
+                state.loadingReview = "idle";
             })
     },
 });
@@ -498,7 +502,6 @@ export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-
         const { authToken, classId, expiration, onSuccess } = data;
         try {
             await teacherApi.saveKeyForQr(authToken, classId, expiration);
-            thunkApi.dispatch(classGroupControlSlice.actions.setExpirationOfKeyActionCreator(90));
             onSuccess();
         }
         catch (e) {
@@ -533,16 +536,15 @@ export const createQrCodeActionCreator = createAsyncThunk('teacher-class-control
 )
 
 export const startReviewForClassActionCreator = createAsyncThunk('teacher-class-control/review-class',
-    async (data: { authToken: string, classId: number, expiration: number, onSuccess: () => void}, thunkApi ) => {
-        const { authToken, classId, expiration, onSuccess } = data;
+    async (data: { authToken: string, classId: number, onSuccess: () => void}, thunkApi ) => {
+        const { authToken, classId, onSuccess } = data;
         try {
-
-
-
             
-            // await teacherApi.deleteClass(authToken, idClass);
-            // thunkApi.dispatch(classGroupControlSlice.actions.removeLastClassActionCreator());
-            // onSuccess();
+            await teacherApi.startReviewForClass(authToken, classId);
+
+            // todo logic
+
+            onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

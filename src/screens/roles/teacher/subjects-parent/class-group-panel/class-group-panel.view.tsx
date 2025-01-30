@@ -38,10 +38,9 @@ export type ClassGroupPanelViewProps = {
 
   setSelectedClass: (value: HeaderClassType, onSuccess: () => void) => void;
   setExpirationOfRefresh: (value: number) => void
-  setExpirationOfKey: (value: number) => void;
   setExpirationOfReview: (value: number) => void;
 
-  activateKeyForClass: (onSuccess: () => void) => void;
+  activateKeyForClass: (expiration: number, onSuccess: () => void) => void
 
   clearQrCodeData: () => void;
   createQrCode: () => void;
@@ -63,7 +62,6 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   onReview,
 
   setExpirationOfRefresh,
-  setExpirationOfKey,
   setSelectedClass,
   setExpirationOfReview,
 
@@ -113,9 +111,8 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
 
   const [isOpenGenerateKeyPopup, setIsOpenGenerateKeyPopup] = useState<boolean>(false);
   const controlGenerateKeyPopup = useCallback(() => {
-    if(isOpenGenerateKeyPopup) setExpirationOfKey(90); 
     setIsOpenGenerateKeyPopup(!isOpenGenerateKeyPopup);
-  },[setExpirationOfKey, isOpenGenerateKeyPopup])
+  },[isOpenGenerateKeyPopup])
   const [isOpenQrCodePopup, setIsOpenQrCodePopup] = useState<boolean>(false);
   const controlQrCodePopup = useCallback(() => {
     setIsOpenQrCodePopup(!isOpenQrCodePopup);
@@ -134,9 +131,9 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     setExpirationOfRefresh(5);
   },[setExpirationOfReview, setExpirationOfRefresh, setSelectedClass, controlClassControlPopup])
 
-  const confirmActivateKeyForClass = useCallback(() => {
-    activateKeyForClass(controlGenerateKeyPopup);
-  },[activateKeyForClass, controlGenerateKeyPopup])
+  const confirmActivateKeyForClass = useCallback((expiration: number, onSuccess: () => void) => {
+    activateKeyForClass(expiration, onSuccess);
+  },[activateKeyForClass])
 
   const [isOpenDescriptionClass, setIsOpenDescriptionClass] = useState<boolean>(false);
   const controlDescriptionClass = useCallback(() => {
@@ -230,8 +227,6 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
       <GenerateKeyPopup 
         stateActivate={teacherClassGroupControlState.generateKeyPopup.loadingActivate} 
         onActivateClick={confirmActivateKeyForClass}
-        setTimeValue={setExpirationOfKey} 
-        timeValue={teacherClassGroupControlState.generateKeyPopup.expiration} 
         closePopup={controlGenerateKeyPopup} isActive={isOpenGenerateKeyPopup}/>
     </>
   );
@@ -659,32 +654,72 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
 export type GenerateKeyPopupProps = {
   isActive: boolean;
   closePopup: () => void;
-  setTimeValue: (value: number) => void;
-  timeValue: number;
-  onActivateClick: () => void;
+  onActivateClick: (expiration: number, onSuccess: () => void) => void;
   stateActivate: "idle" | "loading" | "success" | "error";
 };
     
 export const GenerateKeyPopup: FC<GenerateKeyPopupProps> = memo(({
   isActive,
   closePopup,
-  setTimeValue,
   stateActivate,
   onActivateClick,
-  timeValue,
 }) => {
+  const [expiration, setExpiration] = useState<number>(90);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const closeTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  },[]);
+
+  useEffect(() => {
+    if (expiration <= 0 && timerRef.current) {
+      closeTimer();
+    }
+  }, [expiration, closeTimer]);
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) return;
+
+    timerRef.current = setInterval(() => {
+      setExpiration(prev => {
+        if (prev <= 1) {
+          closeTimer();
+          setExpiration(90);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, [closeTimer]);
+
+  const handleClose = useCallback(() => {
+    closeTimer();
+    closePopup();
+  }, [closePopup,closeTimer]);
+
+  const handleActivate = useCallback(() => {
+    onActivateClick(expiration, startTimer);
+  },[onActivateClick, startTimer, expiration]);
+
+  const handleInput = useCallback((value: number) => {
+    closeTimer();
+    setExpiration(value);
+  },[closeTimer]);
   
   return (
-    <Popup isActive={isActive} closePopup={closePopup}>
+    <Popup isActive={isActive} closePopup={handleClose}>
       <Text themeFont={theme.fonts.h2}>
-        Срок действия: <span style={{width: 110, display: 'inline-block'}}><b> {timeValue} cекунд</b> </span>
+        Срок действия: <span style={{width: 110, display: 'inline-block'}}><b> {expiration} cекунд</b> </span>
       </Text>
       <Spacing variant='Column' themeSpace={15}/>
-      <RangeSlider value={timeValue} setValue={setTimeValue}/>
+      <RangeSlider value={expiration} setValue={handleInput}/>
       <Spacing variant='Column' themeSpace={30}/>
       <Column horizontalAlign='center'>
         <Button 
-          onClick={onActivateClick} 
+          onClick={handleActivate} 
           width={140}
           borderRaius={15} state={stateActivate}
           variant="primary" padding={[12,17]}>
