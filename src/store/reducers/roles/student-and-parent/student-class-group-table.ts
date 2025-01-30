@@ -48,6 +48,7 @@ export type StudentClassGroupTableState = {
     loadingKey: "idle" | "loading" | "success" | "error";
     loadingReview: "idle" | "loading" | "success" | "error";
     loadingScan: "idle" | "loading" | "success" | "error";
+    loadingReloadTable: "idle" | "loading" | "success" | "error";
 }
 
 export type HeaderClassType = {
@@ -59,6 +60,7 @@ export type HeaderClassType = {
 const initialState: StudentClassGroupTableState = {
     loading: "idle",
     classGroup: null,
+    loadingReloadTable: 'idle',
     currentStudentId: -1,
     studentsStatistics: [],
     selectedGrade: {
@@ -182,6 +184,16 @@ export const studentClassGroupTableSlice = createSlice({
             })
             .addCase(checkQrCodeActionCreator.rejected, (state) => {
                 state.loadingScan = "idle";
+            })
+
+            .addCase(reloadStudntTableStatisticsActionCreator.fulfilled, (state) => {
+                state.loadingReloadTable = 'success';
+            })
+            .addCase(reloadStudntTableStatisticsActionCreator.pending, (state) => {
+                state.loadingReloadTable = 'loading';
+            })
+            .addCase(reloadStudntTableStatisticsActionCreator.rejected, (state) => {
+                state.loadingReloadTable = "idle";
             })
     },
 });
@@ -325,6 +337,8 @@ export const askReviewActionCreator = createAsyncThunk('student-class-group-tabl
     }
 )
 
+
+
 export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-table/check=qr-code-st',
     async (data: { 
             authToken: string, value: string, keyRedux: number, onSuccess: () => void, onError: () => void}, thunkApi ) => {
@@ -369,15 +383,6 @@ export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-ta
                 onError();
                 return;
             }
-            // const studentStats = studentStatistics.find(stat => stat.student.idAccount === userId);
-            // if (!studentStats) return;
-        
-            // const gradeInfo = studentStats.grades.find(grade => grade.idClass === classId);
-            // if (!gradeInfo) return;
-
-            // await studentApi.askReview(authToken, classId, gradeInfo.idStudentGrate);
-            // closePrewPopup();
-            // onSuccess();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -414,3 +419,42 @@ async function getAccurateTime(): Promise<AccurateTime> {
 
     return accurateTime;
 }
+
+export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('student-class-group-table/reload',
+    async (data: { authToken: string, accountId : number, idHold: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
+        const { authToken, idHold, accountId } = data;
+        try {
+
+            const responce = await studentApi.getTableOfSubgroup(authToken, idHold);
+            thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
+                transformAndSortStudentsStatistics(responce)
+            ));
+
+            const currentStudent = responce.students.find((student: any) => student.idAccount === accountId);
+            
+            thunkApi.dispatch(studentClassGroupTableSlice.actions.setCurrentStudentIdActionCreator(currentStudent.idStudent));
+
+            const currentStudentClasses = responce.studentGrades
+            .filter((grade: any) => grade.idStudent === currentStudent.idStudent)
+            .map((grade: any) => grade.idClass);
+
+            const classesIds = responce.classes
+                .filter((cls: any) => currentStudentClasses.includes(cls.idClass))
+                .map((cls: any, index: any) => ({
+                    id: cls.idClass,
+                    position: index + 1,
+                    gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
+                }));
+            
+            thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(classesIds));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            } else {
+            }
+        }
+    }
+)

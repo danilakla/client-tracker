@@ -5,7 +5,7 @@ import { useAppDispatch, useTypedSelector } from '../../../../hooks/use-typed-se
 import { useUser } from '../../../../hooks/user-hook';
 import { useStudentClassGroups } from '../student-class-groups/student-class-groups.props';
 import { useStudentSubjects } from '../student-subjects/student-subjects.props';
-import { askReviewActionCreator, checkQrCodeActionCreator, getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { askReviewActionCreator, checkQrCodeActionCreator, getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, reloadStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   role
@@ -107,6 +107,22 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
     );
   },[dispatch, authToken, studentClassGroupTableState.redisKeyData?.classId])
 
+  const reloadTable = useCallback(()=>{
+    dispatch(reloadStudntTableStatisticsActionCreator({
+      authToken: authToken, 
+      idHold: studentClassGroupTableState.classGroup?.idHold || -1, 
+      idSubgroup: studentClassGroupTableState.classGroup?.idSubgroup || -1,
+      role: role,
+      accountId: userAccountId
+    }));
+  },[
+    studentClassGroupTableState.classGroup,
+    dispatch,
+    role,
+    authToken,
+    userAccountId
+  ])
+
   return (
       <StudentClassGroupTableView 
         askReview={askReview}
@@ -114,6 +130,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
         checkQrCode={checkQrCode}
         goToClassGroups={goToClassGroups}
         setSelectedClass={setSelectedClass}
+        reloadTable={reloadTable}
         getKeyForQr={getKeyForQr}
         studentClassGroupTableState={studentClassGroupTableState}
         role={role}

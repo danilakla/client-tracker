@@ -32,6 +32,7 @@ export type StudentClassGroupTableViewProps = {
   getKeyForQr: (onError: () => void) => void;
   clearRedisKey: () => void;
   askReview: (onSuccess: () => void, onError: () => void, closePrewPopup: () => void) => void;
+  reloadTable: () => void;
   checkQrCode: (value: string, onSuccess: () => void, onError: () => void) => void;
 };
 
@@ -41,6 +42,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
   getKeyForQr,
   goToClassGroups,
   clearRedisKey,
+  reloadTable,
   setSelectedClass,
   checkQrCode,
   askReview,
@@ -151,6 +153,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           setErrorAccessCamera={setErrorAccessCamera}
           isClassControlPopup={isClassControlPopup}
           getKeyForQr={onGetKeyForQr}
+          reloadTable={reloadTable}
           onAskReview={controlConfirmReviewPopup}
           studentClassGroupTableState={studentClassGroupTableState}
           />) :
@@ -159,6 +162,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           hasCameraAccess={hasCameraAccess}
           onAskReview={controlConfirmReviewPopup}
           setErrorAccessCamera={setErrorAccessCamera}
+          reloadTable={reloadTable}
           closeClassControl={closeClassControl}
           onHandleQrCode={onHandleQrCode}
           openClassControl={openClassControl}
@@ -234,6 +238,7 @@ type LocalViewProps = {
   closeClassControl: () => void;
   onHandleQrCode: (value: string) => void;
   isClassControlPopup: boolean;
+  reloadTable: () => void;
   onAskReview: () => void;
   hasCameraAccess: boolean | null;
   openClassControl: (value: HeaderClassType) => void;
@@ -249,6 +254,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   onAskReview,
   setSelectedGrade,
   hasCameraAccess,
+  reloadTable,
   setErrorAccessCamera,
   isClassControlPopup,
   onHandleQrCode,
@@ -277,11 +283,15 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
         <CircleLoading state={studentClassGroupTableState.loading}/>
       </Column> : <>
         <Surface>
-          <Button onClick={controlInfoWindow} 
-            borderRaius={10} 
-            variant='recomended' padding={[10, 10]}>
-            Информация 🛈
-          </Button>
+        <Row>
+            <Button onClick={controlInfoWindow} borderRaius={10} variant='recomended' padding={[10, 10]}>
+              Информация 🛈
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button onClick={reloadTable} borderRaius={10} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
+              Обновить
+            </Button>
+          </Row>
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
             <StudentsTable onClickGrade={openDescription} openClassControl={openClassControl}
@@ -332,6 +342,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
   getKeyForQr,
   onAskReview,
   setSelectedGrade,
+  reloadTable,
   hasCameraAccess,
   setErrorAccessCamera,
   isClassControlPopup,
@@ -361,11 +372,15 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           <CircleLoading state={studentClassGroupTableState.loading}/>
         </Column> : <>
         <Surface style={{width: 900}}>
-          <Button onClick={controlInfoWindow} 
-            borderRaius={10} 
-            variant='recomended' padding={[10, 10]}>
-            Информация 🛈
-          </Button>
+          <Row>
+            <Button onClick={controlInfoWindow} borderRaius={10} variant='recomended' padding={[10, 10]}>
+              Информация 🛈
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button onClick={reloadTable} borderRaius={10} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
+              Обновить
+            </Button>
+          </Row>
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
             <StudentsTable

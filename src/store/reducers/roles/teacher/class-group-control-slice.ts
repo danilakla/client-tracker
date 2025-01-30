@@ -83,6 +83,8 @@ export type СlassGroupControlState = {
     loadingAdd: "idle" | "loading" | "success" | "error";
     loadingReview: "idle" | "loading" | "success" | "error";
 
+    loadingReloadTable: "idle" | "loading" | "success" | "error";
+
     selectedClass: HeaderClassType;
     qrCodePopup: {
         loadingQrCode: "idle" | "loading" | "success" | "error";
@@ -112,6 +114,7 @@ const initialState: СlassGroupControlState = {
     errors: {},
     classesIds: [],
     loadingUpdate: 'idle',
+    loadingReloadTable: 'idle',
     countClasses: 0,
     selectedGrade: {
         idClass: -1,
@@ -348,6 +351,16 @@ export const classGroupControlSlice = createSlice({
             .addCase(startReviewForClassActionCreator.rejected, (state) => {
                 state.loadingReview = "idle";
             })
+
+            .addCase(reloadTableStatisticsActionCreator.fulfilled, (state) => {
+                state.loadingReloadTable = 'success';
+            })
+            .addCase(reloadTableStatisticsActionCreator.pending, (state) => {
+                state.loadingReloadTable = 'loading';
+            })
+            .addCase(reloadTableStatisticsActionCreator.rejected, (state) => {
+                state.loadingReloadTable = "idle";
+            })
     },
 });
 
@@ -558,3 +571,27 @@ export const startReviewForClassActionCreator = createAsyncThunk('teacher-class-
     }
 )
 
+export const reloadTableStatisticsActionCreator = createAsyncThunk('reload-teacher-class-group-control-init',
+    async (data: { authToken: string, holdId: number, initData: InitScreenData}, thunkApi ) => {
+        const { authToken, holdId, initData } = data;
+        try {
+            thunkApi.dispatch(classGroupControlSlice.actions.setIdHoldActionCreator(holdId))
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassGroupInfoActionCreator({initData}))
+
+            const responce = await teacherApi.getTableOfSubgroup(authToken, holdId);
+            thunkApi.dispatch(classGroupControlSlice.actions.setStudentsStatisticsActionCreator(
+                transformAndSortStudentsStatistics(responce)
+            ));
+            thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes.map((item: any) => item.idClass)));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            } else {
+            }
+        }
+    }
+)

@@ -33,6 +33,7 @@ export type ClassGroupPanelViewProps = {
   deleteClass: (onSuccess: () => void) => void;
   createClass: (onSuccess: () => void) => void;
   setGradeNumber: (value: string) => void;
+  reloadTable: () => void;
   setDescription: (value: string) => void;
   setAttendance: (value: AttendanceCodeType) => void;
 
@@ -58,7 +59,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setAttendance,
   setDescription,
   setGradeNumber,
-
+  reloadTable,
   onReview,
 
   setExpirationOfRefresh,
@@ -161,6 +162,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           openDeletePopup={openDeletePopup}
           confirmUpdate={confirmUpdate}
           handleReview={handleReview}
+          reloadTable={reloadTable}
           isClassControlPopup={isClassControlPopup}
           isOpenUpdateWindow={isOpenUpdateWindow}
           controlGenerateKeyPopup={controlGenerateKeyPopup}
@@ -172,6 +174,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
         (<ClassGroupPanelDesktopView
           openAddPopup={openAddPopup}
           handleReview={handleReview}
+          reloadTable={reloadTable}
           closeClassControlForStudents={closeClassControlForStudents}
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           teacherClassGroupControlState={teacherClassGroupControlState}
@@ -240,6 +243,7 @@ type LocalViewProps = {
   openDeletePopup: () => void;
   openClassControlForStudents: (value: HeaderClassType) => void;
   setGradeNumber: (value: string) => void;
+  reloadTable: () => void;
   setDescription: (value: string) => void;
   setAttendance: (value: AttendanceCodeType) => void;
   isOpenUpdateWindow: boolean;
@@ -274,6 +278,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   openUpdateWindow,
   handleReview,
   confirmUpdate,
+  reloadTable,
 
   controlGenerateKeyPopup,
   controlQrCodePopup,
@@ -289,9 +294,15 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface>
-          <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
-            Информация 🛈
-          </Button>
+          <Row>
+            <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
+              Информация 🛈
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button onClick={reloadTable} borderRaius={10} state={teacherClassGroupControlState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
+              Обновить
+            </Button>
+          </Row>
           <Spacing themeSpace={25} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
             <StudentsTable
@@ -397,6 +408,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   openClassControlForStudents,
   isClassControlPopup,
   confirmUpdate,
+  reloadTable,
   handleReview,
 
   controlGenerateKeyPopup,
@@ -413,9 +425,15 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface style={{width: 900}}>
-          <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
-            Информация 🛈
-          </Button>
+          <Row>
+            <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
+              Информация 🛈
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button onClick={reloadTable} state={teacherClassGroupControlState.loadingReloadTable}  borderRaius={10} variant='recomended' padding={[10, 10]}>
+              Обновить
+            </Button>
+          </Row>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
             <StudentsTable

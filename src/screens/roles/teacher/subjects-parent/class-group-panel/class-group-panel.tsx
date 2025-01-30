@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, HeaderClassType, startReviewForClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, HeaderClassType, reloadTableStatisticsActionCreator, startReviewForClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -151,11 +151,24 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     }));
   },[dispatch, authToken, teacherClassGroupControlState.selectedClass.id])
 
+  const reloadTable = useCallback(()=>{
+    if(
+      teacherClassGroupControlState.initData === null || 
+      teacherClassGroupControlState.idHold === null) return;
+    
+    dispatch(reloadTableStatisticsActionCreator({
+      authToken: authToken,
+      holdId: teacherClassGroupControlState.idHold,
+      initData: teacherClassGroupControlState.initData
+    }));
+  },[dispatch, authToken, teacherClassGroupControlState.idHold, teacherClassGroupControlState.initData])
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
         updateGrade={updateGrade}
         onReview={onReview}
+        reloadTable={reloadTable}
         setSelectedGrade={setSelectedGrade}
         deleteClass={deleteClass}
         teacherClassGroupControlState={teacherClassGroupControlState}
