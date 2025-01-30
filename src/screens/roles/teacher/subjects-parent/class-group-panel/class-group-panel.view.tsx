@@ -298,7 +298,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
             <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
-            <Spacing themeSpace={10} variant='Row' />
+            <Spacing themeSpace={15} variant='Row' />
             <Button onClick={reloadTable} borderRaius={10} state={teacherClassGroupControlState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>
@@ -429,7 +429,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
-            <Spacing themeSpace={10} variant='Row' />
+            <Spacing themeSpace={15} variant='Row' />
             <Button onClick={reloadTable} state={teacherClassGroupControlState.loadingReloadTable}  borderRaius={10} variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>

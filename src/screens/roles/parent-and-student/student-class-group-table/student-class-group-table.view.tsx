@@ -287,7 +287,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
             <Button onClick={controlInfoWindow} borderRaius={10} variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
-            <Spacing themeSpace={10} variant='Row' />
+            <Spacing themeSpace={15} variant='Row' />
             <Button onClick={reloadTable} borderRaius={10} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>
@@ -376,7 +376,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
             <Button onClick={controlInfoWindow} borderRaius={10} variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
-            <Spacing themeSpace={10} variant='Row' />
+            <Spacing themeSpace={15} variant='Row' />
             <Button onClick={reloadTable} borderRaius={10} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>
