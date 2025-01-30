@@ -294,7 +294,9 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
           </Row>
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
-            <StudentsTable onClickGrade={openDescription} openClassControl={openClassControl}
+            <StudentsTable 
+              role={role}
+              onClickGrade={openDescription} openClassControl={openClassControl}
               classesIds={studentClassGroupTableState.classesIds}
               data={studentClassGroupTableState.studentsStatistics}/> :
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
@@ -384,6 +386,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={20} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
             <StudentsTable
+              role={role}
               onClickGrade={openDescription} openClassControl={openClassControl}
               classesIds={studentClassGroupTableState.classesIds}
               data={studentClassGroupTableState.studentsStatistics}/> :
@@ -517,12 +520,14 @@ export type StudentsTableProps = {
 	classesIds: HeaderClassType[];
   onClickGrade: (value: GradeInfo) => void;
   openClassControl: (value: HeaderClassType) => void;
+  role: "ROLE_STUDENT" | "ROLE_PARENTS";
 };
   
 export const StudentsTable: FC<StudentsTableProps> = memo(({ 
   data,
   onClickGrade,
   openClassControl,
+  role,
   classesIds,
 }) => {
   const [isVerticalScrollNeeded, setIsVerticalScrollNeeded] = useState(true);
@@ -820,8 +825,8 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
           <HeaderClasses ref={horizontalScrollRef1}>
             {classesIds.map((item, index) => (
               <HeaderClassItem
-                key={index}
-                onClick={item.gradeId === -1 ? () => {} : () => openClassControl(item)}
+                key={index} 
+                onClick={(item.gradeId === -1 || role === 'ROLE_PARENTS') ? () => {} : () => openClassControl(item)}
               >
                 <Text themeFont={theme.fonts.h3}>Занятие {index + 1}</Text>
               </HeaderClassItem>
