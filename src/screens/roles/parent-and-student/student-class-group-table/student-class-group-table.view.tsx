@@ -421,7 +421,6 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           onAskReview={onAskReview}
           position={studentClassGroupTableState.selectedClass.position}/>
       </Popup>
-      {/* <CustomScrollWithDiv/> */}
     </WrapperDesktop>
   );
 });
@@ -822,7 +821,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
             {classesIds.map((item, index) => (
               <HeaderClassItem
                 key={index}
-                onClick={() => openClassControl(item)}
+                onClick={item.gradeId === -1 ? () => {} : () => openClassControl(item)}
               >
                 <Text themeFont={theme.fonts.h3}>Занятие {index + 1}</Text>
               </HeaderClassItem>
@@ -855,6 +854,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
               {data.map((item, index) => (
                 <ClassesRow key={index}>
                   {item.grades.map((grade, gradeIndex) => (
+                    grade.idStudentGrate !== -1 ? 
                     <ClassItem
                       key={gradeIndex}
                       onClick={() => onClickGrade(grade)}
@@ -866,6 +866,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
                       <ColorCircle
                         color={attendanceColorsForStudents[grade.attendance]}
                       />
+                    </ClassItem> : 
+                    <ClassItem style={{borderRight: 0, backgroundColor: '#d3d3d376'}} key={index}
+                      onClick={() => {}} >
                     </ClassItem>
                   ))}
                 </ClassesRow>

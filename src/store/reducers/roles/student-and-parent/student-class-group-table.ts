@@ -261,24 +261,39 @@ function transformAndSortStudentsStatistics(input: {
         attendance: AttendanceCodeType;
     }[];
 }): StatisticOfStudent[] {
-    const { students, studentGrades } = input;
+    const { students, studentGrades, classes } = input;
+
+    const allClassIds = classes.map(cls => cls.idClass);
 
     const result: StatisticOfStudent[] = students.map((student) => {
         const [surname, name, lastname] = student.flpName.split("_");
         const idStudent = student.idStudent;
         const idAccount = student.idAccount;
 
-        const grades = studentGrades
-            .filter((grade) => grade.idStudent === student.idStudent)
-            .map((grade) => ({
-                idClass: grade.idClass,
-                idStudentGrate: grade.idStudentGrate,
-                grade: grade.grade,
-                idStudent: idStudent,
-                description: grade.description,
-                attendance: grade.attendance,
-            }))
-            .sort((a, b) => a.idClass - b.idClass); 
+        const grades = allClassIds.map((idClass) => {
+            const grade = studentGrades
+                .filter((grade) => grade.idStudent === idStudent && grade.idClass === idClass)
+                .map((grade) => ({
+                    idClass: grade.idClass,
+                    idStudentGrate: grade.idStudentGrate,
+                    grade: grade.grade,
+                    idStudent: idStudent,
+                    description: grade.description,
+                    attendance: grade.attendance,
+                }))[0];
+
+            if (!grade) {
+                return {
+                    idClass: -1,
+                    idStudent: -1,
+                    idStudentGrate: -1,
+                    grade: null,
+                    description: null,
+                    attendance: 0 as AttendanceCodeType
+                };
+            }
+            return grade;
+        });
 
         return {
             student: { idAccount, surname, name, lastname, idStudent },
@@ -289,6 +304,7 @@ function transformAndSortStudentsStatistics(input: {
     result.sort((a, b) => a.student.surname.localeCompare(b.student.surname));
 
     return result;
+
 }
 
 
