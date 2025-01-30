@@ -45,6 +45,8 @@ export type ClassGroupPanelViewProps = {
 
   clearQrCodeData: () => void;
   createQrCode: () => void;
+
+  onReview: (onSuccess: () => void) => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -57,6 +59,8 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setAttendance,
   setDescription,
   setGradeNumber,
+
+  onReview,
 
   setExpirationOfRefresh,
   setExpirationOfKey,
@@ -139,6 +143,10 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     setIsOpenDescriptionClass(!isOpenDescriptionClass);
   },[isOpenDescriptionClass])
 
+  const handleReview = useCallback(() => {
+    onReview(closeClassControlForStudents);
+  },[onReview, closeClassControlForStudents])
+
   return (
     <>
       {
@@ -155,6 +163,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           closeUpdateWindow={closeUpdateWindow}
           openDeletePopup={openDeletePopup}
           confirmUpdate={confirmUpdate}
+          handleReview={handleReview}
           isClassControlPopup={isClassControlPopup}
           isOpenUpdateWindow={isOpenUpdateWindow}
           controlGenerateKeyPopup={controlGenerateKeyPopup}
@@ -165,6 +174,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           />) :
         (<ClassGroupPanelDesktopView
           openAddPopup={openAddPopup}
+          handleReview={handleReview}
           closeClassControlForStudents={closeClassControlForStudents}
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           teacherClassGroupControlState={teacherClassGroupControlState}
@@ -249,6 +259,8 @@ type LocalViewProps = {
 
   controlDescriptionClass: () => void;
   isOpenDescriptionClass: boolean;
+
+  handleReview: () => void;
 };
 
 export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
@@ -265,6 +277,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   setGradeNumber,
   closeUpdateWindow,
   openUpdateWindow,
+  handleReview,
   confirmUpdate,
 
   controlGenerateKeyPopup,
@@ -340,6 +353,15 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           variant="primary" padding={[12,17]}>
           Генерация QR-code
         </Button>
+        <Spacing themeSpace={15} variant='Column' />
+        <Button 
+          onClick={handleReview} 
+          width={200}
+          state={teacherClassGroupControlState.loadingReview}
+          borderRaius={10}
+          variant="primary" padding={[12,17]}>
+          Пересмотр
+        </Button>
       </Modal>
       <Modal isActive={isOpenDescriptionClass} closeModal={controlDescriptionClass} >
         <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
@@ -380,6 +402,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   openClassControlForStudents,
   isClassControlPopup,
   confirmUpdate,
+  handleReview,
 
   controlGenerateKeyPopup,
   controlQrCodePopup,
@@ -455,6 +478,14 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             borderRaius={10}
             variant="primary" padding={[12,17]}>
             Генерация QR-code
+          </Button>
+          <Spacing themeSpace={15} variant='Column' />
+          <Button 
+            onClick={handleReview} 
+            width={240}
+            borderRaius={10}
+            variant="primary" padding={[12,17]}>
+            Пересмотр
           </Button>
         </Column>
       </Popup>

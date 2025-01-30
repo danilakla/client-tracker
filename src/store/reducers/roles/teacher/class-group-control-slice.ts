@@ -79,6 +79,7 @@ export type СlassGroupControlState = {
     loadingDelete: "idle" | "loading" | "success" | "error";
     loadingUpdate: "idle" | "loading" | "success" | "error";
     loadingAdd: "idle" | "loading" | "success" | "error";
+    loadingReview: "idle" | "loading" | "success" | "error";
 
     selectedClass: HeaderClassType;
     qrCodePopup: {
@@ -121,6 +122,7 @@ const initialState: СlassGroupControlState = {
     },
     loadingAdd: 'idle',
     loadingDelete: 'idle',
+    loadingReview: 'idle',
 
     selectedClass: {
         id: -1,

@@ -149,10 +149,15 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     authToken
   ])
 
+  const onReview = useCallback((onSuccess: () => void)=>{
+    onSuccess();
+  },[])
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
         updateGrade={updateGrade}
+        onReview={onReview}
         setSelectedGrade={setSelectedGrade}
         deleteClass={deleteClass}
         teacherClassGroupControlState={teacherClassGroupControlState}
