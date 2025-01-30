@@ -8,7 +8,7 @@ import { Surface } from '../../../../../ui-kit/surface';
 import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ExistMark, HeaderClasses, HeaderClassItem, HorizontalSlider, HorizontalTrack, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper, VerticalSlider, VerticalTrack } from './class-group-panel.styled';
 import { Text } from '../../../../../ui-kit/text';
 import { Spacing } from '../../../../../ui-kit/spacing';
-import { AttendanceCodeType, attendanceOptions, GradeInfo, HeaderClassType, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { AttendanceCodeType, attendanceColorsForStudents, attendanceOptions, GradeInfo, HeaderClassType, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { Button } from '../../../../../ui-kit/button';
 import { Column } from '../../../../../ui-kit/column';
 import { CircleLoading } from '../../../../../ui-kit/circle-loading';
@@ -763,7 +763,7 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
           Статус
         </Text>
         <Spacing variant='Column' themeSpace={25}/>
-        <Row style={{gap: 25, width: '100%'}} horizontalAlign='center'>
+        <Row style={{gap: 10, width: '100%'}} horizontalAlign='space-between'>
           {attendanceOptions.map((option) => (
             <Column style={{width: 'auto'}} horizontalAlign='center'>
               <ColorCircleButton
@@ -773,7 +773,7 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
                 isSelected={selectedGrade.attendance === option.id}
               />
               <Spacing variant='Column' themeSpace={10}/>
-              <Text align='center' themeColor={theme.colors.gray} themeFont={theme.fonts.ht2}>
+              <Text style={{fontSize: 12}} align='center' themeColor={theme.colors.gray} themeFont={theme.fonts.ht2}>
                 {option.name}
               </Text>
             </Column>
@@ -1163,7 +1163,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		    		  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
 		    			{item.grade}
 		    		  </Text>}
-		    		  <ColorCircle variant={item.attendance} />
+		    		  <ColorCircle
+                  color={attendanceColorsForStudents[item.attendance]}
+                />
 		    		</ClassItem>)}
 		    	  </ClassesRow>)}
 		    	</ClassesContainer>

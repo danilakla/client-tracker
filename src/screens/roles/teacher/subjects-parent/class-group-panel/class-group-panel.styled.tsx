@@ -9,7 +9,7 @@ export const ColorCircleButton = styled.div<{color: string, isSelected: boolean}
   border-radius: 20px;
   cursor: pointer;
 
-  border: ${({ isSelected }) => (isSelected ? `5px solid ${theme.colors.gray}` : "none")};
+  border: ${({ isSelected }) => (isSelected ? `5px solid ${theme.colors.primary}` : "none")};
 
   background-color: ${({ color }) => color};
 `;
@@ -164,23 +164,12 @@ export const HeaderClasses = styled.div`
 `;
 
 
-export const ColorCircle = styled.div<{variant: AttendanceCodeType}>`
+export const ColorCircle = styled.div<{color: string}>`
   width: 10px;
   height: 10px;
   border-radius: 5px;
 
-  background-color: ${({ variant }) => {
-    switch(variant){
-      case 0:
-        return `transparent`;
-      case 1:
-        return `${theme.colors.attentive}`;
-      case 2:
-        return `${theme.colors.neutral}`;
-      case 3:
-        return `${theme.colors.success}`;
-    }
-  }};
+  background-color: ${({ color }) => color};
 `;
 
 
