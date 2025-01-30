@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import { theme } from "../../../../../ui-kit/themes/theme";
-import { AttendanceCodeType } from "../../../../../store/reducers/roles/teacher/class-group-control-slice";
-
 
 export const ColorCircleButton = styled.div<{color: string, isSelected: boolean}>`
   width: 40px;
@@ -113,7 +111,7 @@ export const ClassesContainer = styled.div`
   }
 `;
 
-export const ClassItem = styled.div`
+export const ClassItem = styled.div<{isReview: boolean}>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -124,6 +122,7 @@ export const ClassItem = styled.div`
   gap: 5px;
   height: 70px;
   flex: 0 0 70px;
+  background-color: ${({ isReview }) => isReview ? '#fc6e6c79' : 'transparent'}
 `;
 
 export const TableWrapper = styled.div`

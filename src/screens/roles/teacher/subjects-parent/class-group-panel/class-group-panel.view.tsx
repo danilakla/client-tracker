@@ -1175,7 +1175,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		    	<ClassesContainer ref={horizontalScrollRef2}>
 		    	  {data.map((item, index)=> <ClassesRow key={index}>
 		    		{item.grades.map((item, index) => 
+            item.idStudentGrate !== -1 ?
             <ClassItem key={index}
+              isReview={item.isReview && item.attendance !== 4}
 		    		  onClick={() => onClickGrade(item)} >
 		    		  {item.description !== null && <ExistMark/>}
 		    		  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
@@ -1184,6 +1186,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		    		  <ColorCircle
                   color={attendanceColorsForStudents[item.attendance]}
                 />
+		    		</ClassItem> : 
+            <ClassItem isReview={false} style={{borderRight: 0, backgroundColor: '#d3d3d376'}} key={index}
+		    		  onClick={() => {}} >
 		    		</ClassItem>)}
 		    	  </ClassesRow>)}
 		    	</ClassesContainer>

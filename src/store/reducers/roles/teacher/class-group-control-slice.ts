@@ -5,7 +5,7 @@ import { appStatusSlice } from "../../app-status-slice";
 import { ClassGroupData } from "./class-group-subroups-slice";
 import { theme } from "../../../../ui-kit/themes/theme";
 
-export type AttendanceCodeType = 0 | 1 | 2 | 3 | 4
+export type AttendanceCodeType = 0 | 1 | 2 | 3 | 4;
 
 export type AttendanceOption = {
   id: AttendanceCodeType;
@@ -37,7 +37,8 @@ export type GradeInfo = {
     grade: number | null,
     idStudent: number,
     description: string | null,
-    attendance: AttendanceCodeType
+    attendance: AttendanceCodeType,
+    isReview: boolean
 }
 
 export type InitScreenData = {
@@ -122,7 +123,8 @@ const initialState: СlassGroupControlState = {
         idStudentGrate: -1,
         grade: null,
         description: null,
-        attendance: 0
+        attendance: 0,
+        isReview: false
     },
     loadingAdd: 'idle',
     loadingDelete: 'idle',
@@ -230,6 +232,7 @@ export const classGroupControlSlice = createSlice({
                         idStudent: gradeForStudent.idStudent,
                         description: gradeForStudent.description,
                         attendance: gradeForStudent.attendance,
+                        isReview: false
                     };
         
                     return {
@@ -279,6 +282,22 @@ export const classGroupControlSlice = createSlice({
         setQrCodeDataActionCreator(state, action: PayloadAction<QrCodeDataType | null>) {
             state.qrCodePopup.qrCodeData = action.payload;
         },
+
+        getReviewStudents(state, action: PayloadAction<{
+            studentGradeId: number,
+            classId: number,
+            expiration: number
+        }[]>) {
+            action.payload.forEach(({ studentGradeId, classId }) => {
+                state.studentsStatistics.forEach(studentStat => {
+                    studentStat.grades.forEach(grade => {
+                        if (grade.idStudentGrate === studentGradeId && grade.idClass === classId) {
+                            grade.isReview = true;
+                        }
+                    });
+                });
+            });
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -461,6 +480,8 @@ export const updateGradeActionCreator = createAsyncThunk('teacher-class-update',
 
 export default classGroupControlSlice.reducer;
 
+
+
 function transformAndSortStudentsStatistics(input: {
     students: {
         idStudent: number;
@@ -483,23 +504,38 @@ function transformAndSortStudentsStatistics(input: {
         attendance: AttendanceCodeType;
     }[];
 }): StatisticOfStudent[] {
-    const { students, studentGrades } = input;
+    const { students, studentGrades, classes } = input;
+    const allClassIds = classes.map(cls => cls.idClass).sort((a, b) => a - b);
 
     const result: StatisticOfStudent[] = students.map((student) => {
         const [surname, name, lastname] = student.flpName.split("_");
         const idStudent = student.idStudent;
 
-        const grades = studentGrades
+        const gradesMap = new Map(studentGrades
             .filter((grade) => grade.idStudent === student.idStudent)
-            .map((grade) => ({
+            .map((grade) => [grade.idClass, {
                 idClass: grade.idClass,
                 idStudentGrate: grade.idStudentGrate,
                 grade: grade.grade,
                 idStudent: idStudent,
                 description: grade.description,
                 attendance: grade.attendance,
-            }))
-            .sort((a, b) => a.idClass - b.idClass); 
+                isReview: false,
+            }])
+        );
+
+        const grades = allClassIds.map(idClass => {
+            const grade = gradesMap.get(idClass);
+            return grade || {
+                idClass: idClass,
+                idStudent: idStudent,
+                idStudentGrate: -1,
+                grade: null,
+                description: null,
+                attendance: 0 as AttendanceCodeType, 
+                isReview: false,
+            };
+        });
 
         return {
             student: { surname, name, lastname, idStudent },
@@ -511,6 +547,7 @@ function transformAndSortStudentsStatistics(input: {
 
     return result;
 }
+
 
 export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',
     async (data: { authToken: string, classId: number, expiration: number, onSuccess: () => void}, thunkApi ) => {
@@ -555,9 +592,9 @@ export const startReviewForClassActionCreator = createAsyncThunk('teacher-class-
         const { authToken, classId, onSuccess } = data;
         try {
             
-            await teacherApi.startReviewForClass(authToken, classId);
+            const responce = await teacherApi.startReviewForClass(authToken, classId);
 
-            // todo logic
+            thunkApi.dispatch(classGroupControlSlice.actions.getReviewStudents(responce));
 
             onSuccess();
         }
