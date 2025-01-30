@@ -19,7 +19,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 16px 5px #8f8fbf40;
+  box-shadow: 0 0 4px 2px #8f8fbf30;
 
   background: ${({ variant }) => {
     switch(variant){

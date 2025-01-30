@@ -833,6 +833,8 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 
     const newScrollTop = (newSliderTop / trackHeight) * scrollableHeight;
     container.scrollTop = newScrollTop;
+
+
   }, []);
 
   const handleVerticalEnd = useCallback(() => {
@@ -845,7 +847,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   }, [handleVerticalMove]);
 
   const handleVerticalStart = useCallback((e: React.MouseEvent | React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
 
     updateVerticalSliderSize();
     updateVerticalSliderPosition();
@@ -939,6 +940,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   }, [isSyncingScroll, updateHorizontalSliderPosition]);
 
   const handleHorizontalMove = useCallback((e: MouseEvent | TouchEvent) => {
+
     if (!isHorizontalDraggingRef.current) return;
 
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
@@ -976,7 +978,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   }, [handleHorizontalMove]);
 
   const handleHorizontalStart = useCallback((e: React.MouseEvent | React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
 
     updateHorizontalSliderSize();
     updateHorizontalSliderPosition();

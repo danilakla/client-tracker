@@ -599,7 +599,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   }, [handleVerticalMove]);
 
   const handleVerticalStart = useCallback((e: React.MouseEvent | React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
 
     updateVerticalSliderSize();
     updateVerticalSliderPosition();
@@ -730,7 +729,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   }, [handleHorizontalMove]);
 
   const handleHorizontalStart = useCallback((e: React.MouseEvent | React.TouchEvent<HTMLDivElement>) => {
-    e.preventDefault();
 
     updateHorizontalSliderSize();
     updateHorizontalSliderPosition();
@@ -862,16 +860,16 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
         </ScrollWrapper>
       </Row>
       {isHorizontalScrollNeeded && 
-            <Column horizontalAlign="flex-end">
-              <Spacing variant="Column" themeSpace={10} />
-              <HorizontalTrack ref={horizontalTrackRef}>
-                <HorizontalSlider
-                  ref={horizontalSliderRef}
-                  onMouseDown={handleHorizontalStart}
-                  onTouchStart={handleHorizontalStart}
-                />
-              </HorizontalTrack>
-            </Column>}
+      <Column horizontalAlign="flex-end">
+        <Spacing variant="Column" themeSpace={10} />
+        <HorizontalTrack ref={horizontalTrackRef}>
+          <HorizontalSlider
+            ref={horizontalSliderRef}
+            onMouseDown={handleHorizontalStart}
+            onTouchStart={handleHorizontalStart}
+          />
+        </HorizontalTrack>
+      </Column>}
     </TableWrapper>
   );
 });
