@@ -392,7 +392,7 @@ export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-ta
             const timeDifference = currentTime.getTime() - parsedDate.getTime();
 
             if (timeDifference / 1000 <= parsedExpiration) {
-                await studentApi.acceptAttendance(authToken, jsonData.idClass, 3);
+                await studentApi.acceptAttendance(authToken, jsonData.idClass, 4);
                 onSuccess();
                 return;
             } else {
