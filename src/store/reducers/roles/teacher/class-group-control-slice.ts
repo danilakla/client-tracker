@@ -17,16 +17,14 @@ export const attendanceOptions: AttendanceOption[] = [
   { id: 0, name: 'Не указано', color: '#0000003e' },
   { id: 1, name: 'Пропуск', color: theme.colors.attentive},
   { id: 2, name: 'Уважительно', color: theme.colors.neutral },
-  { id: 3, name: 'Отработано', color: '#90ee9095' },
-  { id: 4, name: 'Посещено', color: theme.colors.success },
+  { id: 3, name: 'Посещено', color: theme.colors.success },
 ];
 
 export const attendanceColorsForStudents: Record<number, string> = {
     0: 'transparent',
     1: theme.colors.attentive,
     2: theme.colors.neutral,
-    3: '#90ee9095',
-    4: theme.colors.success,
+    3: theme.colors.success,
   };
 
 type ErrorType = string | null;

@@ -788,9 +788,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   }, [updateVerticalSliderSize, updateVerticalSliderPosition]);
 
   useEffect(() => {
-    updateHorizontalSliderSize();
-    updateHorizontalSliderPosition();
-
     const container1 = horizontalScrollRef1.current;
     const container2 = horizontalScrollRef2.current;
 
@@ -814,6 +811,11 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
       window.removeEventListener("resize", updateHorizontalSliderSize);
     };
   }, [handleHorizontalScroll1, handleHorizontalScroll2, updateHorizontalSliderSize,updateHorizontalSliderPosition ]);
+
+  useEffect(() => {
+    updateHorizontalSliderSize();
+    updateHorizontalSliderPosition();
+  }, [classesIds]);
 
   return (
     <TableWrapper>
@@ -883,7 +885,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
         </ScrollWrapper>
       </Row>
       {isHorizontalScrollNeeded && 
-      <Column horizontalAlign="flex-end">
+      <Column 
+        style={{visibility: isHorizontalScrollNeeded ? 'visible' : 'hidden'}}  
+        horizontalAlign="flex-end">
         <Spacing variant="Column" themeSpace={10} />
         <HorizontalTrack ref={horizontalTrackRef}>
           <HorizontalSlider

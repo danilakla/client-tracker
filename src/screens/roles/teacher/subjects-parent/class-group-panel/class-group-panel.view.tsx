@@ -1003,7 +1003,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
     if (!container || !slider || !track) return;
 
     const visibleRatio = container.clientWidth / container.scrollWidth;
-    if(visibleRatio === 1) setIsHorizontalScrollNeeded(false);
+    setIsHorizontalScrollNeeded(visibleRatio < 1);
     const sliderWidth = Math.max(visibleRatio * track.clientWidth, 30);
 
     slider.style.width = `${sliderWidth}px`;
@@ -1102,9 +1102,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   }, [updateVerticalSliderSize, updateVerticalSliderPosition]);
 
   useEffect(() => {
-    updateHorizontalSliderSize();
-    updateHorizontalSliderPosition();
-
     const container1 = horizontalScrollRef1.current;
     const container2 = horizontalScrollRef2.current;
 
@@ -1128,6 +1125,11 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
       window.removeEventListener("resize", updateHorizontalSliderSize);
     };
   }, [handleHorizontalScroll1, handleHorizontalScroll2, updateHorizontalSliderSize,updateHorizontalSliderPosition ]);
+  
+  useEffect(() => {
+    updateHorizontalSliderSize();
+    updateHorizontalSliderPosition();
+  }, [classesIds]);
 
 	return (
 	  <TableWrapper>
@@ -1177,7 +1179,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		    		{item.grades.map((item, index) => 
             item.idStudentGrate !== -1 ?
             <ClassItem key={index}
-              isReview={item.isReview && item.attendance !== 4}
+              isReview={item.isReview && item.attendance !== 3}
 		    		  onClick={() => onClickGrade(item)} >
 		    		  {item.description !== null && <ExistMark/>}
 		    		  {item.grade !== null && <Text themeFont={theme.fonts.ht2}>
@@ -1195,8 +1197,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		      </Table>
 		    </ScrollWrapper>
       </Row>
-      {isHorizontalScrollNeeded && 
-      <Column horizontalAlign="flex-end">
+      <Column 
+        style={{visibility: isHorizontalScrollNeeded ? 'visible' : 'hidden'}} 
+        horizontalAlign="flex-end">
         <Spacing variant="Column" themeSpace={10} />
         <HorizontalTrack ref={horizontalTrackRef}>
           <HorizontalSlider
@@ -1205,7 +1208,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
             onTouchStart={handleHorizontalStart}
           />
         </HorizontalTrack>
-      </Column>}
+      </Column>
 	  </TableWrapper>
 	);
 });
