@@ -24,12 +24,14 @@ import ShieldLogo from '../../../../../ui-kit/assets/security-shield.svg';
 import { Image } from '../../../../../ui-kit/image';
 import QRCode from 'react-qr-code';
 import React from 'react';
+import { Checkbox } from '../../../../../ui-kit/checkbox';
 
 export type ClassGroupPanelViewProps = {
   teacherClassGroupControlState: СlassGroupControlState;
   goToTeacherClassGroupSubgroups: () => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
   updateGrade: (onSuccess: () => void) => void;
+  toggleComplited: () => void;
   deleteClass: (onSuccess: () => void) => void;
   createClass: (onSuccess: () => void) => void;
   setGradeNumber: (value: string) => void;
@@ -61,6 +63,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setGradeNumber,
   reloadTable,
   onReview,
+  toggleComplited,
 
   setExpirationOfRefresh,
   setSelectedClass,
@@ -168,6 +171,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           controlGenerateKeyPopup={controlGenerateKeyPopup}
           isOpenDescriptionClass={isOpenDescriptionClass}
           controlQrCodePopup={controlQrCodePopup}
+          toggleComplited={toggleComplited}
           closeClassControlForStudents={closeClassControlForStudents}
           openClassControlForStudents={openClassControlForStudents}
           />) :
@@ -175,6 +179,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           openAddPopup={openAddPopup}
           handleReview={handleReview}
           reloadTable={reloadTable}
+          toggleComplited={toggleComplited}
           closeClassControlForStudents={closeClassControlForStudents}
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           teacherClassGroupControlState={teacherClassGroupControlState}
@@ -240,6 +245,7 @@ type LocalViewProps = {
   teacherClassGroupControlState: СlassGroupControlState;
   goToTeacherClassGroupSubgroups: () => void;
   openAddPopup: () => void;
+  toggleComplited: () => void;
   openDeletePopup: () => void;
   openClassControlForStudents: (value: HeaderClassType) => void;
   setGradeNumber: (value: string) => void;
@@ -271,6 +277,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   openDeletePopup,
   setAttendance,
   openClassControlForStudents,
+  toggleComplited,
   isClassControlPopup,
   setDescription,
   setGradeNumber,
@@ -335,6 +342,9 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           setGradeNumber={setGradeNumber}
           setDescription={setDescription}
           confirmUpdate={confirmUpdate}
+          toggleComplited={toggleComplited}
+          isCompleted={teacherClassGroupControlState.isCompleted}
+          isShowCompleted={teacherClassGroupControlState.isShowCompleted}
           loadingUpdate={teacherClassGroupControlState.loadingUpdate}
           closeUpdateWindow={closeUpdateWindow}
           />
@@ -407,6 +417,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   openUpdateWindow,
   openClassControlForStudents,
   isClassControlPopup,
+  toggleComplited,
   confirmUpdate,
   reloadTable,
   handleReview,
@@ -462,6 +473,9 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           selectedGrade={teacherClassGroupControlState.selectedGrade}
           setAttendance={setAttendance}
           isMobile={false}
+          toggleComplited={toggleComplited}
+          isCompleted={teacherClassGroupControlState.isCompleted}
+          isShowCompleted={teacherClassGroupControlState.isShowCompleted}
           errorNote={teacherClassGroupControlState.errors['gradeNumberError']}
           errorDescription={teacherClassGroupControlState.errors['descriptionError']}
           setGradeNumber={setGradeNumber}
@@ -758,6 +772,9 @@ export type ControlStudentGradeProps = {
   isMobile: boolean;
   errorDescription?: string | null;
   selectedGrade: GradeInfo;
+  isShowCompleted: boolean;
+  isCompleted: boolean;
+  toggleComplited: () => void;
   loadingUpdate: "idle" | "loading" | "success" | "error";
 };
     
@@ -771,6 +788,9 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
   errorNote,
   selectedGrade,
   loadingUpdate,
+  isShowCompleted,
+  isCompleted,
+  toggleComplited,
   errorDescription
 }) => {
   
@@ -799,10 +819,18 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
         </Row>
       </Column>
       <Spacing themeSpace={25} variant='Column' />
-      <Input 
-        header='Оценка' 
-        placeholder='9' error={errorNote}
-        value={selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
+      <Row verticalAlign='flex-end' style={{width: '100%', maxWidth: 440}}>
+        <Input 
+          header='Оценка' 
+          placeholder='9' error={errorNote}
+          value={selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
+        {isShowCompleted && <Row verticalAlign='center'>
+          <Text align='right' style={{width: 110, paddingRight: 5}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+            Отработано:
+          </Text>
+          <Checkbox value={isCompleted} toggle={toggleComplited}/>
+        </Row>}
+      </Row>
       <Spacing themeSpace={25} variant='Column' />
       <Textarea
         value={selectedGrade.description || ''}

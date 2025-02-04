@@ -26,7 +26,7 @@ export const TextareaStyled = styled.textarea<{
 }>`
   width: 100%;
   autocomplete: off;
-  box-shadow: 0 0 4px 2px #8f8fbf30;
+  box-shadow: 0 0 4px 2px #8f8fbf25;
   box-sizing: border-box;
   resize: none;
   border: 2px solid ${({ borderColor }) => borderColor};

@@ -5,7 +5,7 @@ import { appStatusSlice } from "../../app-status-slice";
 import { ClassGroupData } from "./class-group-subroups-slice";
 import { theme } from "../../../../ui-kit/themes/theme";
 
-export type AttendanceCodeType = 0 | 1 | 2 | 3 | 4;
+export type AttendanceCodeType = 0 | 1 | 2 | 3 | 4 | 7 | 8;
 
 export type AttendanceOption = {
   id: AttendanceCodeType;
@@ -25,6 +25,8 @@ export const attendanceColorsForStudents: Record<number, string> = {
     1: theme.colors.attentive,
     2: theme.colors.neutral,
     3: theme.colors.success,
+    7: `linear-gradient(to bottom, ${theme.colors.success} 50%,  ${theme.colors.attentive} 50%)`,
+    8: `linear-gradient(to bottom, ${theme.colors.success} 50%,  ${theme.colors.neutral} 50%)`
   };
 
 type ErrorType = string | null;
@@ -84,6 +86,9 @@ export type СlassGroupControlState = {
 
     loadingReloadTable: "idle" | "loading" | "success" | "error";
 
+    isCompleted: boolean; 
+    isShowCompleted: boolean; 
+
     selectedClass: HeaderClassType;
     qrCodePopup: {
         loadingQrCode: "idle" | "loading" | "success" | "error";
@@ -113,6 +118,8 @@ const initialState: СlassGroupControlState = {
     errors: {},
     classesIds: [],
     loadingUpdate: 'idle',
+    isCompleted: false,
+    isShowCompleted: false,
     loadingReloadTable: 'idle',
     countClasses: 0,
     selectedGrade: {
@@ -212,6 +219,20 @@ export const classGroupControlSlice = createSlice({
         },
         setAttendanceActionCreator(state, action: PayloadAction<AttendanceCodeType>) {
             state.selectedGrade.attendance = action.payload;
+            switch(action.payload){
+                case 1:
+                case 2:
+                    state.isShowCompleted = true;
+                    break;
+                default:
+                    state.isShowCompleted = false;
+            }
+        },
+        setIsCompletedActionCreator(state, action: PayloadAction<boolean>) {
+            state.isCompleted = action.payload;
+        },
+        toggleIsCompletedActionCreator(state) {
+            state.isCompleted = !state.isCompleted;
         },
         addClassToStudentsStatisticsActionCreator(state, action: PayloadAction<{ idClass: number; studentGrades: GradeInfo[] }>
         ) {
@@ -248,7 +269,21 @@ export const classGroupControlSlice = createSlice({
             state.countClasses = action.payload;
         },
         setSelectedGradeActionCreator(state, action: PayloadAction<{gradeInfo: GradeInfo, onSuccess: () => void}>) {
-            state.selectedGrade = action.payload.gradeInfo;
+            switch(action.payload.gradeInfo.attendance){
+                case 7:
+                    state.selectedGrade = {...action.payload.gradeInfo, attendance: 1};
+                    state.isCompleted = true;
+                    state.isShowCompleted = true;
+                    break;
+                case 8:
+                    state.selectedGrade = {...action.payload.gradeInfo, attendance: 2};
+                    state.isCompleted = true;
+                    state.isShowCompleted = true;
+                    break;
+                default:
+                    state.selectedGrade = action.payload.gradeInfo;
+                    state.isShowCompleted = false;
+            }
             action.payload.onSuccess();
         },
         setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData}>) {
@@ -455,11 +490,25 @@ export const addClassActionCreator = createAsyncThunk('teacher-class-add',
 )
 
 export const updateGradeActionCreator = createAsyncThunk('teacher-class-update',
-    async (data: { authToken: string, grade: GradeInfo, onSuccess: () => void}, thunkApi ) => {
-        const { authToken, grade, onSuccess } = data;
+    async (data: { authToken: string, grade: GradeInfo, isCompleted: boolean, onSuccess: () => void}, thunkApi ) => {
+        const { authToken, grade, isCompleted, onSuccess } = data;
         try {
             const desc= grade.description?.trim() || null;
-            const response = await teacherApi.updateGrade(authToken, grade.idStudentGrate, grade.grade, desc === '' ? null : desc , grade.attendance );
+
+            let attendance : AttendanceCodeType = 0;
+
+            switch(grade.attendance){
+                case 1:
+                    attendance = isCompleted ? 7 : grade.attendance;
+                    break;
+                case 2:
+                    attendance = isCompleted ? 8 : grade.attendance;
+                    break;
+                default:
+                    attendance = grade.attendance;
+            }
+
+            const response = await teacherApi.updateGrade(authToken, grade.idStudentGrate, grade.grade, desc === '' ? null : desc , attendance);
             
             thunkApi.dispatch(classGroupControlSlice.actions.updateGradeActionCreator(response));
             onSuccess();

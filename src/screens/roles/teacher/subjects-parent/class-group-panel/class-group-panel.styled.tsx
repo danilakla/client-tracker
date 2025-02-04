@@ -164,11 +164,11 @@ export const HeaderClasses = styled.div`
 
 
 export const ColorCircle = styled.div<{color: string}>`
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
 
-  background-color: ${({ color }) => color};
+  background: ${({ color }) => color};
 `;
 
 

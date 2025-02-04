@@ -815,6 +815,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   useEffect(() => {
     updateHorizontalSliderSize();
     updateHorizontalSliderPosition();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classesIds]);
 
   return (

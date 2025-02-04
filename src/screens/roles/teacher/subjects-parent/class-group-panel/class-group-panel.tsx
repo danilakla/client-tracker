@@ -24,6 +24,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
 
     setSelectedClassActionCreator,
     setExpirationOfRefreshActionCreator,
+    toggleIsCompletedActionCreator,
     setExpirationOfReviewActionCreator,
     clearQrCodeDataActionCreator
   } = classGroupControlSlice.actions;
@@ -72,12 +73,14 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   const updateGrade = useCallback((onSuccess: () => void)=>{
     dispatch(updateGradeActionCreator({
       authToken: authToken, 
+      isCompleted: teacherClassGroupControlState.isCompleted,
       grade: teacherClassGroupControlState.selectedGrade,
       onSuccess: onSuccess
     }));
   },[
     dispatch,
     authToken,
+    teacherClassGroupControlState.isCompleted,
     teacherClassGroupControlState.selectedGrade
   ])
 
@@ -96,6 +99,10 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   const setAttendance = useCallback((value: AttendanceCodeType)=>{
     dispatch(setAttendanceActionCreator(value));
   },[dispatch,setAttendanceActionCreator])
+
+  const toggleIsCompleted = useCallback(()=>{
+    dispatch(toggleIsCompletedActionCreator());
+  },[dispatch,toggleIsCompletedActionCreator])
 
   // qr-code-part
 
@@ -175,6 +182,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         goToTeacherClassGroupSubgroups={onPrevScreen}
         setAttendance={setAttendance}
         setDescription={setDescription}
+        toggleComplited={toggleIsCompleted}
         setGradeNumber={setGradeNumber}
 
         setExpirationOfRefresh={setExpirationOfRefresh}
