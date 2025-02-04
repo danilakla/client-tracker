@@ -25,8 +25,8 @@ export const attendanceColorsForStudents: Record<number, string> = {
     1: theme.colors.attentive,
     2: theme.colors.neutral,
     3: theme.colors.success,
-    7: `linear-gradient(to bottom, ${theme.colors.success} 50%,  ${theme.colors.attentive} 50%)`,
-    8: `linear-gradient(to bottom, ${theme.colors.success} 50%,  ${theme.colors.neutral} 50%)`
+    7: `linear-gradient(to right, ${theme.colors.success} 50%,  ${theme.colors.attentive} 50%)`,
+    8: `linear-gradient(to right, ${theme.colors.success} 50%,  ${theme.colors.neutral} 50%)`
   };
 
 type ErrorType = string | null;
