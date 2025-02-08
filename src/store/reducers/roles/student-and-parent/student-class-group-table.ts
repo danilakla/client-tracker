@@ -251,8 +251,6 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
                     position: cls.isAttestation ? -1 : positionCounter++,
                 }));
 
-            console.log(classesIds);
-            
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(classesIds));
         }
         catch (e) {
@@ -303,8 +301,8 @@ export const transformAndSortStudentsStatistics = (input: {
 }): StatisticOfStudent[] => {
     const { students, studentGrades, classes, attestationStudentGrades } = input;
     const allClassIds = classes.map(cls => cls.idClass).sort((a, b) => a - b);
-    
-    return students.map(student => {
+
+    const transformedStudents = students.map(student => {
         const [surname, name, lastname] = student.flpName.split("_");
         const idStudent = student.idStudent;
         
@@ -333,25 +331,28 @@ export const transformAndSortStudentsStatistics = (input: {
                 maxCountLab: att.maxCountLab,
             }));
 
-            const grades = allClassIds.map(idClass => {
-                return gradesMap.get(idClass) ?? {
-                    idClass,
-                    idStudent,
-                    idStudentGrate: -1,
-                    grade: null,
-                    description: null,
-                    attendance: 0 as AttendanceCodeType,
-                    isReview: false,
-                    isPassLab: false
-                };
-            });
+        const grades = allClassIds.map(idClass => {
+            return gradesMap.get(idClass) ?? {
+                idClass,
+                idStudent,
+                idStudentGrate: -1,
+                grade: null,
+                description: null,
+                attendance: 0 as AttendanceCodeType,
+                isReview: false,
+                isPassLab: false
+            };
+        });
 
         return {
             student: { surname, name, lastname, idStudent },
             grades,
         };
     });
+
+    return transformedStudents.sort((a, b) => a.student.surname.localeCompare(b.student.surname));
 }
+
 
 
 
@@ -509,8 +510,6 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
                     gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
                 }));
             
-            console.log(classesIds);
-
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(classesIds));
         }
         catch (e) {

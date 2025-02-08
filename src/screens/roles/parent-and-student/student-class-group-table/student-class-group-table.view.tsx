@@ -586,9 +586,9 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
             <StudentsContainer>
               {data.map((item, index) => (
                 <StudentItem key={index}>
-                  <Text themeFont={theme.fonts.ht2}>{item.student.lastname}</Text>
-                  <Text themeFont={theme.fonts.ht2}>{item.student.name}</Text>
                   <Text themeFont={theme.fonts.ht2}>{item.student.surname}</Text>
+                  <Text themeFont={theme.fonts.ht2}>{item.student.name}</Text>
+                  <Text themeFont={theme.fonts.ht2}>{item.student.lastname}</Text>
                 </StudentItem>
               ))}
             </StudentsContainer>

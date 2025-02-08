@@ -464,8 +464,6 @@ export const initTableStatisticsActionCreator = createAsyncThunk('teacher-class-
 
             const responce = await teacherApi.getTableOfSubgroup(authToken, holdId);
 
-            console.log(transformAndSortStudentsStatistics(responce));
-
             thunkApi.dispatch(classGroupControlSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));
@@ -610,8 +608,8 @@ export const transformAndSortStudentsStatistics = (input: {
 }): StatisticOfStudent[] => {
     const { students, studentGrades, classes, attestationStudentGrades } = input;
     const allClassIds = classes.map(cls => cls.idClass).sort((a, b) => a - b);
-    
-    return students.map(student => {
+
+    const transformedStudents = students.map(student => {
         const [surname, name, lastname] = student.flpName.split("_");
         const idStudent = student.idStudent;
         
@@ -640,25 +638,28 @@ export const transformAndSortStudentsStatistics = (input: {
                 maxCountLab: att.maxCountLab,
             }));
 
-            const grades = allClassIds.map(idClass => {
-                return gradesMap.get(idClass) ?? {
-                    idClass,
-                    idStudent,
-                    idStudentGrate: -1,
-                    grade: null,
-                    description: null,
-                    attendance: 0 as AttendanceCodeType,
-                    isReview: false,
-                    isPassLab: false
-                };
-            });
+        const grades = allClassIds.map(idClass => {
+            return gradesMap.get(idClass) ?? {
+                idClass,
+                idStudent,
+                idStudentGrate: -1,
+                grade: null,
+                description: null,
+                attendance: 0 as AttendanceCodeType,
+                isReview: false,
+                isPassLab: false
+            };
+        });
 
         return {
             student: { surname, name, lastname, idStudent },
             grades,
         };
     });
+
+    return transformedStudents.sort((a, b) => a.student.surname.localeCompare(b.student.surname));
 }
+
 
 
 
