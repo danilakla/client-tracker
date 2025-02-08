@@ -55,6 +55,7 @@ export type СlassGroupDetailsState = {
     searchText: string;
     searchTextWindow: string;
     isMany: boolean;
+    hasApplyAttestation: boolean;
     description: string;
     loading: "idle" | "loading" | "success" | "error";
     loadingAdd: "idle" | "loading" | "success" | "error";
@@ -70,6 +71,7 @@ const initialState: СlassGroupDetailsState = {
     description: '',
     searchTextWindow: '',
     classFormats: [],
+    hasApplyAttestation: true,
     loadingDelete: 'idle',
     subgroups: [],
     newSubgroups: [],
@@ -137,6 +139,9 @@ export const classGroupDetailsSlice = createSlice({
         },
         setSearchTextWindowActionCreator(state, action: PayloadAction<string>) {
             state.searchTextWindow = action.payload;
+        },
+        switchHasApplyAttestationActionCreator(state) {
+            state.hasApplyAttestation = !state.hasApplyAttestation;
         },
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.description = action.payload;
@@ -286,6 +291,10 @@ export const initClassGroupDetailsActionCreator = createAsyncThunk('dean-class-g
                         thunkApi.dispatch(classGroupDetailsSlice.actions.switchIsManyActionCreator());
                     }
 
+                    if(!classGroupDetailsResponse.hasApplyAttestation){
+                        thunkApi.dispatch(classGroupDetailsSlice.actions.switchHasApplyAttestationActionCreator());
+                    }
+
                     break;
             }
         }
@@ -304,13 +313,14 @@ export const createClassGroupActionCreator = createAsyncThunk('dean-class-group-
         authToken: string,
         teacherId: number,
         subjectId: number,
+        hasApplyAttestation: boolean,
         isMany: boolean,
         formatClassId: number, 
         description: string, 
         newSubgroups: SubgroupDetails[],
         onSuccess: () => void
     }, thunkApi ) => {
-        const { authToken, teacherId, subjectId, formatClassId, isMany, description, newSubgroups, onSuccess } = data;
+        const { authToken, teacherId, hasApplyAttestation, subjectId, formatClassId, isMany, description, newSubgroups, onSuccess } = data;
         try {
             thunkApi.dispatch(classGroupDetailsSlice.actions.clearErrors());
 
@@ -346,7 +356,7 @@ export const createClassGroupActionCreator = createAsyncThunk('dean-class-group-
             const existingSubgroupIds = newSubgroups
                 .filter(subgroup => subgroup.isExist)
                 .map(subgroup => subgroup.idSubgroup); 
-            await deanApi.assignGroupToClassGroup(authToken, responce.idClassGroup, isMany, existingSubgroupIds);
+            await deanApi.assignGroupToClassGroup(authToken, responce.idClassGroup, isMany, hasApplyAttestation, existingSubgroupIds);
             onSuccess();
         }
         catch (e) {

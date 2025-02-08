@@ -30,6 +30,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     setSearchTextActionCreator,
     setSearchTextWindowActionCreator,
     switchIsExistByIndexActionCreator,
+    switchHasApplyAttestationActionCreator,
     reset
   } = classGroupDetailsSlice.actions;
 
@@ -81,6 +82,10 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     dispatch(switchIsExistByIndexActionCreator(value));
   }, [dispatch, switchIsExistByIndexActionCreator]);
 
+  const switchHasApplyAttestation = useCallback(() => {
+    dispatch(switchHasApplyAttestationActionCreator());
+  }, [dispatch, switchHasApplyAttestationActionCreator]);
+
   const switchIsMany = useCallback(() => {
     dispatch(switchIsManyActionCreator());
   }, [dispatch, switchIsManyActionCreator]);
@@ -110,6 +115,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     dispatch(createClassGroupActionCreator({
       authToken: authToken,
       isMany: deanClassGroupDetailsState.isMany,
+      hasApplyAttestation: deanClassGroupDetailsState.hasApplyAttestation,
       teacherId: Number.parseInt(deanClassGroupDetailsState.selectedTeacher.value),
       subjectId: deanClassGroupsState.selectedSubject?.idSubject || -1,
       newSubgroups: deanClassGroupDetailsState.newSubgroups,
@@ -120,6 +126,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
   }, [
     dispatch, 
     deanClassGroupDetailsState.selectedTeacher,
+    deanClassGroupDetailsState.hasApplyAttestation,
     deanClassGroupDetailsState.selectedClassFormat,
     deanClassGroupDetailsState.description,
     deanClassGroupDetailsState.newSubgroups,
@@ -167,10 +174,17 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     goToClassGroups
   ]);
 
+  useEffect(() => {
+    if(deanClassGroupsState.selectedSubject === null){
+      goToClassGroups();
+    }
+  },[deanClassGroupsState.selectedSubject, goToClassGroups])
+
   return (
       <ClassGroupsDetailsView 
         deanClassGroupDetailsState={deanClassGroupDetailsState}
         goToClassGroups={goToClassGroups}
+        switchHasApplyAttestation={switchHasApplyAttestation}
         setSearchText={setSearchText}
         updateClassGroup={updateClassGroup}
         filteredSubgroups={filteredSubgroups}

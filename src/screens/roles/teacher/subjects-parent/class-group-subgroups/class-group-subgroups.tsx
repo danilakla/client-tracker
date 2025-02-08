@@ -19,7 +19,8 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
   
   const { 
     setSearchTextActionCreator,
-    resetStatus
+    resetStatus,
+    reset
   } = classGroupSubroupsSlice.actions;
 
   const [filteredSubgroups, setFilteredSubgroups] = useState<SubgroupInfo[]>([]);
@@ -108,8 +109,9 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
   const onPrevScreen = useCallback(() => {
     if(teacherClassGroupSubroupsState.isOneScreen || currentPage === 'subgroups'){
       goToClassGroupPanel();
+      dispatch(reset());
     } setCurrentPage('subgroups');
-  },[currentPage, goToClassGroupPanel, teacherClassGroupSubroupsState.isOneScreen])
+  },[currentPage, dispatch, reset, goToClassGroupPanel, teacherClassGroupSubroupsState.isOneScreen])
 
   return (
     <>

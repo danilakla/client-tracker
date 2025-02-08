@@ -559,7 +559,10 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
     const slider = verticalSliderRef.current;
     const track = verticalTrackRef.current;
 
-    if (!container || !slider || !track) return;
+    if (!container || !slider || !track) {
+      setIsVerticalScrollNeeded(false);
+      return;
+    }
 
     const visibleRatio = container.clientHeight / container.scrollHeight;
     if(visibleRatio === 1) setIsVerticalScrollNeeded(false);
@@ -687,7 +690,10 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
     const slider = horizontalSliderRef.current;
     const track = horizontalTrackRef.current;
 
-    if (!container || !slider || !track) return;
+    if (!container || !slider || !track) {
+      setIsHorizontalScrollNeeded(false);
+      return;
+    }
 
     const visibleRatio = container.clientWidth / container.scrollWidth;
     if(visibleRatio === 1) setIsHorizontalScrollNeeded(false);
@@ -815,8 +821,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
   useEffect(() => {
     updateHorizontalSliderSize();
     updateHorizontalSliderPosition();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [classesIds]);
+  }, [updateHorizontalSliderPosition, updateHorizontalSliderSize, classesIds]);
 
   return (
     <TableWrapper>

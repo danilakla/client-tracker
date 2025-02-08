@@ -41,6 +41,7 @@ export type ClassGroupsDetailsViewProps = {
   setSearchTextWindow: (value: string) => void;
   updateClassGroup: () => void;
   switchIsExistByIndex: (value: number) => void;
+  switchHasApplyAttestation: () => void;
 };
 
 export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
@@ -48,6 +49,7 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
   deanClassGroupDetailsState,
   setSelectedClassFormat,
   setDescription,
+  switchHasApplyAttestation,
   setSelectedTeacher,
   switchIsMany,
   deleteClassGroup,
@@ -84,6 +86,7 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
         isOpenSubgroups={isOpenSubgroups}
         setSelectedClassFormat={setSelectedClassFormat}
         setSelectedTeacher={setSelectedTeacher}
+        switchHasApplyAttestation={switchHasApplyAttestation}
         setSearchText={setSearchText}
         updateClassGroup={updateClassGroup}
         setSearchTextWindow={setSearchTextWindow}
@@ -106,6 +109,7 @@ export const ClassGroupsDetailsView: FC<ClassGroupsDetailsViewProps> = memo(({
         switchIsExistByIndex={switchIsExistByIndex}
         switchIsMany={switchIsMany}
         updateClassGroup={updateClassGroup}
+        switchHasApplyAttestation={switchHasApplyAttestation}
         filteredSubgroupsWindow={filteredSubgroupsWindow}
         openDeletePopup={openDeletePopup}
         setSearchText={setSearchText}
@@ -139,6 +143,7 @@ type LocalViewProps = {
   updateClassGroup: () => void;
   deanClassGroupDetailsState: СlassGroupDetailsState;
   filteredSubgroups: SubgroupDetails[];
+  switchHasApplyAttestation: () => void;
   switchIsExistByIndex: (value: number) => void;
   switchIsMany: () => void;
   filteredSubgroupsWindow: SubgroupDetails[];
@@ -152,6 +157,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
   createClassGroup,
   deanClassGroupDetailsState,
   filteredSubgroups,
+  switchHasApplyAttestation,
   filteredSubgroupsWindow,
   setDescription,
   controlSubroupsWindow,
@@ -192,7 +198,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={20} variant='Column' />
           <Input 
               header='Введите описание' 
-              placeholder='Белоруccкий....' error={deanClassGroupDetailsState.errors['descriptionError']}
+              placeholder='Матем....' error={deanClassGroupDetailsState.errors['descriptionError']}
               value={deanClassGroupDetailsState.description} setValue={setDescription}/>
           <Spacing themeSpace={25} variant='Column' />
           <Select 
@@ -217,6 +223,13 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
               {deanClassGroupDetailsState.errors['classFormatError']}
             </Text>
           </Column>
+          <ActionButtonSwitch  
+                  disable={type === 'edit'}
+                  width={'100%'}
+                  text='Включить в аттестацию'
+                  isLeft={!deanClassGroupDetailsState.hasApplyAttestation} 
+                  onClick={switchHasApplyAttestation} />
+          <Spacing themeSpace={30} variant='Column' />
           <ActionButtonSwitch  
             disable={type === 'edit'}
             text='Разные занятия'
@@ -275,6 +288,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
   goToClassGroups,
   createClassGroup,
   deanClassGroupDetailsState,
+  switchHasApplyAttestation,
   filteredSubgroups,
   filteredSubgroupsWindow,
   setDescription,
@@ -301,7 +315,6 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
         </Column>) : (<>
           <Row >
             <Column style={{width: 'auto'}}>
-           
               <Row>
                   <Button 
                     state={deanClassGroupDetailsState.loadingAdd} 
@@ -319,7 +332,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                 <Spacing themeSpace={20} variant='Column' />
                 <Input 
                     header='Введите описание' 
-                    placeholder='Белоруccкий....' error={deanClassGroupDetailsState.errors['descriptionError']}
+                    placeholder='Матем....' error={deanClassGroupDetailsState.errors['descriptionError']}
                     value={deanClassGroupDetailsState.description} setValue={setDescription}/>
                 <Spacing themeSpace={25} variant='Column' />
                 <Select 
@@ -344,14 +357,21 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                     {deanClassGroupDetailsState.errors['classFormatError']}
                   </Text>
                 </Column>
+                <ActionButtonSwitch  
+                  disable={type === 'edit'}
+                  width={'100%'}
+                  text='Включить в аттестацию'
+                  isLeft={!deanClassGroupDetailsState.hasApplyAttestation} 
+                  onClick={switchHasApplyAttestation} />
               </Surface>
             </Column>
           <Spacing themeSpace={25} variant='Row' />
-            <Surface style={{width: 500}}>
+            <Surface >
               <Row horizontalAlign='space-between'>
                 <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
                   Редактировать группы
                 </Button>
+                <Spacing themeSpace={15} variant='Row' />
                 <ActionButtonSwitch  
                   disable={type === 'edit'}
                   width={'220px'}
@@ -362,7 +382,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
               <Spacing themeSpace={15} variant='Column' />
               <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
               <Spacing themeSpace={15} variant='Column' />
-              <ScrollView style={{height: 235}}>
+              <ScrollView style={{height: 276}}>
                 <ItemsContainerMobile>
                 {filteredSubgroupsExists.map((item, index) => 
                     <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)}
