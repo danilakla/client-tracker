@@ -129,6 +129,7 @@ export const HeaderClassItem = styled.div`
   align-items: center;
   flex-shrink: 0;
   justify-content: center;
+  cursor: pointer;
   flex: 0 0 70px;
 `;
 

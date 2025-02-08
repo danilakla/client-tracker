@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, HeaderClassType, reloadTableStatisticsActionCreator, startReviewForClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, startReviewForClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -58,17 +58,20 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.studentsStatistics
   ])
 
-  const deleteClass = useCallback((onSuccess: () => void)=>{
-    dispatch(deleteClassActionCreator({
-      authToken: authToken, 
-      idClass: teacherClassGroupControlState.classesIds[teacherClassGroupControlState.classesIds.length - 1],
-      onSuccess: onSuccess
-    }));
-  },[
-    dispatch,
-    teacherClassGroupControlState.classesIds,
-    authToken
-  ])
+  const deleteClass = useCallback((onSuccess: () => void) => {
+    const lastNonAttestationClass = teacherClassGroupControlState.classesIds
+        .slice()
+        .reverse()
+        .find(classItem => !classItem.isAttestation);
+
+    if (lastNonAttestationClass) {
+        dispatch(deleteClassActionCreator({
+            authToken: authToken,
+            idClass: lastNonAttestationClass.idClass,  
+            onSuccess: onSuccess
+        }));
+    }
+}, [dispatch, authToken, teacherClassGroupControlState.classesIds]);
 
   const updateGrade = useCallback((onSuccess: () => void)=>{
     dispatch(updateGradeActionCreator({
@@ -106,7 +109,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
 
   // qr-code-part
 
-  const setSelectedClass = useCallback((value: HeaderClassType, onSuccess: () => void)=>{
+  const setSelectedClass = useCallback((value: ClassHeaderType, onSuccess: () => void)=>{
     dispatch(setSelectedClassActionCreator({value, onSuccess}));
   },[dispatch,setSelectedClassActionCreator])
 
@@ -122,13 +125,13 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(activateKeyForClassActionCreator({
       authToken: authToken, 
       expiration: expiration,
-      classId: teacherClassGroupControlState.selectedClass.id,
+      classId: teacherClassGroupControlState.selectedClass.idClass,
       onSuccess: onSuccess
     }));
   },[
     dispatch,
     authToken,
-    teacherClassGroupControlState.selectedClass.id
+    teacherClassGroupControlState.selectedClass.idClass
   ])
 
   const clearQrCodeData = useCallback(()=>{
@@ -140,13 +143,13 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
       authToken: authToken,
       expirationOfReview: teacherClassGroupControlState.qrCodePopup.expirationOfReview,
       expirationOfRefresh: teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
-      classId: teacherClassGroupControlState.selectedClass.id,
+      classId: teacherClassGroupControlState.selectedClass.idClass,
     }));
   },[
     dispatch,
     teacherClassGroupControlState.qrCodePopup.expirationOfReview,
     teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
-    teacherClassGroupControlState.selectedClass.id,
+    teacherClassGroupControlState.selectedClass.idClass,
     authToken
   ])
 
@@ -154,9 +157,9 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(startReviewForClassActionCreator({
       authToken: authToken,
       onSuccess: onSuccess,
-      classId: teacherClassGroupControlState.selectedClass.id
+      classId: teacherClassGroupControlState.selectedClass.idClass
     }));
-  },[dispatch, authToken, teacherClassGroupControlState.selectedClass.id])
+  },[dispatch, authToken, teacherClassGroupControlState.selectedClass.idClass])
 
   const reloadTable = useCallback(()=>{
     if(

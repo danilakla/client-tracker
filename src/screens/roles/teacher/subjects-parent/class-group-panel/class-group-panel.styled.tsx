@@ -111,7 +111,7 @@ export const ClassesContainer = styled.div`
   }
 `;
 
-export const ClassItem = styled.div<{isReview: boolean}>`
+export const ClassItem = styled.div<{isReview?: boolean}>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -122,7 +122,22 @@ export const ClassItem = styled.div<{isReview: boolean}>`
   gap: 5px;
   height: 70px;
   flex: 0 0 70px;
-  background-color: ${({ isReview }) => isReview ? '#fc6e6c79' : 'transparent'}
+  background-color: ${({ isReview }) => isReview ? '#fc6e6c79' : 'transparent'};
+`;
+
+export const EmptyClassItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  position: relative;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: center;
+  gap: 5px;
+  height: 70px;
+  flex: 0 0 70px;
+  border-right: 0 !important;
+  background-color: #d3d3d376;
 `;
 
 export const TableWrapper = styled.div`
@@ -141,6 +156,7 @@ export const HeaderClassItem = styled.div`
   display: flex;
   writing-mode: vertical-rl;
   align-items: center;
+  cursor: pointer;
   flex-shrink: 0;
   justify-content: center;
   flex: 0 0 70px;

@@ -13,6 +13,14 @@ export type AttendanceOption = {
   color: string;
 }
 
+export type ClassHeaderType = {
+    idClass: number,
+    idClassHold: number,
+    dateCreation: string,
+    isAttestation: boolean,
+    position: number;
+}
+
 export const attendanceOptions: AttendanceOption[] = [
   { id: 0, name: 'Не указано', color: '#0000003e' },
   { id: 1, name: 'Пропуск', color: theme.colors.attentive},
@@ -31,16 +39,6 @@ export const attendanceColorsForStudents: Record<number, string> = {
 
 type ErrorType = string | null;
 
-export type GradeInfo = {
-    idClass: number,
-    idStudentGrate: number,
-    grade: number | null,
-    idStudent: number,
-    description: string | null,
-    attendance: AttendanceCodeType,
-    isReview: boolean
-}
-
 export type InitScreenData = {
     subgroup: {
         idSubgroup: number,
@@ -54,15 +52,36 @@ export type InitScreenData = {
     classGroup: ClassGroupData
 }
 
+export type GradeInfo = {
+    idClass: number;
+    idStudentGrate: number;
+    grade: number | null;
+    idStudent: number;
+    description: string | null;
+    attendance: AttendanceCodeType;
+    isReview: boolean;
+    isPassLab: boolean;
+};
+
+export type AttestationGradeInfo = {
+    idClass: number;
+    idAttestationStudentGrades: number;
+    idStudent: number;
+    avgGrade: number | null;
+    hour: number | null;
+    currentCountLab: number | null;
+    maxCountLab: number | null;
+};
+
 export type StatisticOfStudent = {
     student: {
-        surname: string,
-        name: string,
-        lastname: string,
-        idStudent: number
-    }
-    grades: GradeInfo[]
-}
+        surname: string;
+        name: string;
+        lastname: string;
+        idStudent: number;
+    };
+    grades: (GradeInfo | AttestationGradeInfo)[];
+};
 
 export type QrCodeDataType = {
     date: string,
@@ -77,7 +96,7 @@ export type СlassGroupControlState = {
     errors: Record<string, ErrorType>;
     countClasses: number;
     idHold: number | null,
-    classesIds: number[];
+    classesIds: ClassHeaderType[];
     selectedGrade: GradeInfo;
     loadingDelete: "idle" | "loading" | "success" | "error";
     loadingUpdate: "idle" | "loading" | "success" | "error";
@@ -89,7 +108,7 @@ export type СlassGroupControlState = {
     isCompleted: boolean; 
     isShowCompleted: boolean; 
 
-    selectedClass: HeaderClassType;
+    selectedClass: ClassHeaderType;
     qrCodePopup: {
         loadingQrCode: "idle" | "loading" | "success" | "error";
         loadingStart: "idle" | "loading" | "success" | "error";
@@ -104,11 +123,6 @@ export type СlassGroupControlState = {
         loadingActivate: "idle" | "loading" | "success" | "error";
     };
 };
-
-export type HeaderClassType = {
-    id: number;
-    position: number
-}
 
 const initialState: СlassGroupControlState = {
     loading: "idle",
@@ -129,6 +143,7 @@ const initialState: СlassGroupControlState = {
         grade: null,
         description: null,
         attendance: 0,
+        isPassLab: false,
         isReview: false
     },
     loadingAdd: 'idle',
@@ -136,7 +151,10 @@ const initialState: СlassGroupControlState = {
     loadingReview: 'idle',
 
     selectedClass: {
-        id: -1,
+        idClass: -1,
+        idClassHold: -1,
+        dateCreation: 'undefined',
+        isAttestation: false,
         position: -1
     },
     qrCodePopup: {
@@ -168,35 +186,51 @@ export const classGroupControlSlice = createSlice({
             state.studentsStatistics = action.payload;
         },
         removeLastClassActionCreator(state) {
-            const lastClassId = state.classesIds.pop();
-        
-            if (lastClassId !== undefined) {
+            const lastClassIndex = state.classesIds
+                .map((classItem, index) => ({ ...classItem, index }))
+                .reverse()
+                .find((classItem) => !classItem.isAttestation)?.index;
+
+            if (lastClassIndex !== undefined) {
+                const [removedClass] = state.classesIds.splice(lastClassIndex, 1);
+            
                 state.studentsStatistics = state.studentsStatistics.map((studentStatistic) => ({
                     ...studentStatistic,
-                    grades: studentStatistic.grades.filter((grade) => grade.idClass !== lastClassId),
+                    grades: studentStatistic.grades.filter((grade) => grade.idClass !== removedClass.idClass),
                 }));
+            
                 state.countClasses--;
             }
         },
-        setClassesIdsActionCreator(state, action: PayloadAction<number[]>) {
-            state.classesIds = action.payload;
-        },
-        updateGradeActionCreator(state, action: PayloadAction<GradeInfo>) {
-            const updatedGrade = action.payload;
+        setClassesIdsActionCreator(state, action: PayloadAction<{
+            idClass: number,
+            idClassHold: number,
+            dateCreation: string,
+            isAttestation: boolean,
+        }[]>) {
+            let positionCounter = 1;
 
-            state.studentsStatistics = state.studentsStatistics.map((studentStatistic) => {
-                const updatedGradesForStudent = studentStatistic.grades.map((grade) => {
-                    if (grade.idStudentGrate === updatedGrade.idStudentGrate) {
-                        return { ...grade, ...updatedGrade };
-                    }
-                    return grade;
-                });
-
+            state.classesIds = action.payload.map((classItem) => {
+                const position = classItem.isAttestation ? -1 : positionCounter++;
+            
                 return {
-                    ...studentStatistic,
-                    grades: updatedGradesForStudent,
+                    ...classItem,
+                    position
                 };
             });
+        },
+        updateGradeActionCreator(state, action: PayloadAction<GradeInfo | AttestationGradeInfo>) {
+            const updatedGrade = action.payload;
+        
+            state.studentsStatistics = state.studentsStatistics.map((studentStatistic) => ({
+                ...studentStatistic,
+                grades: studentStatistic.grades.map((grade) => {
+                    if (grade !== null && "idStudentGrate" in grade && "idStudentGrate" in updatedGrade) {
+                        return grade.idStudentGrate === updatedGrade.idStudentGrate ? { ...grade, ...updatedGrade } : grade;
+                    }
+                    return grade;
+                }),
+            }));
         },
         setGradeNumberActionCreator(state, action: PayloadAction<string>) {
             const parsedGrade = action.payload.trim();
@@ -234,9 +268,9 @@ export const classGroupControlSlice = createSlice({
         toggleIsCompletedActionCreator(state) {
             state.isCompleted = !state.isCompleted;
         },
-        addClassToStudentsStatisticsActionCreator(state, action: PayloadAction<{ idClass: number; studentGrades: GradeInfo[] }>
+        addClassToStudentsStatisticsActionCreator(state, action: PayloadAction<{ idClass: number; idClassHold: number; studentGrades: GradeInfo[] }>
         ) {
-            const { idClass, studentGrades } = action.payload;
+            const { idClass, studentGrades, idClassHold } = action.payload;
         
             state.studentsStatistics = state.studentsStatistics.map((statistic) => {
                 const gradeForStudent = studentGrades.find(
@@ -251,7 +285,8 @@ export const classGroupControlSlice = createSlice({
                         idStudent: gradeForStudent.idStudent,
                         description: gradeForStudent.description,
                         attendance: gradeForStudent.attendance,
-                        isReview: false
+                        isReview: false,
+                        isPassLab: gradeForStudent.isPassLab
                     };
         
                     return {
@@ -262,7 +297,16 @@ export const classGroupControlSlice = createSlice({
         
                 return statistic;
             });
-            state.classesIds.push(idClass);
+            const lastPosition = state.classesIds.filter(classItem => !classItem.isAttestation).length;
+
+            state.classesIds.push({
+                idClass: idClass,
+                idClassHold: idClassHold,
+                dateCreation: new Date().toISOString().split('T')[0],
+                isAttestation: false,
+                position: lastPosition + 1 
+            });
+
             state.countClasses++;
         },
         setCountClassesActionCreator(state, action: PayloadAction<number>) {
@@ -304,7 +348,7 @@ export const classGroupControlSlice = createSlice({
         setExpirationOfReviewActionCreator(state, action: PayloadAction<number>) {
             state.qrCodePopup.expirationOfReview = action.payload;
         },
-        setSelectedClassActionCreator(state, action: PayloadAction<{value: {id: number, position: number}, onSuccess: () => void}>) {
+        setSelectedClassActionCreator(state, action: PayloadAction<{value: ClassHeaderType, onSuccess: () => void}>) {
             state.selectedClass = action.payload.value;
             action.payload.onSuccess();
         },
@@ -315,16 +359,11 @@ export const classGroupControlSlice = createSlice({
         setQrCodeDataActionCreator(state, action: PayloadAction<QrCodeDataType | null>) {
             state.qrCodePopup.qrCodeData = action.payload;
         },
-
-        getReviewStudents(state, action: PayloadAction<{
-            studentGradeId: number,
-            classId: number,
-            expiration: number
-        }[]>) {
+        getReviewStudents(state, action: PayloadAction<{ studentGradeId: number, classId: number }[]>) {
             action.payload.forEach(({ studentGradeId, classId }) => {
-                state.studentsStatistics.forEach(studentStat => {
-                    studentStat.grades.forEach(grade => {
-                        if (grade.idStudentGrate === studentGradeId && grade.idClass === classId) {
+                state.studentsStatistics.forEach((studentStat) => {
+                    studentStat.grades.forEach((grade) => {
+                        if (grade !== null && "idStudentGrate" in grade && grade.idStudentGrate === studentGradeId && grade.idClass === classId) {
                             grade.isReview = true;
                         }
                     });
@@ -424,11 +463,14 @@ export const initTableStatisticsActionCreator = createAsyncThunk('teacher-class-
             thunkApi.dispatch(classGroupControlSlice.actions.setClassGroupInfoActionCreator({initData}))
 
             const responce = await teacherApi.getTableOfSubgroup(authToken, holdId);
+
+            console.log(transformAndSortStudentsStatistics(responce));
+
             thunkApi.dispatch(classGroupControlSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));
             thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
-            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes.map((item: any) => item.idClass)));
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -473,7 +515,8 @@ export const addClassActionCreator = createAsyncThunk('teacher-class-add',
 
             thunkApi.dispatch(classGroupControlSlice.actions.addClassToStudentsStatisticsActionCreator({
                 studentGrades: responce.studentGrades,
-                idClass: responce.classes.idClass
+                idClass: responce.classes.idClass,
+                idClassHold: holdId
             }));
 
             onSuccess();
@@ -527,9 +570,12 @@ export const updateGradeActionCreator = createAsyncThunk('teacher-class-update',
 
 export default classGroupControlSlice.reducer;
 
+export const checkIsAttestationGrade = (grade: GradeInfo | AttestationGradeInfo): grade is AttestationGradeInfo => {
+    return "avgGrade" in grade; 
+}
 
 
-function transformAndSortStudentsStatistics(input: {
+export const transformAndSortStudentsStatistics = (input: {
     students: {
         idStudent: number;
         idSubgroup: number;
@@ -539,8 +585,9 @@ function transformAndSortStudentsStatistics(input: {
     }[];
     classes: {
         idClass: number;
-        idClassGroupToSubgroup: number;
+        idClassHold: number;
         dateCreation: string;
+        isAttestation: boolean;
     }[];
     studentGrades: {
         idStudentGrate: number;
@@ -549,18 +596,29 @@ function transformAndSortStudentsStatistics(input: {
         grade: number | null;
         description: string | null;
         attendance: AttendanceCodeType;
+        isPassLab: boolean;
     }[];
-}): StatisticOfStudent[] {
-    const { students, studentGrades, classes } = input;
+    attestationStudentGrades: {
+        idAttestationStudentGrades: number;
+        idStudent: number;
+        idClass: number;
+        avgGrade: number | null;
+        hour: number | null;
+        currentCountLab: number | null;
+        maxCountLab: number | null;
+    }[];
+}): StatisticOfStudent[] => {
+    const { students, studentGrades, classes, attestationStudentGrades } = input;
     const allClassIds = classes.map(cls => cls.idClass).sort((a, b) => a - b);
-
-    const result: StatisticOfStudent[] = students.map((student) => {
+    
+    return students.map(student => {
         const [surname, name, lastname] = student.flpName.split("_");
         const idStudent = student.idStudent;
+        
+        const gradesMap = new Map<number, GradeInfo | AttestationGradeInfo>();
 
-        const gradesMap = new Map(studentGrades
-            .filter((grade) => grade.idStudent === student.idStudent)
-            .map((grade) => [grade.idClass, {
+        studentGrades.filter(grade => grade.idStudent === idStudent)
+            .forEach(grade => gradesMap.set(grade.idClass, {
                 idClass: grade.idClass,
                 idStudentGrate: grade.idStudentGrate,
                 grade: grade.grade,
@@ -568,32 +626,40 @@ function transformAndSortStudentsStatistics(input: {
                 description: grade.description,
                 attendance: grade.attendance,
                 isReview: false,
-            }])
-        );
+                isPassLab: false
+            }));
 
-        const grades = allClassIds.map(idClass => {
-            const grade = gradesMap.get(idClass);
-            return grade || {
-                idClass: idClass,
+        attestationStudentGrades.filter(att => att.idStudent === idStudent)
+            .forEach(att => gradesMap.set(att.idClass, {
+                idClass: att.idClass,
+                idAttestationStudentGrades: att.idAttestationStudentGrades,
                 idStudent: idStudent,
-                idStudentGrate: -1,
-                grade: null,
-                description: null,
-                attendance: 0 as AttendanceCodeType, 
-                isReview: false,
-            };
-        });
+                avgGrade: att.avgGrade,
+                hour: att.hour,
+                currentCountLab: att.currentCountLab,
+                maxCountLab: att.maxCountLab,
+            }));
+
+            const grades = allClassIds.map(idClass => {
+                return gradesMap.get(idClass) ?? {
+                    idClass,
+                    idStudent,
+                    idStudentGrate: -1,
+                    grade: null,
+                    description: null,
+                    attendance: 0 as AttendanceCodeType,
+                    isReview: false,
+                    isPassLab: false
+                };
+            });
 
         return {
             student: { surname, name, lastname, idStudent },
             grades,
         };
     });
-
-    result.sort((a, b) => a.student.surname.localeCompare(b.student.surname));
-
-    return result;
 }
+
 
 
 export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',

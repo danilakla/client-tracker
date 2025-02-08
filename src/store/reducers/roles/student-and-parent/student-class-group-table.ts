@@ -6,26 +6,50 @@ import { ClassGroupInfo } from "./student-subjects-slice";
 import { AttendanceCodeType } from "../teacher/class-group-control-slice";
 
 type ErrorType = string | null;
+export type AttendanceOption = {
+  id: AttendanceCodeType;
+  name: string;
+  color: string;
+}
+
+export type ClassHeaderType = {
+    idClass: number,
+    gradeId: number,
+    dateCreation: string,
+    isAttestation: boolean,
+    position: number;
+}
 
 export type GradeInfo = {
-    idClass: number,
-    idStudentGrate: number,
-    grade: number | null,
-    idStudent: number,
-    description: string | null,
-    attendance: AttendanceCodeType
-}
+    idClass: number;
+    idStudentGrate: number;
+    grade: number | null;
+    idStudent: number;
+    description: string | null;
+    attendance: AttendanceCodeType;
+    isReview: boolean;
+    isPassLab: boolean;
+};
+
+export type AttestationGradeInfo = {
+    idClass: number;
+    idAttestationStudentGrades: number;
+    idStudent: number;
+    avgGrade: number | null;
+    hour: number | null;
+    currentCountLab: number | null;
+    maxCountLab: number | null;
+};
 
 export type StatisticOfStudent = {
     student: {
-        surname: string,
-        name: string,
-        lastname: string,
-        idStudent: number,
-        idAccount: number
-    },
-    grades: GradeInfo[]
-}
+        surname: string;
+        name: string;
+        lastname: string;
+        idStudent: number;
+    };
+    grades: (GradeInfo | AttestationGradeInfo)[];
+};
 
 export type RedisKeyDataType = {
     classId: number,
@@ -37,9 +61,9 @@ export type StudentClassGroupTableState = {
     classGroup: ClassGroupInfo | null;
     studentsStatistics: StatisticOfStudent[];
     errors: Record<string, ErrorType>;
-    classesIds: HeaderClassType[];
+    classesIds: ClassHeaderType[];
     selectedGrade: GradeInfo;
-    selectedClass: HeaderClassType;
+    selectedClass: ClassHeaderType;
 
     currentStudentId: number;
     gradesIds: number[];
@@ -49,12 +73,6 @@ export type StudentClassGroupTableState = {
     loadingReview: "idle" | "loading" | "success" | "error";
     loadingScan: "idle" | "loading" | "success" | "error";
     loadingReloadTable: "idle" | "loading" | "success" | "error";
-}
-
-export type HeaderClassType = {
-    id: number;
-    position: number;
-    gradeId: number;
 }
 
 const initialState: StudentClassGroupTableState = {
@@ -69,7 +87,9 @@ const initialState: StudentClassGroupTableState = {
         idStudentGrate: -1,
         grade: null,
         description: null,
-        attendance: 0
+        attendance: 0,
+        isReview: false,
+        isPassLab: false
     },
     errors: {},
     classesIds: [],
@@ -77,9 +97,11 @@ const initialState: StudentClassGroupTableState = {
     gradesIds: [],
     redisKeyData: null,
     selectedClass: {
-        id: -1,
+        idClass: -1,
         position: -1,
-        gradeId: -1
+        gradeId: -1,
+        dateCreation: 'undefined',
+        isAttestation: false
     },
     loadingReview: 'idle',
     loadingScan: 'idle',
@@ -108,11 +130,11 @@ export const studentClassGroupTableSlice = createSlice({
             state.selectedGrade = action.payload.gradeInfo;
             action.payload.onSuccess();
         },
-        setSelectedClassActionCreator(state, action: PayloadAction<{value: HeaderClassType, onSuccess: () => void}>) {
+        setSelectedClassActionCreator(state, action: PayloadAction<{value: ClassHeaderType, onSuccess: () => void}>) {
             state.selectedClass = action.payload.value;
             action.payload.onSuccess();
         },
-        setClassesIdsActionCreator(state, action: PayloadAction<HeaderClassType[]>) {
+        setClassesIdsActionCreator(state, action: PayloadAction<ClassHeaderType[]>) {
             state.classesIds = action.payload;
         },
         setRedisKeyDataActionCreator(state, action: PayloadAction<RedisKeyDataType | null>) {
@@ -134,7 +156,9 @@ export const studentClassGroupTableSlice = createSlice({
                 idStudentGrate: -1,
                 grade: null,
                 description: null,
-                attendance: 0
+                attendance: 0,
+                isReview: false,
+                isPassLab: false
             };
         },
         clearErrors(state) {
@@ -216,13 +240,18 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
             .filter((grade: any) => grade.idStudent === currentStudent.idStudent)
             .map((grade: any) => grade.idClass);
 
-            const classesIds = responce.classes
-                .filter((cls: any) => currentStudentClasses.includes(cls.idClass))
-                .map((cls: any, index: any) => ({
-                    id: cls.idClass,
-                    position: index + 1,
+            let positionCounter = 1;
+
+            const classesIds: ClassHeaderType[] = responce.classes
+                .map((cls: any) => ({
+                    idClass: cls.idClass,
                     gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
+                    dateCreation: cls.dateCreation,
+                    isAttestation: cls.isAttestation,
+                    position: cls.isAttestation ? -1 : positionCounter++,
                 }));
+
+            console.log(classesIds);
             
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(classesIds));
         }
@@ -239,7 +268,7 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
 
 export default studentClassGroupTableSlice.reducer;
 
-function transformAndSortStudentsStatistics(input: {
+export const transformAndSortStudentsStatistics = (input: {
     students: {
         idStudent: number;
         idSubgroup: number;
@@ -249,8 +278,9 @@ function transformAndSortStudentsStatistics(input: {
     }[];
     classes: {
         idClass: number;
-        idClassGroupToSubgroup: number;
+        idClassHold: number;
         dateCreation: string;
+        isAttestation: boolean;
     }[];
     studentGrades: {
         idStudentGrate: number;
@@ -259,53 +289,70 @@ function transformAndSortStudentsStatistics(input: {
         grade: number | null;
         description: string | null;
         attendance: AttendanceCodeType;
+        isPassLab: boolean;
     }[];
-}): StatisticOfStudent[] {
-    const { students, studentGrades, classes } = input;
-
-    const allClassIds = classes.map(cls => cls.idClass);
-
-    const result: StatisticOfStudent[] = students.map((student) => {
+    attestationStudentGrades: {
+        idAttestationStudentGrades: number;
+        idStudent: number;
+        idClass: number;
+        avgGrade: number | null;
+        hour: number | null;
+        currentCountLab: number | null;
+        maxCountLab: number | null;
+    }[];
+}): StatisticOfStudent[] => {
+    const { students, studentGrades, classes, attestationStudentGrades } = input;
+    const allClassIds = classes.map(cls => cls.idClass).sort((a, b) => a - b);
+    
+    return students.map(student => {
         const [surname, name, lastname] = student.flpName.split("_");
         const idStudent = student.idStudent;
-        const idAccount = student.idAccount;
+        
+        const gradesMap = new Map<number, GradeInfo | AttestationGradeInfo>();
 
-        const grades = allClassIds.map((idClass) => {
-            const grade = studentGrades
-                .filter((grade) => grade.idStudent === idStudent && grade.idClass === idClass)
-                .map((grade) => ({
-                    idClass: grade.idClass,
-                    idStudentGrate: grade.idStudentGrate,
-                    grade: grade.grade,
-                    idStudent: idStudent,
-                    description: grade.description,
-                    attendance: grade.attendance,
-                }))[0];
+        studentGrades.filter(grade => grade.idStudent === idStudent)
+            .forEach(grade => gradesMap.set(grade.idClass, {
+                idClass: grade.idClass,
+                idStudentGrate: grade.idStudentGrate,
+                grade: grade.grade,
+                idStudent: idStudent,
+                description: grade.description,
+                attendance: grade.attendance,
+                isReview: false,
+                isPassLab: false
+            }));
 
-            if (!grade) {
-                return {
-                    idClass: -1,
-                    idStudent: -1,
+        attestationStudentGrades.filter(att => att.idStudent === idStudent)
+            .forEach(att => gradesMap.set(att.idClass, {
+                idClass: att.idClass,
+                idAttestationStudentGrades: att.idAttestationStudentGrades,
+                idStudent: idStudent,
+                avgGrade: att.avgGrade,
+                hour: att.hour,
+                currentCountLab: att.currentCountLab,
+                maxCountLab: att.maxCountLab,
+            }));
+
+            const grades = allClassIds.map(idClass => {
+                return gradesMap.get(idClass) ?? {
+                    idClass,
+                    idStudent,
                     idStudentGrate: -1,
                     grade: null,
                     description: null,
-                    attendance: 0 as AttendanceCodeType
+                    attendance: 0 as AttendanceCodeType,
+                    isReview: false,
+                    isPassLab: false
                 };
-            }
-            return grade;
-        });
+            });
 
         return {
-            student: { idAccount, surname, name, lastname, idStudent },
+            student: { surname, name, lastname, idStudent },
             grades,
         };
     });
-
-    result.sort((a, b) => a.student.surname.localeCompare(b.student.surname));
-
-    return result;
-
 }
+
 
 
 
@@ -331,12 +378,12 @@ export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-ta
 
 export const askReviewActionCreator = createAsyncThunk('student-class-group-table/ask-review',
     async (data: { 
-            authToken: string, selectedClass: HeaderClassType,
+            authToken: string, selectedClass: ClassHeaderType,
             onSuccess: () => void, onError: () => void, closePrewPopup: () => void}, thunkApi ) => {
         const { authToken, selectedClass, onSuccess, onError, closePrewPopup} = data;
         try {
 
-            await studentApi.askReview(authToken, selectedClass.id, selectedClass.gradeId);
+            await studentApi.askReview(authToken, selectedClass.idClass, selectedClass.gradeId);
             closePrewPopup();
             onSuccess();
         }
@@ -457,11 +504,13 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
             const classesIds = responce.classes
                 .filter((cls: any) => currentStudentClasses.includes(cls.idClass))
                 .map((cls: any, index: any) => ({
-                    id: cls.idClass,
+                    idClass: cls.idClass,
                     position: index + 1,
                     gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
                 }));
             
+            console.log(classesIds);
+
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(classesIds));
         }
         catch (e) {

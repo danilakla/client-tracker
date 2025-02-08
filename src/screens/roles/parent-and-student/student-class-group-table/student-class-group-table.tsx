@@ -5,7 +5,7 @@ import { useAppDispatch, useTypedSelector } from '../../../../hooks/use-typed-se
 import { useUser } from '../../../../hooks/user-hook';
 import { useStudentClassGroups } from '../student-class-groups/student-class-groups.props';
 import { useStudentSubjects } from '../student-subjects/student-subjects.props';
-import { askReviewActionCreator, checkQrCodeActionCreator, getKeyForQrActionCreator, GradeInfo, HeaderClassType, initStudntTableStatisticsActionCreator, reloadStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { askReviewActionCreator, checkQrCodeActionCreator, getKeyForQrActionCreator, GradeInfo, ClassHeaderType, initStudntTableStatisticsActionCreator, reloadStudntTableStatisticsActionCreator, studentClassGroupTableSlice } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
   role
@@ -63,7 +63,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
 
   // qr-code-logic
 
-  const setSelectedClass = useCallback((value: HeaderClassType, onSuccess: () => void)=>{
+  const setSelectedClass = useCallback((value: ClassHeaderType, onSuccess: () => void)=>{
     dispatch(setSelectedClassActionCreator({value, onSuccess}));
   },[dispatch,setSelectedClassActionCreator])
 
@@ -71,7 +71,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
     dispatch(getKeyForQrActionCreator(
       {
         authToken: authToken,
-        id: studentClassGroupTableState.selectedClass.id,
+        id: studentClassGroupTableState.selectedClass.idClass,
         onError: onError
       }
     ));
