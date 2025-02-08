@@ -151,7 +151,6 @@ export const NameHeader = styled.div<{isHide: boolean}>`
   flex-shrink: 0;
 `;
 
-
 export const HeaderClassItem = styled.div`
   display: flex;
   writing-mode: vertical-rl;

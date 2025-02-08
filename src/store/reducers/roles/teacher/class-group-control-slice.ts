@@ -660,9 +660,6 @@ export const transformAndSortStudentsStatistics = (input: {
     return transformedStudents.sort((a, b) => a.student.surname.localeCompare(b.student.surname));
 }
 
-
-
-
 export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-control/active-key',
     async (data: { authToken: string, classId: number, expiration: number, onSuccess: () => void}, thunkApi ) => {
         const { authToken, classId, expiration, onSuccess } = data;

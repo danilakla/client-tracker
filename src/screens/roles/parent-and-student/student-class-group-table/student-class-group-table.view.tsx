@@ -1,5 +1,5 @@
 
-import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useState } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { theme } from '../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../components/wrapper-mobile';
