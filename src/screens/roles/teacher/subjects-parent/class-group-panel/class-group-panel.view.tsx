@@ -39,6 +39,7 @@ export type ClassGroupPanelViewProps = {
   createClass: (onSuccess: () => void) => void;
   setGradeNumber: (value: string) => void;
   reloadTable: () => void;
+  setSelectedAttestationGrade: (value: AttestationGradeInfo, onSuccess: () => void) => void;
   setDescription: (value: string) => void;
   setAttendance: (value: AttendanceCodeType) => void;
 
@@ -52,6 +53,16 @@ export type ClassGroupPanelViewProps = {
   createQrCode: () => void;
 
   onReview: (onSuccess: () => void) => void;
+
+  resetAttestateWindow: () => void;
+  setMaxCountLab: (value: string) => void;
+  setTimeOfOneClass: (value: string) => void;
+  setCountClassThatNotAttestationClass: (value: string) => void;
+
+  calculateAttestation: (onSuccess: () => void) => void;
+  setAvgGrade: (value: string) => void;
+
+  onSave: (onSuccess: () => void) => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -67,6 +78,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   switchIsPassed,
   reloadTable,
   onReview,
+  setSelectedAttestationGrade,
   toggleComplited,
 
   setExpirationOfRefresh,
@@ -76,12 +88,39 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   activateKeyForClass,
 
   createQrCode,
-  clearQrCodeData
+  clearQrCodeData,
+
+  setCountClassThatNotAttestationClass,
+  setMaxCountLab,
+  setTimeOfOneClass,
+  resetAttestateWindow,
+  setAvgGrade,
+
+  calculateAttestation,
+  onSave
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
   const [isOpenAddPopup, setIsOpenAddPopup] = useState<boolean>(false);
   const [isOpenDeletePopup, setIsOpenDeletePopup] = useState<boolean>(false);
+
+  const [isOpenAttestationGrade, setIsOpenAttestationGrade] = useState<boolean>(false);
+  const openAttestationGrade = useCallback((value: AttestationGradeInfo) => {
+    setSelectedAttestationGrade(value, () => setIsOpenAttestationGrade(true));
+  },[setSelectedAttestationGrade])
+  const closeAttestationGrade = useCallback(() => {
+    setIsOpenAttestationGrade(false);
+    resetAttestateWindow();
+  },[resetAttestateWindow])
+
+  const [isOpenClassAttestation, setIsOpenClassAttestation] = useState<boolean>(false);
+  const openClassAttestation = useCallback((value: ClassHeaderType) => {
+    setSelectedClass(value, () => setIsOpenClassAttestation(true));
+  },[setSelectedClass])
+  const closeClassAttestation = useCallback(() => {
+    setIsOpenClassAttestation(false);
+    resetAttestateWindow();
+  },[resetAttestateWindow])
 
   const openAddPopup = useCallback(() => {
     setIsOpenAddPopup(true);
@@ -134,16 +173,10 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     setSelectedClass(value, controlClassControlPopup);
   },[setSelectedClass, controlClassControlPopup])
   const closeClassControlForStudents = useCallback(() => {
-    setSelectedClass({
-      idClass: -1,
-      idClassHold: -1,
-      dateCreation: 'undefined',
-      isAttestation: false,
-      position: -1
-    }, controlClassControlPopup);
+    controlClassControlPopup();
     setExpirationOfReview(90);
     setExpirationOfRefresh(5);
-  },[setExpirationOfReview, setExpirationOfRefresh, setSelectedClass, controlClassControlPopup])
+  },[setExpirationOfReview, setExpirationOfRefresh, controlClassControlPopup])
 
   const confirmActivateKeyForClass = useCallback((expiration: number, onSuccess: () => void) => {
     activateKeyForClass(expiration, onSuccess);
@@ -158,6 +191,14 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     onReview(closeClassControlForStudents);
   },[onReview, closeClassControlForStudents])
 
+  const onCalculateAttestation = useCallback(() => {
+    calculateAttestation(closeClassAttestation);
+  },[calculateAttestation, closeClassAttestation])
+
+  const onClickSave = useCallback(() => {
+    onSave(closeAttestationGrade);
+  },[onSave, closeAttestationGrade])
+
   return (
     <>
       {
@@ -168,8 +209,13 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           setAttendance={setAttendance}
           setDescription={setDescription}
+          setAvgGrade={setAvgGrade}
           controlDescriptionClass={controlDescriptionClass}
           setGradeNumber={setGradeNumber}
+          setCountClassThatNotAttestationClass={setCountClassThatNotAttestationClass}
+          setMaxCountLab={setMaxCountLab}
+          setTimeOfOneClass={setTimeOfOneClass}
+          resetAttestateWindow={resetAttestateWindow}
           openUpdateWindow={openUpdateWindow}
           closeUpdateWindow={closeUpdateWindow}
           openDeletePopup={openDeletePopup}
@@ -185,11 +231,26 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           toggleComplited={toggleComplited}
           closeClassControlForStudents={closeClassControlForStudents}
           openClassControlForStudents={openClassControlForStudents}
+          isOpenAttestationGrade={isOpenAttestationGrade}
+          isOpenClassAttestation={isOpenClassAttestation}
+          openAttestationGrade={openAttestationGrade}
+          closeAttestationGrade={closeAttestationGrade}
+          onClickSave={onClickSave}
+          calculateAttestation={onCalculateAttestation}
+          openClassAttestation={openClassAttestation}
+          closeClassAttestation={closeClassAttestation}
           />) :
         (<ClassGroupPanelDesktopView
           openAddPopup={openAddPopup}
+          onClickSave={onClickSave}
+          calculateAttestation={onCalculateAttestation}
           handleReview={handleReview}
+          setAvgGrade={setAvgGrade}
           switchIsPassed={switchIsPassed}
+          setCountClassThatNotAttestationClass={setCountClassThatNotAttestationClass}
+          setMaxCountLab={setMaxCountLab}
+          setTimeOfOneClass={setTimeOfOneClass}
+          resetAttestateWindow={resetAttestateWindow}
           reloadTable={reloadTable}
           toggleComplited={toggleComplited}
           closeClassControlForStudents={closeClassControlForStudents}
@@ -209,6 +270,12 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           isOpenUpdateWindow={isOpenUpdateWindow}
           isClassControlPopup={isClassControlPopup}
           openClassControlForStudents={openClassControlForStudents}
+          isOpenAttestationGrade={isOpenAttestationGrade}
+          isOpenClassAttestation={isOpenClassAttestation}
+          openAttestationGrade={openAttestationGrade}
+          closeAttestationGrade={closeAttestationGrade}
+          openClassAttestation={openClassAttestation}
+          closeClassAttestation={closeClassAttestation}
           />)
       }
       <Popup isActive={isOpenAddPopup} closePopup={closeAddPopup}>
@@ -279,6 +346,22 @@ type LocalViewProps = {
   isOpenDescriptionClass: boolean;
 
   handleReview: () => void;
+
+  isOpenAttestationGrade: boolean;
+  isOpenClassAttestation: boolean;
+  openAttestationGrade: (value: AttestationGradeInfo) => void;
+  closeAttestationGrade: () => void;
+  openClassAttestation: (value: ClassHeaderType) => void;
+  closeClassAttestation: () => void;
+
+  resetAttestateWindow: () => void;
+  setMaxCountLab: (value: string) => void;
+  setTimeOfOneClass: (value: string) => void;
+  setCountClassThatNotAttestationClass: (value: string) => void;
+  setAvgGrade: (value: string) => void;
+
+  calculateAttestation: () => void;
+  onClickSave: () => void;
 };
 
 export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
@@ -305,7 +388,22 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   controlQrCodePopup,
 
   controlDescriptionClass,
-  isOpenDescriptionClass
+  isOpenDescriptionClass,
+
+  isOpenAttestationGrade,
+  isOpenClassAttestation,
+  openAttestationGrade,
+  closeAttestationGrade,
+  openClassAttestation,
+  closeClassAttestation,
+
+  setCountClassThatNotAttestationClass,
+  setMaxCountLab,
+  setTimeOfOneClass,
+  setAvgGrade,
+  onClickSave,
+
+  calculateAttestation
 }) => {
 
   return (
@@ -326,7 +424,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           </Row>
           <Spacing themeSpace={25} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
-            <StudentsTable
+            <StudentsTable openClassAttestation={openClassAttestation} openAttestationGrade={openAttestationGrade}
               onClickGrade={openUpdateWindow} openClassControlForStudents={openClassControlForStudents}
               classesIds={teacherClassGroupControlState.classesIds}
               data={teacherClassGroupControlState.studentsStatistics}/> :
@@ -362,6 +460,43 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           isShowCompleted={teacherClassGroupControlState.isShowCompleted}
           loadingUpdate={teacherClassGroupControlState.loadingUpdate}
           closeUpdateWindow={closeUpdateWindow}
+          />
+      </Modal>
+      <Modal isActive={isOpenClassAttestation} closeModal={closeClassAttestation}>
+        <ControlAttestationClass
+          errorCountClassThatNotAttestation={teacherClassGroupControlState.errors["errorCountClassThatNotAttestation"]}
+          errorMaxLabCount={teacherClassGroupControlState.errors["errorMaxLabCount"]}
+          errorTimeOfOneClass={teacherClassGroupControlState.errors["errorTimeOfOneClass"]}
+          setCountClassThatNotAttestation={setCountClassThatNotAttestationClass}
+          setMaxLabCount={setMaxCountLab}
+          setTimeOfOneClass={setTimeOfOneClass}
+          countClassThatNotAttestation={teacherClassGroupControlState.countClassThatNotAttestation}
+          maxLabCount={teacherClassGroupControlState.maxLabCount}
+          timeOfOneClass={teacherClassGroupControlState.timeOfOneClass}
+          calculateState={teacherClassGroupControlState.loadingCalculate}
+          onCaclulate={calculateAttestation}
+          onCancel={closeClassAttestation}
+          isMobile={true}
+          />
+      </Modal>
+      <Modal isActive={isOpenAttestationGrade} closeModal={closeAttestationGrade}>
+        <ControlAttestationGrade
+          errorAvgGrade={teacherClassGroupControlState.errors["errorAvgGrade"]}
+          errorCurrentCountLab={teacherClassGroupControlState.errors["errorCurrentCountLab"]}
+          errorMaxCountLab={teacherClassGroupControlState.errors["errorMaxCountLab"]}
+          errorHour={teacherClassGroupControlState.errors["errorHour"]}
+          setCurrentCountLab={setCountClassThatNotAttestationClass}
+          setMaxCountLab={setMaxCountLab}
+          setHour={setTimeOfOneClass}
+          setAvgGrade={setAvgGrade}
+          avgGrade={teacherClassGroupControlState.avgGrade}
+          currentCountLab={teacherClassGroupControlState.countClassThatNotAttestation}
+          maxCountLab={teacherClassGroupControlState.maxLabCount}
+          hour={teacherClassGroupControlState.timeOfOneClass}
+          stateSave={teacherClassGroupControlState.loadingCalculate}
+          onSave={onClickSave}
+          onCancel={closeAttestationGrade}
+          isMobile={true}
           />
       </Modal>
       <Modal isActive={isClassControlPopup} closeModal={closeClassControlForStudents}>
@@ -439,7 +574,22 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   controlQrCodePopup,
 
   isOpenDescriptionClass,
-  controlDescriptionClass
+  controlDescriptionClass,
+
+  isOpenAttestationGrade,
+  isOpenClassAttestation,
+  openAttestationGrade,
+  closeAttestationGrade,
+  openClassAttestation,
+  closeClassAttestation,
+
+  setCountClassThatNotAttestationClass,
+  setMaxCountLab,
+  setTimeOfOneClass,
+  setAvgGrade,
+  onClickSave,
+  
+  calculateAttestation
 }) => {
 
   return (
@@ -460,7 +610,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           </Row>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
-            <StudentsTable
+            <StudentsTable  openClassAttestation={openClassAttestation} openAttestationGrade={openAttestationGrade}
               onClickGrade={openUpdateWindow} openClassControlForStudents={openClassControlForStudents}
               classesIds={teacherClassGroupControlState.classesIds}
               data={teacherClassGroupControlState.studentsStatistics}/> :
@@ -526,6 +676,43 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             Пересмотр
           </Button>
         </Column>
+      </Popup>
+      <Popup isActive={isOpenClassAttestation} closePopup={closeClassAttestation}>
+        <ControlAttestationClass
+          errorCountClassThatNotAttestation={teacherClassGroupControlState.errors["errorCountClassThatNotAttestation"]}
+          errorMaxLabCount={teacherClassGroupControlState.errors["errorMaxLabCount"]}
+          errorTimeOfOneClass={teacherClassGroupControlState.errors["errorTimeOfOneClass"]}
+          setCountClassThatNotAttestation={setCountClassThatNotAttestationClass}
+          setMaxLabCount={setMaxCountLab}
+          setTimeOfOneClass={setTimeOfOneClass}
+          countClassThatNotAttestation={teacherClassGroupControlState.countClassThatNotAttestation}
+          maxLabCount={teacherClassGroupControlState.maxLabCount}
+          timeOfOneClass={teacherClassGroupControlState.timeOfOneClass}
+          calculateState={teacherClassGroupControlState.loadingCalculate}
+          onCaclulate={calculateAttestation}
+          onCancel={closeClassAttestation}
+          isMobile={false}
+          />
+      </Popup>
+      <Popup isActive={isOpenAttestationGrade} closePopup={closeAttestationGrade}>
+        <ControlAttestationGrade
+          errorAvgGrade={teacherClassGroupControlState.errors["errorAvgGrade"]}
+          errorCurrentCountLab={teacherClassGroupControlState.errors["errorCurrentCountLab"]}
+          errorMaxCountLab={teacherClassGroupControlState.errors["errorMaxCountLab"]}
+          errorHour={teacherClassGroupControlState.errors["errorHour"]}
+          setCurrentCountLab={setCountClassThatNotAttestationClass}
+          setMaxCountLab={setMaxCountLab}
+          setHour={setTimeOfOneClass}
+          setAvgGrade={setAvgGrade}
+          avgGrade={teacherClassGroupControlState.avgGrade}
+          currentCountLab={teacherClassGroupControlState.countClassThatNotAttestation}
+          maxCountLab={teacherClassGroupControlState.maxLabCount}
+          hour={teacherClassGroupControlState.timeOfOneClass}
+          stateSave={teacherClassGroupControlState.loadingCalculate}
+          onSave={onClickSave}
+          onCancel={closeAttestationGrade}
+          isMobile={false}
+          />
       </Popup>
       <Popup style={{width: 440}} isActive={isOpenDescriptionClass} closePopup={controlDescriptionClass} >
         <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
@@ -871,19 +1058,183 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
   );
 });
 
+export type ControlAttestationClassProps = {
+  isMobile: boolean;
+
+  errorCountClassThatNotAttestation: string | null;
+  errorMaxLabCount: string | null;
+  errorTimeOfOneClass: string | null;
+
+  countClassThatNotAttestation: number | null;
+  maxLabCount: number | null;
+  timeOfOneClass: number | null;
+  setCountClassThatNotAttestation: (value: string) => void;
+  setMaxLabCount: (value: string) => void;
+  setTimeOfOneClass: (value: string) => void;
+  calculateState: "idle" | "loading" | "success" | "error";
+
+  onCancel: () => void;
+  onCaclulate: () => void;
+};
+    
+export const ControlAttestationClass: FC<ControlAttestationClassProps> = memo(({
+  isMobile,
+
+  errorCountClassThatNotAttestation,
+  errorMaxLabCount,
+  errorTimeOfOneClass,
+
+  setCountClassThatNotAttestation,
+  setMaxLabCount,
+  setTimeOfOneClass,
+  countClassThatNotAttestation,
+  maxLabCount,
+  timeOfOneClass,
+
+  calculateState,
+
+  onCaclulate,
+  onCancel
+}) => {
+  
+  return (
+    <Column style={isMobile ? {} : {width: 440}} horizontalAlign='center'>
+      <Text themeFont={theme.fonts.h1}>
+        Аттестация
+		  </Text>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+          header='Прошедшее количество занятий' 
+          placeholder='9' error={errorMaxLabCount}
+          value={maxLabCount?.toString() || ''} setValue={setMaxLabCount}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+          header='Необходимое кол-во защищённых занятий' 
+          placeholder='9' error={errorCountClassThatNotAttestation}
+          value={countClassThatNotAttestation?.toString() || ''} setValue={setCountClassThatNotAttestation}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+          header='Продолжительность занятия, мин' 
+          placeholder='9' error={errorTimeOfOneClass}
+          value={timeOfOneClass?.toString() || ''} setValue={setTimeOfOneClass}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Row>
+        <Button 
+          onClick={onCaclulate}
+          state={calculateState} 
+          variant='recomended' padding={[12,17]}>
+          Вычислить
+        </Button>
+        <Spacing variant='Row' themeSpace={20}/>
+        <Button onClick={onCancel} variant='attentive' padding={[12,17]}>
+          Отмена
+        </Button>
+      </Row>
+    </Column>
+  );
+});
+
+
+export type ControlAttestationGradeProps = {
+  isMobile: boolean;
+
+  errorAvgGrade: string | null;
+  errorHour: string | null;
+  errorMaxCountLab: string | null;
+  errorCurrentCountLab: string | null;
+
+  avgGrade: number | null;
+  hour: number | null;
+  maxCountLab: number | null;
+  currentCountLab: number | null;
+  setAvgGrade: (value: string) => void;
+  setHour: (value: string) => void;
+  setCurrentCountLab: (value: string) => void;
+  setMaxCountLab: (value: string) => void;
+  
+  stateSave: "idle" | "loading" | "success" | "error";
+
+  onCancel: () => void;
+  onSave: () => void;
+};
+    
+export const ControlAttestationGrade: FC<ControlAttestationGradeProps> = memo(({
+  isMobile,
+
+  errorAvgGrade,
+  errorHour,
+  errorMaxCountLab,
+  errorCurrentCountLab,
+
+  avgGrade,
+  hour,
+  maxCountLab,
+  currentCountLab,
+  setAvgGrade,
+  setHour,
+  setCurrentCountLab,
+  setMaxCountLab,
+
+  stateSave,
+
+  onSave,
+  onCancel
+}) => {
+  
+  return (
+    <Column style={isMobile ? {} : {width: 440}} horizontalAlign='center'>
+      <Input 
+          header='Оценка' 
+          placeholder='9' error={errorAvgGrade}
+          value={avgGrade?.toString() || ''} setValue={setAvgGrade}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+          header='Количество часов' 
+          placeholder='9' error={errorHour}
+          value={hour?.toString() || ''} setValue={setHour}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+          header='Кол-во защищённых занятий' 
+          placeholder='9' error={errorCurrentCountLab}
+          value={currentCountLab?.toString() || ''} setValue={setCurrentCountLab}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Input 
+          header='Максимальное кол-во защищённых занятий' 
+          placeholder='9' error={errorMaxCountLab}
+          value={maxCountLab?.toString() || ''} setValue={setMaxCountLab}/>
+      <Spacing themeSpace={25} variant='Column' />
+      <Row>
+        <Button 
+          onClick={onSave}
+          state={stateSave} 
+          variant='recomended' padding={[12,17]}>
+          Сохранить
+        </Button>
+        <Spacing variant='Row' themeSpace={20}/>
+        <Button onClick={onCancel} variant='attentive' padding={[12,17]}>
+          Отмена
+        </Button>
+      </Row>
+    </Column>
+  );
+});
 
 export type StudentsTableProps = {
 	data: StatisticOfStudent[];
 	classesIds: ClassHeaderType[];
 	onClickGrade: (value: GradeInfo) => void;
   openClassControlForStudents: (value: ClassHeaderType) => void;
+  openClassAttestation: (value: ClassHeaderType) => void;
+  openAttestationGrade: (value: AttestationGradeInfo) => void
 };
   
 export const StudentsTable: FC<StudentsTableProps> = memo(({
 	data,
 	classesIds,
 	onClickGrade,
-  openClassControlForStudents
+  openClassControlForStudents,
+  openClassAttestation,
+  openAttestationGrade
 }) => {
   const {
     isHorizontalScrollNeeded,
@@ -909,7 +1260,10 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		    </NameHeader>
 		    {classesIds.length !== 0 && <HeaderClasses ref={horizontalScrollRef1}>
 		  	{classesIds.map((item, index) => (
-		  	  <HeaderClassItem key={index} onClick={() => openClassControlForStudents(item)}>
+		  	  <HeaderClassItem key={index} onClick={
+            item.isAttestation ? 
+          () => openClassAttestation(item) : 
+          () => openClassControlForStudents(item)}>
 		  		<Text themeFont={theme.fonts.h3}>
             {!item.isAttestation ? <>Занятие {item.position}</> : <>Аттестация</>}
 		  		</Text>
@@ -948,7 +1302,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
             <ClassItemView 
               item={item} 
               onClickGrade={onClickGrade} 
-              onClickAttestation={() => {}}/>)}
+              onClickAttestation={openAttestationGrade}/>)}
 		    	  </ClassesRow>)}
 		    	</ClassesContainer>
 		      </Table>
@@ -1002,6 +1356,16 @@ export const ClassItemView: FC<ClassItemViewProps> = memo(({
       <EmptyClassItem />
     )
   ) : (
-    <ClassItem />
+    <ClassItem style={{backgroundColor: theme.colors.neutral}} onClick={() => onClickAttestation(item)}>
+      <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
+        <b>{item.avgGrade?.toFixed(2).replace(/\.?0+$/, '')}</b>
+      </Text>
+      <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
+        <b>{item.hour?.toFixed(2).replace(/\.?0+$/, '')} ч.</b>
+      </Text>
+      <Text themeFont={theme.fonts.ht2} style={{fontSize: 11}}>
+      <b>{item.currentCountLab} / {item.maxCountLab} макс.</b>
+		  </Text>
+    </ClassItem>
   );
 });

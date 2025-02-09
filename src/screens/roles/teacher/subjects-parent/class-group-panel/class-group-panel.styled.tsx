@@ -82,7 +82,7 @@ export const ClassesRow = styled.div`
   display: flex;
   position: relative;
   flex-direction: row;
-      
+
   & > div {
     border-right: 1px solid #52526655;
   }
@@ -97,7 +97,7 @@ export const ClassesContainer = styled.div`
   flex-direction: column;
   width: 100%;
   overflow-x: scroll;
-
+  
   & > div {
     & > div {
       border-bottom: 2px solid ${theme.colors.primary};

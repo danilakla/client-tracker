@@ -104,6 +104,8 @@ export type СlassGroupControlState = {
     loadingAdd: "idle" | "loading" | "success" | "error";
     loadingReview: "idle" | "loading" | "success" | "error";
 
+    isNeedAttestation: boolean;
+
     loadingReloadTable: "idle" | "loading" | "success" | "error";
 
     isCompleted: boolean; 
@@ -123,6 +125,12 @@ export type СlassGroupControlState = {
     generateKeyPopup: {
         loadingActivate: "idle" | "loading" | "success" | "error";
     };
+
+    loadingCalculate: "idle" | "loading" | "success" | "error";
+    maxLabCount:  number | null;
+    countClassThatNotAttestation: number | null;
+    avgGrade: number | null;
+    timeOfOneClass: number | null;
 };
 
 const initialState: СlassGroupControlState = {
@@ -137,6 +145,7 @@ const initialState: СlassGroupControlState = {
     isShowCompleted: false,
     loadingReloadTable: 'idle',
     countClasses: 0,
+    isNeedAttestation: false,
     selectedGrade: {
         idClass: -1,
         idStudent: -1,
@@ -178,7 +187,14 @@ const initialState: СlassGroupControlState = {
     },
     generateKeyPopup: {
         loadingActivate: "idle"
-    }
+    },
+
+    loadingCalculate: "idle",
+
+    maxLabCount: null,
+    avgGrade: null,
+    countClassThatNotAttestation: null,
+    timeOfOneClass: null,
 };
 
 const setErrorByKey = (state: СlassGroupControlState, key: string, error: ErrorType) => {
@@ -264,6 +280,9 @@ export const classGroupControlSlice = createSlice({
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.selectedGrade.description = action.payload;
         },
+        setIsNeedAttestationActionCreator(state, action: PayloadAction<boolean>) {
+            state.isNeedAttestation = action.payload;
+        },
         setAttendanceActionCreator(state, action: PayloadAction<AttendanceCodeType>) {
             state.selectedGrade.attendance = action.payload;
             switch(action.payload){
@@ -344,9 +363,13 @@ export const classGroupControlSlice = createSlice({
             action.payload.onSuccess();
         },
         setSelectedAttestationGradeActionCreator(state, action: PayloadAction<{
-            attestationGradeInfo: AttestationGradeInfo, onSuccess: () => void
+            value: AttestationGradeInfo, onSuccess: () => void
         }>) {
-            state.selectedAttestationGrade = action.payload.attestationGradeInfo;
+            state.selectedAttestationGrade = action.payload.value;
+            state.countClassThatNotAttestation = action.payload.value.currentCountLab;
+            state.avgGrade = action.payload.value.avgGrade;
+            state.maxLabCount = action.payload.value.maxCountLab;
+            state.timeOfOneClass = action.payload.value.hour;
             action.payload.onSuccess();
         },
         setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData}>) {
@@ -388,7 +411,100 @@ export const classGroupControlSlice = createSlice({
                     });
                 });
             });
-        }
+        },
+        setTimeOfOneClassActionCreator(state, action: PayloadAction<string>) {
+            const parsedGrade = action.payload.trim();
+
+            if (parsedGrade === "") {
+                state.timeOfOneClass = null;
+            } else {
+                const numericGrade = Number(parsedGrade);
+
+                if (!isNaN(numericGrade)){
+                    if(numericGrade > 1000) return;
+                    state.timeOfOneClass = numericGrade;
+                }
+                else
+                    state.timeOfOneClass = null;
+            }
+        },
+        setCountClassThatNotAttestationClassActionCreator(state, action: PayloadAction<string>) {
+            const parsedGrade = action.payload.trim();
+
+            if (parsedGrade === "") {
+                state.countClassThatNotAttestation = null;
+            } else {
+                const numericGrade = Number(parsedGrade);
+
+                if (!isNaN(numericGrade)){
+                    if(numericGrade > 1000) return;
+                    state.countClassThatNotAttestation = numericGrade;
+                }
+                else
+                    state.countClassThatNotAttestation = null;
+            }
+        },
+        setMaxCountLabActionCreator(state, action: PayloadAction<string>) {
+            const parsedGrade = action.payload.trim();
+
+            if (parsedGrade === "") {
+                state.maxLabCount = null;
+            } else {
+                const numericGrade = Number(parsedGrade);
+
+                if (!isNaN(numericGrade)){
+                    if(numericGrade > 1000) return;
+                    state.maxLabCount = numericGrade;
+                }
+                else
+                    state.maxLabCount = null;
+            }
+        },
+        resetAttestateWindowPopup(state) {
+            state.maxLabCount = null;
+            state.countClassThatNotAttestation = null;
+            state.timeOfOneClass = null;
+            state.avgGrade = null;
+            state.errors = {};
+        },
+
+        updateAttestationGradesActionCreator(state, action: PayloadAction<AttestationGradeInfo[]>) {
+            action.payload.forEach((newGrade) => {
+                state.studentsStatistics.forEach((studentStat) => {
+                    studentStat.grades = studentStat.grades.map((grade) =>
+                        "idAttestationStudentGrades" in grade && grade.idAttestationStudentGrades === newGrade.idAttestationStudentGrades
+                            ? { ...grade, ...newGrade }
+                            : grade
+                    );
+                });
+            });
+        },
+        updateAttestationGradeActionCreator(state, action: PayloadAction<AttestationGradeInfo>) {
+            const newGrade = action.payload;
+            state.studentsStatistics.forEach((studentStat) => {
+                studentStat.grades = studentStat.grades.map((grade) =>
+                    "idAttestationStudentGrades" in grade && grade.idAttestationStudentGrades === newGrade.idAttestationStudentGrades
+                        ? { ...grade, ...newGrade }
+                        : grade
+                );
+            });
+        },
+        setAvgGradeActionCreator(state, action: PayloadAction<string>) {
+            const parsedGrade = action.payload.trim();
+
+            if (parsedGrade === "") {
+                state.avgGrade = null;
+            } else {
+                const numericGrade = Number(parsedGrade);
+
+                if (!isNaN(numericGrade)){
+                    if(numericGrade > 1000) return;
+                    state.avgGrade = numericGrade;
+                }
+                else
+                    state.avgGrade = null;
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -471,6 +587,26 @@ export const classGroupControlSlice = createSlice({
             .addCase(reloadTableStatisticsActionCreator.rejected, (state) => {
                 state.loadingReloadTable = "idle";
             })
+
+            .addCase(calculateAttestationActionCreator.fulfilled, (state) => {
+                state.loadingCalculate = 'success';
+            })
+            .addCase(calculateAttestationActionCreator.pending, (state) => {
+                state.loadingCalculate = 'loading';
+            })
+            .addCase(calculateAttestationActionCreator.rejected, (state) => {
+                state.loadingCalculate = "idle";
+            })
+
+            .addCase(updateAttestationClassActionCreator.fulfilled, (state) => {
+                state.loadingCalculate = 'success';
+            })
+            .addCase(updateAttestationClassActionCreator.pending, (state) => {
+                state.loadingCalculate = 'loading';
+            })
+            .addCase(updateAttestationClassActionCreator.rejected, (state) => {
+                state.loadingCalculate = "idle";
+            })
     },
 });
 
@@ -488,6 +624,9 @@ export const initTableStatisticsActionCreator = createAsyncThunk('teacher-class-
             ));
             thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
             thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes));
+
+            const isNotify = await teacherApi.notifyTeacherAttestation(authToken, holdId);
+            thunkApi.dispatch(classGroupControlSlice.actions.setIsNeedAttestationActionCreator(isNotify));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -757,6 +896,9 @@ export const reloadTableStatisticsActionCreator = createAsyncThunk('reload-teach
             ));
             thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
             thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes));
+
+            const isNotify = await teacherApi.notifyTeacherAttestation(authToken, holdId);
+            thunkApi.dispatch(classGroupControlSlice.actions.setIsNeedAttestationActionCreator(isNotify));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -764,6 +906,77 @@ export const reloadTableStatisticsActionCreator = createAsyncThunk('reload-teach
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
                 }
             } else {
+            }
+        }
+    }
+)
+
+export const calculateAttestationActionCreator = createAsyncThunk('teacher-class-control/calculate-attestation',
+    async (data: { 
+      authToken: string, 
+      maxLabCount: number,
+      holdId: number, 
+      classId: number, 
+      countClassThatNotAttestation: number,
+      timeOfOneClass: number
+      studentId: number[]
+      onSuccess: () => void}, thunkApi ) => {
+
+        const { authToken, maxLabCount, holdId, classId, countClassThatNotAttestation, timeOfOneClass, studentId, onSuccess } = data;
+        try { 
+            const responce = await teacherApi.calculateAttestation(
+                authToken, 
+                maxLabCount, 
+                holdId, 
+                classId, 
+                countClassThatNotAttestation, 
+                timeOfOneClass, 
+                studentId
+            );
+
+            thunkApi.dispatch(classGroupControlSlice.actions.updateAttestationGradesActionCreator(responce));
+
+            onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
+            }
+        }
+    }
+)
+
+export const updateAttestationClassActionCreator = createAsyncThunk('teacher-class-control/update-attestation-classes',
+    async (data: { 
+      authToken: string, 
+      idAttestationStudentGrades: number,
+      avgGrade: number,
+      hour: number,
+      currentCountLab :number,
+      maxCountLab: number,
+      onSuccess: () => void}, thunkApi ) => {
+        const { authToken, idAttestationStudentGrades, avgGrade, hour, currentCountLab, maxCountLab, onSuccess } = data;
+        try { 
+            const responce = await teacherApi.updateAttestationGrade(
+                authToken,
+                idAttestationStudentGrades,
+                avgGrade,
+                hour,
+                currentCountLab,
+                maxCountLab
+            );
+
+            thunkApi.dispatch(classGroupControlSlice.actions.updateAttestationGradeActionCreator(responce));
+
+            onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                }
             }
         }
     }

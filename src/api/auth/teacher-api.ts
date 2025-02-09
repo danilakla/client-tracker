@@ -103,6 +103,56 @@ export const teacherApi = {
                 return response.data;
             })
     },
+    calculateAttestation(
+        authToken: string,
+        maxLabCount: number,
+        holdId: number,
+        classId: number,
+        countClassThatNotAttestation: number,
+        timeOfOneClass: number,
+        studentId: number[]
+    ){
+        return instance.post('/teacher/calculate/avg/attestation',{
+            maxLabCount,
+            holdId,
+            classId,
+            countClassThatNotAttestation,
+            timeOfOneClass,
+            studentId
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    updateAttestationGrade(
+        authToken: string, 
+        idAttestationStudentGrades: number,
+        avgGrade: number,
+        hour: number,
+        currentCountLab :number,
+        maxCountLab: number
+    ){
+        return instance.put('/teacher/update/attestation/classes',{
+            idAttestationStudentGrades,
+            avgGrade,
+            maxCountLab,
+            hour,
+            currentCountLab,
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    notifyTeacherAttestation(
+        authToken: string, 
+        isHold: number
+    ){
+        return instance.get(`/attestation/notify-teacher/${isHold}`, 
+            { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 
 

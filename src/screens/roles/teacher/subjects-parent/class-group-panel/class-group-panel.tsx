@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, startReviewForClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, AttestationGradeInfo, calculateAttestationActionCreator, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, startReviewForClassActionCreator, updateAttestationClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -27,7 +27,16 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     setExpirationOfRefreshActionCreator,
     toggleIsCompletedActionCreator,
     setExpirationOfReviewActionCreator,
-    clearQrCodeDataActionCreator
+    clearQrCodeDataActionCreator,
+
+    setSelectedAttestationGradeActionCreator,
+
+    setCountClassThatNotAttestationClassActionCreator,
+    setMaxCountLabActionCreator,
+    setTimeOfOneClassActionCreator,
+    setAvgGradeActionCreator,
+
+    resetAttestateWindowPopup
   } = classGroupControlSlice.actions;
 
   useEffect(() => {
@@ -88,9 +97,26 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.selectedGrade
   ])
 
+  const resetAttestateWindow = useCallback(()=>{
+    dispatch(resetAttestateWindowPopup());
+  },[dispatch,resetAttestateWindowPopup])
+  const setMaxCountLab = useCallback((value: string)=>{
+    dispatch(setMaxCountLabActionCreator(value));
+  },[dispatch,setMaxCountLabActionCreator])
+  const setTimeOfOneClass = useCallback((value: string)=>{
+    dispatch(setTimeOfOneClassActionCreator(value));
+  },[dispatch,setTimeOfOneClassActionCreator])
+  const setCountClassThatNotAttestationClass = useCallback((value: string)=>{
+    dispatch(setCountClassThatNotAttestationClassActionCreator(value));
+  },[dispatch,setCountClassThatNotAttestationClassActionCreator])
+
   const setSelectedGrade = useCallback((gradeInfo: GradeInfo, onSuccess: () => void)=>{
     dispatch(setSelectedGradeActionCreator({gradeInfo, onSuccess}));
   },[dispatch,setSelectedGradeActionCreator])
+
+  const setSelectedAttestationGrade = useCallback((value: AttestationGradeInfo, onSuccess: () => void)=>{
+    dispatch(setSelectedAttestationGradeActionCreator({value, onSuccess}));
+  },[dispatch,setSelectedAttestationGradeActionCreator])
 
   const setGradeNumber = useCallback((value: string)=>{
     dispatch(setGradeNumberActionCreator(value));
@@ -178,14 +204,75 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     }));
   },[dispatch, authToken, teacherClassGroupControlState.idHold, teacherClassGroupControlState.initData])
 
+  const calculateAttestation = useCallback((onSuccess: () => void)=>{
+    if(teacherClassGroupControlState.maxLabCount === null
+      || teacherClassGroupControlState.countClassThatNotAttestation === null
+      || teacherClassGroupControlState.timeOfOneClass === null)
+      return;
+
+    const studentIds: number[] = teacherClassGroupControlState.studentsStatistics.map(
+      item => item.student.idStudent
+    )
+ 
+    dispatch(calculateAttestationActionCreator({
+      authToken: authToken,
+      maxLabCount: teacherClassGroupControlState.maxLabCount,
+      classId: teacherClassGroupControlState.selectedClass.idClass,
+      holdId: teacherClassGroupControlState.selectedClass.idClassHold,
+      countClassThatNotAttestation: teacherClassGroupControlState.countClassThatNotAttestation,
+      timeOfOneClass: teacherClassGroupControlState.timeOfOneClass,
+      studentId: studentIds,
+      onSuccess: onSuccess
+    }))
+  },[
+      dispatch,authToken, 
+      teacherClassGroupControlState.studentsStatistics,
+      teacherClassGroupControlState.maxLabCount,
+      teacherClassGroupControlState.selectedClass,
+      teacherClassGroupControlState.countClassThatNotAttestation,
+      teacherClassGroupControlState.timeOfOneClass
+  ])
+
+  const setAvgGrade = useCallback((value: string) => {
+    dispatch(setAvgGradeActionCreator(value));
+  },[dispatch,setAvgGradeActionCreator])
+
+  const onSave = useCallback((onSuccess: () => void) => {
+    if(teacherClassGroupControlState.avgGrade === null 
+      || teacherClassGroupControlState.maxLabCount === null
+      || teacherClassGroupControlState.timeOfOneClass === null
+      || teacherClassGroupControlState.countClassThatNotAttestation === null)
+      return;
+
+    dispatch(updateAttestationClassActionCreator({
+      authToken: authToken,
+      avgGrade: teacherClassGroupControlState.avgGrade,
+      maxCountLab: teacherClassGroupControlState.maxLabCount,
+      idAttestationStudentGrades: teacherClassGroupControlState.selectedAttestationGrade.idAttestationStudentGrades,
+      hour: teacherClassGroupControlState.timeOfOneClass,
+      currentCountLab: teacherClassGroupControlState.countClassThatNotAttestation,
+      onSuccess: onSuccess
+    }));
+  },[
+    authToken, dispatch,
+    teacherClassGroupControlState.avgGrade,
+    teacherClassGroupControlState.maxLabCount,
+    teacherClassGroupControlState.selectedAttestationGrade.idAttestationStudentGrades,
+    teacherClassGroupControlState.timeOfOneClass,
+    teacherClassGroupControlState.countClassThatNotAttestation,])
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
+        onSave={onSave}
         switchIsPassed={switchIsPassed}
+        calculateAttestation={calculateAttestation}
         updateGrade={updateGrade}
+        setAvgGrade={setAvgGrade}
         onReview={onReview}
         reloadTable={reloadTable}
         setSelectedGrade={setSelectedGrade}
+        setSelectedAttestationGrade={setSelectedAttestationGrade}
         deleteClass={deleteClass}
         teacherClassGroupControlState={teacherClassGroupControlState}
         goToTeacherClassGroupSubgroups={onPrevScreen}
@@ -202,6 +289,11 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
 
         createQrCode={createQrCode}
         clearQrCodeData={clearQrCodeData}
+
+        setCountClassThatNotAttestationClass={setCountClassThatNotAttestationClass}
+        setMaxCountLab={setMaxCountLab}
+        setTimeOfOneClass={setTimeOfOneClass}
+        resetAttestateWindow={resetAttestateWindow}
         />
     );
 });

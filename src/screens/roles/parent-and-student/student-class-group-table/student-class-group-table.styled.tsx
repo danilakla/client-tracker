@@ -96,7 +96,7 @@ export const ClassesContainer = styled.div`
   }
 `;
 
-export const ClassItem = styled.div`
+export const ClassItem = styled.div<{isPassed?: boolean}>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -107,6 +107,7 @@ export const ClassItem = styled.div`
   gap: 5px;
   height: 70px;
   flex: 0 0 70px;
+  background-color: ${({ isPassed }) => isPassed ? '#16d97735' : 'transparent'};
 `;
 
 export const TableWrapper = styled.div`
