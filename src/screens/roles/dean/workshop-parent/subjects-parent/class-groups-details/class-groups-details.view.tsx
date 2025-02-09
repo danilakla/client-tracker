@@ -240,7 +240,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
             Редактировать группы
           </Button>
-           : <Column>
+           : <Column horizontalAlign='center'>
             <Text themeFont={theme.fonts.h3}>
               Список подгрупп
             </Text>
@@ -270,13 +270,15 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           </Text>
           <Spacing variant='Column' themeSpace={10}/>
           <ScrollView style={{maxHeight: 400, position: 'relative'}}>
-          <ItemsContainerMobile>
-          {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
-              Совпадений не найдено
-            </Text>}
-          {filteredSubgroupsWindow.map((item, index) => 
-              <ActionExistbleButton key={index} onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
-          </ItemsContainerMobile>
+            <Column horizontalAlign='center'>
+              <ItemsContainerMobile>
+              {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
+                  Совпадений не найдено
+                </Text>}
+              {filteredSubgroupsWindow.map((item, index) => 
+                  <ActionExistbleButton key={index} onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
+              </ItemsContainerMobile>
+            </Column>
           </ScrollView>
           </Column>
       </Modal>
@@ -383,10 +385,12 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
               <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
               <Spacing themeSpace={15} variant='Column' />
               <ScrollView style={{height: 276}}>
-                <ItemsContainerMobile>
-                {filteredSubgroupsExists.map((item, index) => 
-                    <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)}
-                </ItemsContainerMobile>
+                <Column horizontalAlign='center'>
+                  <ItemsContainerMobile>
+                  {filteredSubgroupsExists.map((item, index) => 
+                      <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)}
+                  </ItemsContainerMobile>
+                </Column>
               </ScrollView>
             </Surface>
           </Row>
@@ -401,6 +405,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
           </Text>
           <Spacing variant='Column' themeSpace={10}/>
           <ScrollView style={{maxHeight: 400, position: 'relative'}}>
+          <Column horizontalAlign='center'>
           <ItemsContainerMobile>
           {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
               Совпадений не найдено
@@ -408,6 +413,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
           {filteredSubgroupsWindow.map((item, index) => 
               <ActionExistbleButton key={index} onClick={() => switchIsExistByIndex(index)} text={item.subgroupNumber} exist={item.isExist}/>)}
           </ItemsContainerMobile>
+          </Column>
           </ScrollView>
           </Column>
       </Popup>

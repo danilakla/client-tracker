@@ -337,6 +337,10 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
             {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
           Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {studentClassGroupTableState.classGroup?.formatName}</span><br/>
+          Преподаватель: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.teacherName.replaceAll('_', ' ')}</span><br/>
+          Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.description}</span><br/>
         </Text>
       </Modal>
     </WrapperMobile>
@@ -416,6 +420,10 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
             {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
           Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {studentClassGroupTableState.classGroup?.formatName}</span><br/>
+          Преподаватель: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.teacherName.replaceAll('_', ' ')}</span><br/>
+          Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
+            {studentClassGroupTableState.classGroup?.description}</span><br/>
         </Text>
       </Popup>
       <Popup isActive={isClassControlPopup} closePopup={closeClassControl}>

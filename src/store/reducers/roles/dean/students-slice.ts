@@ -9,6 +9,7 @@ export type StudentInfoState = {
     idStudent: number,
     idSubgroup: number,
     flpName: string,
+    login: string,
     keyStudentParents: string,
     idAccount: number
 };
@@ -58,6 +59,7 @@ const initialState: StudentsState = {
         idStudent: -1,
         idSubgroup: -1,
         flpName: '',
+        login: '',
         keyStudentParents: '',
         idAccount: -1
     },
@@ -197,8 +199,9 @@ export const studentsSlice = createSlice({
                 };
             }
         },
-        setSelectedSubgroupActionCreator(state, action: PayloadAction<SubgroupInfoState>) {
-            state.selectedSubgroup = action.payload;
+        setSelectedSubgroupActionCreator(state, action: PayloadAction<{value: SubgroupInfoState, onSuccess: () => void}>) {
+            state.selectedSubgroup = action.payload.value;
+            action.payload.onSuccess();
         },
         clearFormActionCreator(state) {
             state.errors = {};
@@ -206,8 +209,9 @@ export const studentsSlice = createSlice({
             state.newName = '';
             state.newSurname = '';
         },
-        setSelectedStudentActionCreator(state, action: PayloadAction<StudentInfoState>) {
-            state.selectedStudent = action.payload;
+        setSelectedStudentActionCreator(state, action: PayloadAction<{value: StudentInfoState, onSuccess: () => void}>) {
+            state.selectedStudent = action.payload.value;
+            action.payload.onSuccess();
         },
         setSearchSubgroupsActionCreator(state, action: PayloadAction<string>) {
             state.searchSubgroups = action.payload;

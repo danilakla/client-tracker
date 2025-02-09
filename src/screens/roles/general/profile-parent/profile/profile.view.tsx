@@ -157,7 +157,7 @@ export const ProfileDesktopView: FC<ProfileViewProps> = memo(({
 
   return (
     <WrapperDesktop isCenter={true} role={user.role} header='Профиль'>
-      <Surface padding={'40px'} borderColor={theme.colors.foreground} style={{width: 'auto'}}>
+      <Surface borderColor={theme.colors.foreground} style={{width: 'auto'}}>
         <Column verticalAlign='center' style={{width: 440}}>
           <Surface borderColor={theme.colors.foreground}>
             <Row verticalAlign='center' horizontalAlign='flex-start'>

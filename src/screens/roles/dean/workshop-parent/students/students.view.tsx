@@ -4,7 +4,6 @@ import { useMediaQuery } from 'react-responsive';
 import { theme } from '../../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../../components/wrapper-desktop';
-import { ScreenContainer } from './students.styled';
 import { Column } from '../../../../../ui-kit/column';
 import { Search } from '../../../../../ui-kit/search';
 import { StudentInfoState, StudentsState, SubgroupInfoState } from '../../../../../store/reducers/roles/dean/students-slice';
@@ -38,8 +37,8 @@ export type StudentsViewProps = {
   clearForm: () => void;
   deleteStudent: (onSuccess: () => void) => void;
   setNewSurname: (value: string) => void;
-  setSelectedSubgroup: (value: SubgroupInfoState) => void;
-  setSelectedStudent: (value: StudentInfoState) => void;
+  setSelectedSubgroup: (value: SubgroupInfoState, onSuccess: () => void) => void;
+  setSelectedStudent: (value: StudentInfoState, onSuccess: () => void) => void;
   deleteSubgroup: (onSuccess: () => void) => void;
 };
 
@@ -80,13 +79,11 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
   };
 
   const goToSubgroupDetails = useCallback((value: SubgroupInfoState) => {
-    setSelectedSubgroup(value);
-    setCurrentScreen('subgroup');
+    setSelectedSubgroup(value, () => setCurrentScreen('subgroup'));
   },[setSelectedSubgroup])
 
   const goToStudentDetails = useCallback((value: StudentInfoState) => {
-    setSelectedStudent(value);
-    setCurrentScreen('student');
+    setSelectedStudent(value, () => setCurrentScreen('student'));
   },[setSelectedStudent])
 
   const [isOpenEditAccountDataPopup, setIsOpenEditAccountDataPopup] = useState<boolean>(false);
@@ -187,68 +184,38 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
     <Column style={{position: 'absolute', height: '100vh', top: 0, zIndex: -1}}>
       <CircleLoading state={deanStudentsState.loading}/>
     </Column>  
-    {isMobile ? 
-      (<WrapperMobile 
-        onBack={handleBackActions[currentScreen]}  
-        role='ROLE_DEAN' header={headers[currentScreen]}>
-        <ScreenContainer 
-          currentScreen={currentScreen}>
-          <AllView 
-            search={deanStudentsState.searchSubgroups}
-            setSearch={setSearchSubgroups}
-            isMobile={true} 
-            onClick={goToSubgroupDetails}
-            data={deanStudentsState.subgroups} />
-          <SubgroupView
-            openDeleteSubgroupPopup={openDeleteSubgroupPopup}
-            loadingDelete={deanStudentsState.loadingDelete}
-            openCreateStudentPopup={openCreateStudentPopup}
-            search={deanStudentsState.searchStudents}
-            setSearch={setSearchStudents}
-            isMobile={true} 
-            onClick={goToStudentDetails}
-            data={deanStudentsState.selectedSubgroup} />
-          <StudentDetailsView
-            openUpdateAccountData={openUpdateAccountData}
-            controlConfirmDeletePopup={controlConfirmDeletePopup}
-            controlConfirmRecoveryPopup={controlConfirmRecoveryPopup}
-            keyStudentParents={deanStudentsState.selectedStudent.keyStudentParents}
-            fioFields={fioFields}
-            isMobile={true}
-            group={deanStudentsState.selectedSubgroup.subgroup.subgroupNumber}
-            />
-        </ScreenContainer>
-      </WrapperMobile>) :
-      (<WrapperDesktop 
-        isCenter={currentScreen === 'student'}
-        onBack={handleBackActions[currentScreen]} 
-        role='ROLE_DEAN' header={headers[currentScreen]}>
-          {currentScreen === 'all' && <AllView 
-            search={deanStudentsState.searchSubgroups}
-            setSearch={setSearchSubgroups}
-            isMobile={false} 
-            onClick={goToSubgroupDetails}
-            data={deanStudentsState.subgroups} />}
-          {currentScreen === 'subgroup' && <SubgroupView
-            loadingDelete={deanStudentsState.loadingDelete}
-            openDeleteSubgroupPopup={openDeleteSubgroupPopup}
-            openCreateStudentPopup={openCreateStudentPopup}
-            search={deanStudentsState.searchStudents}
-            setSearch={setSearchStudents}
-            isMobile={false} 
-            onClick={goToStudentDetails}
-            data={deanStudentsState.selectedSubgroup} />}
-          {currentScreen === 'student' && <StudentDetailsView
-            openUpdateAccountData={openUpdateAccountData}
-            controlConfirmDeletePopup={controlConfirmDeletePopup}
-            controlConfirmRecoveryPopup={controlConfirmRecoveryPopup}
-            keyStudentParents={deanStudentsState.selectedStudent.keyStudentParents}
-            fioFields={fioFields}
-            isMobile={false}
-            group={deanStudentsState.selectedSubgroup.subgroup.subgroupNumber}
-            />}
-        </WrapperDesktop>)
-    }
+    {currentScreen === 'all' && <AllView 
+      onBack={handleBackActions[currentScreen]}
+      header={headers[currentScreen]}
+      search={deanStudentsState.searchSubgroups}
+      setSearch={setSearchSubgroups}
+      isMobile={isMobile} 
+      onClick={goToSubgroupDetails}
+      data={deanStudentsState.subgroups} />}
+    {currentScreen === 'subgroup' && <SubgroupView
+      onBack={handleBackActions[currentScreen]}
+      header={headers[currentScreen]}
+      loadingDelete={deanStudentsState.loadingDelete}
+      openDeleteSubgroupPopup={openDeleteSubgroupPopup}
+      openCreateStudentPopup={openCreateStudentPopup}
+      search={deanStudentsState.searchStudents}
+      setSearch={setSearchStudents}
+      isMobile={isMobile} 
+      onClick={goToStudentDetails}
+      data={deanStudentsState.selectedSubgroup} />}
+    {currentScreen === 'student' && <StudentDetailsView
+      isCenter={true}
+      onBack={handleBackActions[currentScreen]}
+      header={headers[currentScreen]}
+      login={deanStudentsState.selectedStudent.login}
+      openUpdateAccountData={openUpdateAccountData}
+      controlConfirmDeletePopup={controlConfirmDeletePopup}
+      controlConfirmRecoveryPopup={controlConfirmRecoveryPopup}
+      keyStudentParents={deanStudentsState.selectedStudent.keyStudentParents}
+      fioFields={fioFields}
+      isMobile={isMobile}
+      group={deanStudentsState.selectedSubgroup.subgroup.subgroupNumber}
+      />}
     <UserAccountDataView
       onClickButton={onClickCreate}
       textButton='Добавить'
@@ -311,6 +278,9 @@ type AllViewProps = {
   search: string;
   setSearch: (value: string) => void;
   onClick: (value: SubgroupInfoState) => void; 
+
+  header: string;
+  onBack: () => void;
 }
 
 export const AllView: FC<AllViewProps> = memo(({
@@ -318,7 +288,10 @@ export const AllView: FC<AllViewProps> = memo(({
   data,
   search,
   onClick,
-  setSearch
+  setSearch,
+
+  header,
+  onBack,
 }) => {
   const [filteredData, setFilteredData] = useState<SubgroupInfoState[]>([]);
 
@@ -339,25 +312,35 @@ export const AllView: FC<AllViewProps> = memo(({
   }, [data, search]);
 
   return (
-    isMobile ? (<Column horizontalAlign='center'>
-      <Search value={search} setValue={setSearch}/>
-      <Spacing themeSpace={20} variant='Column' />
-      {
-        filteredData.map((item, index) => <>
-          <ActionButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />
-          <Spacing themeSpace={10} variant='Column' />
-        </>)
-      }
-    </Column>) : (<Column style={{width: 695}}>
-      <Search isMobile={false} value={search} setValue={setSearch}/>
-      <Spacing themeSpace={30} variant='Column' />
-      <GridContainer columns={4}>
-        {
-          filteredData.map((item, index) =>
-            <ActionBlockButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)
-        }
-      </GridContainer>
-    </Column>)
+    isMobile ? 
+    (<WrapperMobile 
+        onBack={onBack}  
+        role='ROLE_DEAN' header={header}>
+          <Column horizontalAlign='center'>
+            <Search value={search} setValue={setSearch}/>
+            <Spacing themeSpace={20} variant='Column' />
+            {
+              filteredData.map((item, index) => <>
+                <ActionButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />
+                <Spacing themeSpace={10} variant='Column' />
+              </>)
+            }
+          </Column>
+      </WrapperMobile>) : 
+      (<WrapperDesktop 
+        onBack={onBack} 
+        role='ROLE_DEAN' header={header}>
+          <Column style={{width: 695}}>
+            <Search isMobile={false} value={search} setValue={setSearch}/>
+            <Spacing themeSpace={30} variant='Column' />
+            <GridContainer columns={4}>
+              {
+                filteredData.map((item, index) =>
+                  <ActionBlockButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)
+              }
+            </GridContainer>
+          </Column>
+      </WrapperDesktop>)
   );
 });
 
@@ -370,6 +353,9 @@ type SubgroupViewProps = {
   onClick: (value: StudentInfoState) => void; 
   openDeleteSubgroupPopup: () => void;
   loadingDelete: "idle" | "loading" | "success" | "error";
+
+  header: string;
+  onBack: () => void;
 }
 
 export const SubgroupView: FC<SubgroupViewProps> = memo(({
@@ -380,7 +366,9 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
   onClick,
   loadingDelete,
   openDeleteSubgroupPopup,
-  setSearch
+  setSearch,
+  onBack,
+  header
 }) => {
   const [filteredData, setFilteredData] = useState<StudentInfoState[]>([]);
 
@@ -397,47 +385,56 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
  
 
   return (
-    isMobile ? (<Column horizontalAlign='center'>
-        <Row style={{width: '100%', maxWidth: 440}}>
-          <Search value={search} setValue={setSearch}/>
-          <Spacing themeSpace={10} variant='Row' />
-          <Button onClick={openCreateStudentPopup} variant='primary' padding={[12,10]}>
-            Добавить
-          </Button>
-        </Row>
-        <Spacing themeSpace={20} variant='Column' />
-        {
-          filteredData.map((item, index) => <>
-            <ActionButton key={index} onClick={() => onClick(item)} text={item.flpName} />
-            <Spacing themeSpace={10} variant='Column' />
-          </>)
-        }
-        <Spacing themeSpace={15} variant='Column' />
-        <Button onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
-          Удалить подгруппу
-        </Button>
-      </Column>) : (
-      <Column horizontalAlign='center' style={{width: 695}}>
-        <Row style={{width: '100%'}}>
-          <Search isMobile={false} 
-            value={search} 
-            setValue={setSearch}/>
-          <Spacing themeSpace={15} variant='Row' />
-          <Button onClick={openCreateStudentPopup} variant='primary' padding={[12,17]}>
-            Добавить
-          </Button>
-          <Spacing themeSpace={15} variant='Row' />
-          <Button style={{flexShrink: 0}}  onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
-            Удалить подгруппу
-          </Button>
+    isMobile ? 
+    (<WrapperMobile 
+      onBack={onBack}  
+      role='ROLE_DEAN' header={header}>
+        <Column horizontalAlign='center'>
+          <Row style={{width: '100%', maxWidth: 440}}>
+            <Button onClick={openCreateStudentPopup} variant='primary' padding={[12,8]}>
+              Добавить студента
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,8]}>
+              Удалить подгруппу
+            </Button>
           </Row>
-        <Spacing themeSpace={30} variant='Column' />
-        <GridContainer columns={4}>
-          {filteredData.map((item, index) => <>
-            <ActionBlockButton key={index} text={item.flpName} onClick={() => onClick(item)} />
-          </>)}
-        </GridContainer>
-      </Column>)
+          <Spacing themeSpace={20} variant='Column' />
+          <Search value={search} setValue={setSearch}/>
+          <Spacing themeSpace={20} variant='Column' />
+          {
+            filteredData.map((item, index) => <>
+              <ActionButton key={index} onClick={() => onClick(item)} text={item.flpName} />
+              <Spacing themeSpace={10} variant='Column' />
+            </>)
+          }
+        </Column>
+      </WrapperMobile>) : 
+      (<WrapperDesktop 
+        onBack={onBack} 
+        role='ROLE_DEAN' header={header}>
+          <Column horizontalAlign='center' style={{width: 695}}>
+            <Row style={{width: '100%'}}>
+              <Search isMobile={false} 
+                value={search} 
+                setValue={setSearch}/>
+              <Spacing themeSpace={15} variant='Row' />
+              <Button onClick={openCreateStudentPopup} variant='primary' padding={[12,17]}>
+                Добавить
+              </Button>
+              <Spacing themeSpace={15} variant='Row' />
+              <Button style={{flexShrink: 0}}  onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
+                Удалить подгруппу
+              </Button>
+              </Row>
+            <Spacing themeSpace={30} variant='Column' />
+            <GridContainer columns={4}>
+              {filteredData.map((item, index) => <>
+                <ActionBlockButton key={index} text={item.flpName} onClick={() => onClick(item)} />
+              </>)}
+            </GridContainer>
+          </Column>
+      </WrapperDesktop>)
   );
 });
 
@@ -448,60 +445,36 @@ type StudentDetailsViewProps = {
   controlConfirmRecoveryPopup: () => void;
   controlConfirmDeletePopup: () => void;
   openUpdateAccountData: () => void;
+  login: string;
   group: string;
+
+  header: string;
+  onBack: () => void;
+  isCenter: boolean;
 }
 
 export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
   isMobile = false,
   group,
+  login,
   controlConfirmRecoveryPopup,
   controlConfirmDeletePopup,
   openUpdateAccountData,
   keyStudentParents,
-  fioFields
+  fioFields,
+
+  onBack,
+  isCenter,
+  header
 }) => {
 
   return (
-    isMobile ? (<Column padding={[0,25]} horizontalAlign='center'>
-      <Surface style={{maxWidth: 440}}>
-        <Row verticalAlign='center' style={{width: '100%'}} horizontalAlign='space-between'>
-          <Image src={accountLogoSVG} width={95} height={95}/>
-          <Spacing themeSpace={10} variant='Row' />
-          <Column style={{gap: 15, overflow: 'hidden'}} verticalAlign='space-between'>
-            <Text themeFont={theme.fonts.h2}> 
-            {fioFields[0]}
-            </Text>
-            <Text themeFont={theme.fonts.h2}> 
-              {fioFields[1]}
-            </Text>
-            <Text themeFont={theme.fonts.h2}> 
-              {fioFields[2]}
-            </Text>
-            <Text themeFont={theme.fonts.ht2}> 
-              {group}
-            </Text>
-          </Column>
-        </Row>
-        <Spacing themeSpace={25} variant='Column' />
-        <Textarea 
-        isCopy={true} 
-        value={keyStudentParents} 
-        placeholder='Родительский ключ' 
-        disabled={true} header='Родительский ключ' />
-      </Surface>
-      <Spacing themeSpace={15} variant='Column' />
-      <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
-      <Spacing variant='Column' themeSpace={10} />
-      <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />
-      <Spacing variant='Column' themeSpace={10} />
-      <ActionButton 
-        themeFont={theme.fonts.h2} 
-        textColor={theme.colors.attentive} 
-        onClick={controlConfirmDeletePopup} 
-        text='Удалить' />
-    </Column>) : (<Surface padding='40px' style={{width: 'auto'}}>
-      <Column horizontalAlign='center' style={{position: 'relative', width: 440}}>
-        <Surface>
+    isMobile ? 
+    (<WrapperMobile 
+      onBack={onBack}  
+      role='ROLE_DEAN' header={header}>
+      <Column horizontalAlign='center'>
+        <Surface style={{maxWidth: 440}}>
           <Row verticalAlign='center' style={{width: '100%'}} horizontalAlign='space-between'>
             <Image src={accountLogoSVG} width={95} height={95}/>
             <Spacing themeSpace={10} variant='Row' />
@@ -521,13 +494,18 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
             </Column>
           </Row>
           <Spacing themeSpace={25} variant='Column' />
+          <Text themeFont={theme.fonts.ht2}> 
+            <b>Логин:</b> {login}
+          </Text>
+          <Spacing themeSpace={15} variant='Column' />
           <Textarea 
-            isCopy={true} 
-            value={keyStudentParents} 
-            placeholder='Родительский ключ' 
-            disabled={true} header='Родительский ключ' />
+          isCopy={true} 
+          height={80}
+          value={keyStudentParents} 
+          placeholder='Родительский ключ' 
+          disabled={true} header='Родительский ключ' />
         </Surface>
-        <Spacing themeSpace={25} variant='Column' />
+        <Spacing themeSpace={15} variant='Column' />
         <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
         <Spacing variant='Column' themeSpace={10} />
         <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />
@@ -538,7 +516,57 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
           onClick={controlConfirmDeletePopup} 
           text='Удалить' />
       </Column>
-    </Surface>)
+    </WrapperMobile>) : 
+    (<WrapperDesktop 
+        isCenter={isCenter}
+        onBack={onBack} 
+        role='ROLE_DEAN' header={header}> 
+        <Surface style={{width: 'auto'}}>
+          <Column horizontalAlign='center' style={{position: 'relative', width: 440}}>
+            <Surface>
+              <Row verticalAlign='center' style={{width: '100%'}} horizontalAlign='space-between'>
+                <Image src={accountLogoSVG} width={95} height={95}/>
+                <Spacing themeSpace={10} variant='Row' />
+                <Column style={{gap: 15, overflow: 'hidden'}} verticalAlign='space-between'>
+                  <Text themeFont={theme.fonts.h2}> 
+                  {fioFields[0]}
+                  </Text>
+                  <Text themeFont={theme.fonts.h2}> 
+                    {fioFields[1]}
+                  </Text>
+                  <Text themeFont={theme.fonts.h2}> 
+                    {fioFields[2]}
+                  </Text>
+                  <Text themeFont={theme.fonts.ht2}> 
+                    {group}
+                  </Text>
+                </Column>
+              </Row>
+              <Spacing themeSpace={25} variant='Column' />
+              <Text themeFont={theme.fonts.ht2}> 
+                <b>Логин:</b> {login}
+              </Text>
+              <Spacing themeSpace={15} variant='Column' />
+              <Textarea 
+                height={75}
+                isCopy={true} 
+                value={keyStudentParents} 
+                placeholder='Родительский ключ' 
+                disabled={true} header='Родительский ключ' />
+            </Surface>
+            <Spacing themeSpace={25} variant='Column' />
+            <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
+            <Spacing variant='Column' themeSpace={10} />
+            <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />
+            <Spacing variant='Column' themeSpace={10} />
+            <ActionButton 
+              themeFont={theme.fonts.h2} 
+              textColor={theme.colors.attentive} 
+              onClick={controlConfirmDeletePopup} 
+              text='Удалить' />
+          </Column>
+        </Surface>
+    </WrapperDesktop>)
   );
 });
 
@@ -613,17 +641,17 @@ export const UserAccountDataView: FC<UserAccountDataViewProps> = memo(({
             header='Фамилия' 
             placeholder='Иванов' error={lastnameError}
             value={lastname} setValue={setLastname}/>
-          <Spacing variant='Column' themeSpace={30}/>
+          <Spacing variant='Column' themeSpace={25}/>
           <Input 
             header='Имя' 
             placeholder='Иванов' error={nameError}
             value={name} setValue={setName}/>
-          <Spacing variant='Column' themeSpace={30}/>
+          <Spacing variant='Column' themeSpace={25}/>
           <Input 
             header='Отчество' 
             placeholder='Иванов' error={surnameError}
             value={surname} setValue={setSurname}/>
-          <Spacing variant='Column' themeSpace={40}/>
+          <Spacing variant='Column' themeSpace={30}/>
           <Row>
             <Button onClick={onClickButton} state={state} variant='recomended' padding={[12,17]}>
               {textButton}
@@ -641,17 +669,17 @@ export const UserAccountDataView: FC<UserAccountDataViewProps> = memo(({
             header='Фамилия' 
             placeholder='Иванов' error={lastnameError}
             value={lastname} setValue={setLastname}/>
-          <Spacing variant='Column' themeSpace={30}/>
+          <Spacing variant='Column' themeSpace={25}/>
           <Input 
             header='Имя' 
             placeholder='Иванов' error={nameError}
             value={name} setValue={setName}/>
-          <Spacing variant='Column' themeSpace={30}/>
+          <Spacing variant='Column' themeSpace={25}/>
           <Input 
             header='Отчество' 
             placeholder='Иванов' error={surnameError}
             value={surname} setValue={setSurname}/>
-          <Spacing variant='Column' themeSpace={40}/>
+          <Spacing variant='Column' themeSpace={30}/>
           <Row>
             <Button onClick={onClickButton} state={state} variant='recomended' padding={[12,17]}>
               {textButton}

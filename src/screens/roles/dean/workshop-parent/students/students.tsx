@@ -50,12 +50,12 @@ export const Students: FC<StudentsProps> = memo(() => {
     dispatch(setSearchStudentsActionCreator(value));
   },[dispatch, setSearchStudentsActionCreator])
 
-  const setSelectedSubgroup = useCallback((value: SubgroupInfoState)=>{
-    dispatch(setSelectedSubgroupActionCreator(value));
+  const setSelectedSubgroup = useCallback((value: SubgroupInfoState, onSuccess: () => void)=>{
+    dispatch(setSelectedSubgroupActionCreator({value, onSuccess}));
   },[dispatch, setSelectedSubgroupActionCreator])
 
-  const setSelectedStudent = useCallback((value: StudentInfoState)=>{
-    dispatch(setSelectedStudentActionCreator(value));
+  const setSelectedStudent = useCallback((value: StudentInfoState, onSuccess: () => void)=>{
+    dispatch(setSelectedStudentActionCreator({value, onSuccess}));
   },[dispatch, setSelectedStudentActionCreator])
 
 

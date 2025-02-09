@@ -535,7 +535,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             {teacherClassGroupControlState.initData?.classGroup.classGroup.description}</span><br/>
           Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {teacherClassGroupControlState.initData?.classGroup.nameClassFormat}</span><br/>
-            Подгруппы: <span style={{fontFamily: theme.fonts.ht2.family}}> <br/>
+          Подгруппы: <span style={{fontFamily: theme.fonts.ht2.family}}> <br/>
           {teacherClassGroupControlState.initData?.subgroup.subgroupNumber
             ?.split('#') 
             .map((subgroup, index) => (
