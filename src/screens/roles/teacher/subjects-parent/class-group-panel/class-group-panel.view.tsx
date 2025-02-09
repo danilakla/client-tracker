@@ -985,6 +985,7 @@ export const ClassItemView: FC<ClassItemViewProps> = memo(({
   return !checkIsAttestationGrade(item) ? (
     item.idStudentGrate !== -1 ? (
       <ClassItem
+        isPassed={item.isPassLab}
         isReview={
           item.isReview && 
           ![3, 7, 8].includes(item.attendance)}

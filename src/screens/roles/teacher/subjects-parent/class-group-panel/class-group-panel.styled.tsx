@@ -111,7 +111,7 @@ export const ClassesContainer = styled.div`
   }
 `;
 
-export const ClassItem = styled.div<{isReview?: boolean}>`
+export const ClassItem = styled.div<{isReview?: boolean, isPassed?: boolean}>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -122,7 +122,7 @@ export const ClassItem = styled.div<{isReview?: boolean}>`
   gap: 5px;
   height: 70px;
   flex: 0 0 70px;
-  background-color: ${({ isReview }) => isReview ? '#fc6e6c79' : 'transparent'};
+  background-color: ${({ isReview, isPassed }) => isPassed ? '#16d97735' : isReview ? '#fc6e6c79' : 'transparent'};
 `;
 
 export const EmptyClassItem = styled.div`
