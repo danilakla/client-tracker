@@ -46,7 +46,7 @@ export const SwitchWrapper = styled.div<{ isLeft: boolean }>`
   right: 15px;
   width: 38px;
   height: 12px;
-  background-color: ${(props) => (props.isLeft ? '#52526645' : '#61a7fc45')};
+  background-color: ${(props) => (props.isLeft ? '#c2c2c26f' : '#61a7fc45')};
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -56,7 +56,7 @@ export const SwitchWrapper = styled.div<{ isLeft: boolean }>`
 export const SwitcherCircle = styled.div<{ isLeft: boolean }>`
   height: 20px;
   width: 20px;
-  background-color: ${(props) => (props.isLeft ? '#5b5b5b' : '#33ccff')};
+  background-color: ${(props) => (props.isLeft ? '#b5b5bc' : '#33ccff')};
   border-radius: 50%;
   position: absolute;
   transition: 0.3s;
