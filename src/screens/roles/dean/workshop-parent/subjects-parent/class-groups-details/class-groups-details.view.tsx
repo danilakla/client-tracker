@@ -256,7 +256,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           </ItemsContainerMobile>
           <Spacing themeSpace={25} variant='Column' />
          {type === 'edit' && 
-          <Button borderRaius={10} onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
+          <Button onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
             Удалить группу занятий
           </Button>}
         </>)
@@ -323,7 +323,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                     {type === 'add' ? 'Добавить группу занятий' : 'Сохранить изменения'}
                   </Button>
                   <Spacing themeSpace={20} variant='Row' />
-                  <Button onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
+                  <Button  onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
                     Удалить группу занятий
                   </Button>
               </Row>
@@ -368,7 +368,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={25} variant='Row' />
             <Surface >
               <Row horizontalAlign='space-between'>
-                <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
+                <Button onClick={controlSubroupsWindow}  variant='primary' padding={[12,17]}>
                   Редактировать группы
                 </Button>
                 <Spacing themeSpace={15} variant='Row' />

@@ -248,6 +248,9 @@ export const classGroupControlSlice = createSlice({
                     state.selectedGrade.grade = null;
             }
         },
+        switchIsPassedActionCreator(state) {
+            state.selectedGrade.isPassLab = !state.selectedGrade.isPassLab;
+        },
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.selectedGrade.description = action.payload;
         },
@@ -549,7 +552,13 @@ export const updateGradeActionCreator = createAsyncThunk('teacher-class-update',
                     attendance = grade.attendance;
             }
 
-            const response = await teacherApi.updateGrade(authToken, grade.idStudentGrate, grade.grade, desc === '' ? null : desc , attendance);
+            const response = await teacherApi.updateGrade(
+                authToken, 
+                grade.idStudentGrate, 
+                grade.grade, 
+                desc === '' ? null : desc , 
+                attendance, 
+                grade.isPassLab);
             
             thunkApi.dispatch(classGroupControlSlice.actions.updateGradeActionCreator(response));
             onSuccess();
@@ -624,7 +633,7 @@ export const transformAndSortStudentsStatistics = (input: {
                 description: grade.description,
                 attendance: grade.attendance,
                 isReview: false,
-                isPassLab: false
+                isPassLab: grade.isPassLab
             }));
 
         attestationStudentGrades.filter(att => att.idStudent === idStudent)

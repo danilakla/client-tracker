@@ -14,7 +14,7 @@ export const CheckboxContainer = styled.label<{
   justify-content: center;
   width: ${({ size }) => `${size}px`};
   height: ${({ size }) => `${size}px`};
-  box-shadow: 0 0 4px 2px #8f8fbf25;
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   border: 2px solid ${({ borderColor }) => borderColor};
   padding: 10px 10px 10px 10px;
   display: flex;

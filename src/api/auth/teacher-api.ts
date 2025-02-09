@@ -54,12 +54,19 @@ export const teacherApi = {
                 return response.data;
             })
     },
-    updateGrade(authToken: string, idStudentGrate: number, grade: number | null, description: string | null, attendance: AttendanceCodeType){
+    updateGrade(
+        authToken: string, 
+        idStudentGrate: number, 
+        grade: number | null, 
+        description: string | null, 
+        attendance: AttendanceCodeType, 
+        isPassLab: boolean){
         return instance.put('/teacher/update/classes',{
             idStudentGrate: idStudentGrate,
             grade: grade,
             description: description,
-            attendance: attendance
+            attendance: attendance,
+            isPassLab: isPassLab
             }, { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;

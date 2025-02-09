@@ -21,6 +21,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     setGradeNumberActionCreator,
     setDescriptionActionCreator,
     setAttendanceActionCreator,
+    switchIsPassedActionCreator,
 
     setSelectedClassActionCreator,
     setExpirationOfRefreshActionCreator,
@@ -94,6 +95,10 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   const setGradeNumber = useCallback((value: string)=>{
     dispatch(setGradeNumberActionCreator(value));
   },[dispatch,setGradeNumberActionCreator])
+
+  const switchIsPassed = useCallback(()=>{
+    dispatch(switchIsPassedActionCreator());
+  },[dispatch,switchIsPassedActionCreator])
 
   const setDescription = useCallback((value: string)=>{
     dispatch(setDescriptionActionCreator(value));
@@ -176,6 +181,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   return (
       <ClassGroupPanelView 
         createClass={createClass}
+        switchIsPassed={switchIsPassed}
         updateGrade={updateGrade}
         onReview={onReview}
         reloadTable={reloadTable}

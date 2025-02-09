@@ -131,7 +131,7 @@ export const ControlSubjectsMobileView: FC<LocalViewProps> = memo(({
       <Row style={{width: '100%', maxWidth: 440}}>
         <Search value={deanControlSubjectsState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={10} variant='Row' />
-        <Button onClick={openAddWindow} borderRaius={10} variant='primary' padding={[12,10]}>
+        <Button onClick={openAddWindow} variant='primary' padding={[12,10]}>
           Добавить
         </Button>
       </Row>
@@ -195,7 +195,7 @@ export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(({
         <Row style={{width: '100%'}}>
           <Search isMobile={false} value={deanControlSubjectsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={20} variant='Row' />
-          <Button onClick={openAddWindow} borderRaius={10} variant='primary' padding={[12,17]}>
+          <Button onClick={openAddWindow} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
         </Row>

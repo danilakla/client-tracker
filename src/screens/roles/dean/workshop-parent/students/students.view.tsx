@@ -401,7 +401,7 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
         <Row style={{width: '100%', maxWidth: 440}}>
           <Search value={search} setValue={setSearch}/>
           <Spacing themeSpace={10} variant='Row' />
-          <Button onClick={openCreateStudentPopup} borderRaius={10} variant='primary' padding={[12,10]}>
+          <Button onClick={openCreateStudentPopup} variant='primary' padding={[12,10]}>
             Добавить
           </Button>
         </Row>
@@ -413,7 +413,7 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
           </>)
         }
         <Spacing themeSpace={15} variant='Column' />
-        <Button borderRaius={10} onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
+        <Button onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
           Удалить подгруппу
         </Button>
       </Column>) : (
@@ -423,11 +423,11 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
             value={search} 
             setValue={setSearch}/>
           <Spacing themeSpace={15} variant='Row' />
-          <Button onClick={openCreateStudentPopup} borderRaius={10} variant='primary' padding={[12,17]}>
+          <Button onClick={openCreateStudentPopup} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
           <Spacing themeSpace={15} variant='Row' />
-          <Button style={{flexShrink: 0}} borderRaius={10} onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
+          <Button style={{flexShrink: 0}}  onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
             Удалить подгруппу
           </Button>
           </Row>

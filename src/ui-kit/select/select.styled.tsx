@@ -29,7 +29,8 @@ export const SelectStyled = styled.div<{
 }>`
   width: 100%;
   cursor: pointer;
-  box-shadow: 0 0 4px 2px #8f8fbf25;
+  border: 2px solid #e9e9f2;
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   box-sizing: border-box;
   border: 2px solid ${({ borderColor }) => borderColor};
   padding: 10px 10px 10px 10px;

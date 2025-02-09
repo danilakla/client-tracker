@@ -22,15 +22,16 @@ export const ButtonContainer = styled.div<{width?: string}>`
 
 export const ActionButtonStyled = styled.div<{
   themeColor?: string;
+  borderColor?: string;
 }>`
   width: 100%;
   height: 42px;
-  box-shadow: 0 0 4px 2px #8f8fbf30;
   box-sizing: border-box;
-  border: none;
-  padding: 0px 20px;
+  padding: 0px 20px 0px 10px;
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   display: flex;
   border-radius: 10px;
+  border: 2px solid ${({ borderColor }) => borderColor};
   background-color: ${({ themeColor }) => themeColor};
   align-items: center;
 

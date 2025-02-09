@@ -292,11 +292,11 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface>
         <Row>
-            <Button onClick={controlInfoWindow} borderRaius={10} variant='recomended' padding={[10, 10]}>
+            <Button onClick={controlInfoWindow}  variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
             <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable} borderRaius={10} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
+            <Button onClick={reloadTable} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>
           </Row>
@@ -381,11 +381,11 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
         </Column> : <>
         <Surface style={{width: 900}}>
           <Row>
-            <Button onClick={controlInfoWindow} borderRaius={10} variant='recomended' padding={[10, 10]}>
+            <Button onClick={controlInfoWindow}  variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
             <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable} borderRaius={10} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
+            <Button onClick={reloadTable}  state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>
           </Row>
@@ -466,7 +466,6 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
       <Button 
         onClick={redisKeyData === null ? getKeyForQr : () => {}} 
         width={200} state={loadingKey}
-        borderRaius={10}
         variant={redisKeyData === null ? 'primary' : 'recomended'} padding={[12,17]}>
         {redisKeyData === null ? "Получить ключ" : "✓"}
       </Button>
@@ -510,7 +509,6 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
               <Button 
                 onClick={onAskReview} 
                 width={270}
-                borderRaius={10}
                 variant="primary" padding={[12,17]}>
                 Запросить пересмотр
               </Button>

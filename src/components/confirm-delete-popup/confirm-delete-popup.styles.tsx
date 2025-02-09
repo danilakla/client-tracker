@@ -10,7 +10,7 @@ export const HeaderContainer = styled.div`
     align-items: center;
     width: 100vw;
     background-color: #ffffff;
-    box-shadow: 0 0 4px 2px #8f8fbf30;
+    border: 2px solid #e9e9f2;
 `;
 
 export const BottomContainer = styled.div`
@@ -23,7 +23,7 @@ export const BottomContainer = styled.div`
     height: 60px;
     width: 100vw;
     background-color: #ffffff;
-    box-shadow: 0 0 4px 2px #8f8fbf30;
+    border: 2px solid #e9e9f2;
     
 `;
 

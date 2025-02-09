@@ -25,7 +25,7 @@ export const SearchStyled = styled.input<{
 }>`
   width: 100%;
   autocomplete: off;
-  box-shadow: 0 0 2px 0px #8f8fbf30;
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   box-sizing: border-box;
   border: 2px solid ${({ borderColor }) => borderColor};
   padding: 10px 10px 10px 40px;

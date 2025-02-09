@@ -183,7 +183,7 @@ export const ClassGroupsMobileView: FC<LocalViewProps> = memo(({
         <Row style={{width: '100%', maxWidth: 440}}>
           <Search value={deanClassGroupsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={10} variant='Row' />
-          <Button onClick={goToClassGroupAdd} borderRaius={10} variant='primary' padding={[12,10]}>
+          <Button onClick={goToClassGroupAdd} variant='primary' padding={[12,10]}>
             Добавить
           </Button>
         </Row>
@@ -264,7 +264,7 @@ export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(({
         <Row style={{width: '100%'}}>
           <Search isMobile={false} value={deanClassGroupsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={20} variant='Row' />
-          <Button onClick={goToClassGroupAdd} borderRaius={10} variant='primary' padding={[12,17]}>
+          <Button onClick={goToClassGroupAdd} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
         </Row>

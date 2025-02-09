@@ -24,7 +24,7 @@ export const ErrorPopup: FC<ErrorPopupProps> = memo(({
           {textError}
         </Text>
         <Spacing variant='Column' themeSpace={25} />
-        <Button onClick={closePopup} borderRaius={10} variant='attentive' padding={[12, 17]}>
+        <Button onClick={closePopup} variant='attentive' padding={[12, 17]}>
           Вернуться назад
         </Button>
       </Column>

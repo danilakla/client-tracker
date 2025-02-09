@@ -7,7 +7,6 @@ import { CircleLoading } from "../circle-loading";
 export type ButtonProps = {
     variant: 'primary' | 'attentive' | 'recomended'
     width?: number | string;
-    borderRaius?: number;
     children?: string;
     height?: number | string;
     sizeLoading?: number;
@@ -22,7 +21,6 @@ export const Button: FC<ButtonProps> = memo(({
     height,
     sizeLoading = 15,
     state = 'idle',
-    borderRaius = 20,
     onClick,
     children, 
     ...rest 
@@ -30,7 +28,7 @@ export const Button: FC<ButtonProps> = memo(({
 
     return <StyledButton
         variant={variant}
-        borderRaius={borderRaius}
+        borderRaius={12}
         height={height}
         disabled={state === 'loading'}
         width={width}

@@ -291,7 +291,10 @@ export const initClassGroupDetailsActionCreator = createAsyncThunk('dean-class-g
                         thunkApi.dispatch(classGroupDetailsSlice.actions.switchIsManyActionCreator());
                     }
 
-                    if(!classGroupDetailsResponse.hasApplyAttestation){
+                    const result = classGroupDetailsResponse.hasApplyAttestation.length === 0 ? false
+                        : classGroupDetailsResponse.hasApplyAttestation.every((val: boolean) => val === true);
+
+                    if(!result){
                         thunkApi.dispatch(classGroupDetailsSlice.actions.switchHasApplyAttestationActionCreator());
                     }
 

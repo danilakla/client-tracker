@@ -26,11 +26,13 @@ import QRCode from 'react-qr-code';
 import React from 'react';
 import { Checkbox } from '../../../../../ui-kit/checkbox';
 import { useTableScroll } from '../../../../../hooks/table-scroll-hook';
+import { ActionButtonSwitch } from '../../../../../ui-kit/action-button-switch';
 
 export type ClassGroupPanelViewProps = {
   teacherClassGroupControlState: СlassGroupControlState;
   goToTeacherClassGroupSubgroups: () => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
+  switchIsPassed: () => void;
   updateGrade: (onSuccess: () => void) => void;
   toggleComplited: () => void;
   deleteClass: (onSuccess: () => void) => void;
@@ -62,6 +64,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setAttendance,
   setDescription,
   setGradeNumber,
+  switchIsPassed,
   reloadTable,
   onReview,
   toggleComplited,
@@ -176,6 +179,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           isClassControlPopup={isClassControlPopup}
           isOpenUpdateWindow={isOpenUpdateWindow}
           controlGenerateKeyPopup={controlGenerateKeyPopup}
+          switchIsPassed={switchIsPassed}
           isOpenDescriptionClass={isOpenDescriptionClass}
           controlQrCodePopup={controlQrCodePopup}
           toggleComplited={toggleComplited}
@@ -185,6 +189,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
         (<ClassGroupPanelDesktopView
           openAddPopup={openAddPopup}
           handleReview={handleReview}
+          switchIsPassed={switchIsPassed}
           reloadTable={reloadTable}
           toggleComplited={toggleComplited}
           closeClassControlForStudents={closeClassControlForStudents}
@@ -256,6 +261,7 @@ type LocalViewProps = {
   openDeletePopup: () => void;
   openClassControlForStudents: (value: ClassHeaderType) => void;
   setGradeNumber: (value: string) => void;
+  switchIsPassed: () => void;
   reloadTable: () => void;
   setDescription: (value: string) => void;
   setAttendance: (value: AttendanceCodeType) => void;
@@ -291,6 +297,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   closeUpdateWindow,
   openUpdateWindow,
   handleReview,
+  switchIsPassed,
   confirmUpdate,
   reloadTable,
 
@@ -309,11 +316,11 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface>
           <Row>
-            <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
+            <Button onClick={controlDescriptionClass}  variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
             <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable} borderRaius={10} state={teacherClassGroupControlState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
+            <Button onClick={reloadTable} state={teacherClassGroupControlState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>
           </Row>
@@ -329,11 +336,11 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={25} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 && 
             <Row>
-              <Button onClick={openAddPopup} borderRaius={10} height={45} variant='primary' padding={[12, 10]}>
+              <Button onClick={openAddPopup} height={45} variant='primary' padding={[12, 10]}>
                 Добавить занятие
               </Button>
               <Spacing themeSpace={20} variant='Row' />
-              <Button onClick={openDeletePopup} borderRaius={10} height={45} variant='attentive' padding={[12, 10]}>
+              <Button onClick={openDeletePopup} height={45} variant='attentive' padding={[12, 10]}>
                 Удалить занятие
               </Button>
             </Row>}
@@ -344,6 +351,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           selectedGrade={teacherClassGroupControlState.selectedGrade}
           setAttendance={setAttendance}
           isMobile={true}
+          switchIsPassed={switchIsPassed}
           errorNote={teacherClassGroupControlState.errors['gradeNumberError']}
           errorDescription={teacherClassGroupControlState.errors['descriptionError']}
           setGradeNumber={setGradeNumber}
@@ -364,7 +372,6 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
         <Button 
           onClick={controlGenerateKeyPopup} 
           width={200}
-          borderRaius={10}
           variant="primary" padding={[12,17]}>
           Генерация ключа
         </Button>
@@ -372,7 +379,6 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
         <Button 
           onClick={controlQrCodePopup} 
           width={200}
-          borderRaius={10}
           variant="primary" padding={[12,17]}>
           Генерация QR-code
         </Button>
@@ -381,7 +387,6 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           onClick={handleReview} 
           width={200}
           state={teacherClassGroupControlState.loadingReview}
-          borderRaius={10}
           variant="primary" padding={[12,17]}>
           Пересмотр
         </Button>
@@ -422,6 +427,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   setGradeNumber,
   closeUpdateWindow,
   openUpdateWindow,
+  switchIsPassed,
   openClassControlForStudents,
   isClassControlPopup,
   toggleComplited,
@@ -444,11 +450,11 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface style={{width: 900}}>
           <Row>
-            <Button onClick={controlDescriptionClass} borderRaius={10} variant='recomended' padding={[10, 10]}>
+            <Button onClick={controlDescriptionClass} variant='recomended' padding={[10, 10]}>
               Информация 🛈
             </Button>
             <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable} state={teacherClassGroupControlState.loadingReloadTable}  borderRaius={10} variant='recomended' padding={[10, 10]}>
+            <Button onClick={reloadTable} state={teacherClassGroupControlState.loadingReloadTable}   variant='recomended' padding={[10, 10]}>
               Обновить
             </Button>
           </Row>
@@ -464,12 +470,12 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 && 
             <Row>
-              <Button borderRaius={10} onClick={openAddPopup} variant='primary' padding={[12, 17]}>
+              <Button onClick={openAddPopup} variant='primary' padding={[12, 17]}>
                 Добавить занятие
               </Button>
               <Spacing themeSpace={15} variant='Row' />
               {teacherClassGroupControlState.classesIds.length !== 0 && 
-                <Button borderRaius={10} onClick={openDeletePopup} variant='attentive' padding={[12, 17]}>
+                <Button onClick={openDeletePopup} variant='attentive' padding={[12, 17]}>
                   Удалить занятие
                 </Button>}
             </Row>}
@@ -480,6 +486,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           selectedGrade={teacherClassGroupControlState.selectedGrade}
           setAttendance={setAttendance}
           isMobile={false}
+          switchIsPassed={switchIsPassed}
           toggleComplited={toggleComplited}
           isCompleted={teacherClassGroupControlState.isCompleted}
           isShowCompleted={teacherClassGroupControlState.isShowCompleted}
@@ -501,7 +508,6 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           <Button 
             onClick={controlGenerateKeyPopup} 
             width={240}
-            borderRaius={10}
             variant="primary" padding={[12,17]}>
             Генерация ключа
           </Button>
@@ -509,7 +515,6 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           <Button 
             onClick={controlQrCodePopup} 
             width={240}
-            borderRaius={10}
             variant="primary" padding={[12,17]}>
             Генерация QR-code
           </Button>
@@ -517,7 +522,6 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           <Button 
             onClick={handleReview} 
             width={240}
-            borderRaius={10}
             variant="primary" padding={[12,17]}>
             Пересмотр
           </Button>
@@ -647,14 +651,13 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
             <Button 
               onClick={handleStop} 
               width={100}
-              borderRaius={15}
               variant='attentive' padding={[12,17]}>
               Стоп
             </Button> : 
             <Button 
               onClick={handleStart} 
               width={100}
-              borderRaius={15} state={stateStart}
+              state={stateStart}
               variant="primary" padding={[12,17]}>
               Старт
             </Button>}
@@ -681,7 +684,6 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
         <Button 
           onClick={onClose} 
           width={120}
-          borderRaius={15}
           variant='attentive' padding={[12,17]}>
           Закрыть 
         </Button>
@@ -760,7 +762,7 @@ export const GenerateKeyPopup: FC<GenerateKeyPopupProps> = memo(({
         <Button 
           onClick={handleActivate} 
           width={140}
-          borderRaius={15} state={stateActivate}
+          state={stateActivate}
           variant="primary" padding={[12,17]}>
           Активировать
         </Button>
@@ -774,6 +776,7 @@ export type ControlStudentGradeProps = {
   setAttendance: (value: AttendanceCodeType) => void;
   setGradeNumber: (value: string) => void;
   setDescription: (value: string) => void;
+  switchIsPassed: () => void;
   confirmUpdate: () => void;
   errorNote?: string | null;
   isMobile: boolean;
@@ -791,6 +794,7 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
   setDescription,
   setGradeNumber,
   confirmUpdate,
+  switchIsPassed,
   isMobile,
   errorNote,
   selectedGrade,
@@ -831,13 +835,15 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
           header='Оценка' 
           placeholder='9' error={errorNote}
           value={selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
-        {isShowCompleted && <Row verticalAlign='center'>
-          <Text align='right' style={{width: 110, paddingRight: 5}} themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-            Отработано:
-          </Text>
-          <Checkbox value={isCompleted} toggle={toggleComplited}/>
-        </Row>}
+        <Spacing themeSpace={10} variant='Row' />
+        {isShowCompleted &&
+          <Checkbox label='Отработано:' value={isCompleted} toggle={toggleComplited}/>}
       </Row>
+      <Spacing themeSpace={25} variant='Column' />
+      <ActionButtonSwitch  
+        text='Защищено'
+        isLeft={!selectedGrade.isPassLab} 
+        onClick={switchIsPassed} />
       <Spacing themeSpace={25} variant='Column' />
       <Textarea
         value={selectedGrade.description || ''}

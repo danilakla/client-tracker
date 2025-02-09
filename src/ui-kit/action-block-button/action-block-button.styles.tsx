@@ -30,10 +30,10 @@ export const ActionBlockButtonStyled = styled.div<{
   cursor: pointer;
   height: ${({size}) => `${size || '155'}px`};
   border-radius: ${({borderRadius}) => `${borderRadius || '30'}px`};
-  box-shadow: 0 0 4px 2px #8f8fbf30;
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   box-sizing: border-box;
-  border: none;
   display: flex;
+  border: 2px solid #e9e9f2;
   flex-direction: column;
   padding: 25px;
   background-color: ${({ themeColor }) => themeColor};

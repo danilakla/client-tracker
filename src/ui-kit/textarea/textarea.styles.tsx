@@ -26,7 +26,7 @@ export const TextareaStyled = styled.textarea<{
 }>`
   width: 100%;
   autocomplete: off;
-  box-shadow: 0 0 4px 2px #8f8fbf25;
+  border: 2px solid #e9e9f2;
   box-sizing: border-box;
   resize: none;
   border: 2px solid ${({ borderColor }) => borderColor};
@@ -40,7 +40,7 @@ export const TextareaStyled = styled.textarea<{
   font-family: ${theme.fonts.ht1.family};
   font-weight: ${theme.fonts.ht1.weight};
   color: ${theme.fonts.ht1};
-
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   font-size: ${theme.fonts.ht1.desktopSize};
   @media (max-width: ${theme.toMobileSize + "px"}){
     font-size: ${theme.fonts.ht1.mobileSize};

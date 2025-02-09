@@ -197,7 +197,7 @@ export const SpecialtiesMobileView: FC<LocalViewData> = memo(({
       <Row style={{width: '100%', maxWidth: 440}}>
         <Search value={deanSpecialtiesState.searchText} setValue={setSearchTextAction}/>
         <Spacing themeSpace={10} variant='Row' />
-        <Button onClick={openCreator} borderRaius={10} variant='primary' padding={[12,10]}>
+        <Button onClick={openCreator} variant='primary' padding={[12,10]}>
           Добавить
         </Button>
       </Row>
@@ -256,7 +256,7 @@ export const SpecialtiesMobileView: FC<LocalViewData> = memo(({
           </Row>
           <Spacing variant='Column' themeSpace={35}/>
           <Button style={{width: '100%', maxWidth: 440}} 
-            borderRaius={10} onClick={openConfirmDelete} 
+            onClick={openConfirmDelete} 
             state={'idle'} 
             variant='attentive' padding={[12,17]}>
             Удалить
@@ -305,7 +305,7 @@ export const SpecialtiesDesktopView: FC<LocalViewData> = memo(({
             value={deanSpecialtiesState.searchText} 
             setValue={setSearchTextAction}/>
           <Spacing themeSpace={20} variant='Row' />
-          <Button onClick={openCreator} borderRaius={10} variant='primary' padding={[12,17]}>
+          <Button onClick={openCreator} variant='primary' padding={[12,17]}>
             Добавить
           </Button>
         </Row>
@@ -367,7 +367,7 @@ export const SpecialtiesDesktopView: FC<LocalViewData> = memo(({
         </Column>
         <Spacing variant='Column' themeSpace={30}/>
         <Button 
-          borderRaius={10} width={340} 
+           width={340} 
           onClick={openConfirmDelete} 
           state={'idle'} variant='attentive' padding={[12,17]}>
           Удалить

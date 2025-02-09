@@ -28,7 +28,7 @@ export const SuccessfulPopup: FC<SuccessfulPopupProps> = memo(({
         <Spacing variant='Column' themeSpace={20} />
         <Image src={successSVG} width={150} height={150}/> 
         <Spacing variant='Column' themeSpace={25} />
-        <Button onClick={closePopup} borderRaius={10} variant='recomended' padding={[12, 17]}>
+        <Button onClick={closePopup} variant='recomended' padding={[12, 17]}>
           Вернуться назад
         </Button>
       </Column>

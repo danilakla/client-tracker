@@ -202,24 +202,24 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
         top: 0,
         height: '100vh',
       }} horizontalAlign='center' verticalAlign='center'>
-        <Button onClick={handleButtonClick} borderRaius={10} variant='primary' padding={[12, 17]}>
+        <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
           Загрузить файл
         </Button>
       </Column>) : <Column horizontalAlign='center' style={{maxWidth: 440}}>
         <Column>
-          <Button onClick={handleButtonClick} borderRaius={10} variant='primary' padding={[12, 17]}>
+          <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
             Загрузить новый файл
           </Button>
           <Spacing variant='Column' themeSpace={15} />
           <Row>
             <Button 
               state={deanGenerateStudentsState.loading} 
-              onClick={onCreate} borderRaius={10} 
+              onClick={onCreate} 
               variant='recomended' padding={[12, 10]}>
               Создать аккаунты
             </Button>
             <Spacing variant='Row' themeSpace={15} />
-            <Button onClick={onClear} borderRaius={10} variant='attentive' padding={[12, 10]}>
+            <Button onClick={onClear} variant='attentive' padding={[12, 10]}>
               Очистить
             </Button>
           </Row>
@@ -281,7 +281,7 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
         top: 0,
         height: '100vh',
       }} horizontalAlign='center' verticalAlign='center'>
-        <Button onClick={handleButtonClick} borderRaius={10} variant='primary' padding={[12, 17]}>
+        <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
           Загрузить файл
         </Button>
       </Column>) : (<Column style={{width: 905}}>
@@ -289,16 +289,16 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
           <Button 
             onClick={onCreate} 
             state={deanGenerateStudentsState.loading} 
-            borderRaius={10} variant='recomended' 
+            variant='recomended' 
             padding={[12, 17]}>
             Создать аккаунты
           </Button>
           <Spacing variant='Row' themeSpace={20} />
-          <Button onClick={handleButtonClick} borderRaius={10} variant='primary' padding={[12, 17]}>
+          <Button onClick={handleButtonClick}  variant='primary' padding={[12, 17]}>
             Загрузить новый файл
           </Button>
           <Spacing variant='Row' themeSpace={20} />
-          <Button onClick={onClear} borderRaius={10} variant='attentive' padding={[12, 17]}>
+          <Button onClick={onClear} variant='attentive' padding={[12, 17]}>
             Очистить
           </Button>
         </Row>
@@ -315,7 +315,7 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
             {deanGenerateStudentsState.errors['createError']}
           </Text>
           <Spacing variant='Column' themeSpace={25} />
-          <Button onClick={closeErrorPopup} borderRaius={10} variant='attentive' padding={[12, 17]}>
+          <Button onClick={closeErrorPopup} variant='attentive' padding={[12, 17]}>
             Вернуться назад
           </Button>
         </Column>
@@ -328,7 +328,7 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
           <Spacing variant='Column' themeSpace={20} />
           <Image src={successSVG} width={150} height={150}/> 
           <Spacing variant='Column' themeSpace={25} />
-          <Button onClick={closeSuccessPopup} borderRaius={10} variant='recomended' padding={[12, 17]}>
+          <Button onClick={closeSuccessPopup} variant='recomended' padding={[12, 17]}>
             Вернуться назад
           </Button>
         </Column>

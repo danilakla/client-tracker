@@ -10,6 +10,7 @@ export type ActionButtonSwitchProps = {
   disable?: boolean;
   textColor?: string;
   themeFont?: FontProps;
+  borderColor?: string;
   themeColor?: string;
   isLeft: boolean;
 };
@@ -19,6 +20,7 @@ export const ActionButtonSwitch : FC<ActionButtonSwitchProps> = memo(({
   themeColor = theme.colors.surface,
   width,
   disable = false,
+  borderColor = theme.colors.foreground,
   textColor = theme.colors.gray,
   isLeft,
   themeFont = theme.fonts.ht1,
@@ -27,7 +29,7 @@ export const ActionButtonSwitch : FC<ActionButtonSwitchProps> = memo(({
   return(
     <ButtonWrapper width={width}>
       <ButtonContainer width={width} onClick={disable ? () => {} : onClick}>
-        <ActionButtonStyled themeColor={themeColor}>
+        <ActionButtonStyled borderColor={borderColor} themeColor={themeColor}>
           <Text 
             format='hide'
             style={{

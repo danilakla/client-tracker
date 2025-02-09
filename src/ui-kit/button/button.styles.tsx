@@ -19,7 +19,8 @@ export const StyledButton = styled.button<StyledButtonProps>`
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 4px 2px #8f8fbf30;
+  border: 2px solid #e9e9f2;
+  
 
   background: ${({ variant }) => {
     switch(variant){
@@ -33,7 +34,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   }};
 
   border: none;
-
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   padding: ${({ padding }) => {
     if (typeof padding === "number") {
       return `${padding}px`;

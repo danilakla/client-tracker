@@ -7,10 +7,12 @@ import { Spacing } from "../spacing";
 import { CheckboxContainer, CheckboxMark } from "./checkbox.styles";
 
 import checkMarkIcon from '../assets/checkmark.svg'
+import { Row } from "../row";
 
 
 export type CheckboxProps = {
   size?: number;
+  label: string;
   value: boolean;
   toggle: () => void;
   themeColor?: string;
@@ -24,20 +26,27 @@ export const Checkbox: FC<CheckboxProps> = memo(({
   borderColor = theme.colors.foreground, 
   themeColor = theme.colors.surface,
   borderRadius = 10,
+  label,
   toggle
 }) => {
 
 
   return (
-    <CheckboxContainer
-      size={size}
-      onClick={toggle}
-      themeColor={themeColor}
-      borderColor={borderColor}
-      borderRadius={borderRadius}
-    >
-     {value && <CheckboxMark src={checkMarkIcon}/>}
-    </CheckboxContainer>
+    <Row verticalAlign='center' style={{flexShrink: 0}}>
+      <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+        {label}
+      </Text>
+      <Spacing variant='Row' themeSpace={5} />
+      <CheckboxContainer
+        size={size}
+        onClick={toggle}
+        themeColor={themeColor}
+        borderColor={borderColor}
+        borderRadius={borderRadius}>
+      {value && <CheckboxMark src={checkMarkIcon}/>}
+      </CheckboxContainer>
+    </Row>
+    
   );
 });
 

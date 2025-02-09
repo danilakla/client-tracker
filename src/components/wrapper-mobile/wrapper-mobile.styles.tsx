@@ -11,6 +11,7 @@ export const HeaderContainer = styled.div`
     width: 100vw;
     background-color: #ffffff;
     box-shadow: -2px 0 4px 2px #8f8fbf25;
+    border-bottom: 2px solid #e9e9f2;
 `;
 
 export const BottomContainer = styled.div`
@@ -24,7 +25,7 @@ export const BottomContainer = styled.div`
     width: 100vw;
     background-color: #ffffff;
     box-shadow: 2px 0 4px 2px #8f8fbf25;
-    
+    border-top: 2px solid #e9e9f2;
 `;
 
 export const ImageButtonStyled = styled.img`

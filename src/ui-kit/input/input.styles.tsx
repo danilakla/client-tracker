@@ -25,7 +25,6 @@ export const InputStyled = styled.input<{
 }>`
   width: 100%;
   autocomplete: off;
-  box-shadow: 0 0 4px 2px #8f8fbf25;
   box-sizing: border-box;
   border: 2px solid ${({ borderColor }) => borderColor};
   padding: 10px 10px 10px 10px;
@@ -33,7 +32,7 @@ export const InputStyled = styled.input<{
   border-radius: 10px;
   background-color: ${({ themeColor }) => themeColor};
   color: ${({ textColor }) => textColor};
-
+  box-shadow: 0 0 4px 2px #8f8fbf15;
   font-family: ${theme.fonts.ht1.family};
   font-weight: ${theme.fonts.ht1.weight};
   color: ${theme.fonts.ht1};

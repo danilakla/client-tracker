@@ -11,7 +11,8 @@ export const HeaderContainer = styled.div`
     align-items: center;
     width: 100vw;
     background-color: #ffffff;
-    box-shadow: 0 0 4px 2px #8f8fbf30;
+    box-shadow: 0 0 4px 2px #8f8fbf25;
+    border-bottom: 2px solid #e9e9f2;
 `;
 
 export const ControlPanelContainer = styled.div`
@@ -24,8 +25,8 @@ export const ControlPanelContainer = styled.div`
     height: auto;
     padding: 15px 10px;
     background-color: #ffffff;
-    box-shadow: 0 0 4px 2px #8f8fbf30;
-    
+    box-shadow: 0 0 4px 2px #8f8fbf25;
+    border: 2px solid #e9e9f2;
 `;
 
 export const ControlPanelWrapper = styled.div`

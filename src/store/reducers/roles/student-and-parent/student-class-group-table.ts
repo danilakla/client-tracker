@@ -317,7 +317,7 @@ export const transformAndSortStudentsStatistics = (input: {
                 description: grade.description,
                 attendance: grade.attendance,
                 isReview: false,
-                isPassLab: false
+                isPassLab: grade.isPassLab
             }));
 
         attestationStudentGrades.filter(att => att.idStudent === idStudent)
