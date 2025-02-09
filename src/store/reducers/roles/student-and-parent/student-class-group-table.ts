@@ -502,14 +502,17 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
             .filter((grade: any) => grade.idStudent === currentStudent.idStudent)
             .map((grade: any) => grade.idClass);
 
-            const classesIds = responce.classes
-                .filter((cls: any) => currentStudentClasses.includes(cls.idClass))
-                .map((cls: any, index: any) => ({
+            let positionCounter = 1;
+
+            const classesIds: ClassHeaderType[] = responce.classes
+                .map((cls: any) => ({
                     idClass: cls.idClass,
-                    position: index + 1,
                     gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
+                    dateCreation: cls.dateCreation,
+                    isAttestation: cls.isAttestation,
+                    position: cls.isAttestation ? -1 : positionCounter++,
                 }));
-            
+
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setClassesIdsActionCreator(classesIds));
         }
         catch (e) {

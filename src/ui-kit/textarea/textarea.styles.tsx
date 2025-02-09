@@ -41,6 +41,7 @@ export const TextareaStyled = styled.textarea<{
   font-weight: ${theme.fonts.ht1.weight};
   color: ${theme.fonts.ht1};
   box-shadow: 0 0 4px 2px #8f8fbf15;
+  
   font-size: ${theme.fonts.ht1.desktopSize};
   @media (max-width: ${theme.toMobileSize + "px"}){
     font-size: ${theme.fonts.ht1.mobileSize};

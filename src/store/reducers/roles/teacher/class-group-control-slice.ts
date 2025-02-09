@@ -98,6 +98,7 @@ export type СlassGroupControlState = {
     idHold: number | null,
     classesIds: ClassHeaderType[];
     selectedGrade: GradeInfo;
+    selectedAttestationGrade: AttestationGradeInfo;
     loadingDelete: "idle" | "loading" | "success" | "error";
     loadingUpdate: "idle" | "loading" | "success" | "error";
     loadingAdd: "idle" | "loading" | "success" | "error";
@@ -145,6 +146,15 @@ const initialState: СlassGroupControlState = {
         attendance: 0,
         isPassLab: false,
         isReview: false
+    },
+    selectedAttestationGrade:{
+        idAttestationStudentGrades: -1,
+        idClass: -1,
+        idStudent: -1,
+        hour: 0,
+        avgGrade: 0,
+        currentCountLab: 0,
+        maxCountLab: 0
     },
     loadingAdd: 'idle',
     loadingDelete: 'idle',
@@ -331,6 +341,12 @@ export const classGroupControlSlice = createSlice({
                     state.selectedGrade = action.payload.gradeInfo;
                     state.isShowCompleted = false;
             }
+            action.payload.onSuccess();
+        },
+        setSelectedAttestationGradeActionCreator(state, action: PayloadAction<{
+            attestationGradeInfo: AttestationGradeInfo, onSuccess: () => void
+        }>) {
+            state.selectedAttestationGrade = action.payload.attestationGradeInfo;
             action.payload.onSuccess();
         },
         setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData}>) {
@@ -740,7 +756,7 @@ export const reloadTableStatisticsActionCreator = createAsyncThunk('reload-teach
                 transformAndSortStudentsStatistics(responce)
             ));
             thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
-            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes.map((item: any) => item.idClass)));
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

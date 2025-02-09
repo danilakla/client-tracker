@@ -835,9 +835,12 @@ export const ControlStudentGrade: FC<ControlStudentGradeProps> = memo(({
           header='Оценка' 
           placeholder='9' error={errorNote}
           value={selectedGrade.grade?.toString() || ''} setValue={setGradeNumber}/>
-        <Spacing themeSpace={10} variant='Row' />
+        
         {isShowCompleted &&
-          <Checkbox label='Отработано:' value={isCompleted} toggle={toggleComplited}/>}
+          <>
+            <Spacing themeSpace={10} variant='Row' />
+            <Checkbox label='Отработано:' value={isCompleted} toggle={toggleComplited}/>
+          </>}
       </Row>
       <Spacing themeSpace={25} variant='Column' />
       <ActionButtonSwitch  
