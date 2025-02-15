@@ -25,6 +25,9 @@ import { attendanceColorsForStudents, checkIsAttestationGrade } from '../../../.
 import { useTableScroll } from '../../../../hooks/table-scroll-hook';
 import { EmptyClassItem } from '../../teacher/subjects-parent/class-group-panel/class-group-panel.styled';
 
+import RefreshLogo from '../../../../ui-kit/assets/refresh.svg';
+import InfoLogo from '../../../../ui-kit/assets/info.svg';
+
 export type StudentClassGroupTableViewProps = {
   role: "ROLE_STUDENT" | "ROLE_PARENTS";
   studentClassGroupTableState: StudentClassGroupTableState;
@@ -292,12 +295,17 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface>
         <Row>
-            <Button onClick={controlInfoWindow}  variant='recomended' padding={[10, 10]}>
-              Информация 🛈
+        <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={InfoLogo} width={15} height={15}/> 
+              </Column>
             </Button>
-            <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable} state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
-              Обновить
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38} width={38} onClick={reloadTable} 
+              state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={RefreshLogo} width={15} height={15}/> 
+              </Column>
             </Button>
           </Row>
           <Spacing themeSpace={20} variant='Column' />
@@ -385,12 +393,17 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
         </Column> : <>
         <Surface style={{width: 900}}>
           <Row>
-            <Button onClick={controlInfoWindow}  variant='recomended' padding={[10, 10]}>
-              Информация 🛈
+            <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={InfoLogo} width={15} height={15}/> 
+              </Column>
             </Button>
-            <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable}  state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
-              Обновить
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38} width={38} onClick={reloadTable} 
+              state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={RefreshLogo} width={15} height={15}/> 
+              </Column>
             </Button>
           </Row>
           <Spacing themeSpace={20} variant='Column' />

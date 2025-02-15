@@ -21,12 +21,15 @@ import { Textarea } from '../../../../../ui-kit/textarea';
 import { RangeSlider } from '../../../../../ui-kit/range-slider';
 
 import ShieldLogo from '../../../../../ui-kit/assets/security-shield.svg';
+import RefreshLogo from '../../../../../ui-kit/assets/refresh.svg';
+import InfoLogo from '../../../../../ui-kit/assets/info.svg';
 import { Image } from '../../../../../ui-kit/image';
 import QRCode from 'react-qr-code';
 import React from 'react';
 import { Checkbox } from '../../../../../ui-kit/checkbox';
 import { useTableScroll } from '../../../../../hooks/table-scroll-hook';
 import { ActionButtonSwitch } from '../../../../../ui-kit/action-button-switch';
+
 
 export type ClassGroupPanelViewProps = {
   teacherClassGroupControlState: СlassGroupControlState;
@@ -414,12 +417,21 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface>
           <Row>
-            <Button onClick={controlDescriptionClass}  variant='recomended' padding={[10, 10]}>
-              Информация 🛈
+            <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={InfoLogo} width={15} height={15}/> 
+              </Column>
             </Button>
-            <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable} state={teacherClassGroupControlState.loadingReloadTable} variant='recomended' padding={[10, 10]}>
-              Обновить
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38} width={38} onClick={reloadTable} 
+              state={teacherClassGroupControlState.loadingReloadTable} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={RefreshLogo} width={15} height={15}/> 
+              </Column>
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38} onClick={reloadTable} variant='attentive' padding={11}>
+              Отправить аттестацию
             </Button>
           </Row>
           <Spacing themeSpace={25} variant='Column' />
@@ -600,12 +612,17 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
       </Column> : <>
         <Surface style={{width: 900}}>
           <Row>
-            <Button onClick={controlDescriptionClass} variant='recomended' padding={[10, 10]}>
-              Информация 🛈
+            <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={InfoLogo} width={15} height={15}/> 
+              </Column>
             </Button>
-            <Spacing themeSpace={15} variant='Row' />
-            <Button onClick={reloadTable} state={teacherClassGroupControlState.loadingReloadTable}   variant='recomended' padding={[10, 10]}>
-              Обновить
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38.4} width={38.4} onClick={reloadTable} 
+              state={teacherClassGroupControlState.loadingReloadTable} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={RefreshLogo} width={15} height={15}/> 
+              </Column>
             </Button>
           </Row>
           <Spacing themeSpace={20} variant='Column' />

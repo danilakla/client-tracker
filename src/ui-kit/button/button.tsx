@@ -1,4 +1,4 @@
-import { FC, HtmlHTMLAttributes, memo } from "react";
+import { FC, HtmlHTMLAttributes, memo, ReactNode } from "react";
 import { StyledButton } from "./button.styles";
 import { Text } from "../text";
 import { theme } from "../themes/theme";
@@ -7,7 +7,7 @@ import { CircleLoading } from "../circle-loading";
 export type ButtonProps = {
     variant: 'primary' | 'attentive' | 'recomended'
     width?: number | string;
-    children?: string;
+    children?: ReactNode;
     height?: number | string;
     sizeLoading?: number;
     onClick?: () => void;
