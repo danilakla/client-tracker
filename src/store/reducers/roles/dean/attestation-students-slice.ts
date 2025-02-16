@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
+import { deanApi } from "../../../../api/auth/dean-api";
 
 export type AttestationStudentsState = {
     loading: "idle" | "loading" | "success" | "error";
@@ -38,7 +39,7 @@ export const initStudentsForDeanActionCreator = createAsyncThunk('attestation-st
     async (data: { authToken: string }, thunkApi) => {
         const { authToken } = data;
         try {
-            
+             const response = deanApi.getStudentsNotAttessted(authToken);
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

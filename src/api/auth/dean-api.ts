@@ -255,4 +255,18 @@ export const deanApi = {
                 return response.data;
             })
     },
+    getTeachersNotAttessted(authToken: string) {
+        return instance.get('/attestation/notify-dean', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    getStudentsNotAttessted(authToken: string) {
+        return instance.get('/dean/not-attested/students', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

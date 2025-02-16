@@ -4,13 +4,16 @@ import { theme } from '../../../../../../ui-kit/themes/theme';
 import { useMediaQuery } from 'react-responsive';
 import { WrapperMobile } from '../../../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../../../components/wrapper-desktop';
+import { AttestationStudentsState } from '../../../../../../store/reducers/roles/dean/attestation-students-slice';
 
 export type AttestationStudentsViewProps = {
   goToAttestation: () => void;
+  deanAttestationStudentsState: AttestationStudentsState;
 };
 
 export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
-  goToAttestation
+  goToAttestation,
+  deanAttestationStudentsState,
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -18,9 +21,11 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
     isMobile ? 
       (<AttestationStudentsMobileView
         goToAttestation={goToAttestation}
+        deanAttestationStudentsState={deanAttestationStudentsState}
         />) :
       (<AttestationStudentsDesktopView
         goToAttestation={goToAttestation}
+        deanAttestationStudentsState={deanAttestationStudentsState}
         />)
   );
 });
@@ -28,10 +33,12 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
 
 type LocalViewProps = {
   goToAttestation: () => void;
+  deanAttestationStudentsState: AttestationStudentsState;
 };
 
 export const AttestationStudentsMobileView: FC<LocalViewProps> = memo(({
-  goToAttestation
+  goToAttestation,
+  deanAttestationStudentsState
 }) => {
 
   return (
@@ -41,7 +48,8 @@ export const AttestationStudentsMobileView: FC<LocalViewProps> = memo(({
 });
 
 export const AttestationStudentsDesktopView: FC<LocalViewProps> = memo(({
-  goToAttestation
+  goToAttestation,
+  deanAttestationStudentsState
 }) => {
 
   return (
