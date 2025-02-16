@@ -29,6 +29,7 @@ import React from 'react';
 import { Checkbox } from '../../../../../ui-kit/checkbox';
 import { useTableScroll } from '../../../../../hooks/table-scroll-hook';
 import { ActionButtonSwitch } from '../../../../../ui-kit/action-button-switch';
+import { SuccessfulPopup } from '../../../../../ui-kit/successful-popup';
 
 
 export type ClassGroupPanelViewProps = {
@@ -66,6 +67,7 @@ export type ClassGroupPanelViewProps = {
   setAvgGrade: (value: string) => void;
 
   onSave: (onSuccess: () => void) => void;
+  removeAttestation: (onSuccess: () => void) => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -87,7 +89,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setExpirationOfRefresh,
   setSelectedClass,
   setExpirationOfReview,
-
+  removeAttestation,
   activateKeyForClass,
 
   createQrCode,
@@ -202,12 +204,32 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     onSave(closeAttestationGrade);
   },[onSave, closeAttestationGrade])
 
+  const [isOpenSendAttestation, setIsOpenSendAttestation] = useState<boolean>(false);
+  const controlSendAttestation = useCallback(() => {
+    setIsOpenSendAttestation(!isOpenSendAttestation);
+  },[isOpenSendAttestation])
+
+  const [isOpenSuccessSendAttestation, setIsOpenSuccessSendAttestation] = useState<boolean>(false);
+  const controlSuccessSendAttestation = useCallback(() => {
+    setIsOpenSuccessSendAttestation(!isOpenSuccessSendAttestation);
+  },[isOpenSuccessSendAttestation])
+
+  const onSuccessForAttestationRemove= useCallback(() => {
+    setIsOpenSuccessSendAttestation(true);
+    setIsOpenSendAttestation(false);
+  },[])
+
+  const handleRemoveAttestation = useCallback(() => {
+    removeAttestation(onSuccessForAttestationRemove);
+  },[removeAttestation, onSuccessForAttestationRemove])
+
   return (
     <>
       {
         isMobile ? 
         (<ClassGroupPanelMobileView
           openAddPopup={openAddPopup}
+          controlSendAttestation={controlSendAttestation}
           teacherClassGroupControlState={teacherClassGroupControlState}
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           setAttendance={setAttendance}
@@ -249,6 +271,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           calculateAttestation={onCalculateAttestation}
           handleReview={handleReview}
           setAvgGrade={setAvgGrade}
+          controlSendAttestation={controlSendAttestation}
           switchIsPassed={switchIsPassed}
           setCountClassThatNotAttestationClass={setCountClassThatNotAttestationClass}
           setMaxCountLab={setMaxCountLab}
@@ -318,6 +341,31 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
         stateActivate={teacherClassGroupControlState.generateKeyPopup.loadingActivate} 
         onActivateClick={confirmActivateKeyForClass}
         closePopup={controlGenerateKeyPopup} isActive={isOpenGenerateKeyPopup}/>
+      <Popup isActive={isOpenSendAttestation} closePopup={controlSendAttestation}>
+        <Column horizontalAlign='center'>
+          <Text themeColor={theme.colors.attentive} themeFont={theme.fonts.h2} align='center'> 
+            Вы уверены, что хотите<br/>
+            отправить аттестацию?
+          </Text>
+          <Spacing  themeSpace={25} variant='Column' />
+          <Row>
+            <Button onClick={handleRemoveAttestation} 
+              state={teacherClassGroupControlState.loadingRemoveAttestation} 
+              variant='recomended' padding={[12,17]}>
+              Отправить
+            </Button>
+            <Spacing variant='Row' themeSpace={20}/>
+            <Button onClick={controlSendAttestation} variant='attentive' padding={[12,17]}>
+              Отмена
+            </Button>
+          </Row>
+        </Column>
+      </Popup>
+      <SuccessfulPopup
+        text={<>Аттестация <br/> успешно отправлена</>}
+        isOpen={isOpenSuccessSendAttestation}
+        closePopup={controlSuccessSendAttestation}
+      />
     </>
   );
 });
@@ -365,6 +413,7 @@ type LocalViewProps = {
 
   calculateAttestation: () => void;
   onClickSave: () => void;
+  controlSendAttestation: () => void;
 };
 
 export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
@@ -406,7 +455,8 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   setAvgGrade,
   onClickSave,
 
-  calculateAttestation
+  calculateAttestation,
+  controlSendAttestation
 }) => {
 
   return (
@@ -430,7 +480,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
               </Column>
             </Button>
             <Spacing themeSpace={10} variant='Row' />
-            <Button height={38} onClick={reloadTable} variant='attentive' padding={11}>
+            <Button height={38} onClick={controlSendAttestation} variant='attentive' padding={11}>
               Отправить аттестацию
             </Button>
           </Row>
@@ -601,7 +651,8 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   setAvgGrade,
   onClickSave,
   
-  calculateAttestation
+  calculateAttestation,
+  controlSendAttestation
 }) => {
 
   return (
@@ -623,6 +674,10 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={RefreshLogo} width={15} height={15}/> 
               </Column>
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38} onClick={controlSendAttestation} variant='attentive' padding={11}>
+              Отправить аттестацию
             </Button>
           </Row>
           <Spacing themeSpace={20} variant='Column' />
@@ -1281,8 +1336,8 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
             item.isAttestation ? 
           () => openClassAttestation(item) : 
           () => openClassControlForStudents(item)}>
-		  		<Text themeFont={theme.fonts.h3}>
-            {!item.isAttestation ? <>Занятие {item.position}</> : <>Аттестация</>}
+		  		<Text themeFont={theme.fonts.h3} >
+            {!item.isAttestation ? <>Занятие {item.position}</> : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
 		  		</Text>
 		  	  </HeaderClassItem>
 		  	))}
@@ -1373,15 +1428,19 @@ export const ClassItemView: FC<ClassItemViewProps> = memo(({
       <EmptyClassItem />
     )
   ) : (
-    <ClassItem style={{backgroundColor: theme.colors.neutral}} onClick={() => onClickAttestation(item)}>
-      <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.avgGrade?.toFixed(2).replace(/\.?0+$/, '')}</b>
-      </Text>
-      <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.hour?.toFixed(2).replace(/\.?0+$/, '')} ч.</b>
-      </Text>
+    <ClassItem 
+    style={{backgroundColor: ( item.avgGrade !== null && item.hour !== null && item.maxCountLab !== null && item.currentCountLab !== null) ? theme.colors.neutral : ''}}  
+    onClick={() => onClickAttestation(item)}>
+      {item.avgGrade !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
+        <b>{item.avgGrade.toFixed(2).replace(/\.?0+$/, '')}</b>
+      </Text>}
+      {item.hour !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
+        <b>{item.hour.toFixed(2).replace(/\.?0+$/, '')} ч.</b>
+      </Text>}
       <Text themeFont={theme.fonts.ht2} style={{fontSize: 11}}>
-      <b>{item.currentCountLab} / {item.maxCountLab} макс.</b>
+      {(item.currentCountLab !== null && item.maxCountLab === null) && <b>{item.currentCountLab}</b>}
+      {(item.currentCountLab === null && item.maxCountLab !== null) && <b>{item.maxCountLab} макс.</b>}
+      {(item.currentCountLab !== null && item.maxCountLab !== null) && <b>{item.currentCountLab} / {item.maxCountLab} макс.</b>}
 		  </Text>
     </ClassItem>
   );

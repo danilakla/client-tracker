@@ -153,6 +153,16 @@ export const teacherApi = {
                 return response.data;
             })
     },
+    removeAttestation(
+        authToken: string, 
+        idAttestation: number
+    ){
+        return instance.delete(`/attestation/remove/${idAttestation}`, 
+            { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 
 

@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, AttestationGradeInfo, calculateAttestationActionCreator, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, startReviewForClassActionCreator, updateAttestationClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, AttestationGradeInfo, calculateAttestationActionCreator, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, removeAttestationActionCreator, startReviewForClassActionCreator, updateAttestationClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -261,6 +261,17 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.timeOfOneClass,
     teacherClassGroupControlState.countClassThatNotAttestation,])
 
+  const removeAttestation = useCallback((onSuccess: () => void) => {
+    dispatch(removeAttestationActionCreator({
+      authToken: authToken,
+      classes: teacherClassGroupControlState.attestationClassesIds,
+      onSuccess: onSuccess
+    }));
+  },[
+    authToken, dispatch,
+    teacherClassGroupControlState.attestationClassesIds
+  ])
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
@@ -280,7 +291,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         setDescription={setDescription}
         toggleComplited={toggleIsCompleted}
         setGradeNumber={setGradeNumber}
-
+        removeAttestation={removeAttestation}
         setExpirationOfRefresh={setExpirationOfRefresh}
         setSelectedClass={setSelectedClass}
         setExpirationOfReview={setExpirationOfReview}

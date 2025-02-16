@@ -22,7 +22,7 @@ export const SuccessfulPopup: FC<SuccessfulPopupProps> = memo(({
 
     return ( <Popup isActive={isOpen} closePopup={closePopup}>
       <Column horizontalAlign='center'>
-        <Text themeFont={theme.fonts.h2} themeColor={theme.colors.success}> 
+        <Text themeFont={theme.fonts.h2} align='center' themeColor={theme.colors.success}> 
           {text}
         </Text>
         <Spacing variant='Column' themeSpace={20} />

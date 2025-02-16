@@ -116,10 +116,10 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
       authToken: authToken,
       isMany: deanClassGroupDetailsState.isMany,
       hasApplyAttestation: deanClassGroupDetailsState.hasApplyAttestation,
-      teacherId: Number.parseInt(deanClassGroupDetailsState.selectedTeacher.value),
+      teacherId: Number.parseFloat(deanClassGroupDetailsState.selectedTeacher.value),
       subjectId: deanClassGroupsState.selectedSubject?.idSubject || -1,
       newSubgroups: deanClassGroupDetailsState.newSubgroups,
-      formatClassId: Number.parseInt(deanClassGroupDetailsState.selectedClassFormat.value),
+      formatClassId: Number.parseFloat(deanClassGroupDetailsState.selectedClassFormat.value),
       description: deanClassGroupDetailsState.description,
       onSuccess: goToClassGroups
     }));

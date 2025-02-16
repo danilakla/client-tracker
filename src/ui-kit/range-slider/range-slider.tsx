@@ -24,7 +24,7 @@ export const RangeSlider: FC<RangeSliderProps> = memo(({
   ...rest }) =>{
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(e.target.value));
+    setValue(parseFloat(e.target.value));
   };
 
   return(

@@ -669,16 +669,17 @@ export const ClassItemView: FC<ClassItemViewProps> = memo(({
       <EmptyClassItem />
     )
   ) : (
-    <ClassItem style={{backgroundColor: theme.colors.neutral}} onClick={() => onClickAttestation(item)}>
-      <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.avgGrade?.toFixed(2).replace(/\.?0+$/, '')}</b>
-      </Text>
-      <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.hour?.toFixed(2).replace(/\.?0+$/, '')} ч.</b>
-      </Text>
+    <ClassItem style={{backgroundColor: theme.colors.neutral}} onClick={() => {}}>
+      {item.avgGrade !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
+        <b>{item.avgGrade.toFixed(2).replace(/\.?0+$/, '')}</b>
+      </Text>}
+      {item.hour !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
+        <b>{item.hour.toFixed(2).replace(/\.?0+$/, '')} ч.</b>
+      </Text>}
       <Text themeFont={theme.fonts.ht2} style={{fontSize: 11}}>
-      <b>{item.currentCountLab} / {item.maxCountLab} макс.</b>
+      {(item.currentCountLab !== null && item.maxCountLab === null) && <b>{item.currentCountLab}</b>}
+      {(item.currentCountLab === null && item.maxCountLab !== null) && <b>{item.maxCountLab} макс.</b>}
+      {(item.currentCountLab !== null && item.maxCountLab !== null) && <b>{item.currentCountLab} / {item.maxCountLab} макс.</b>}
       </Text>
-    </ClassItem>
-  );
+    </ClassItem>)
 });

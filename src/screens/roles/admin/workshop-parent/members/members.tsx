@@ -83,14 +83,14 @@ export const Members: FC<MembersProps> = memo(() => {
       dispatch(deleteDeanActionCreator({
         authToken: authToken,
         deanId: adminMembersState.selectedDean.idDean,
-        newDeanId: parseInt(adminMembersState.selectedNewResponsible.value),
+        newDeanId: parseFloat(adminMembersState.selectedNewResponsible.value),
         onSuccess: onSuccess
       }));
     } else if(toggle === 'right'){
       dispatch(deleteTeacherActionCreator({
         authToken: authToken,
         teacherId: adminMembersState.selectedTeacher.idTeacher,
-        newTeacherId: parseInt(adminMembersState.selectedNewResponsible.value),
+        newTeacherId: parseFloat(adminMembersState.selectedNewResponsible.value),
         onSuccess: onSuccess
       }));
     }

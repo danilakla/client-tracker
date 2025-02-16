@@ -438,12 +438,12 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
 
             const addedSubgroupIds = existingSubgroupIds.filter(id => !oldSubgroupIds.includes(id));
             if(addedSubgroupIds.length > 0)
-                await deanApi.addGroupToClassGroup(authToken, Number.parseInt(classGroupId), addedSubgroupIds);
+                await deanApi.addGroupToClassGroup(authToken, Number.parseFloat(classGroupId), addedSubgroupIds);
             
 
             const removedSubgroupIds = oldSubgroupIds.filter(id => !existingSubgroupIds.includes(id));
             if(removedSubgroupIds.length > 0)
-                await deanApi.removeGroupToClassGroup(authToken, Number.parseInt(classGroupId), removedSubgroupIds);
+                await deanApi.removeGroupToClassGroup(authToken, Number.parseFloat(classGroupId), removedSubgroupIds);
 
             onSuccess();
         }
