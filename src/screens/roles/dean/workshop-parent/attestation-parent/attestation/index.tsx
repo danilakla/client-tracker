@@ -1,0 +1,1 @@
+export { Attestation } from './attestation';

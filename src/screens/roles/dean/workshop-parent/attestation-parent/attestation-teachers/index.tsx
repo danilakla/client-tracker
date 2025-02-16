@@ -1,0 +1,1 @@
+export { AttestationTeachers } from './attestation-teachers';

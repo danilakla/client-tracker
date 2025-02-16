@@ -24,6 +24,11 @@ import { ControlSubjects as DeanControlSubjects } from "./screens/roles/dean/wor
 import { ClassGroupsDetails as DeanClassGroupsDetails } from "./screens/roles/dean/workshop-parent/subjects-parent/class-groups-details";
 import { ClassGroups as DeanClassGroups } from "./screens/roles/dean/workshop-parent/subjects-parent/class-groups";
 
+import { Attestation as DeanAttestation  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation";
+import { AttestationStart as DeanAttestationStart  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation-start";
+import { AttestationStudents as DeanAttestationStudents  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation-students";
+import { AttestationTeachers as DeanAttestationTeachers  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation-teachers";
+
 import { Subjects as TeacherSubjects } from "./screens/roles/teacher/subjects-parent/subjects";
 import { ClassGroups as TeacherClassGroups } from "./screens/roles/teacher/subjects-parent/class-groups";
 import { ClassGroupSubgroups as TeacherClassGroupSubgroups } from "./screens/roles/teacher/subjects-parent/class-group-subgroups";
@@ -57,6 +62,11 @@ export const urls = {
   deanClassGroups: '/dean/workshop/subjects/class-groups',
   deanClassGroupAdd: '/dean/workshop/subjects/class-group/add',
   deanClassGroupEdit: '/dean/workshop/subjects/class-group/edit',
+
+  deanAttestation: '/dean/workshop/attestation',
+  deanAttestationStart: '/dean/workshop/attestation/start',
+  deanAttestationTeachers: '/dean/workshop/attestation/teachers',
+  deanAttestationStudents: '/dean/workshop/attestation/students',
 
   teacherSubjects: '/teacher/subjects',
   teacherClassGroups: '/teacher/subjects/class-groups',
@@ -110,6 +120,12 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.deanClassGroups} element={<DeanClassGroups/>}/>
           <Route path={urls.deanClassGroupAdd} element={<DeanClassGroupsDetails type='add' />}/>
           <Route path={urls.deanClassGroupEdit} element={<DeanClassGroupsDetails type='edit' />}/>
+
+
+          <Route path={urls.deanAttestation} element={<DeanAttestation/>}/>
+          <Route path={urls.deanAttestationStart} element={<DeanAttestationStart/>}/>
+          <Route path={urls.deanAttestationStudents} element={<DeanAttestationStudents/>}/>
+          <Route path={urls.deanAttestationTeachers} element={<DeanAttestationTeachers/>}/>
 
           <Route path={urls.profileUpdateAccountData} element={<ChangeAccoundData/>}/>
           <Route path={urls.profileUpdatePassword} element={<ChangePassword/>}/>
