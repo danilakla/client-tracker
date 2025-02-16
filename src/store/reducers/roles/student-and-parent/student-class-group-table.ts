@@ -39,6 +39,7 @@ export type AttestationGradeInfo = {
     hour: number | null;
     currentCountLab: number | null;
     maxCountLab: number | null;
+    isAttested: boolean;
 };
 
 export type StatisticOfStudent = {
@@ -297,6 +298,7 @@ export const transformAndSortStudentsStatistics = (input: {
         hour: number | null;
         currentCountLab: number | null;
         maxCountLab: number | null;
+        isAttested: boolean;
     }[];
 }): StatisticOfStudent[] => {
     const { students, studentGrades, classes, attestationStudentGrades } = input;
@@ -329,6 +331,7 @@ export const transformAndSortStudentsStatistics = (input: {
                 hour: att.hour,
                 currentCountLab: att.currentCountLab,
                 maxCountLab: att.maxCountLab,
+                isAttested: att.isAttested
             }));
 
         const grades = allClassIds.map(idClass => {

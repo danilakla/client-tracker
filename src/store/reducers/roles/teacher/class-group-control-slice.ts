@@ -71,6 +71,7 @@ export type AttestationGradeInfo = {
     hour: number | null;
     currentCountLab: number | null;
     maxCountLab: number | null;
+    isAttested: boolean;
 };
 
 export type StatisticOfStudent = {
@@ -133,6 +134,7 @@ export type СlassGroupControlState = {
     countClassThatNotAttestation: number | null;
     avgGrade: number | null;
     timeOfOneClass: number | null;
+    isAttested: boolean;
 };
 
 const initialState: СlassGroupControlState = {
@@ -166,7 +168,8 @@ const initialState: СlassGroupControlState = {
         hour: 0,
         avgGrade: 0,
         currentCountLab: 0,
-        maxCountLab: 0
+        maxCountLab: 0,
+        isAttested: false
     },
     loadingAdd: 'idle',
     loadingDelete: 'idle',
@@ -199,6 +202,7 @@ const initialState: СlassGroupControlState = {
     avgGrade: null,
     countClassThatNotAttestation: null,
     timeOfOneClass: null,
+    isAttested: false,
 };
 
 const setErrorByKey = (state: СlassGroupControlState, key: string, error: ErrorType) => {
@@ -273,7 +277,7 @@ export const classGroupControlSlice = createSlice({
                 const numericGrade = parseFloat(parsedGrade);
 
                 if (!isNaN(numericGrade)){
-                    if(numericGrade > 1000) return;
+                    if(numericGrade > 10) return;
                     state.selectedGrade.grade = numericGrade;
                 }
                 else
@@ -288,6 +292,9 @@ export const classGroupControlSlice = createSlice({
         },
         setIsNeedAttestationActionCreator(state, action: PayloadAction<boolean>) {
             state.isNeedAttestation = action.payload;
+        },
+        toggleAttestedActionCreator(state) {
+            state.isAttested = !state.isAttested;
         },
         setAttendanceActionCreator(state, action: PayloadAction<AttendanceCodeType>) {
             state.selectedGrade.attendance = action.payload;
@@ -376,6 +383,7 @@ export const classGroupControlSlice = createSlice({
             state.avgGrade = action.payload.value.avgGrade;
             state.maxLabCount = action.payload.value.maxCountLab;
             state.timeOfOneClass = action.payload.value.hour;
+            state.isAttested = action.payload.value.isAttested;
             action.payload.onSuccess();
         },
         setClassGroupInfoActionCreator(state, action: PayloadAction<{initData: InitScreenData}>) {
@@ -427,7 +435,7 @@ export const classGroupControlSlice = createSlice({
                 const numericGrade = parseFloat(parsedGrade);
 
                 if (!isNaN(numericGrade)){
-                    if(numericGrade > 1000) return;
+                    if(numericGrade > 300) return;
                     state.timeOfOneClass = numericGrade;
                 }
                 else
@@ -443,7 +451,7 @@ export const classGroupControlSlice = createSlice({
                 const numericGrade = parseFloat(parsedGrade);
 
                 if (!isNaN(numericGrade)){
-                    if(numericGrade > 1000) return;
+                    if(numericGrade > 100) return;
                     state.countClassThatNotAttestation = numericGrade;
                 }
                 else
@@ -459,7 +467,7 @@ export const classGroupControlSlice = createSlice({
                 const numericGrade = parseFloat(parsedGrade);
 
                 if (!isNaN(numericGrade)){
-                    if(numericGrade > 1000) return;
+                    if(numericGrade > 100) return;
                     state.maxLabCount = numericGrade;
                 }
                 else
@@ -504,7 +512,7 @@ export const classGroupControlSlice = createSlice({
                 const numericGrade = parseFloat(parsedGrade);
 
                 if (!isNaN(numericGrade)){
-                    if(numericGrade > 1000) return;
+                    if(numericGrade > 10) return;
                     state.avgGrade = numericGrade;
                 }
                 else
@@ -784,6 +792,7 @@ export const transformAndSortStudentsStatistics = (input: {
         hour: number | null;
         currentCountLab: number | null;
         maxCountLab: number | null;
+        isAttested: boolean;
     }[];
 }): StatisticOfStudent[] => {
     const { students, studentGrades, classes, attestationStudentGrades } = input;
@@ -816,6 +825,7 @@ export const transformAndSortStudentsStatistics = (input: {
                 hour: att.hour,
                 currentCountLab: att.currentCountLab,
                 maxCountLab: att.maxCountLab,
+                isAttested: att.isAttested
             }));
 
         const grades = allClassIds.map(idClass => {
@@ -930,23 +940,56 @@ export const reloadTableStatisticsActionCreator = createAsyncThunk('reload-teach
 export const calculateAttestationActionCreator = createAsyncThunk('teacher-class-control/calculate-attestation',
     async (data: { 
       authToken: string, 
-      maxLabCount: number,
+      maxLabCount: number | null,
       holdId: number, 
       classId: number, 
-      countClassThatNotAttestation: number,
-      timeOfOneClass: number
+      countClassThatNotAttestation: number | null,
+      timeOfOneClass: number | null,
       studentId: number[]
       onSuccess: () => void}, thunkApi ) => {
 
         const { authToken, maxLabCount, holdId, classId, countClassThatNotAttestation, timeOfOneClass, studentId, onSuccess } = data;
         try { 
+            let hasError = false;
+
+            thunkApi.dispatch(classGroupControlSlice.actions.clearErrors());
+
+            if(countClassThatNotAttestation == null){
+                thunkApi.dispatch(classGroupControlSlice.actions.setError({
+                    key: "errorCountClassThatNotAttestation",
+                    error: "Введите корректное значение",
+                }))
+
+                hasError = true;
+            }
+
+            if(maxLabCount == null){
+                thunkApi.dispatch(classGroupControlSlice.actions.setError({
+                    key: "errorMaxLabCount",
+                    error: "Введите корректное значение",
+                }))
+
+                hasError = true;
+            }
+
+            if(timeOfOneClass == null){
+                thunkApi.dispatch(classGroupControlSlice.actions.setError({
+                    key: "errorTimeOfOneClass",
+                    error: "Введите корректное значение",
+                }))
+
+                hasError = true;
+            }
+
+            if(hasError) return;
+
             const responce = await teacherApi.calculateAttestation(
                 authToken, 
-                maxLabCount, 
+                maxLabCount || -1, 
                 holdId, 
                 classId, 
-                countClassThatNotAttestation, 
-                timeOfOneClass, 
+                countClassThatNotAttestation || -1, 
+                timeOfOneClass || -1,  
                 studentId
             );
 
@@ -968,12 +1011,13 @@ export const updateAttestationClassActionCreator = createAsyncThunk('teacher-cla
     async (data: { 
       authToken: string, 
       idAttestationStudentGrades: number,
-      avgGrade: number,
-      hour: number,
-      currentCountLab :number,
-      maxCountLab: number,
+      avgGrade: number | null,
+      hour: number | null,
+      isAttested: boolean,
+      currentCountLab :number | null,
+      maxCountLab: number | null,
       onSuccess: () => void}, thunkApi ) => {
-        const { authToken, idAttestationStudentGrades, avgGrade, hour, currentCountLab, maxCountLab, onSuccess } = data;
+        const { authToken, idAttestationStudentGrades, avgGrade, hour, currentCountLab,isAttested,  maxCountLab, onSuccess } = data;
         try { 
             const responce = await teacherApi.updateAttestationGrade(
                 authToken,
@@ -981,7 +1025,8 @@ export const updateAttestationClassActionCreator = createAsyncThunk('teacher-cla
                 avgGrade,
                 hour,
                 currentCountLab,
-                maxCountLab
+                maxCountLab,
+                isAttested
             );
 
             thunkApi.dispatch(classGroupControlSlice.actions.updateAttestationGradeActionCreator(responce));
@@ -1006,7 +1051,7 @@ export const removeAttestationActionCreator = createAsyncThunk('teacher-class-co
       onSuccess: () => void}, thunkApi ) => {
         const { authToken, holdId, onSuccess } = data;
         try { 
-            const responce = await teacherApi.removeAttestation(authToken, holdId);
+            await teacherApi.removeAttestation(authToken, holdId);
             onSuccess();
         }
         catch (e) {

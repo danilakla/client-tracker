@@ -68,6 +68,8 @@ export type ClassGroupPanelViewProps = {
 
   onSave: (onSuccess: () => void) => void;
   removeAttestation: (onSuccess: () => void) => void;
+
+  toggleAttested: () => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -76,6 +78,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   createClass,
   updateGrade,
   setSelectedGrade,
+  toggleAttested,
   deleteClass,
   setAttendance,
   setDescription,
@@ -234,6 +237,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           goToTeacherClassGroupSubgroups={goToTeacherClassGroupSubgroups}
           setAttendance={setAttendance}
           setDescription={setDescription}
+          toggleAttested={toggleAttested}
           setAvgGrade={setAvgGrade}
           controlDescriptionClass={controlDescriptionClass}
           setGradeNumber={setGradeNumber}
@@ -276,6 +280,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           setCountClassThatNotAttestationClass={setCountClassThatNotAttestationClass}
           setMaxCountLab={setMaxCountLab}
           setTimeOfOneClass={setTimeOfOneClass}
+          toggleAttested={toggleAttested}
           resetAttestateWindow={resetAttestateWindow}
           reloadTable={reloadTable}
           toggleComplited={toggleComplited}
@@ -404,6 +409,7 @@ type LocalViewProps = {
   closeAttestationGrade: () => void;
   openClassAttestation: (value: ClassHeaderType) => void;
   closeClassAttestation: () => void;
+  toggleAttested: () => void;
 
   resetAttestateWindow: () => void;
   setMaxCountLab: (value: string) => void;
@@ -433,6 +439,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   openUpdateWindow,
   handleReview,
   switchIsPassed,
+  toggleAttested,
   confirmUpdate,
   reloadTable,
 
@@ -552,6 +559,8 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           setMaxCountLab={setMaxCountLab}
           setHour={setTimeOfOneClass}
           setAvgGrade={setAvgGrade}
+          toggleAttested={toggleAttested}
+          isAttested={teacherClassGroupControlState.isAttested}
           avgGrade={teacherClassGroupControlState.avgGrade}
           currentCountLab={teacherClassGroupControlState.countClassThatNotAttestation}
           maxCountLab={teacherClassGroupControlState.maxLabCount}
@@ -644,6 +653,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   openAttestationGrade,
   closeAttestationGrade,
   openClassAttestation,
+  toggleAttested,
   closeClassAttestation,
 
   setCountClassThatNotAttestationClass,
@@ -777,6 +787,8 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           setCurrentCountLab={setCountClassThatNotAttestationClass}
           setMaxCountLab={setMaxCountLab}
           setHour={setTimeOfOneClass}
+          toggleAttested={toggleAttested}
+          isAttested={teacherClassGroupControlState.isAttested}
           setAvgGrade={setAvgGrade}
           avgGrade={teacherClassGroupControlState.avgGrade}
           currentCountLab={teacherClassGroupControlState.countClassThatNotAttestation}
@@ -1218,6 +1230,7 @@ export type ControlAttestationGradeProps = {
   errorCurrentCountLab: string | null;
 
   avgGrade: number | null;
+  isAttested: boolean;
   hour: number | null;
   maxCountLab: number | null;
   currentCountLab: number | null;
@@ -1227,6 +1240,8 @@ export type ControlAttestationGradeProps = {
   setMaxCountLab: (value: string) => void;
   
   stateSave: "idle" | "loading" | "success" | "error";
+
+  toggleAttested: () => void;
 
   onCancel: () => void;
   onSave: () => void;
@@ -1239,6 +1254,8 @@ export const ControlAttestationGrade: FC<ControlAttestationGradeProps> = memo(({
   errorHour,
   errorMaxCountLab,
   errorCurrentCountLab,
+  isAttested,
+  toggleAttested,
 
   avgGrade,
   hour,
@@ -1257,6 +1274,11 @@ export const ControlAttestationGrade: FC<ControlAttestationGradeProps> = memo(({
   
   return (
     <Column style={isMobile ? {} : {width: 440}} horizontalAlign='center'>
+      <ActionButtonSwitch  
+        text='Аттестован'
+        isLeft={!isAttested} 
+        onClick={toggleAttested} />
+      <Spacing themeSpace={20} variant='Column' />
       <Input 
           header='Оценка' 
           placeholder='9' error={errorAvgGrade}
@@ -1431,13 +1453,13 @@ export const ClassItemView: FC<ClassItemViewProps> = memo(({
     )
   ) : (
     <ClassItem 
-    style={{backgroundColor: ( item.avgGrade !== null && item.hour !== null && item.maxCountLab !== null && item.currentCountLab !== null) ? theme.colors.neutral : ''}}  
+    style={{backgroundColor: item.isAttested ? theme.colors.neutral : '#fc657e80'}}  
     onClick={() => onClickAttestation(item)}>
       {item.avgGrade !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.avgGrade.toFixed(2).replace(/\.?0+$/, '')}</b>
+        <b>{item.avgGrade}</b>
       </Text>}
       {item.hour !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.hour.toFixed(2).replace(/\.?0+$/, '')} ч.</b>
+        <b>{item.hour} ч.</b>
       </Text>}
       <Text themeFont={theme.fonts.ht2} style={{fontSize: 11}}>
       {(item.currentCountLab !== null && item.maxCountLab === null) && <b>{item.currentCountLab}</b>}

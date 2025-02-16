@@ -35,6 +35,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     setMaxCountLabActionCreator,
     setTimeOfOneClassActionCreator,
     setAvgGradeActionCreator,
+    toggleAttestedActionCreator,
 
     resetAttestateWindowPopup
   } = classGroupControlSlice.actions;
@@ -122,6 +123,10 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(setGradeNumberActionCreator(value));
   },[dispatch,setGradeNumberActionCreator])
 
+  const toggleAttested = useCallback(()=>{
+    dispatch(toggleAttestedActionCreator());
+  },[dispatch,toggleAttestedActionCreator])
+
   const switchIsPassed = useCallback(()=>{
     dispatch(switchIsPassedActionCreator());
   },[dispatch,switchIsPassedActionCreator])
@@ -205,11 +210,6 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   },[dispatch, authToken, teacherClassGroupControlState.idHold, teacherClassGroupControlState.initData])
 
   const calculateAttestation = useCallback((onSuccess: () => void)=>{
-    if(teacherClassGroupControlState.maxLabCount === null
-      || teacherClassGroupControlState.countClassThatNotAttestation === null
-      || teacherClassGroupControlState.timeOfOneClass === null)
-      return;
-
     const studentIds: number[] = teacherClassGroupControlState.studentsStatistics.map(
       item => item.student.idStudent
     )
@@ -238,12 +238,6 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   },[dispatch,setAvgGradeActionCreator])
 
   const onSave = useCallback((onSuccess: () => void) => {
-    if(teacherClassGroupControlState.avgGrade === null 
-      || teacherClassGroupControlState.maxLabCount === null
-      || teacherClassGroupControlState.timeOfOneClass === null
-      || teacherClassGroupControlState.countClassThatNotAttestation === null)
-      return;
-
     dispatch(updateAttestationClassActionCreator({
       authToken: authToken,
       avgGrade: teacherClassGroupControlState.avgGrade,
@@ -251,6 +245,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
       idAttestationStudentGrades: teacherClassGroupControlState.selectedAttestationGrade.idAttestationStudentGrades,
       hour: teacherClassGroupControlState.timeOfOneClass,
       currentCountLab: teacherClassGroupControlState.countClassThatNotAttestation,
+      isAttested: teacherClassGroupControlState.isAttested,
       onSuccess: onSuccess
     }));
   },[
@@ -259,6 +254,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.maxLabCount,
     teacherClassGroupControlState.selectedAttestationGrade.idAttestationStudentGrades,
     teacherClassGroupControlState.timeOfOneClass,
+    teacherClassGroupControlState.isAttested,
     teacherClassGroupControlState.countClassThatNotAttestation,])
 
   const removeAttestation = useCallback((onSuccess: () => void) => {
@@ -295,6 +291,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         setExpirationOfRefresh={setExpirationOfRefresh}
         setSelectedClass={setSelectedClass}
         setExpirationOfReview={setExpirationOfReview}
+        toggleAttested={toggleAttested}
 
         activateKeyForClass={activateKeyForClass}
 

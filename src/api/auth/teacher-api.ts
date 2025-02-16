@@ -127,10 +127,11 @@ export const teacherApi = {
     updateAttestationGrade(
         authToken: string, 
         idAttestationStudentGrades: number,
-        avgGrade: number,
-        hour: number,
-        currentCountLab :number,
-        maxCountLab: number
+        avgGrade: number | null,
+        hour: number | null,
+        currentCountLab :number | null,
+        maxCountLab: number | null,
+        isAttested: boolean,
     ){
         return instance.put('/teacher/update/attestation/classes',{
             idAttestationStudentGrades,
@@ -138,6 +139,7 @@ export const teacherApi = {
             maxCountLab,
             hour,
             currentCountLab,
+            isAttested
             }, { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;

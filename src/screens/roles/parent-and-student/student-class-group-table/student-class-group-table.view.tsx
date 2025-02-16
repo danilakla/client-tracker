@@ -669,12 +669,14 @@ export const ClassItemView: FC<ClassItemViewProps> = memo(({
       <EmptyClassItem />
     )
   ) : (
-    <ClassItem style={{backgroundColor: theme.colors.neutral}} onClick={() => {}}>
+    <ClassItem 
+    style={{backgroundColor: item.isAttested ? theme.colors.neutral : '#fc657e80'}}  
+    onClick={() => {}}>
       {item.avgGrade !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.avgGrade.toFixed(2).replace(/\.?0+$/, '')}</b>
+        <b>{item.avgGrade}</b>
       </Text>}
       {item.hour !== null && <Text themeFont={theme.fonts.ht2} style={{ fontSize: 11 }}>
-        <b>{item.hour.toFixed(2).replace(/\.?0+$/, '')} ч.</b>
+        <b>{item.hour} ч.</b>
       </Text>}
       <Text themeFont={theme.fonts.ht2} style={{fontSize: 11}}>
       {(item.currentCountLab !== null && item.maxCountLab === null) && <b>{item.currentCountLab}</b>}
