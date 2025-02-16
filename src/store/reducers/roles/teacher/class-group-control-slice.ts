@@ -726,7 +726,7 @@ export const updateGradeActionCreator = createAsyncThunk('teacher-class-update',
             const response = await teacherApi.updateGrade(
                 authToken, 
                 grade.idStudentGrate, 
-                grade.grade, 
+                grade.grade === null ? 0 : grade.grade, 
                 desc === '' ? null : desc , 
                 attendance, 
                 grade.isPassLab);
@@ -1002,13 +1002,11 @@ export const updateAttestationClassActionCreator = createAsyncThunk('teacher-cla
 export const removeAttestationActionCreator = createAsyncThunk('teacher-class-control/remove-attestation-class',
     async (data: { 
       authToken: string, 
-      classes: ClassHeaderType[],
+      holdId: number,
       onSuccess: () => void}, thunkApi ) => {
-        const { authToken, classes, onSuccess } = data;
+        const { authToken, holdId, onSuccess } = data;
         try { 
-            if(classes.length === 0) return;
-            
-            const responce = await teacherApi.removeAttestation(authToken, 1);
+            const responce = await teacherApi.removeAttestation(authToken, holdId);
             onSuccess();
         }
         catch (e) {

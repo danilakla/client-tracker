@@ -264,12 +264,12 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   const removeAttestation = useCallback((onSuccess: () => void) => {
     dispatch(removeAttestationActionCreator({
       authToken: authToken,
-      classes: teacherClassGroupControlState.attestationClassesIds,
+      holdId: teacherClassGroupControlState.idHold || -1,
       onSuccess: onSuccess
     }));
   },[
     authToken, dispatch,
-    teacherClassGroupControlState.attestationClassesIds
+    teacherClassGroupControlState.idHold
   ])
 
   return (

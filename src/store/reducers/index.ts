@@ -18,6 +18,10 @@ import deanSpecialtiesReducer from "./roles/dean/specialties-slice"
 import deanGenerateStudentsReducer from "./roles/dean/generate-students-slice"
 import deanStudentsReducer from "./roles/dean/students-slice"
 
+import deanAttestationStartReducer from "./roles/dean/attestation-start-slice"
+import deanAttestationStudentsReducer from "./roles/dean/attestation-students-slice"
+import deanAttestationTeachersReducer from "./roles/dean/attestation-teachers-slice"
+
 import deanClassGroupDetailsReducer from "./roles/dean/subjects-parent/class-group-details-slice"
 import deanClassGroupsReducer from "./roles/dean/subjects-parent/class-groups-slice"
 import deanControlSubjectsReducer from "./roles/dean/subjects-parent/control-subjects-slice"
@@ -53,6 +57,9 @@ export const rootReducers = combineReducers({
       deanStudents: deanStudentsReducer,
       deanClassGroupDetails: deanClassGroupDetailsReducer,
       deanClassGroups: deanClassGroupsReducer,
+      deanAttestationStart: deanAttestationStartReducer,
+      deanAttestationStudents: deanAttestationStudentsReducer,
+      deanAttestationTeachers: deanAttestationTeachersReducer,
 
       teacherSubjects: teacherSubjectsReducer,
       teacherClassGroups: teacherClassGroupsReducer,
@@ -61,7 +68,7 @@ export const rootReducers = combineReducers({
 
       studentSubjects: studentSubjectsReducer,
       studentClassGroups: studentClassGroupsReducer,
-      studentClassGroupTable: studentClassGroupTableReducer
+      studentClassGroupTable: studentClassGroupTableReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducers>;

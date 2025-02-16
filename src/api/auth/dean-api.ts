@@ -247,4 +247,12 @@ export const deanApi = {
                 return response.data;
             })
     },
+    startAttestation(authToken: string, time: number){
+        return instance.post('/attestation',{
+            time: time
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

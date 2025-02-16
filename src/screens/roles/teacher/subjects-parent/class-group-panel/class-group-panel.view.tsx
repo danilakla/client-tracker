@@ -480,9 +480,10 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
               </Column>
             </Button>
             <Spacing themeSpace={10} variant='Row' />
+            {teacherClassGroupControlState.isNeedAttestation && 
             <Button height={38} onClick={controlSendAttestation} variant='attentive' padding={11}>
               Отправить аттестацию
-            </Button>
+            </Button>}
           </Row>
           <Spacing themeSpace={25} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
@@ -676,9 +677,10 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
               </Column>
             </Button>
             <Spacing themeSpace={10} variant='Row' />
+            {teacherClassGroupControlState.isNeedAttestation && 
             <Button height={38} onClick={controlSendAttestation} variant='attentive' padding={11}>
               Отправить аттестацию
-            </Button>
+            </Button>}
           </Row>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
