@@ -513,6 +513,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
               </Button>
             </Row>}
         </Surface>
+        <Spacing variant='Column' themeSpace={85} />
       </>}
       <Modal isActive={isOpenUpdateWindow} closeModal={closeUpdateWindow}>
         <ControlStudentGrade

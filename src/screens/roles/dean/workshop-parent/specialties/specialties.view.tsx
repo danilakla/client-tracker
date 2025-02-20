@@ -19,6 +19,7 @@ import { SpecialtyInfo, SpecialtyState } from '../../../../../store/reducers/rol
 import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-popup';
 import { CircleLoading } from '../../../../../ui-kit/circle-loading';
 import { Modal } from '../../../../../ui-kit/modal';
+import { ItemsContainerMobile } from '../subjects-parent/control-subjects/control-subjects.styled';
 
 export type SpecialtiesViewProps = {
   goToWorkshop: () => void;
@@ -202,10 +203,10 @@ export const SpecialtiesMobileView: FC<LocalViewData> = memo(({
         </Button>
       </Row>
       <Spacing themeSpace={20} variant='Column' />
-      {filteredSpecialities.map((item, index) => <>
-          <ActionButton key={index} onClick={() => onClickCard(item)} text={item.name} />
-          <Spacing themeSpace={10} variant='Column' />
-        </>)}
+      <ItemsContainerMobile>
+      {filteredSpecialities.map((item, index) =>
+          <ActionButton key={index} onClick={() => onClickCard(item)} text={item.name}/>)}
+      </ItemsContainerMobile>
       <Modal isActive={isOpenAdd} closeModal={closeAdd}>
         <Column horizontalAlign='center'>
           <Input 

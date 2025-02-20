@@ -207,7 +207,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
             items={deanClassGroupDetailsState.teachers} 
             selectedItem={deanClassGroupDetailsState.selectedTeacher} 
             setValue={setSelectedTeacher}/>
-          <Column style={{height: 25}}>
+          <Column style={{height: 25, flexShrink: 0}}>
             <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}>
               {deanClassGroupDetailsState.errors['teacherError']}
             </Text>
@@ -218,7 +218,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
             items={deanClassGroupDetailsState.classFormats} 
             selectedItem={deanClassGroupDetailsState.selectedClassFormat} 
             setValue={setSelectedClassFormat}/>
-          <Column style={{height: 30}}>
+          <Column style={{height: 25, flexShrink: 0}}>
             <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}>
               {deanClassGroupDetailsState.errors['classFormatError']}
             </Text>
@@ -229,7 +229,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
                   text='Включить в аттестацию'
                   isLeft={!deanClassGroupDetailsState.hasApplyAttestation} 
                   onClick={switchHasApplyAttestation} />
-          <Spacing themeSpace={30} variant='Column' />
+          <Spacing themeSpace={20} variant='Column' />
           <ActionButtonSwitch  
             disable={type === 'edit'}
             text='Разные занятия'
@@ -248,17 +248,19 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={type === 'add' ? 15 : 10} variant='Column' />
           <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={10} variant='Column' />
-          <ItemsContainerMobile>
           {
-            filteredSubgroupsExists.map((item, index) => 
-              <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)
+            filteredSubgroupsExists.map((item, index) =>
+              <>
+              <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>
+              <Spacing themeSpace={10} variant='Column' />
+              </>)
           }
-          </ItemsContainerMobile>
-          <Spacing themeSpace={25} variant='Column' />
+          <Spacing themeSpace={20} variant='Column' />
          {type === 'edit' && 
           <Button onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
             Удалить группу занятий
           </Button>}
+          <Spacing variant='Column' themeSpace={85} />
         </>)
       }
       <Modal padding='none' isActive={isOpenSubgroups} closeModal={controlSubroupsWindow}>

@@ -100,6 +100,7 @@ export const ChangePasswordMobileView: FC<ChangePasswordViewProps> = memo(({
             </Button>
           </Row>
         </Column>
+        <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

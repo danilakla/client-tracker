@@ -23,6 +23,7 @@ import { Input } from '../../../../../ui-kit/input';
 import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-popup';
 import { GridContainer } from '../../../../../ui-kit/grid-container';
 import { ActionBlockButton } from '../../../../../ui-kit/action-block-button';
+import { ItemsContainerMobile } from '../subjects-parent/control-subjects/control-subjects.styled';
 
 export type StudentsViewProps = {
   goToWorkshop: () => void;
@@ -316,15 +317,13 @@ export const AllView: FC<AllViewProps> = memo(({
     (<WrapperMobile 
         onBack={onBack}  
         role='ROLE_DEAN' header={header}>
-          <Column horizontalAlign='center'>
+          <Column horizontalAlign='center' style={{height: '100%'}}>
             <Search value={search} setValue={setSearch}/>
             <Spacing themeSpace={20} variant='Column' />
-            {
-              filteredData.map((item, index) => <>
-                <ActionButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />
-                <Spacing themeSpace={10} variant='Column' />
-              </>)
-            }
+            <ItemsContainerMobile>
+            {filteredData.map((item, index) =>
+                <ActionButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)}
+            </ItemsContainerMobile>
           </Column>
       </WrapperMobile>) : 
       (<WrapperDesktop 
@@ -389,7 +388,7 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
     (<WrapperMobile 
       onBack={onBack}  
       role='ROLE_DEAN' header={header}>
-        <Column horizontalAlign='center'>
+        <Column horizontalAlign='center' style={{height: '100%'}}>
           <Row style={{width: '100%', maxWidth: 440}}>
             <Button onClick={openCreateStudentPopup} variant='primary' padding={[12,8]}>
               Добавить студента
@@ -402,12 +401,10 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
           <Spacing themeSpace={20} variant='Column' />
           <Search value={search} setValue={setSearch}/>
           <Spacing themeSpace={20} variant='Column' />
-          {
-            filteredData.map((item, index) => <>
-              <ActionButton key={index} onClick={() => onClick(item)} text={item.flpName} />
-              <Spacing themeSpace={10} variant='Column' />
-            </>)
-          }
+          <ItemsContainerMobile>
+            {filteredData.map((item, index) =>
+              <ActionButton key={index} onClick={() => onClick(item)} text={item.flpName} />)}
+          </ItemsContainerMobile>
         </Column>
       </WrapperMobile>) : 
       (<WrapperDesktop 
@@ -515,6 +512,7 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
           textColor={theme.colors.attentive} 
           onClick={controlConfirmDeletePopup} 
           text='Удалить' />
+        <Spacing variant='Column' themeSpace={85} />
       </Column>
     </WrapperMobile>) : 
     (<WrapperDesktop 

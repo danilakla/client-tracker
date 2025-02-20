@@ -9,4 +9,5 @@ export const ItemsContainerMobile = styled.div`
   gap: ${(props) => '10px'};
   height: 100%;
   overflow: auto;
+  padding-bottom: 85px;
 `;

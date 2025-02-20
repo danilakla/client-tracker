@@ -96,6 +96,7 @@ export const ChangeAccoundDataMobileView: FC<ChangeAccoundDataViewProps> = memo(
           </Button>
         </Row>
       </Column>
+      <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

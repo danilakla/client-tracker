@@ -62,7 +62,7 @@ export const UniversityInfoMobileView: FC<UniversityInfoViewProps> = memo(({
               </Text>
               <Spacing themeSpace={10} variant='Column' />
               <Text 
-                themeFont={theme.fonts.h2} 
+                themeFont={theme.fonts.ht2} 
                 style={{
                   wordBreak: 'break-word',
                   overflow: 'hidden', 
@@ -82,12 +82,13 @@ export const UniversityInfoMobileView: FC<UniversityInfoViewProps> = memo(({
                   overflow: 'hidden', 
                   textOverflow: 'ellipsis'
                 }} 
-                themeFont={theme.fonts.h2} 
+                themeFont={theme.fonts.ht2} 
                 themeColor={theme.colors.nothing}>
                 {universityInfoState.university.description === '' ? 'Не указано' : universityInfoState.university.description}
               </Text>
           </Column>
       </Surface>)}
+      <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

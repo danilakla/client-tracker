@@ -73,6 +73,7 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
       <ActionButton onClick={goToDeanStudents} text='Студенты' />
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToAttestation} text='Аттестация' />
+      <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

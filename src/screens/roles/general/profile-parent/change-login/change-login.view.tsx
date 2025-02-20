@@ -86,6 +86,7 @@ export const ChangeLoginMobileView: FC<ChangeLoginViewProps> = memo(({
             </Button>
           </Row>
         </Column>
+        <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

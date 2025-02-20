@@ -90,6 +90,7 @@ export const GeneratorKeysMobileView: FC<GeneratorKeysViewProps> = memo(({
       <Button onClick={onCreate} state={adminGeneratorKeysState.loading} variant='primary' padding={[12,17]}>
         Создать ключ
       </Button>
+      <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

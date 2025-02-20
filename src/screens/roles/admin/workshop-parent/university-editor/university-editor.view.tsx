@@ -88,6 +88,7 @@ export const UniversityEditorMobileView: FC<UniversityEditorViewProps> = memo(({
           </Button>
         </Row>
       </>)}
+      <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

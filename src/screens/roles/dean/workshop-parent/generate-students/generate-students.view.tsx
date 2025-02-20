@@ -205,7 +205,7 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
         <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
           Загрузить файл
         </Button>
-      </Column>) : <Column horizontalAlign='center' style={{maxWidth: 440}}>
+      </Column>) : <Column horizontalAlign='center' style={{maxWidth: 440, height: "100%"}}>
         <Column>
           <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
             Загрузить новый файл

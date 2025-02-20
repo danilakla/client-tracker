@@ -64,6 +64,7 @@ export const AttestationMobileView: FC<LocalViewProps> = memo(({
       <ActionButton onClick={goToAttestationTeachers} text='Список преподавателей' />
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToAttestationStudents} text='Список студентов' />
+      <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
 });

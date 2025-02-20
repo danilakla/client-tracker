@@ -319,6 +319,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
               Студенты не найдены
             </Text>}
         </Surface>
+        <Spacing variant='Column' themeSpace={85} />
       </>}
       <Modal isActive={isOpenDescription} closeModal={closeDescription}> 
         <ScrollView style={{maxHeight: 450}}>

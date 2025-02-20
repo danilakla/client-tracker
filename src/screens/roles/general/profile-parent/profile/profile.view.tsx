@@ -119,6 +119,7 @@ export const ProfileMobileView: FC<ProfileViewProps> = memo(({
         <Spacing variant='Column' themeSpace={10} />
         <ActionButton onClick={controlExitPopup} themeFont={theme.fonts.h2} textColor={theme.colors.attentive} text='Выйти из аккаунта' />
       </Column>
+      <Spacing variant='Column' themeSpace={85} />
       <Popup isActive={isOpenExitPopup} closePopup={controlExitPopup}>
         <Column horizontalAlign='center'>
           <Text themeFont={theme.fonts.h2} align='center'> 

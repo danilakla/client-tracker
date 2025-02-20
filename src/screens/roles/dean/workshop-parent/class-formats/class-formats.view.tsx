@@ -20,6 +20,7 @@ import { ClassFormatInfo, ClassFormatsState } from '../../../../../store/reducer
 import { Textarea } from '../../../../../ui-kit/textarea';
 import { CircleLoading } from '../../../../../ui-kit/circle-loading';
 import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-popup';
+import { ItemsContainerMobile } from '../subjects-parent/control-subjects/control-subjects.styled';
 
 export type ClassFormatsViewProps = {
   goToWorkshop: () => void;
@@ -211,10 +212,10 @@ export const ClassFormatsMobileView: FC<LocalViewData> = memo(({
         </Button>
       </Row>
       <Spacing themeSpace={20} variant='Column' />
-      {filteredListFormats.map((item, index) => <>
-          <ActionButton key={index} onClick={() => onClickCard(item)} text={item.formatName} />
-          <Spacing themeSpace={10} variant='Column' />
-        </>)}
+      <ItemsContainerMobile>
+      {filteredListFormats.map((item, index) =>
+          <ActionButton key={index} onClick={() => onClickCard(item)} text={item.formatName} />)}
+      </ItemsContainerMobile>
       <Modal isActive={isOpenAdd} closeModal={closeAdd}>
         <Column horizontalAlign='center'>
           <Input 
