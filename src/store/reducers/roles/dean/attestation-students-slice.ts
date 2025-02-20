@@ -3,19 +3,77 @@ import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { deanApi } from "../../../../api/auth/dean-api";
 
-export type AttestationStudentsState = {
-    loading: "idle" | "loading" | "success" | "error";
+export type SubgroupDTO = {
+    subgroup: {
+        id: number,
+        subgroupNumber: string,
+        admissionDate: string
+    },
+    students: StudentDTO[]
 }
 
+export type StudentDTO = {
+    id: number,
+    name: string
+    classGroups: DebtDTO[]
+}
+
+export type DebtDTO = {
+    id: number,
+    description: string
+    idSubject: number,
+    idClassFormat: number,
+    idTeacher: number
+}
+
+export type AttestationStudentsState = {
+    loading: "idle" | "loading" | "success" | "error";
+    subgroups: SubgroupDTO[];
+    selectedSubgroup: SubgroupDTO;
+    selectedStudent: StudentDTO;
+    searchSubgroup: string;
+    searchStudent: string;
+}
 
 const initialState : AttestationStudentsState = {
     loading: 'idle',
+    searchSubgroup: '',
+    searchStudent: '',
+    subgroups: [],
+    selectedSubgroup: {
+        subgroup: {
+            id: -1,
+            subgroupNumber: '',
+            admissionDate: ''
+        },
+        students: []
+    },
+    selectedStudent:{
+        id: -1,
+        name: '',
+        classGroups: []
+    }
 }
 
 export const attestationStudentsSlice = createSlice({
     name: 'attestation-students-slice',
     initialState,
     reducers: {
+        setSubgroupsActionCreator(state, action: PayloadAction<SubgroupDTO[]>) {
+            state.subgroups = action.payload;
+        },
+        setSelectedSubgroupActionCreator(state, action: PayloadAction<SubgroupDTO>) {
+            state.selectedSubgroup = action.payload;
+        },
+        setSelectedStudentActionCreator(state, action: PayloadAction<StudentDTO>) {
+            state.selectedStudent = action.payload;
+        },
+        setSearchStudentActionCreator(state, action: PayloadAction<string>) {
+            state.searchStudent = action.payload;
+        },
+        setSearchSubgroupActionCreator(state, action: PayloadAction<string>) {
+            state.searchSubgroup = action.payload;
+        },
         reset(state) {
             Object.assign(state, initialState);
         },

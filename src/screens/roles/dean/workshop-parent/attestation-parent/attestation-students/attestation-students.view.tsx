@@ -1,14 +1,18 @@
 
-import { FC, memo } from 'react';
+import { FC, memo, useState } from 'react';
 import { theme } from '../../../../../../ui-kit/themes/theme';
 import { useMediaQuery } from 'react-responsive';
 import { WrapperMobile } from '../../../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../../../components/wrapper-desktop';
-import { AttestationStudentsState } from '../../../../../../store/reducers/roles/dean/attestation-students-slice';
+import { AttestationStudentsState, StudentDTO, SubgroupDTO } from '../../../../../../store/reducers/roles/dean/attestation-students-slice';
 
 export type AttestationStudentsViewProps = {
   goToAttestation: () => void;
   deanAttestationStudentsState: AttestationStudentsState;
+  setSearchStudent: (value: string) => void;
+  setSearchSubgroup: (value: string) => void;
+  setSelectedStudent: (value: StudentDTO) => void;
+  setSelectedSubgroup: (value: SubgroupDTO) => void;
 };
 
 export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
@@ -16,6 +20,8 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
   deanAttestationStudentsState,
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
+
+  const [currentScreen, setCurrentScreen] = useState<'subgroups' | 'students' | 'subjects'>('subjects')
 
   return (
     isMobile ? 
@@ -34,6 +40,7 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
 type LocalViewProps = {
   goToAttestation: () => void;
   deanAttestationStudentsState: AttestationStudentsState;
+  
 };
 
 export const AttestationStudentsMobileView: FC<LocalViewProps> = memo(({
