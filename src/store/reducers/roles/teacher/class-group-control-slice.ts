@@ -1052,6 +1052,9 @@ export const removeAttestationActionCreator = createAsyncThunk('teacher-class-co
         const { authToken, holdId, onSuccess } = data;
         try { 
             await teacherApi.removeAttestation(authToken, holdId);
+
+            thunkApi.dispatch(classGroupControlSlice.actions.setIsNeedAttestationActionCreator(false));
+
             onSuccess();
         }
         catch (e) {

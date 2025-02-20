@@ -7,4 +7,6 @@ export const ItemsContainerMobile = styled.div`
   max-width: 440px;
   flex-direction: column;
   gap: ${(props) => '10px'};
+  height: 100%;
+  overflow: auto;
 `;

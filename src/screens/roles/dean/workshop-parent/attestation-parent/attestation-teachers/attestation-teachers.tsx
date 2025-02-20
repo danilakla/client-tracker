@@ -1,8 +1,8 @@
-import { FC, memo, useCallback, useEffect, useRef } from 'react';
+import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { AttestationTeachersProps } from './attestation-teachers.props';
 import { AttestationTeachersView } from './attestation-teachers.view';
 import { useAttestation } from '../attestation/attestation.props';
-import { attestationTeachersSlice, initTeachersForDeanActionCreator } from '../../../../../../store/reducers/roles/dean/attestation-teachers-slice';
+import { attestationTeachersSlice, initTeachersForDeanActionCreator, TeacherDto } from '../../../../../../store/reducers/roles/dean/attestation-teachers-slice';
 import { useAppDispatch, useTypedSelector } from '../../../../../../hooks/use-typed-selector';
 import { useUser } from '../../../../../../hooks/user-hook';
 
@@ -16,7 +16,8 @@ export const AttestationTeachers: FC<AttestationTeachersProps> = memo(() => {
   const dispatch = useAppDispatch();
 
   const { 
-    reset
+    reset,
+    setSearchTextActionCreator
   } = attestationTeachersSlice.actions;
 
   const isInizialized = useRef(true);
@@ -34,11 +35,27 @@ export const AttestationTeachers: FC<AttestationTeachersProps> = memo(() => {
      };
   },[dispatch, reset, initData]);
 
+  const [filteredTeachers, setFilteredTeachers] = useState<TeacherDto[]>([]);
+
+  useEffect(() => {
+    const trimmedSearchText = deanAttestationTeachersState.searchText.trim().toLowerCase();
+  
+    const newFiltered= deanAttestationTeachersState.teachers
+      .filter(teacher => !trimmedSearchText || teacher.flpName.toLowerCase().includes(trimmedSearchText));
+  
+      setFilteredTeachers(newFiltered);
+  }, [deanAttestationTeachersState.teachers, deanAttestationTeachersState.searchText]);
+
+  const setSearchText = useCallback((value: string) => {
+    dispatch(setSearchTextActionCreator(value));
+  }, [dispatch, setSearchTextActionCreator]);
 
   return (
       <AttestationTeachersView 
         deanAttestationTeachersState={deanAttestationTeachersState}
         goToAttestation={goToAttestation}
+        filteredTeachers={filteredTeachers}
+        setSearchText={setSearchText}
         />
     );
 });

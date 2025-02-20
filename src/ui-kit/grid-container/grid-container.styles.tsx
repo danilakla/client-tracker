@@ -12,4 +12,7 @@ export const GridContainerStyled = styled.div<{
   );
   gap: ${({ gap }) => (gap ? `${gap}px` : '25px')};
   width: ${({ width }) => (width ? `${width}` : '100%')} ;
+  height: 100%;
+  overflow: auto;
+  padding-bottom: 65px
 `;

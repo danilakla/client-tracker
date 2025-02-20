@@ -41,6 +41,8 @@ export const ImageArrowButton = styled.img`
 
 export const ScreenContent = styled.div`
     padding: 75px 25px;
+    height: 100vh;
+    overflow: auto;
     display: flex;
     flex-direction: column;
     align-items: center;

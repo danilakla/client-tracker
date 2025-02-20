@@ -3,19 +3,37 @@ import axios from "axios";
 import { appStatusSlice } from "../../app-status-slice";
 import { deanApi } from "../../../../api/auth/dean-api";
 
+export type TeacherDto = {
+    idTeacher: number
+    flpName: string
+    idAccount: number
+    idUniversity: number
+}
+
 export type AttestationTeachersState = {
     loading: "idle" | "loading" | "success" | "error";
+    teachers: TeacherDto[];
+    searchText: string;
 }
 
 
+
 const initialState : AttestationTeachersState = {
+    teachers: [],
     loading: 'idle',
+    searchText: ''
 }
 
 export const attestationTeachersSlice = createSlice({
     name: 'attestation-teachers-slice',
     initialState,
     reducers: {
+        setSearchTextActionCreator(state, action: PayloadAction<string>) {
+            state.searchText = action.payload;
+        },
+        setTeachersActionCreator(state, action: PayloadAction<TeacherDto[]>) {
+            state.teachers = action.payload;
+        },
         reset(state) {
             Object.assign(state, initialState);
         },
@@ -39,7 +57,14 @@ export const initTeachersForDeanActionCreator = createAsyncThunk('attestation-te
     async (data: { authToken: string }, thunkApi) => {
         const { authToken } = data;
         try {
-            const response = deanApi.getTeachersNotAttessted(authToken);
+            const response = await deanApi.getTeachersNotAttessted(authToken);
+
+            thunkApi.dispatch(attestationTeachersSlice.actions.setTeachersActionCreator(
+                response.map((teacher: TeacherDto) => ({
+                    ...teacher,
+                    flpName: teacher.flpName.replace(/_/g, ' ')
+                }))
+            ));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

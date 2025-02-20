@@ -53,17 +53,18 @@ export const ImageArrowButton = styled.img`
 `;
 
 export const ScreenContent = styled.div<{ isCenter?: boolean }>`
-  padding:  95px 110px 95px 110px;
+  padding:  95px 110px 0px 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  
+  height: 100vh;
+  overflow: auto;
+
   ${({ isCenter }) =>
     isCenter &&
     `
     min-height: 740px;  
-    height: 100vh;
     justify-content: center;
   `}
 `;
