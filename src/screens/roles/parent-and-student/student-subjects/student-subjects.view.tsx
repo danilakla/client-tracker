@@ -91,7 +91,7 @@ export const StudentSubjectsDesktopView: FC<StudentSubjectsViewProps> = memo(({
           <CircleLoading state={studentSubjectsState.loading}/>
         </Column>
       }
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Search isMobile={false} value={studentSubjectsState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>

@@ -93,7 +93,7 @@ export const StudentClassGroupsDesktopView: FC<StudentClassGroupsViewProps> = me
 
   return (
     <WrapperDesktop onBack={goToStudentSubjects} role={role} header={nameSubject}>
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Search isMobile={false} value={searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>

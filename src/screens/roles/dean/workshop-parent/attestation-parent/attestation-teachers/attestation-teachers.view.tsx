@@ -93,14 +93,13 @@ export const AttestationTeachersDesktopView: FC<LocalViewProps> = memo(({
           <CircleLoading state={deanAttestationTeachersState.loading}/>
         </Column>
       }
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Search isMobile={false} value={deanAttestationTeachersState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredTeachers.map((item, index) => <>
+          {filteredTeachers.map((item, index) =>
             <ActionBlockButton key={index}
-              text={item.flpName} />
-            </>)}
+              text={item.flpName} />)}
         </GridContainer>
       </Column>
     </WrapperDesktop>

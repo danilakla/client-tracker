@@ -191,7 +191,7 @@ export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(({
 
   return (
     <WrapperDesktop onBack={goToWorkshop} role='ROLE_DEAN' header='Предметы'>
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Row style={{width: '100%'}}>
           <Search isMobile={false} value={deanControlSubjectsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={20} variant='Row' />
@@ -201,9 +201,8 @@ export const ControlSubjectsDesktopView: FC<LocalViewProps> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSubjects.map((item, index) => <>
-            <ActionBlockButton key={index} onClick={() => goClassGroups(item)} text={item.name} />
-            </>)}
+          {filteredSubjects.map((item, index) =>
+            <ActionBlockButton key={index} onClick={() => goClassGroups(item)} text={item.name} />)}
         </GridContainer>
       </Column>
       <Popup isActive={isOpenAddWindow} closePopup={closeAddWindow}> 

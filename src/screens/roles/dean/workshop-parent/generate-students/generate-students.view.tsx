@@ -284,7 +284,7 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
         <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
           Загрузить файл
         </Button>
-      </Column>) : (<Column style={{width: 905}}>
+      </Column>) : (<Column style={{width: 905, height: '100%'}}>
         <Row>
           <Button 
             onClick={onCreate} 

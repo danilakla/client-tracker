@@ -324,7 +324,7 @@ export const ClassFormatsDesktopView: FC<LocalViewData> = memo(({
           <CircleLoading state={deanClassFormatsState.loading}/>
         </Column>
       }
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Row style={{width: '100%'}}>
           <Search isMobile={false} 
             value={deanClassFormatsState.searchText} 
@@ -336,9 +336,8 @@ export const ClassFormatsDesktopView: FC<LocalViewData> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredListFormats.map((item, index) => <>
-            <ActionBlockButton key={index} text={item.formatName} onClick={() => onClickCard(item)} />
-          </>)}
+          {filteredListFormats.map((item, index) =>
+            <ActionBlockButton key={index} text={item.formatName} onClick={() => onClickCard(item)} />)}
         </GridContainer>
       </Column>
       <Popup isActive={isOpenAdd} closePopup={closeAdd}>

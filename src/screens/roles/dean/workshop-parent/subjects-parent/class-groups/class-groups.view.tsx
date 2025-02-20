@@ -260,7 +260,7 @@ export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(({
         Группы занятий
       </Text>
       <Spacing themeSpace={10} variant='Column' />
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: "100%", overflow: 'hidden'}}>
         <Row style={{width: '100%'}}>
           <Search isMobile={false} value={deanClassGroupsState.searchText} setValue={setSearchText}/>
           <Spacing themeSpace={20} variant='Row' />
@@ -270,9 +270,8 @@ export const ClassGroupsDesktopView: FC<LocalViewProps> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredClassGroups.map((item, index) => <>
-            <ActionBlockButton key={index} onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />
-            </>)}
+          {filteredClassGroups.map((item, index) =>
+            <ActionBlockButton key={index} onClick={() => goToClassGroupEdit(item.idClassGroup)} text={item.description} />)}
         </GridContainer>
       </Column>
       <Popup isActive={isOpenUpdateWindow} closePopup={closeUpdateWindow}> 

@@ -104,7 +104,7 @@ export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
           <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
         </Column>
       }
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%' }}>
         <Search isMobile={false} value={teacherClassGroupSubroupsState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>

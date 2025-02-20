@@ -93,15 +93,14 @@ export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
           <CircleLoading state={teacherSubjectsState.loading}/>
         </Column>
       }
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Search isMobile={false} value={teacherSubjectsState.searchText} setValue={setSearchText}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSubjects.map((item, index) => <>
+          {filteredSubjects.map((item, index) => 
             <ActionBlockButton 
               onClick={() => goToClassGroups(item.classGroups, item.subjectName)} 
-              text={item.subjectName} key={index}/>
-            </>)}
+              text={item.subjectName} key={index}/>)}
         </GridContainer>
       </Column>
     </WrapperDesktop>

@@ -90,7 +90,7 @@ export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
   return (
     <WrapperDesktop role='ROLE_DEAN' header='Мастерская' isCenter={true}>
       <Column style={{width: 'auto'}}>
-        <GridContainer columns={4}>
+        <GridContainer columns={4} style={{paddingBottom: 0}}>
           <ActionBlockButton onClick={goToControlSubjects} text='Предметы' />
           <ActionBlockButton onClick={goToClassFormats} text='Форматы занятий' />
           <ActionBlockButton onClick={goToSpecialties} text='Специаль- ности' />

@@ -64,6 +64,7 @@ export const ScreenContent = styled.div<{ isCenter?: boolean }>`
   ${({ isCenter }) =>
     isCenter &&
     `
+    padding-bottom: 65px;
     min-height: 740px;  
     justify-content: center;
   `}

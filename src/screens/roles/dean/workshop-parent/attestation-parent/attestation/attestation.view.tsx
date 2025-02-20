@@ -79,7 +79,7 @@ export const AttestationDesktopView: FC<LocalViewProps> = memo(({
   return (
     <WrapperDesktop role='ROLE_DEAN' header='Аттестация' onBack={goToDeanWorkshop} isCenter={true}>
       <Column style={{width: 'auto'}}>
-        <GridContainer columns={3}>
+        <GridContainer columns={3} style={{paddingBottom: 0}}>
           <ActionBlockButton onClick={goToAttestationStart} text='Запуск аттестации' />
           <ActionBlockButton onClick={goToAttestationTeachers} text='Список преподавателей' />
           <ActionBlockButton onClick={goToAttestationStudents} text='Список студентов' />

@@ -300,7 +300,7 @@ export const SpecialtiesDesktopView: FC<LocalViewData> = memo(({
           <CircleLoading state={deanSpecialtiesState.loading}/>
         </Column>
       }
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Row style={{width: '100%'}}>
           <Search isMobile={false} 
             value={deanSpecialtiesState.searchText} 
@@ -312,9 +312,8 @@ export const SpecialtiesDesktopView: FC<LocalViewData> = memo(({
         </Row>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSpecialities.map((item, index) => <>
-            <ActionBlockButton key={index} text={item.name} onClick={() => onClickCard(item)} />
-          </>)}
+          {filteredSpecialities.map((item, index) =>
+            <ActionBlockButton key={index} text={item.name} onClick={() => onClickCard(item)} />)}
         </GridContainer>
       </Column>
       <Popup isActive={isOpenAdd} closePopup={closeAdd}>

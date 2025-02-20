@@ -329,14 +329,12 @@ export const AllView: FC<AllViewProps> = memo(({
       (<WrapperDesktop 
         onBack={onBack} 
         role='ROLE_DEAN' header={header}>
-          <Column style={{width: 695}}>
+          <Column style={{width: 695, height: '100%'}}>
             <Search isMobile={false} value={search} setValue={setSearch}/>
             <Spacing themeSpace={30} variant='Column' />
             <GridContainer columns={4}>
-              {
-                filteredData.map((item, index) =>
-                  <ActionBlockButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)
-              }
+              {filteredData.map((item, index) =>
+                  <ActionBlockButton key={index} onClick={() => onClick(item)} text={item.subgroup.subgroupNumber} />)}
             </GridContainer>
           </Column>
       </WrapperDesktop>)
@@ -410,7 +408,7 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
       (<WrapperDesktop 
         onBack={onBack} 
         role='ROLE_DEAN' header={header}>
-          <Column horizontalAlign='center' style={{width: 695}}>
+          <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
             <Row style={{width: '100%'}}>
               <Search isMobile={false} 
                 value={search} 
@@ -423,12 +421,11 @@ export const SubgroupView: FC<SubgroupViewProps> = memo(({
               <Button style={{flexShrink: 0}}  onClick={openDeleteSubgroupPopup} variant='attentive' padding={[12,17]}>
                 Удалить подгруппу
               </Button>
-              </Row>
+            </Row>
             <Spacing themeSpace={30} variant='Column' />
             <GridContainer columns={4}>
-              {filteredData.map((item, index) => <>
-                <ActionBlockButton key={index} text={item.flpName} onClick={() => onClick(item)} />
-              </>)}
+              {filteredData.map((item, index) => 
+                <ActionBlockButton key={index} text={item.flpName} onClick={() => onClick(item)} />)}
             </GridContainer>
           </Column>
       </WrapperDesktop>)
