@@ -1,12 +1,10 @@
 import { FC, HtmlHTMLAttributes, memo, ReactNode, useState } from "react";
 
 import profileActive from '../../images/menu-panel/white/profile.svg';
-import statisticsActive from '../../images/menu-panel/white/statistics.svg';
 import subjectActive from '../../images/menu-panel/white/subject.svg';
 import workshopActive from '../../images/menu-panel/white/workshop.svg';
 
 import profileDisable from '../../images/menu-panel/gray/profile.svg';
-import statisticsDisable from '../../images/menu-panel/gray/statistics.svg';
 import subjectDisable from '../../images/menu-panel/gray/subject.svg';
 import workshopDisable from '../../images/menu-panel/gray/workshop.svg';
 import { UserRole } from "../../store/reducers/user-slice";

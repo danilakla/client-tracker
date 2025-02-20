@@ -145,8 +145,7 @@ export const MembersView: FC<MembersViewProps> = memo(({
     {
       isMobile ? 
       (<WrapperMobile onBack={handleBackActions[currentScreen]} role='ROLE_ADMIN' header={headers[currentScreen]}>
-        <ScreenContainer currentScreen={currentScreen}>
-          <ListOfMembersView
+          {currentScreen === 'members' && <ListOfMembersView
             isMobile={isMobile}
             onClickToggle={onClickToggle}
             toggle={toggle}
@@ -156,8 +155,8 @@ export const MembersView: FC<MembersViewProps> = memo(({
             openDescriptionDean={openDescriptionDean}
             openDescriptionTeacher={openDescriptionTeacher}
             adminMembersState={adminMembersState}
-          />
-          <MemberInfoView
+          />}
+          {currentScreen === 'details' && <MemberInfoView
             isMobile={isMobile}
             faculty={adminMembersState.selectedDean.faculty}
             toggle={toggle}
@@ -166,8 +165,7 @@ export const MembersView: FC<MembersViewProps> = memo(({
             controlConfirmPopup={controlConfirmPopup}
             resultDean={resultDean}
             resultTeacher={resultTeacher}
-          />
-        </ScreenContainer>
+          />}
       </WrapperMobile>) :
       (
         <WrapperDesktop 
@@ -407,7 +405,7 @@ export const MemberInfoView: FC<MemberInfoViewProps> = memo(({
 
   return (
     isMobile ?
-    (<Column horizontalAlign='center' padding={[0,25]}>
+    (<Column horizontalAlign='center'>
       <Surface style={{maxWidth: 440}}>
         <Row verticalAlign='center' style={{width: '100%'}} horizontalAlign='space-between'>
           <Image src={accountLogoSVG} width={95} height={95}/>
@@ -423,12 +421,13 @@ export const MemberInfoView: FC<MemberInfoViewProps> = memo(({
       </Surface>
       <Spacing themeSpace={25} variant='Column' />
       <ActionButton onClick={controlConfirmPopup} text='Сбросить пароль' />
-      <Spacing variant='Column' themeSpace={15} />
+      <Spacing variant='Column' themeSpace={10} />
       <ActionButton 
         themeFont={theme.fonts.h2} 
         textColor={theme.colors.attentive} 
         onClick={controlDropPopup} 
         text='Удалить' />
+      <Spacing variant='Column' themeSpace={85} />
     </Column>) : 
     (<Surface padding='40px'>
       <Column horizontalAlign='center' style={{position: 'relative', width: 440}}>
@@ -484,7 +483,7 @@ export const ListOfMembersView: FC<ListOfMembersViewProps> = memo(({
 
   return (
     isMobile ? 
-      (<Column horizontalAlign='center'>
+      (<Column horizontalAlign='center' style={{height: '100%'}}>
         <Toggle varinat={toggle} onButtonClick={onClickToggle}   leftText='Деканы' rightText='Преподаватели'/>
         <Spacing themeSpace={10} variant='Column' />
         <Search value={adminMembersState.searchText} setValue={setSearchText}/>
@@ -499,10 +498,9 @@ export const ListOfMembersView: FC<ListOfMembersViewProps> = memo(({
               <ActionButton key={index} onClick={() => openDescriptionTeacher(item)} text={item.flpName} />))
         }
         </ItemsContainerMobile>
-        <Spacing themeSpace={75} variant='Column' />
       </Column>)
        : (
-      <Column horizontalAlign='center' style={{width: 695}}>
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <Toggle varinat={toggle} onButtonClick={onClickToggle}   leftText='Деканы' rightText='Преподаватели'/>
         <Spacing themeSpace={35} variant='Column' />
         <Search isMobile={false} value={adminMembersState.searchText} setValue={setSearchText}/>
