@@ -63,7 +63,7 @@ export const AttestationMobileView: FC<LocalViewProps> = memo(({
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToAttestationTeachers} text='Список преподавателей' />
       <Spacing variant='Column' themeSpace={10} />
-      <ActionButton onClick={goToAttestationStudents} text='Список студентов' />
+      <ActionButton onClick={goToAttestationStudents} text='Список задолжников' />
       <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
@@ -82,7 +82,7 @@ export const AttestationDesktopView: FC<LocalViewProps> = memo(({
         <GridContainer columns={3} style={{paddingBottom: 0}}>
           <ActionBlockButton onClick={goToAttestationStart} text='Запуск аттестации' />
           <ActionBlockButton onClick={goToAttestationTeachers} text='Список преподавателей' />
-          <ActionBlockButton onClick={goToAttestationStudents} text='Список студентов' />
+          <ActionBlockButton onClick={goToAttestationStudents} text='Список задолжников' />
         </GridContainer>
       </Column>
     </WrapperDesktop>

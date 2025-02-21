@@ -225,7 +225,7 @@ export const deleteDeanActionCreator = createAsyncThunk('admin-members/delete-de
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
                 } else thunkApi.dispatch(membersSlice.actions.setError({
                     key: "selectedNewResponsibleError",
-                    error: e.response?.data.message,
+                    error: "Некорректное значение",
                 }));
             }
         }
@@ -246,7 +246,7 @@ export const deleteTeacherActionCreator = createAsyncThunk('admin-members/delete
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
                 } else thunkApi.dispatch(membersSlice.actions.setError({
                     key: "selectedNewResponsibleError",
-                    error: e.response?.data.message,
+                    error: "Некорректное значение",
                 }));
             }
         }

@@ -116,7 +116,24 @@ export const AttestationStartDesktopView: FC<LocalViewProps> = memo(({
 
   return (
     <WrapperDesktop role='ROLE_DEAN' header='Запуск аттестации' onBack={goToAttestation} isCenter={true}>
-
+      <Surface style={{width: 'auto'}}>
+        <Column horizontalAlign='center'>
+          <Input 
+            header='Введите длительность аттестации, дней' 
+            placeholder='14' error={deanAttestationStartState.errors["TimeOfDayError"]}
+            value={deanAttestationStartState.timeOfDay} setValue={setTimeOfDay}/>
+          <Spacing variant='Column' themeSpace={35}/>
+          <Row>
+            <Button onClick={startAttestation} state={deanAttestationStartState.loadingStart} variant='recomended' padding={[12,17]}>
+              Сохранить
+            </Button>
+            <Spacing variant='Row' themeSpace={25}/>
+            <Button onClick={goToAttestation} state={'idle'} variant='attentive' padding={[12,17]}>
+              Отмена
+            </Button>
+          </Row>
+        </Column>
+      </Surface>
     </WrapperDesktop>
   );
 });

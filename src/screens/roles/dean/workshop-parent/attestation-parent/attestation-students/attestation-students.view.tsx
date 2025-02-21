@@ -13,6 +13,8 @@ import { Column } from '../../../../../../ui-kit/column';
 import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
 import { GridContainer } from '../../../../../../ui-kit/grid-container';
 import { ActionBlockButton } from '../../../../../../ui-kit/action-block-button';
+import { Surface } from '../../../../../../ui-kit/surface';
+import { Text } from '../../../../../../ui-kit/text';
 
 export type AttestationStudentsViewProps = {
   goToAttestation: () => void;
@@ -84,7 +86,6 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
           student={deanAttestationStudentsState.selectedStudent}
           isMobile={isMobile}
           goBack={goBackToStudents}
-          deanAttestationStudentsState={deanAttestationStudentsState}
         /> }
     </>
   );
@@ -195,14 +196,12 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
 
 type SubjectsViewProps = {
   goBack: () => void;
-  deanAttestationStudentsState: AttestationStudentsState;
   isMobile: boolean;
   student: StudentDTO; 
 };
 
 export const SubjectsView: FC<SubjectsViewProps> = memo(({
   goBack,
-  deanAttestationStudentsState,
   student,
   isMobile
 }) => {
@@ -210,12 +209,32 @@ export const SubjectsView: FC<SubjectsViewProps> = memo(({
   return (
     isMobile ? 
     (<WrapperMobile role='ROLE_DEAN' header='Задолженности' onBack={goBack}>
+      <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
+       Студент
+      </Text>
+      <Spacing themeSpace={10} variant='Column' />
+      <ActionButton text={student.name} isShowArrow={false}/>
+      <Spacing themeSpace={20} variant='Column' />
+      <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
+       Список долгов
+      </Text>
+      <Spacing themeSpace={10} variant='Column' />
       <ItemsContainerMobile>
         {student.classGroups.map((item, index) => 
           <ActionButton key={index} text={item.description} isShowArrow={false}/>)}
       </ItemsContainerMobile>
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header='Задолженности' onBack={goBack}>
+      <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
+       Студент
+      </Text>
+      <Spacing themeSpace={10} variant='Column' />
+      <ActionButton text={student.name} isShowArrow={false}/>
+      <Spacing themeSpace={20} variant='Column' />
+      <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
+       Список долгов
+      </Text>
+      <Spacing themeSpace={10} variant='Column' />
       <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
         <GridContainer columns={4}>
           {student.classGroups.map((item, index) =>
