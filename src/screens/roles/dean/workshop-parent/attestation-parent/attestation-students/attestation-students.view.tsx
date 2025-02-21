@@ -81,6 +81,7 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
         /> }
       {currentScreen === 'subjects' && 
         <SubjectsView
+          student={deanAttestationStudentsState.selectedStudent}
           isMobile={isMobile}
           goBack={goBackToStudents}
           deanAttestationStudentsState={deanAttestationStudentsState}
@@ -122,9 +123,8 @@ export const SubgroupsView: FC<SubgroupsViewProps> = memo(({
       <Search value={searchText} setValue={setSearchSubgroup}/>
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
-        {filteredSubgroups.map((item, index) => <>
-          <ActionButton key={index} onClick={() => goToStudents(item)} text={item.subgroup.subgroupNumber} />
-          </>)}
+        {filteredSubgroups.map((item, index) =>
+          <ActionButton key={index} onClick={() => goToStudents(item)} text={item.subgroup.subgroupNumber} />)}
       </ItemsContainerMobile>
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header='Список групп' onBack={goBack}>
@@ -137,11 +137,10 @@ export const SubgroupsView: FC<SubgroupsViewProps> = memo(({
         <Search isMobile={false} value={searchText} setValue={setSearchSubgroup}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredSubgroups.map((item, index) => <>
+          {filteredSubgroups.map((item, index) =>
             <ActionBlockButton key={index}
               onClick={() => goToStudents(item)} 
-              text={item.subgroup.subgroupNumber} />
-            </>)}
+              text={item.subgroup.subgroupNumber} />)}
         </GridContainer>
       </Column>
     </WrapperDesktop>)
@@ -175,9 +174,8 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
       <Search value={searchText} setValue={setSearchStudent}/>
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
-        {filteredStudents.map((item, index) => <>
-          <ActionButton key={index} onClick={() => goToSubjects(item)} text={item.name} />
-          </>)}
+        {filteredStudents.map((item, index) => 
+          <ActionButton key={index} onClick={() => goToSubjects(item)} text={item.name} />)}
       </ItemsContainerMobile>
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header={nameSubgroup} onBack={goBack}>
@@ -185,11 +183,10 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
         <Search isMobile={false} value={searchText} setValue={setSearchStudent}/>
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
-          {filteredStudents.map((item, index) => <>
-            <ActionBlockButton key={index}
-              onClick={() => goToSubjects(item)} 
-              text={item.name} />
-            </>)}
+          {filteredStudents.map((item, index) =>
+            <ActionBlockButton key={index} text={item.name}
+              onClick={() => goToSubjects(item)}/>
+          )}
         </GridContainer>
       </Column>
     </WrapperDesktop>)
@@ -200,22 +197,32 @@ type SubjectsViewProps = {
   goBack: () => void;
   deanAttestationStudentsState: AttestationStudentsState;
   isMobile: boolean;
+  student: StudentDTO; 
 };
 
 export const SubjectsView: FC<SubjectsViewProps> = memo(({
   goBack,
   deanAttestationStudentsState,
+  student,
   isMobile
 }) => {
 
   return (
     isMobile ? 
     (<WrapperMobile role='ROLE_DEAN' header='Задолженности' onBack={goBack}>
-
+      <ItemsContainerMobile>
+        {student.classGroups.map((item, index) => 
+          <ActionButton key={index} text={item.description} isShowArrow={false}/>)}
+      </ItemsContainerMobile>
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header='Задолженности' onBack={goBack}>
-
-      </WrapperDesktop>
-    )
+      <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>
+        <GridContainer columns={4}>
+          {student.classGroups.map((item, index) =>
+            <ActionBlockButton key={index}
+              text={item.description} />)}
+        </GridContainer>
+      </Column>
+    </WrapperDesktop>)
   );
 });
