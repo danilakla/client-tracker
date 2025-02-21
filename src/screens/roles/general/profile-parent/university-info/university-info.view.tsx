@@ -105,7 +105,7 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
         <Column style={{position: 'absolute', height: '100vh', top: 0}}>
           <CircleLoading state={universityInfoState.loading}/>
         </Column>) :
-      (<Surface padding='40px' style={{width: 'auto'}}>
+      (<Surface padding='25px' style={{width: 'auto'}}>
         <Column style={{width: 500}}>
             <Text 
               themeFont={theme.fonts.h2} 
@@ -114,7 +114,7 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
             </Text>
             <Spacing themeSpace={10} variant='Column' />
             <Text 
-              themeFont={theme.fonts.h2} 
+              themeFont={theme.fonts.ht2} 
               style={{
                 wordBreak: 'break-word',
                 overflow: 'hidden', 
@@ -134,7 +134,7 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
                 overflow: 'hidden', 
                 textOverflow: 'ellipsis'
               }} 
-              themeFont={theme.fonts.h2} 
+              themeFont={theme.fonts.ht2} 
               themeColor={theme.colors.nothing}>
               {universityInfoState.university.description === '' ? 'Не указано' : universityInfoState.university.description}
             </Text>

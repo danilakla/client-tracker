@@ -104,7 +104,7 @@ export const UniversityEditorDesktopView: FC<UniversityEditorViewProps> = memo((
   return (
     <WrapperDesktop isCenter={true} onBack={goToWorkshop} role='ROLE_ADMIN' header='Университет'>
       {adminUniversityEditorState.loadingData === 'loading' ?
-      (<CircleLoading state={'loading'} />) : (<Surface style={{width: 'auto'}} padding='40px'>
+      (<CircleLoading state={'loading'} />) : (<Surface style={{width: 'auto'}} padding='25px'>
         <Column style={{width: 440}} horizontalAlign='center'>
           <Input 
               header='Название' 

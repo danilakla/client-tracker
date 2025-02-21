@@ -487,17 +487,20 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
               </Text>
             </Column>
           </Row>
-          <Spacing themeSpace={25} variant='Column' />
-          <Text themeFont={theme.fonts.ht2}> 
-            <b>Логин:</b> {login}
-          </Text>
           <Spacing themeSpace={15} variant='Column' />
           <Textarea 
-          isCopy={true} 
-          height={80}
-          value={keyStudentParents} 
-          placeholder='Родительский ключ' 
-          disabled={true} header='Родительский ключ' />
+            height={55}
+            isCopy={true} 
+            value={login} 
+            placeholder='Логин' 
+            disabled={true} header='Логин' />
+          <Spacing themeSpace={10} variant='Column' />
+          <Textarea 
+            height={55}
+            isCopy={true} 
+            value={keyStudentParents} 
+            placeholder='Родительский ключ' 
+            disabled={true} header='Родительский ключ' />
         </Surface>
         <Spacing themeSpace={15} variant='Column' />
         <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
@@ -537,19 +540,22 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
                   </Text>
                 </Column>
               </Row>
-              <Spacing themeSpace={25} variant='Column' />
-              <Text themeFont={theme.fonts.ht2}> 
-                <b>Логин:</b> {login}
-              </Text>
               <Spacing themeSpace={15} variant='Column' />
               <Textarea 
-                height={75}
+                height={55}
+                isCopy={true} 
+                value={login} 
+                placeholder='Логин' 
+                disabled={true} header='Логин' />
+              <Spacing themeSpace={10} variant='Column' />
+              <Textarea 
+                height={55}
                 isCopy={true} 
                 value={keyStudentParents} 
                 placeholder='Родительский ключ' 
                 disabled={true} header='Родительский ключ' />
             </Surface>
-            <Spacing themeSpace={25} variant='Column' />
+            <Spacing themeSpace={15} variant='Column' />
             <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
             <Spacing variant='Column' themeSpace={10} />
             <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />

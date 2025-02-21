@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useEffect, useRef } from 'react';
+import { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { AttestationStudentsProps } from './attestation-students.props';
 import { AttestationStudentsView } from './attestation-students.view';
 import { useAttestation } from '../attestation/attestation.props';
@@ -46,13 +46,40 @@ export const AttestationStudents: FC<AttestationStudentsProps> = memo(() => {
     dispatch(setSearchSubgroupActionCreator(value));
   }, [dispatch, setSearchSubgroupActionCreator]);
 
-  const setSelectedStudent = useCallback((value: StudentDTO) => {
-    dispatch(setSelectedStudentActionCreator(value));
+  const setSelectedStudent = useCallback((value: StudentDTO, onSuccess: () => void) => {
+    dispatch(setSelectedStudentActionCreator({value, onSuccess}));
   }, [dispatch, setSelectedStudentActionCreator]);
 
-  const setSelectedSubgroup = useCallback((value: SubgroupDTO) => {
-    dispatch(setSelectedSubgroupActionCreator(value));
+  const setSelectedSubgroup = useCallback((value: SubgroupDTO, onSuccess: () => void) => {
+    dispatch(setSelectedSubgroupActionCreator({value, onSuccess}));
   }, [dispatch, setSelectedSubgroupActionCreator]);
+
+  const goBackToAttestation = useCallback(() => {
+    goToAttestation();
+    dispatch(reset());
+  },[goToAttestation, dispatch, reset])
+
+  const [filteredSubgroups, setFilteredSubgroups] = useState<SubgroupDTO[]>([]);
+  
+  useEffect(() => {
+    const trimmedSearchText = deanAttestationStudentsState.searchSubgroup.trim().toLowerCase();
+  
+    const newFiltered= deanAttestationStudentsState.subgroups
+      .filter(subgroup => !trimmedSearchText || subgroup.subgroup.subgroupNumber.toLowerCase().includes(trimmedSearchText));
+  
+      setFilteredSubgroups(newFiltered);
+  }, [deanAttestationStudentsState.subgroups, deanAttestationStudentsState.searchSubgroup]);
+
+  const [filteredStudents, setFilteredStudents] = useState<StudentDTO[]>([]);
+  
+  useEffect(() => {
+    const trimmedSearchText = deanAttestationStudentsState.searchStudent.trim().toLowerCase();
+  
+    const newFiltered= deanAttestationStudentsState.selectedSubgroup.students
+      .filter(student => !trimmedSearchText || student.name.toLowerCase().includes(trimmedSearchText));
+  
+      setFilteredStudents(newFiltered);
+  }, [deanAttestationStudentsState.selectedSubgroup, deanAttestationStudentsState.searchStudent]);
 
   return (
       <AttestationStudentsView 
@@ -61,7 +88,9 @@ export const AttestationStudents: FC<AttestationStudentsProps> = memo(() => {
         setSelectedStudent={setSelectedStudent}
         setSelectedSubgroup={setSelectedSubgroup}
         deanAttestationStudentsState={deanAttestationStudentsState}
-        goToAttestation={goToAttestation}
+        goToAttestation={goBackToAttestation}
+        filteredStudents={filteredStudents}
+        filteredSubgroups={filteredSubgroups}
         />
     );
 });

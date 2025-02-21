@@ -62,11 +62,13 @@ export const attestationStudentsSlice = createSlice({
         setSubgroupsActionCreator(state, action: PayloadAction<SubgroupDTO[]>) {
             state.subgroups = action.payload;
         },
-        setSelectedSubgroupActionCreator(state, action: PayloadAction<SubgroupDTO>) {
-            state.selectedSubgroup = action.payload;
+        setSelectedSubgroupActionCreator(state, action: PayloadAction<{value: SubgroupDTO, onSuccess: () => void}>) {
+            state.selectedSubgroup = action.payload.value;
+            action.payload.onSuccess();
         },
-        setSelectedStudentActionCreator(state, action: PayloadAction<StudentDTO>) {
-            state.selectedStudent = action.payload;
+        setSelectedStudentActionCreator(state, action: PayloadAction<{value: StudentDTO, onSuccess: () => void}>) {
+            state.selectedStudent = action.payload.value;
+            action.payload.onSuccess();
         },
         setSearchStudentActionCreator(state, action: PayloadAction<string>) {
             state.searchStudent = action.payload;
@@ -97,7 +99,34 @@ export const initStudentsForDeanActionCreator = createAsyncThunk('attestation-st
     async (data: { authToken: string }, thunkApi) => {
         const { authToken } = data;
         try {
-             const response = deanApi.getStudentsNotAttessted(authToken);
+             const response = await deanApi.getStudentsNotAttessted(authToken);
+
+             const currentYear = new Date().getFullYear();
+
+             const processedData = response.map((item: any) => {
+                const admissionYear = new Date(item.subgroup.admissionDate).getFullYear();
+                const course = currentYear - admissionYear + 1;
+
+                const groupInfo = item.subgroup.subgroupNumber?.split('.') || ['0', '0'];
+                const formattedGroup = `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`;
+
+                const students = item.students.map((student: any) => ({
+                    ...student,
+                    name: student.name.replace(/_/g, ' '),
+                }));
+
+                return {
+                    ...item,
+                    subgroup: {
+                        ...item.subgroup,
+                        subgroupNumber: formattedGroup,
+                    },
+                    students,
+                };
+            });
+
+            thunkApi.dispatch(attestationStudentsSlice.actions.setSubgroupsActionCreator(processedData))
+
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

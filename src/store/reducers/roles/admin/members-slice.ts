@@ -10,6 +10,7 @@ export type TeacherInfoState = {
     idTeacher: number,
     flpName: string,
     idUniversity: number,
+    login: string,
     idAccount: number
 };
 
@@ -18,6 +19,7 @@ export type DeanInfoState = {
     flpName: string,
     faculty: string,
     idUniversity: number,
+    login: string,
     idAccount: number
 };
 
@@ -46,6 +48,7 @@ const initialState: MembersState = {
     newPassword: '',
     selectedDean: {
         idDean: 0,
+        login: '',
         flpName: '',
         faculty: '',
         idUniversity: 0,
@@ -54,6 +57,7 @@ const initialState: MembersState = {
     selectedTeacher: {
         idTeacher: 0,
         flpName: '',
+        login: '',
         idUniversity: 0,
         idAccount: 0
     },

@@ -105,7 +105,7 @@ export const GeneratorKeysDesktopView: FC<GeneratorKeysViewProps> = memo(({
 
   return (
     <WrapperDesktop isCenter={true} onBack={goToWorkshop} role='ROLE_ADMIN' header='Генеарация ключей'>
-      <Surface padding='40px' style={{width: 'auto'}}>
+      <Surface padding='25px' style={{width: 'auto'}}>
         <Column style={{width: 440}} horizontalAlign='center'>
           <Select header='Выберите роль' setValue={setRole} items={data} selectedItem={adminGeneratorKeysState.role} />
           <Spacing variant='Column' themeSpace={30} />

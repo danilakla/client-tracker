@@ -162,6 +162,7 @@ export const MembersView: FC<MembersViewProps> = memo(({
             toggle={toggle}
             closeDescription={closeDescription}
             controlDropPopup={controlDropPopup}
+            login={toggle === 'left' ? adminMembersState.selectedDean.login : adminMembersState.selectedTeacher.login}
             controlConfirmPopup={controlConfirmPopup}
             resultDean={resultDean}
             resultTeacher={resultTeacher}
@@ -194,6 +195,7 @@ export const MembersView: FC<MembersViewProps> = memo(({
                 faculty={adminMembersState.selectedDean.faculty}
                 toggle={toggle}
                 closeDescription={closeDescription}
+                login={toggle === 'left' ? adminMembersState.selectedDean.login : adminMembersState.selectedTeacher.login}
                 controlDropPopup={controlDropPopup}
                 controlConfirmPopup={controlConfirmPopup}
                 resultDean={resultDean}
@@ -389,6 +391,7 @@ type MemberInfoViewProps = {
   controlConfirmPopup: () => void;
   resultDean: string[];
   resultTeacher: string[];
+  login: string;
   faculty: string;
 }
 
@@ -399,6 +402,7 @@ export const MemberInfoView: FC<MemberInfoViewProps> = memo(({
   faculty,
   controlDropPopup,
   controlConfirmPopup,
+  login,
   resultDean,
   resultTeacher
 }) => {
@@ -418,8 +422,15 @@ export const MemberInfoView: FC<MemberInfoViewProps> = memo(({
             />
           </Column>
         </Row>
+        <Spacing themeSpace={10} variant='Column' />
+        <Textarea 
+          height={55}
+          isCopy={true} 
+          value={login} 
+          placeholder='Логин' 
+          disabled={true} header='Логин' />
       </Surface>
-      <Spacing themeSpace={25} variant='Column' />
+      <Spacing themeSpace={15} variant='Column' />
       <ActionButton onClick={controlConfirmPopup} text='Сбросить пароль' />
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton 
@@ -429,7 +440,7 @@ export const MemberInfoView: FC<MemberInfoViewProps> = memo(({
         text='Удалить' />
       <Spacing variant='Column' themeSpace={85} />
     </Column>) : 
-    (<Surface padding='40px'>
+    (<Surface padding='25px'>
       <Column horizontalAlign='center' style={{position: 'relative', width: 440}}>
         <Surface>
           <Row verticalAlign='center' style={{width: '100%'}} horizontalAlign='space-between'>
@@ -443,8 +454,15 @@ export const MemberInfoView: FC<MemberInfoViewProps> = memo(({
                 />
             </Column>
           </Row>
+          <Spacing themeSpace={10} variant='Column' />
+          <Textarea 
+            height={55}
+            isCopy={true} 
+            value={login} 
+            placeholder='Логин' 
+            disabled={true} header='Логин' />
         </Surface>
-        <Spacing themeSpace={30} variant='Column' />
+        <Spacing themeSpace={15} variant='Column' />
         <ActionButton onClick={controlConfirmPopup} text='Сбросить пароль' />
         <Spacing variant='Column' themeSpace={15} />
         <ActionButton 
