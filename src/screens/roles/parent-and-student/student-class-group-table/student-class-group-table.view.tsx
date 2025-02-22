@@ -308,7 +308,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
               </Column>
             </Button>
           </Row>
-          <Spacing themeSpace={20} variant='Column' />
+          <Spacing themeSpace={10} variant='Column' />
           {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
             <StudentsTable 
               role={role}

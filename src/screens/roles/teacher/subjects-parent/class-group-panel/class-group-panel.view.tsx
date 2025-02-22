@@ -492,7 +492,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
               Отправить аттестацию
             </Button>}
           </Row>
-          <Spacing themeSpace={25} variant='Column' />
+          <Spacing themeSpace={10} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
             <StudentsTable openClassAttestation={openClassAttestation} openAttestationGrade={openAttestationGrade}
               onClickGrade={openUpdateWindow} openClassControlForStudents={openClassControlForStudents}
