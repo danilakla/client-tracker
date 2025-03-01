@@ -14,7 +14,7 @@ export const studentApi = {
             })
     },
     getTableOfSubgroup(authToken: string, idHold: number) {
-        return instance.get(`/common/show/table/${idHold}`, { 
+        return instance.get(`/student/show/table/${idHold}`, { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;

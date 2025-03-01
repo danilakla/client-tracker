@@ -2,6 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { authApi } from "../../../api/auth/auth-api";
 import axios from "axios";
 import { ItemOfSelectType } from "../../../ui-kit/select/select";
+import { appStatusSlice } from "../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -167,11 +168,7 @@ export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sig
             onSuccess?.();
         }
         catch (e) {
-            if (axios.isAxiosError(e)) {
-                if (e.response?.status === 401) {
-                    
-                }
-            }
+            thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -247,7 +244,7 @@ export const signUpActionCreator = createAsyncThunk('sign-up/user',
                 thunkApi.dispatch(singupSlice.actions.setError(
                     { key: "keyError", error: e.response?.data.message }
                 ));
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

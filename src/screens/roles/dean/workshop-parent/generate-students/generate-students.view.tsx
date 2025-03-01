@@ -55,42 +55,48 @@ export const GenerateStudentsView: FC<GenerateStudentsViewProps> = memo(({
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const arrayBuffer = e.target?.result as ArrayBuffer;
-        const binaryStr = new Uint8Array(arrayBuffer).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        );
-        const workbook = XLSX.read(binaryStr, { type: 'binary' });
-  
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-  
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-          header: ["fio", "numberOfGroup", "subgroup", "specialty"]
-        }) as { fio: string, numberOfGroup: string, subgroup: string, specialty: string }[];
-  
-        const students = jsonData.map((row) => {
-          const fioParts = row.fio.trim().split(" ");
-          const lastname = fioParts[0];
-          const name = fioParts[1];
-          const surname = fioParts[2];
-  
-          const numberOfGroup = `${row.numberOfGroup}.${row.subgroup}`;
-  
-          return {
-            name,
-            lastname,
-            surname,
-            numberOfGroup,
-            specialty: row.specialty,
-          };
-        });
-  
-        setStudents(students);
+        try {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          const binaryStr = new Uint8Array(arrayBuffer).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ""
+          );
+          const workbook = XLSX.read(binaryStr, { type: 'binary' });
+    
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+    
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+            header: ["fio", "numberOfGroup", "subgroup", "specialty"]
+          }) as { fio: string, numberOfGroup: string, subgroup: string, specialty: string }[];
+    
+          const students = jsonData.map((row) => {
+            const fioParts = row.fio.trim().split(" ");
+            const lastname = fioParts[0];
+            const name = fioParts[1];
+            const surname = fioParts[2];
+    
+            const numberOfGroup = `${row.numberOfGroup}.${row.subgroup}`;
+    
+            return {
+              name,
+              lastname,
+              surname,
+              numberOfGroup,
+              specialty: row.specialty,
+            };
+          });
+    
+          setStudents(students);
+        } catch (error: any) {
+          console.error("Ошибка при обработке файла:", error);
+          alert("Ошибка загрузки файла: " + error.message);
+        }
       };
       reader.readAsArrayBuffer(file);
     }
   }, [setStudents]);
+
 
   const handleButtonClick = useCallback(() => {
     fileInputRef.current?.click();

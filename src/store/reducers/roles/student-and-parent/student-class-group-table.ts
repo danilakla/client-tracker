@@ -4,6 +4,7 @@ import { appStatusSlice } from "../../app-status-slice";
 import { studentApi } from "../../../../api/auth/student-api";
 import { ClassGroupInfo } from "./student-subjects-slice";
 import { AttendanceCodeType } from "../teacher/class-group-control-slice";
+import { parentApi } from "../../../../api/auth/parent-api";
 
 type ErrorType = string | null;
 export type AttendanceOption = {
@@ -225,10 +226,12 @@ export const studentClassGroupTableSlice = createSlice({
 
 export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-class-group-table/init',
     async (data: { authToken: string, accountId : number, idHold: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
-        const { authToken, idHold, accountId } = data;
+        const { authToken, idHold, accountId, role } = data;
         try {
 
-            const responce = await studentApi.getTableOfSubgroup(authToken, idHold);
+            const responce = role === 'ROLE_STUDENT' ? 
+            await studentApi.getTableOfSubgroup(authToken, idHold) :
+            await parentApi.getTableOfSubgroup(authToken, idHold);
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));

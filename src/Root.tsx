@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 import './App.css';
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Login } from './screens/auth/login';
 import { Signup } from './screens/auth/signup';
 import { PrivateRoute } from "./private-route";
@@ -36,8 +36,12 @@ import { ClassGroupSubgroups as TeacherClassGroupSubgroups } from "./screens/rol
 import { StudentSubjects } from "./screens/roles/parent-and-student/student-subjects";
 import { StudentClassGroups } from "./screens/roles/parent-and-student/student-class-groups";
 import { StudentClassGroupTable } from "./screens/roles/parent-and-student/student-class-group-table";
+import { Warning } from "./screens/warning";
+import { useAppControlHook } from "./hooks/app-control-hook";
 
 export const urls = {
+  error: '/error',
+  
   logInUser: '/log-in/user',
   logInParent: '/log-in/parent',
   signUp: '/sign-up',
@@ -83,6 +87,12 @@ type RootProps = {};
 
 export const Root: FC<RootProps> = () => {
   const { user } = useTypedSelector(state => state.user);
+
+  const {goToErrorScreen} = useAppControlHook();
+
+  useEffect(() => {
+    goToErrorScreen();
+  },[goToErrorScreen])
 
   return (
     <Routes>
@@ -166,6 +176,8 @@ export const Root: FC<RootProps> = () => {
           {/* <Route path={urls.teacherClassGroupControl} element={<TeacherClassGroupPanel/>}/> */}
         </>}
         <Route path='*' element={<Navigate to='/' />} />
+
+        <Route path={urls.error} element={<Warning/>} />
       </Route>
     </Routes>
   );

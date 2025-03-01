@@ -22,7 +22,7 @@ export const teacherApi = {
             })
     },
     getTableOfSubgroup(authToken: string, holdId: number) {
-        return instance.get(`/common/show/table/${holdId}`, { 
+        return instance.get(`/teacher/show/table/${holdId}`, { 
             headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;

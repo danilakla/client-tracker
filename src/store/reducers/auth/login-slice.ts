@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { authApi } from "../../../api/auth/auth-api";
 import axios from "axios";
+import { appStatusSlice } from "../app-status-slice";
 
 type ErrorType = string | null;
 
@@ -91,6 +92,8 @@ export const loginUserActionCreator = createAsyncThunk('login/user',
                 thunkApi.dispatch(loginSlice.actions.setError(
                     { key: "passwordError", error: e.response?.data.message }
                 ));
+            } else {
+                thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
             }
         }
     }
@@ -110,6 +113,8 @@ export const loginParentActionCreator = createAsyncThunk('login/parent',
                 thunkApi.dispatch(loginSlice.actions.setError(
                     { key: "parentKeyError", error: e.response?.data.message }
                 ));
+            } else {
+                thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
             }
         }
     }

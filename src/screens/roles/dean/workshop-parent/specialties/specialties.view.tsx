@@ -238,7 +238,7 @@ export const SpecialtiesMobileView: FC<LocalViewData> = memo(({
           <Spacing variant='Column' themeSpace={35}/>
           <Input 
             header='Название' 
-            placeholder='Лекция....'
+            placeholder='Программная инженерия....'
             error={deanSpecialtiesState.errors['newNameOfSpecialtyError']}
             value={deanSpecialtiesState.newNameOfSpecialty} 
             setValue={setNewNameOfSpecialty}/>
@@ -320,7 +320,7 @@ export const SpecialtiesDesktopView: FC<LocalViewData> = memo(({
         <Column horizontalAlign='center' style={{width: 440}}>
           <Input 
             header='Введите название' 
-            placeholder='Лекция....'
+            placeholder='Программная инженерия....'
             error={deanSpecialtiesState.errors['newNameOfSpecialtyError']}
             value={deanSpecialtiesState.newNameOfSpecialty} 
             setValue={setNewNameOfSpecialty}/>
@@ -347,7 +347,7 @@ export const SpecialtiesDesktopView: FC<LocalViewData> = memo(({
           <Column horizontalAlign='center' style={{width: 440}}>
           <Input 
             header='Название' 
-            placeholder='Лекция....'
+            placeholder='Программная инженерия....'
             error={deanSpecialtiesState.errors['newNameOfSpecialtyError']}
             value={deanSpecialtiesState.newNameOfSpecialty} 
             setValue={setNewNameOfSpecialty}/>

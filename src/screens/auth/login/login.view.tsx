@@ -45,7 +45,7 @@ export const LoginView: FC<LoginViewProps> = memo(({
             value={loginState.parentKey} setValue={setParentKey}/>
         </>) : (<>
           <Input 
-            header='Электронная почта' 
+            header='Логин' 
             placeholder='Nikola...' error={loginState.errors["loginError"]}
             value={loginState.login} setValue={setLogin}/>
           <Spacing variant='Column' themeSpace={30}/>

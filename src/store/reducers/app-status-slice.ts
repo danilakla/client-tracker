@@ -4,7 +4,7 @@ import axios from "axios";
 import { userApi } from "../../api/auth/user-api";
 
 export type AppStatus = {
-    status: "idle" | "loading" | "no-autorizate" | "success";
+    status: "idle" | "loading" | "no-autorizate" | "success" | "app-error";
 }
 
 
@@ -16,7 +16,7 @@ export const appStatusSlice = createSlice({
     name: 'app-status',
     initialState,
     reducers: {
-        setStatusApp(state, action: PayloadAction<{ status: "idle" | "loading" | "no-autorizate" | "success" }>) {
+        setStatusApp(state, action: PayloadAction<{ status: "idle" | "loading" | "no-autorizate" | "success" | "app-error"}>) {
             state.status = action.payload.status;
         },
         clearStatus(state) {
@@ -51,7 +51,11 @@ export const getUserInfoActionCreator = createAsyncThunk('user/info',
             if (axios.isAxiosError(e)) {
                 if (e.response?.status === 401) {
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else {
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
                 }
+            } else {
+                thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
             }
         }
     }
