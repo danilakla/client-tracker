@@ -126,12 +126,15 @@ export const NameHeader = styled.div<{isHide: boolean}>`
 
 export const HeaderClassItem = styled.div`
   display: flex;
+  flex-direction: column;
   writing-mode: vertical-rl;
-  align-items: center;
+  position: relative;
+  align-items: flex-start;
+  cursor: pointer;
   flex-shrink: 0;
   justify-content: center;
-  cursor: pointer;
   flex: 0 0 70px;
+  transform: rotate(180deg);
 `;
 
 export const TableHeader = styled.div`

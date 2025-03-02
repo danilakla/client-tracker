@@ -295,8 +295,8 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
         <CircleLoading state={studentClassGroupTableState.loading}/>
       </Column> : <>
         <Surface>
-        <Row>
-        <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
+        <Row style={{position: 'absolute'}}>
+          <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
               </Column>
@@ -395,7 +395,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           <CircleLoading state={studentClassGroupTableState.loading}/>
         </Column> : <>
         <Surface style={{width: 900}}>
-          <Row>
+          <Row style={{position: 'absolute'}}>
             <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
@@ -582,6 +582,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 
   return (
     <TableWrapper>
+      {classesIds.length === 0 && <Spacing variant='Column' themeSpace={50} />}
       <TableHeader>
         <NameHeader isHide={isVerticalScrollNeeded}>
           <Text themeFont={theme.fonts.h3}>Имя студента</Text>
@@ -592,14 +593,13 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
               <HeaderClassItem
                 key={index} 
                 onClick={(item.gradeId === -1 || role === 'ROLE_PARENTS') ? () => {} : () => openClassControl(item)}>
-                <Text themeFont={theme.fonts.h3}>
-                  {!item.isAttestation ? <>
-                    Занятие {item.position}
-                    {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
-                    <Text themeFont={theme.fonts.ml} format='hide' style={{height: 68}} >
-                      {item.className}
-                    </Text>
-                  </>  : <>Аттестация</>}
+                <Text themeFont={theme.fonts.h3} >
+                  {!item.isAttestation ? 
+                  <>Занятие {item.position}</> : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
+                </Text>
+                {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
+                <Text themeFont={theme.fonts.ml} format='hide' style={{maxHeight: 100}}>
+                  {item.className}
                 </Text>
               </HeaderClassItem>
             ))}

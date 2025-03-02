@@ -22,6 +22,7 @@ import { RangeSlider } from '../../../../../ui-kit/range-slider';
 
 import ShieldLogo from '../../../../../ui-kit/assets/security-shield.svg';
 import RefreshLogo from '../../../../../ui-kit/assets/refresh.svg';
+import attentionSvgrepo from '../../../../../ui-kit/assets/attention-svgrepo.svg';
 import InfoLogo from '../../../../../ui-kit/assets/info.svg';
 import { Image } from '../../../../../ui-kit/image';
 import QRCode from 'react-qr-code';
@@ -513,8 +514,8 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
       <Column style={{position: 'absolute', height: '100vh', top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
-        <Surface>
-          <Row>
+        <Surface style={{position: 'relative'}}>
+          <Row style={{position: 'absolute'}}>
             <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
@@ -529,8 +530,11 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
             </Button>
             <Spacing themeSpace={10} variant='Row' />
             {teacherClassGroupControlState.isNeedAttestation && 
-            <Button height={38} onClick={controlSendAttestation} variant='attentive' padding={11}>
-              Отправить аттестацию
+            <Button height={38} width={38} onClick={controlSendAttestation} 
+              state={teacherClassGroupControlState.loadingReloadTable} variant='attentive' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={attentionSvgrepo} width={20} height={20}/> 
+              </Column>
             </Button>}
           </Row>
           <Spacing themeSpace={10} variant='Column' />
@@ -748,8 +752,8 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
       <Column style={{position: 'absolute', height: '100vh', top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
-        <Surface style={{width: 900}}>
-          <Row>
+        <Surface style={{width: 900, position: 'relative'}}>
+          <Row style={{position: 'absolute'}}>
             <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
@@ -764,8 +768,11 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             </Button>
             <Spacing themeSpace={10} variant='Row' />
             {teacherClassGroupControlState.isNeedAttestation && 
-            <Button height={38} onClick={controlSendAttestation} variant='attentive' padding={11}>
-              Отправить аттестацию
+            <Button height={38} width={38} onClick={controlSendAttestation} 
+              state={teacherClassGroupControlState.loadingReloadTable} variant='attentive' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={attentionSvgrepo} width={20} height={20}/> 
+              </Column>
             </Button>}
           </Row>
           <Spacing themeSpace={20} variant='Column' />
@@ -1453,6 +1460,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 
 	return (
 	  <TableWrapper>
+      {classesIds.length === 0 && <Spacing variant='Column' themeSpace={50} />}
 		  <TableHeader>
 		    <NameHeader isHide={isVerticalScrollNeeded}>
 		  	<Text themeFont={theme.fonts.h3}>
@@ -1467,15 +1475,12 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
           () => openClassControlForStudents(item)}>
 		  		<Text themeFont={theme.fonts.h3} >
             {!item.isAttestation ? 
-            <>
-              Занятие {item.position}
-              {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
-              <Text themeFont={theme.fonts.ml} format='hide' style={{height: 68}} >
-                {item.className}
-              </Text>
-            </> 
-            : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
+            <>Занятие {item.position}</> : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
 		  		</Text>
+          {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
+          <Text themeFont={theme.fonts.ml} format='hide' style={{maxHeight: 100}}>
+            {item.className}
+          </Text>
 		  	  </HeaderClassItem>
 		  	))}
 		    </HeaderClasses>}
