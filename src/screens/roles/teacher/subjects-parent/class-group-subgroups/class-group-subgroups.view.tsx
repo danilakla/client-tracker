@@ -72,7 +72,7 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
       teacherClassGroupSubroupsState.loading === 'loading' ? 'Загрузка...' : 'Список подгрупп'
     }>
       {teacherClassGroupSubroupsState.loading === 'loading' ?
-      <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+      <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
         <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
       </Column> : <>
         <Search value={teacherClassGroupSubroupsState.searchText} setValue={setSearchText}/>
@@ -100,7 +100,7 @@ export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
       teacherClassGroupSubroupsState.loading === 'loading' ? 'Загрузка...' : 'Список подгрупп'
     }>
       {teacherClassGroupSubroupsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
         </Column>
       }

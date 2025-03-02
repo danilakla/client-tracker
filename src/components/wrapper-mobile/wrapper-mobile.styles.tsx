@@ -39,9 +39,9 @@ export const ImageArrowButton = styled.img`
     height: 10px;
 `;
 
-export const ScreenContent = styled.div`
+export const ScreenContent = styled.div<{height: number}>`
     padding: 75px 25px 0px 25px;
-    height: 100vh;
+    height: ${({ height }) => height}px;
     overflow: auto;
     display: flex;
     flex-direction: column;

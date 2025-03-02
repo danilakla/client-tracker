@@ -12,9 +12,9 @@ export const StyledLogo = styled.img`
     }
 `;
 
-export const AuthWrapper = styled.div`
+export const AuthWrapper = styled.div<{height: number}>`
     display: flex;
-    height: 100vh;
+    height: ${({ height }) => height}px;
     box-sizing: border-box;
     width: 100vw;
     flex-direction: column;

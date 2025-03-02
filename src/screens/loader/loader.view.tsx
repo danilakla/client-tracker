@@ -5,7 +5,7 @@ import { AppContainer, LoaderContainer, One, Three, Two } from './loading.styled
 export const LoaderView: FC = memo(() => {
 
   return (
-    <AppContainer>
+    <AppContainer height={window.innerHeight}>
       <LoaderContainer>
         <One />
         <Two />

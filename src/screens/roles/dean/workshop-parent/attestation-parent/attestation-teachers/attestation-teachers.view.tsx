@@ -64,7 +64,7 @@ export const AttestationTeachersMobileView: FC<LocalViewProps> = memo(({
   return (
     <WrapperMobile role='ROLE_DEAN' header='Список преподавателей' onBack={goToAttestation}>
       {deanAttestationTeachersState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={deanAttestationTeachersState.loading}/>
         </Column>
       }
@@ -89,7 +89,7 @@ export const AttestationTeachersDesktopView: FC<LocalViewProps> = memo(({
   return (
     <WrapperDesktop role='ROLE_DEAN' header='Список преподавателей' onBack={goToAttestation}>
       {deanAttestationTeachersState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={deanAttestationTeachersState.loading}/>
         </Column>
       }

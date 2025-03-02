@@ -200,7 +200,7 @@ export const ClassFormatsMobileView: FC<LocalViewData> = memo(({
   return (
     <WrapperMobile onBack={goToWorkshop} role='ROLE_DEAN' header='Форматы занятий'>
       {deanClassFormatsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={deanClassFormatsState.loading}/>
         </Column>
       }
@@ -320,7 +320,7 @@ export const ClassFormatsDesktopView: FC<LocalViewData> = memo(({
   return (
     <WrapperDesktop onBack={goToWorkshop} role='ROLE_DEAN' header='Форматы занятий'>
       {deanClassFormatsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={deanClassFormatsState.loading}/>
         </Column>
       }

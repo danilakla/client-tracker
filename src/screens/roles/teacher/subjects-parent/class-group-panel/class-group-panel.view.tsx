@@ -511,7 +511,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   return (
     <WrapperMobile onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' header='Таблица'>
       {teacherClassGroupControlState.loading === 'loading' ?
-      <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+      <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface style={{position: 'relative'}}>
@@ -749,7 +749,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   return (
     <WrapperDesktop style={{padding: 'none'}} onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' header='Таблица' isCenter={true}>
       {teacherClassGroupControlState.loading === 'loading' ?
-      <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+      <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface style={{width: 900, position: 'relative'}}>

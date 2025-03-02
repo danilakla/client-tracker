@@ -182,7 +182,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
 
   return (
     <>
-    <Column style={{position: 'absolute', height: '100vh', top: 0, zIndex: -1}}>
+    <Column style={{position: 'absolute', height: window.innerHeight, top: 0, zIndex: -1}}>
       <CircleLoading state={deanStudentsState.loading}/>
     </Column>  
     {currentScreen === 'all' && <AllView 

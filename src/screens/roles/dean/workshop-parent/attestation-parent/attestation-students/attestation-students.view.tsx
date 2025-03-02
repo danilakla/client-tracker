@@ -117,7 +117,7 @@ export const SubgroupsView: FC<SubgroupsViewProps> = memo(({
     isMobile ? 
     (<WrapperMobile role='ROLE_DEAN' header='Список групп' onBack={goBack}>
       {loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={loading}/>
         </Column>
       }
@@ -130,7 +130,7 @@ export const SubgroupsView: FC<SubgroupsViewProps> = memo(({
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header='Список групп' onBack={goBack}>
       {loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={loading}/>
         </Column>
       }

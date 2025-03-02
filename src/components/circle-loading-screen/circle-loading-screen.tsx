@@ -8,7 +8,7 @@ export type CircleLoadingScreenProps = {
 export const CircleLoadingScreen: FC<CircleLoadingScreenProps> = memo(() => {
 
   return(
-    <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+    <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
 	  <CircleLoading state={'loading'}/>
 	</Column>
 )})

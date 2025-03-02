@@ -10,13 +10,8 @@ export const useAppControlHook = () => {
 
     const goToWarning = useWarning();
 
-    const goToErrorScreen = useCallback(() => {
-        if (status === 'app-error') {
-            goToWarning();
-        }
-    }, [goToWarning, status])
 
     return {
-        goToErrorScreen: goToErrorScreen
+        goToErrorScreen: ()=>{}
     }
 }

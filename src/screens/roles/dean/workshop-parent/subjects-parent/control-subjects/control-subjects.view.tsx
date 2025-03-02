@@ -124,7 +124,7 @@ export const ControlSubjectsMobileView: FC<LocalViewProps> = memo(({
   return (
     <WrapperMobile onBack={goToWorkshop} role='ROLE_DEAN' header='Предметы'>
       {deanControlSubjectsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={deanControlSubjectsState.loading}/>
         </Column>
       }

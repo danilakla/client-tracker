@@ -173,7 +173,7 @@ export const MembersView: FC<MembersViewProps> = memo(({
           isCenter={currentScreen === 'details'} 
           onBack={handleBackActions[currentScreen]} 
           role='ROLE_ADMIN' header={headers[currentScreen]}>
-          <Column style={{position: 'absolute', height: '100vh', top: 0, zIndex: -1}}>
+          <Column style={{position: 'absolute', height: window.innerHeight, top: 0, zIndex: -1}}>
             <CircleLoading state={adminMembersState.loading}/>
           </Column>
           {adminMembersState.loading !== 'loading' && <Column style={{width: 'auto'}} horizontalAlign='center'>

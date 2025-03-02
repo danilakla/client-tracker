@@ -47,11 +47,11 @@ export const WrapperDesktop: FC<WrapperDesktopProps> = memo(({
 	  		</Text>
 	  	</HeaderContainer>
     
-	  	<ScreenContent isCenter={isCenter} {...rest}>
+	  	<ScreenContent height={window.innerHeight} isCenter={isCenter} {...rest}>
 	  		{children}
 	  	</ScreenContent>
     
-		<ControlPanelWrapper>
+		<ControlPanelWrapper height={window.innerHeight}>
 			<ControlPanelContainer>
 	  			{role === 'ROLE_ADMIN' && adminSections.map(
 	  				(item, index) => <ImageButton key={index}

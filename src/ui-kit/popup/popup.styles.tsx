@@ -2,9 +2,10 @@ import styled from "styled-components";
 
 export const WrapperPopap = styled.div<{
     isActive: boolean;
+    height: number;
 }>`
     width: 100vw;
-    height: 100vh;
+    height: ${({ height }) => height}px;
     z-index: 1000;
     box-sizing: border-box;
     top: 0;
@@ -12,7 +13,7 @@ export const WrapperPopap = styled.div<{
     -webkit-backdrop-filter: blur(3px);
     background: rgba(24, 24, 24, 0.11);
     left: 0;
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0,0,0,0.3);
     position: fixed;
     display: flex;
     justify-content: center;

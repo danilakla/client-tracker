@@ -50,7 +50,7 @@ export const UniversityInfoMobileView: FC<UniversityInfoViewProps> = memo(({
   return (
     <WrapperMobile onBack={goToProfile} role={user.role} header='Университет'>
       {universityInfoState.loading === 'loading' ?
-        (<Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        (<Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={universityInfoState.loading}/>
         </Column>) :
         (<Surface padding='25px'>
@@ -102,7 +102,7 @@ export const UniversityInfoDesktopView: FC<UniversityInfoViewProps> = memo(({
   return (
     <WrapperDesktop onBack={goToProfile} isCenter={true} role={user.role} header='Университет'>
       {universityInfoState.loading === 'loading' ? (
-        <Column style={{position: 'absolute', height: '100vh', top: 0}}>
+        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
           <CircleLoading state={universityInfoState.loading}/>
         </Column>) :
       (<Surface padding='25px' style={{width: 'auto'}}>

@@ -206,7 +206,7 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
       {deanGenerateStudentsState.students.length === 0 ? (<Column style={{
         position: 'absolute',
         top: 0,
-        height: '100vh',
+        height: window.innerHeight,
       }} horizontalAlign='center' verticalAlign='center'>
         <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
           Загрузить файл
@@ -285,7 +285,7 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
       {deanGenerateStudentsState.students.length === 0 ? (<Column style={{
         position: 'absolute',
         top: 0,
-        height: '100vh',
+        height: window.innerHeight,
       }} horizontalAlign='center' verticalAlign='center'>
         <Button onClick={handleButtonClick} variant='primary' padding={[12, 17]}>
           Загрузить файл

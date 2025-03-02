@@ -15,20 +15,6 @@ export const useAuthentication = () => {
         }
     }, [status, getUserInfo]);
 
-    const onRedirect = useCallback(() => {
-        if (status === "no-autorizate") {
-            redirectToLogin();
-        }
-    }, [redirectToLogin, status])
-
-    useEffect(() => {
-        getUser()
-    }, [getUser]);
-
-    useEffect(() => {
-        onRedirect();
-    }, [onRedirect])
-
     return {
         appStatus: status
     }
