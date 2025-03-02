@@ -165,6 +165,18 @@ export const teacherApi = {
                 return response.data;
             })
     },
+    updateNameOfClass(
+        authToken: string, 
+        className: string,
+        classId: number
+    ){
+        return instance.put(`/teacher/update/class/${classId}`, { className }, { 
+                headers: {'Authorization' : `Bearer ${authToken}`} 
+            })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }
 
 

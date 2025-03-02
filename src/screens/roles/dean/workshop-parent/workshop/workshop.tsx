@@ -7,6 +7,7 @@ import { useGenerateStudents } from '../generate-students/generate-students.prop
 import { useDeanStudents } from '../students/students.props';
 import { useControlSubjects } from '../subjects-parent/control-subjects/control-subjects.props';
 import { useAttestation } from '../attestation-parent/attestation/attestation.props';
+import { useStatisticsExcel } from '../statistics-exel/statistics-exel.props';
 
 export const Workshop: FC<WorkshopProps> = memo(() => {
   
@@ -16,6 +17,7 @@ export const Workshop: FC<WorkshopProps> = memo(() => {
   const goToGenerateStudents = useGenerateStudents();
   const goToDeanStudents = useDeanStudents();
   const goToAttestation = useAttestation();
+  const goToStatisticsExcel = useStatisticsExcel();
 
   return (
       <WorkshopView 
@@ -25,6 +27,7 @@ export const Workshop: FC<WorkshopProps> = memo(() => {
         goToControlSubjects={goToControlSubjects}
         goToGenerateStudents={goToGenerateStudents}
         goToAttestation={goToAttestation}
+        goToStatisticsExcel={goToStatisticsExcel}
         />
     );
 });

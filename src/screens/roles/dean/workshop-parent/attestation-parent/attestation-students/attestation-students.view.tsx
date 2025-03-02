@@ -13,7 +13,6 @@ import { Column } from '../../../../../../ui-kit/column';
 import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
 import { GridContainer } from '../../../../../../ui-kit/grid-container';
 import { ActionBlockButton } from '../../../../../../ui-kit/action-block-button';
-import { Surface } from '../../../../../../ui-kit/surface';
 import { Text } from '../../../../../../ui-kit/text';
 
 export type AttestationStudentsViewProps = {
@@ -83,6 +82,7 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
         /> }
       {currentScreen === 'subjects' && 
         <SubjectsView
+          subgroupNumber={deanAttestationStudentsState.selectedSubgroup.subgroup.subgroupNumber}
           student={deanAttestationStudentsState.selectedStudent}
           isMobile={isMobile}
           goBack={goBackToStudents}
@@ -198,17 +198,25 @@ type SubjectsViewProps = {
   goBack: () => void;
   isMobile: boolean;
   student: StudentDTO; 
+  subgroupNumber: string;
 };
 
 export const SubjectsView: FC<SubjectsViewProps> = memo(({
   goBack,
   student,
-  isMobile
+  isMobile,
+  subgroupNumber
 }) => {
 
   return (
     isMobile ? 
     (<WrapperMobile role='ROLE_DEAN' header='Задолженности' onBack={goBack}>
+      <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
+       Группа
+      </Text>
+      <Spacing themeSpace={10} variant='Column' />
+      <ActionButton text={subgroupNumber} isShowArrow={false}/>
+      <Spacing themeSpace={10} variant='Column' />
       <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
        Студент
       </Text>
@@ -226,13 +234,19 @@ export const SubjectsView: FC<SubjectsViewProps> = memo(({
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header='Задолженности' onBack={goBack}>
       <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
+       Группа
+      </Text>
+      <Spacing themeSpace={10} variant='Column' />
+      <ActionButton text={subgroupNumber} isShowArrow={false}/>
+      <Spacing themeSpace={10} variant='Column' />
+      <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
        Студент
       </Text>
       <Spacing themeSpace={10} variant='Column' />
       <ActionButton text={student.name} isShowArrow={false}/>
       <Spacing themeSpace={20} variant='Column' />
       <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
-       Список долгов
+        Список долгов - {student.unattestedCount}
       </Text>
       <Spacing themeSpace={10} variant='Column' />
       <Column horizontalAlign='center' style={{width: 695, height: '100%'}}>

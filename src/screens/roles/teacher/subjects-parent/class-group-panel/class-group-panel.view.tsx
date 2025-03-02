@@ -42,9 +42,11 @@ export type ClassGroupPanelViewProps = {
   deleteClass: (onSuccess: () => void) => void;
   createClass: (onSuccess: () => void) => void;
   setGradeNumber: (value: string) => void;
+  setNameOfClass: (value: string) => void;
   reloadTable: () => void;
   setSelectedAttestationGrade: (value: AttestationGradeInfo, onSuccess: () => void) => void;
   setDescription: (value: string) => void;
+  setCurrentNameOfClass: (onSuccess: () => void) => void;
   setAttendance: (value: AttendanceCodeType) => void;
 
   setSelectedClass: (value: ClassHeaderType, onSuccess: () => void) => void;
@@ -70,6 +72,8 @@ export type ClassGroupPanelViewProps = {
   removeAttestation: (onSuccess: () => void) => void;
 
   toggleAttested: () => void;
+
+  renameClass: (onSuccess: () => void) => void;
 };
 
 export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
@@ -82,7 +86,9 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   deleteClass,
   setAttendance,
   setDescription,
+  setNameOfClass,
   setGradeNumber,
+  setCurrentNameOfClass,
   switchIsPassed,
   reloadTable,
   onReview,
@@ -105,7 +111,9 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setAvgGrade,
 
   calculateAttestation,
-  onSave
+  onSave,
+
+  renameClass
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -226,6 +234,19 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     removeAttestation(onSuccessForAttestationRemove);
   },[removeAttestation, onSuccessForAttestationRemove])
 
+  const [isOpenRenameClass, setIsOpenRenameClass] = useState<boolean>(false);
+  const openRenameClass = useCallback(() => {
+    setCurrentNameOfClass(() => setIsOpenRenameClass(true));
+  },[setCurrentNameOfClass])
+  const closeRenameClass = useCallback(() => {
+    setIsOpenRenameClass(false);
+    setNameOfClass('');
+  },[setNameOfClass])
+
+  const handleRenameClass = useCallback(() => {
+    renameClass(closeRenameClass);
+  },[renameClass, closeRenameClass])
+
   return (
     <>
       {
@@ -264,14 +285,21 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           isOpenClassAttestation={isOpenClassAttestation}
           openAttestationGrade={openAttestationGrade}
           closeAttestationGrade={closeAttestationGrade}
+          setNameOfClass={setNameOfClass}
           onClickSave={onClickSave}
           calculateAttestation={onCalculateAttestation}
+          renameClass={handleRenameClass}
           openClassAttestation={openClassAttestation}
           closeClassAttestation={closeClassAttestation}
+          isOpenRenameClass={isOpenRenameClass}
+          closeRenameClass={closeRenameClass}
+          openRenameClass={openRenameClass}
           />) :
         (<ClassGroupPanelDesktopView
           openAddPopup={openAddPopup}
           onClickSave={onClickSave}
+          renameClass={handleRenameClass}
+          setNameOfClass={setNameOfClass}
           calculateAttestation={onCalculateAttestation}
           handleReview={handleReview}
           setAvgGrade={setAvgGrade}
@@ -306,6 +334,9 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           openAttestationGrade={openAttestationGrade}
           closeAttestationGrade={closeAttestationGrade}
           openClassAttestation={openClassAttestation}
+          isOpenRenameClass={isOpenRenameClass}
+          closeRenameClass={closeRenameClass}
+          openRenameClass={openRenameClass}
           closeClassAttestation={closeClassAttestation}
           />)
       }
@@ -384,9 +415,11 @@ type LocalViewProps = {
   openDeletePopup: () => void;
   openClassControlForStudents: (value: ClassHeaderType) => void;
   setGradeNumber: (value: string) => void;
+  renameClass: () => void;
   switchIsPassed: () => void;
   reloadTable: () => void;
   setDescription: (value: string) => void;
+  setNameOfClass: (value: string) => void;
   setAttendance: (value: AttendanceCodeType) => void;
   isOpenUpdateWindow: boolean;
   closeUpdateWindow: () => void;
@@ -420,6 +453,9 @@ type LocalViewProps = {
   calculateAttestation: () => void;
   onClickSave: () => void;
   controlSendAttestation: () => void;
+  isOpenRenameClass: boolean;
+  openRenameClass: () => void;
+  closeRenameClass: () => void;
 };
 
 export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
@@ -431,6 +467,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   openDeletePopup,
   setAttendance,
   openClassControlForStudents,
+  renameClass,
   toggleComplited,
   isClassControlPopup,
   setDescription,
@@ -454,6 +491,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   openAttestationGrade,
   closeAttestationGrade,
   openClassAttestation,
+  setNameOfClass,
   closeClassAttestation,
 
   setCountClassThatNotAttestationClass,
@@ -463,7 +501,10 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   onClickSave,
 
   calculateAttestation,
-  controlSendAttestation
+  controlSendAttestation,
+  isOpenRenameClass,
+  openRenameClass,
+  closeRenameClass
 }) => {
 
   return (
@@ -576,6 +617,17 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
         <Text themeFont={theme.fonts.h1}>
 		  		Занятие {teacherClassGroupControlState.selectedClass.position}
 		  	</Text>
+        <Spacing themeSpace={10} variant='Column' />
+        <Text themeFont={theme.fonts.ht1} format='break' >
+		  		{teacherClassGroupControlState.selectedClass.className}
+		  	</Text>
+        <Spacing themeSpace={20} variant='Column' />
+        <Button 
+          onClick={openRenameClass} 
+          width={200}
+          variant="primary" padding={[12,17]}>
+          Редакт. название
+        </Button>
         <Spacing themeSpace={15} variant='Column' />
         <Button 
           onClick={controlGenerateKeyPopup} 
@@ -598,6 +650,24 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           variant="primary" padding={[12,17]}>
           Пересмотр
         </Button>
+      </Modal>
+      <Modal closeModal={closeRenameClass}  isActive={isOpenRenameClass}>
+        <Column horizontalAlign='center'>
+          <Input 
+            header='Введите название' 
+            placeholder='Введение...' error={teacherClassGroupControlState.errors["nameOfClassError"]}
+            value={teacherClassGroupControlState.nameOfClass} setValue={setNameOfClass}/>
+          <Spacing variant='Column' themeSpace={35}/>
+          <Row>
+            <Button onClick={renameClass} state={teacherClassGroupControlState.loadingRename} variant='recomended' padding={[12,17]}>
+              Сохранить
+            </Button>
+            <Spacing variant='Row' themeSpace={25}/>
+            <Button onClick={closeRenameClass} state={'idle'} variant='attentive' padding={[12,17]}>
+              Отмена
+            </Button>
+          </Row>
+        </Column>
       </Modal>
       <Modal isActive={isOpenDescriptionClass} closeModal={controlDescriptionClass} >
         <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
@@ -634,6 +704,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   setDescription,
   setGradeNumber,
   closeUpdateWindow,
+  setNameOfClass,
   openUpdateWindow,
   switchIsPassed,
   openClassControlForStudents,
@@ -651,6 +722,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
 
   isOpenAttestationGrade,
   isOpenClassAttestation,
+  renameClass,
   openAttestationGrade,
   closeAttestationGrade,
   openClassAttestation,
@@ -664,7 +736,10 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   onClickSave,
   
   calculateAttestation,
-  controlSendAttestation
+  controlSendAttestation,
+  isOpenRenameClass,
+  openRenameClass,
+  closeRenameClass
 }) => {
 
   return (
@@ -739,7 +814,18 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           <Text themeFont={theme.fonts.h1}>
 		  	  	Занятие {teacherClassGroupControlState.selectedClass.position}
 		  	  </Text>
+          <Spacing themeSpace={10} variant='Column' />
+          <Text themeFont={theme.fonts.ht1} format='break' style={{maxWidth: 200}}>
+		  	  	{teacherClassGroupControlState.selectedClass.className}
+		  	  </Text>
           <Spacing themeSpace={25} variant='Column' />
+          <Button 
+            onClick={openRenameClass} 
+            width={240}
+            variant="primary" padding={[12,17]}>
+            Редакт. название
+          </Button>
+          <Spacing themeSpace={15} variant='Column' />
           <Button 
             onClick={controlGenerateKeyPopup} 
             width={240}
@@ -800,6 +886,24 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           onCancel={closeAttestationGrade}
           isMobile={false}
           />
+      </Popup>
+      <Popup closePopup={closeRenameClass} isActive={isOpenRenameClass}>
+        <Column horizontalAlign='center' style={{width: 440}}>
+          <Input 
+            header='Введите название' 
+            placeholder='Введение...' error={teacherClassGroupControlState.errors["nameOfClassError"]}
+            value={teacherClassGroupControlState.nameOfClass} setValue={setNameOfClass}/>
+          <Spacing variant='Column' themeSpace={35}/>
+          <Row>
+            <Button onClick={renameClass} state={teacherClassGroupControlState.loadingRename} variant='recomended' padding={[12,17]}>
+              Сохранить
+            </Button>
+            <Spacing variant='Row' themeSpace={25}/>
+            <Button onClick={closeRenameClass} state={'idle'} variant='attentive' padding={[12,17]}>
+              Отмена
+            </Button>
+          </Row>
+        </Column>
       </Popup>
       <Popup style={{width: 440}} isActive={isOpenDescriptionClass} closePopup={controlDescriptionClass} >
         <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
@@ -1362,7 +1466,15 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
           () => openClassAttestation(item) : 
           () => openClassControlForStudents(item)}>
 		  		<Text themeFont={theme.fonts.h3} >
-            {!item.isAttestation ? <>Занятие {item.position}</> : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
+            {!item.isAttestation ? 
+            <>
+              Занятие {item.position}
+              <Spacing variant='Row' themeSpace={5} />
+              {item.className && <Text themeFont={theme.fonts.ml} format='hide' style={{height: 68}} >
+                {item.className}
+              </Text>}
+            </> 
+            : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
 		  		</Text>
 		  	  </HeaderClassItem>
 		  	))}

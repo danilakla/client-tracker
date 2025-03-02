@@ -28,6 +28,7 @@ import { Attestation as DeanAttestation  } from "./screens/roles/dean/workshop-p
 import { AttestationStart as DeanAttestationStart  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation-start";
 import { AttestationStudents as DeanAttestationStudents  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation-students";
 import { AttestationTeachers as DeanAttestationTeachers  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation-teachers";
+import { StatisticsExcel as DeanStatisticsExcel  } from "./screens/roles/dean/workshop-parent/statistics-exel";
 
 import { Subjects as TeacherSubjects } from "./screens/roles/teacher/subjects-parent/subjects";
 import { ClassGroups as TeacherClassGroups } from "./screens/roles/teacher/subjects-parent/class-groups";
@@ -71,6 +72,8 @@ export const urls = {
   deanAttestationStart: '/dean/workshop/attestation/start',
   deanAttestationTeachers: '/dean/workshop/attestation/teachers',
   deanAttestationStudents: '/dean/workshop/attestation/students',
+
+  deanStatisticsEcxel: '/dean/workshop/statistics-excel',
 
   teacherSubjects: '/teacher/subjects',
   teacherClassGroups: '/teacher/subjects/class-groups',
@@ -142,6 +145,8 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.profileUpdateLogin} element={<ChangeLogin/>}/>
           <Route path={urls.deanGenerateStudents} element={<DeanGenerateStudents/>}/>
           <Route path={urls.deanStudents} element={<DeanStudents/>}/>
+
+          <Route path={urls.deanStatisticsEcxel} element={<DeanStatisticsExcel/>}/>
         </>}
         {user.role === 'ROLE_PARENTS' && <>
           <Route index element={<Navigate to={urls.profile} />} />

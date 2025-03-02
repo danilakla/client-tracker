@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, AttestationGradeInfo, calculateAttestationActionCreator, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, removeAttestationActionCreator, startReviewForClassActionCreator, updateAttestationClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, AttestationGradeInfo, calculateAttestationActionCreator, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, removeAttestationActionCreator, renameClassActionCreator, startReviewForClassActionCreator, updateAttestationClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -22,11 +22,13 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     setDescriptionActionCreator,
     setAttendanceActionCreator,
     switchIsPassedActionCreator,
+    setNameOfClassActionCreator,
 
     setSelectedClassActionCreator,
     setExpirationOfRefreshActionCreator,
     toggleIsCompletedActionCreator,
     setExpirationOfReviewActionCreator,
+    setCurrentNameOfClassActionCreator,
     clearQrCodeDataActionCreator,
 
     setSelectedAttestationGradeActionCreator,
@@ -134,6 +136,10 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   const setDescription = useCallback((value: string)=>{
     dispatch(setDescriptionActionCreator(value));
   },[dispatch,setDescriptionActionCreator])
+
+  const setNameOfClass = useCallback((value: string)=>{
+    dispatch(setNameOfClassActionCreator(value));
+  },[dispatch,setNameOfClassActionCreator])
 
   const setAttendance = useCallback((value: AttendanceCodeType)=>{
     dispatch(setAttendanceActionCreator(value));
@@ -268,6 +274,23 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.idHold
   ])
 
+  const setCurrentNameOfClass = useCallback((onSuccess: () => void)=>{
+    dispatch(setCurrentNameOfClassActionCreator({onSuccess}));
+  },[dispatch,setCurrentNameOfClassActionCreator])
+  
+  const renameClass = useCallback((onSuccess: () => void) => {
+    dispatch(renameClassActionCreator({
+      authToken: authToken,
+      classId: teacherClassGroupControlState.selectedClass.idClass,
+      nameOfClass: teacherClassGroupControlState.nameOfClass ,
+      onSuccess
+    }))
+  },[
+    dispatch,
+    teacherClassGroupControlState.selectedClass.idClass,
+    teacherClassGroupControlState.nameOfClass, authToken
+  ])
+
   return (
       <ClassGroupPanelView 
         createClass={createClass}
@@ -277,7 +300,9 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         updateGrade={updateGrade}
         setAvgGrade={setAvgGrade}
         onReview={onReview}
+        renameClass={renameClass}
         reloadTable={reloadTable}
+        setCurrentNameOfClass={setCurrentNameOfClass}
         setSelectedGrade={setSelectedGrade}
         setSelectedAttestationGrade={setSelectedAttestationGrade}
         deleteClass={deleteClass}
@@ -287,6 +312,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
         setDescription={setDescription}
         toggleComplited={toggleIsCompleted}
         setGradeNumber={setGradeNumber}
+        setNameOfClass={setNameOfClass}
         removeAttestation={removeAttestation}
         setExpirationOfRefresh={setExpirationOfRefresh}
         setSelectedClass={setSelectedClass}

@@ -18,6 +18,7 @@ export type ClassHeaderType = {
     idClassHold: number,
     dateCreation: string,
     isAttestation: boolean,
+    className: string | null;
     position: number;
 }
 
@@ -107,6 +108,9 @@ export type СlassGroupControlState = {
     loadingReview: "idle" | "loading" | "success" | "error";
     loadingRemoveAttestation: "idle" | "loading" | "success" | "error";
 
+    loadingRename: "idle" | "loading" | "success" | "error";
+    nameOfClass: string;
+
     isNeedAttestation: boolean;
 
     loadingReloadTable: "idle" | "loading" | "success" | "error";
@@ -180,6 +184,7 @@ const initialState: СlassGroupControlState = {
         idClass: -1,
         idClassHold: -1,
         dateCreation: 'undefined',
+        className: null,
         isAttestation: false,
         position: -1
     },
@@ -203,6 +208,9 @@ const initialState: СlassGroupControlState = {
     countClassThatNotAttestation: null,
     timeOfOneClass: null,
     isAttested: false,
+
+    loadingRename: 'idle',
+    nameOfClass: '',
 };
 
 const setErrorByKey = (state: СlassGroupControlState, key: string, error: ErrorType) => {
@@ -241,6 +249,7 @@ export const classGroupControlSlice = createSlice({
             idClassHold: number,
             dateCreation: string,
             isAttestation: boolean,
+            className: string,
         }[]>) {
             let positionCounter = 1;
 
@@ -289,6 +298,13 @@ export const classGroupControlSlice = createSlice({
         },
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.selectedGrade.description = action.payload;
+        },
+        setNameOfClassActionCreator(state, action: PayloadAction<string>) {
+            state.nameOfClass = action.payload;
+        },
+        setCurrentNameOfClassActionCreator(state, action: PayloadAction<{onSuccess: () => void}>) {
+            state.nameOfClass = state.selectedClass.className || '';
+            action.payload.onSuccess();
         },
         setIsNeedAttestationActionCreator(state, action: PayloadAction<boolean>) {
             state.isNeedAttestation = action.payload;
@@ -345,6 +361,7 @@ export const classGroupControlSlice = createSlice({
             const lastPosition = state.classesIds.filter(classItem => !classItem.isAttestation).length;
 
             state.classesIds.push({
+                className: null,
                 idClass: idClass,
                 idClassHold: idClassHold,
                 dateCreation: new Date().toISOString().split('T')[0],
@@ -630,6 +647,16 @@ export const classGroupControlSlice = createSlice({
             })
             .addCase(removeAttestationActionCreator.rejected, (state) => {
                 state.loadingRemoveAttestation = "idle";
+            })
+
+            .addCase(renameClassActionCreator.fulfilled, (state) => {
+                state.loadingRename = 'success';
+            })
+            .addCase(renameClassActionCreator.pending, (state) => {
+                state.loadingRename = 'loading';
+            })
+            .addCase(renameClassActionCreator.rejected, (state) => {
+                state.loadingRename = "idle";
             })
     },
 });
@@ -1049,6 +1076,29 @@ export const removeAttestationActionCreator = createAsyncThunk('teacher-class-co
             await teacherApi.removeAttestation(authToken, holdId);
 
             thunkApi.dispatch(classGroupControlSlice.actions.setIsNeedAttestationActionCreator(false));
+
+            onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+        }
+    }
+)
+
+
+
+
+
+
+export const renameClassActionCreator = createAsyncThunk('rename-class',
+    async (data: { authToken: string, classId: number, nameOfClass: string, onSuccess: () => void}, thunkApi ) => {
+        const { authToken, classId, nameOfClass, onSuccess } = data;
+        try {
+            const responce = await teacherApi.updateNameOfClass(authToken, nameOfClass, classId);
 
             onSuccess();
         }
