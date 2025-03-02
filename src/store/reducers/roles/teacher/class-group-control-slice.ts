@@ -1100,11 +1100,6 @@ export const removeAttestationActionCreator = createAsyncThunk('teacher-class-co
     }
 )
 
-
-
-
-
-
 export const renameClassActionCreator = createAsyncThunk('rename-class',
     async (data: { authToken: string, classId: number, nameOfClass: string, onSuccess: () => void}, thunkApi ) => {
         const { authToken, classId, nameOfClass, onSuccess } = data;

@@ -480,8 +480,7 @@ type AccurateTime = Date;
 
 async function getAccurateTime(): Promise<AccurateTime> {
     const start = Date.now();
-    // const response = await fetch('http://worldtimeapi.org/api/timezone/Etc/UTC');
-    const response = await fetch('https://cors-anywhere.herokuapp.com/http://worldtimeapi.org/api/timezone/Etc/UTC');
+    const response = await fetch('http://worldtimeapi.org/api/timezone/Etc/UTC');
     const end = Date.now();
 
     const data: WorldTimeApiResponse = await response.json();
