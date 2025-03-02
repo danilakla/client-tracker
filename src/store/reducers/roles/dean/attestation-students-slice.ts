@@ -134,8 +134,8 @@ export const initStudentsForDeanActionCreator = createAsyncThunk('attestation-st
             if (axios.isAxiosError(e)) {
                 if (e.response?.status === 401) {
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

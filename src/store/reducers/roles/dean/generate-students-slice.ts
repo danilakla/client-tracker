@@ -111,7 +111,7 @@ export const generateStudentsActionCreator = createAsyncThunk('dean-generate-stu
                     error: e.response?.data.message,
                 }))
                 onError?.();
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

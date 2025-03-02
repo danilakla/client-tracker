@@ -187,8 +187,8 @@ export const initializeMembersDataActionCreator = createAsyncThunk('admin-member
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -205,8 +205,8 @@ export const recoverPasswordActionCreator = createAsyncThunk('admin-members/reco
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -227,7 +227,7 @@ export const deleteDeanActionCreator = createAsyncThunk('admin-members/delete-de
                     key: "selectedNewResponsibleError",
                     error: "Некорректное значение",
                 }));
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -248,7 +248,7 @@ export const deleteTeacherActionCreator = createAsyncThunk('admin-members/delete
                     key: "selectedNewResponsibleError",
                     error: "Некорректное значение",
                 }));
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

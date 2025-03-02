@@ -120,8 +120,8 @@ export const initSpecialtiesDataActionCreator = createAsyncThunk('dean-specialie
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -156,7 +156,7 @@ export const addSpecialtyActionCreator = createAsyncThunk('dean-specialies/add-s
                         error: e.response?.data.message,
                     }));
                 }
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -189,7 +189,7 @@ export const updateSpecialtyActionCreator = createAsyncThunk('dean-specialies/up
                         error: e.response?.data.message,
                     }));
                 }
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -207,8 +207,8 @@ export const deleteSpecialtyActionCreator = createAsyncThunk('dean-specialies/de
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

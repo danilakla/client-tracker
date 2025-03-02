@@ -127,8 +127,8 @@ export const initClassFormatsDataActionCreator = createAsyncThunk('dean-class-fo
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -163,7 +163,7 @@ export const addClassFormatActionCreator = createAsyncThunk('dean-class-formats/
                         error: e.response?.data.message,
                     }));
                 }
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -196,7 +196,7 @@ export const updateClassFormatActionCreator = createAsyncThunk('dean-class-forma
                         error: e.response?.data.message,
                     }));
                 }
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -214,8 +214,8 @@ export const deleteClassFormatActionCreator = createAsyncThunk('dean-class-forma
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

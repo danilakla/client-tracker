@@ -95,8 +95,8 @@ export const startAttestationActionCreator = createAsyncThunk('attestation-start
                 if (e.response?.status === 401) {
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
                     return;
-                }
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

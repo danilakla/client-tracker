@@ -108,13 +108,14 @@ export const changePasswordActionCreator = createAsyncThunk('profile/change-pass
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                    return;
                 }
 
                 thunkApi.dispatch(changePasswordSlice.actions.setError(
                     { key: "oldPasswordError", error: e.response?.data.message }
                 ));
-            }
-        }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+        } 
     }
 )
 

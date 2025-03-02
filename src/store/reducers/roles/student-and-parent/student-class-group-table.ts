@@ -261,9 +261,8 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            } else {
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -378,7 +377,7 @@ export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-ta
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
                 }
                 else onError();
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -402,7 +401,7 @@ export const askReviewActionCreator = createAsyncThunk('student-class-group-tabl
                     closePrewPopup();
                     onError();
                 }
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
@@ -461,7 +460,7 @@ export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-ta
                 } else {
                     onError();
                 }
-            }
+            } 
             onError();
         }
     }
@@ -525,9 +524,8 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
             if (axios.isAxiosError(e)) {
                 if(e.response?.status === 401){
                     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-                }
-            } else {
-            }
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

@@ -91,7 +91,7 @@ export const changeLoginActionCreator = createAsyncThunk('profile/change-login',
                 thunkApi.dispatch(changeLoginSlice.actions.setError(
                     { key: "newLoginError", error: e.response?.data.message }
                 ));
-            }
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )
