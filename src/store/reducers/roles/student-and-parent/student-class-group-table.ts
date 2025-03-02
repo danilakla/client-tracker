@@ -19,6 +19,7 @@ export type ClassHeaderType = {
     dateCreation: string,
     isAttestation: boolean,
     position: number;
+    className: string | null;
 }
 
 export type GradeInfo = {
@@ -101,6 +102,7 @@ const initialState: StudentClassGroupTableState = {
     selectedClass: {
         idClass: -1,
         position: -1,
+        className: null,
         gradeId: -1,
         dateCreation: 'undefined',
         isAttestation: false
@@ -252,6 +254,7 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
                     gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
                     dateCreation: cls.dateCreation,
                     isAttestation: cls.isAttestation,
+                    className: cls.className,
                     position: cls.isAttestation ? -1 : positionCounter++,
                 }));
 
@@ -282,6 +285,7 @@ export const transformAndSortStudentsStatistics = (input: {
         idClassHold: number;
         dateCreation: string;
         isAttestation: boolean;
+        className: string | null;
     }[];
     studentGrades: {
         idStudentGrate: number;

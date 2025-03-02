@@ -617,7 +617,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
         <Text themeFont={theme.fonts.h1}>
 		  		Занятие {teacherClassGroupControlState.selectedClass.position}
 		  	</Text>
-        <Spacing themeSpace={10} variant='Column' />
+        {teacherClassGroupControlState.selectedClass.className !== null && <Spacing themeSpace={10} variant='Column' />}
         <Text themeFont={theme.fonts.ht1} format='break' >
 		  		{teacherClassGroupControlState.selectedClass.className}
 		  	</Text>
@@ -814,7 +814,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           <Text themeFont={theme.fonts.h1}>
 		  	  	Занятие {teacherClassGroupControlState.selectedClass.position}
 		  	  </Text>
-          <Spacing themeSpace={10} variant='Column' />
+          {teacherClassGroupControlState.selectedClass.className !== null && <Spacing themeSpace={10} variant='Column' />}
           <Text themeFont={theme.fonts.ht1} format='break' style={{maxWidth: 200}}>
 		  	  	{teacherClassGroupControlState.selectedClass.className}
 		  	  </Text>
@@ -1469,10 +1469,10 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
             {!item.isAttestation ? 
             <>
               Занятие {item.position}
-              <Spacing variant='Row' themeSpace={5} />
-              {item.className && <Text themeFont={theme.fonts.ml} format='hide' style={{height: 68}} >
+              {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
+              <Text themeFont={theme.fonts.ml} format='hide' style={{height: 68}} >
                 {item.className}
-              </Text>}
+              </Text>
             </> 
             : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
 		  		</Text>

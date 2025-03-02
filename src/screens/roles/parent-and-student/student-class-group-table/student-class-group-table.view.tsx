@@ -66,6 +66,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     setSelectedClass({
       idClass: -1, 
       position: -1, 
+      className: null,
       gradeId: -1,
       isAttestation: false,
       dateCreation: 'undefined'
@@ -333,6 +334,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
           redisKeyData={studentClassGroupTableState.redisKeyData}
           loadingKey={studentClassGroupTableState.loadingKey}
           getKeyForQr={getKeyForQr}
+          className={studentClassGroupTableState.selectedClass.className}
           loadingScan={studentClassGroupTableState.loadingScan}
           hasCameraAccess={hasCameraAccess}
           setErrorAccessCamera={setErrorAccessCamera}
@@ -445,6 +447,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           redisKeyData={studentClassGroupTableState.redisKeyData}
           loadingKey={studentClassGroupTableState.loadingKey}
           getKeyForQr={getKeyForQr}
+          className={studentClassGroupTableState.selectedClass.className}
           loadingScan={studentClassGroupTableState.loadingScan}
           hasCameraAccess={hasCameraAccess}
           setErrorAccessCamera={setErrorAccessCamera}
@@ -458,6 +461,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
 
 export type QrcCodePartProps = {
   position: number;
+  className: string | null;
   redisKeyData: RedisKeyDataType | null;
   getKeyForQr: () => void;
   setErrorAccessCamera: () => void;
@@ -474,6 +478,7 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
   getKeyForQr,
   setErrorAccessCamera,
   hasCameraAccess,
+  className,
   onHandleQrCode,
   onAskReview,
   loadingKey,
@@ -483,6 +488,10 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
 	  <Column horizontalAlign='center'>
       <Text themeFont={theme.fonts.h1}>
         Занятие {position}
+      </Text>
+      {className !== null && <Spacing themeSpace={10} variant='Column' />}
+      <Text themeFont={theme.fonts.ht1} format='break' >
+        {className}
       </Text>
       <Spacing themeSpace={15} variant='Column' />
       <Button 
@@ -584,7 +593,13 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
                 key={index} 
                 onClick={(item.gradeId === -1 || role === 'ROLE_PARENTS') ? () => {} : () => openClassControl(item)}>
                 <Text themeFont={theme.fonts.h3}>
-                  {!item.isAttestation ? <>Занятие {item.position}</> : <>Аттестация</>}
+                  {!item.isAttestation ? <>
+                    Занятие {item.position}
+                    {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
+                    <Text themeFont={theme.fonts.ml} format='hide' style={{height: 68}} >
+                      {item.className}
+                    </Text>
+                  </>  : <>Аттестация</>}
                 </Text>
               </HeaderClassItem>
             ))}

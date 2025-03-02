@@ -167,7 +167,7 @@ export const teacherApi = {
     },
     updateNameOfClass(
         authToken: string, 
-        className: string,
+        className: string | null,
         classId: number
     ){
         return instance.put(`/teacher/update/class/${classId}`, { className }, { 
