@@ -103,6 +103,7 @@ export const Root: FC<RootProps> = () => {
       <Route path={urls.logInParent} element={<Login typeOfLogin='parent' />} />
       <Route path={urls.signUp} element={<Signup/>} />
 
+      <Route element={<PrivateRoute/>}>
         {/* General */}
         <Route path={urls.profile} element={<Profile/>}/>
         <Route path={urls.profileUniversityInfo} element={<UniversityInfo/>}/>
@@ -179,6 +180,10 @@ export const Root: FC<RootProps> = () => {
           <Route path={urls.teacherClassGroupSubgroups} element={<TeacherClassGroupSubgroups/>}/>
           {/* <Route path={urls.teacherClassGroupControl} element={<TeacherClassGroupPanel/>}/> */}
         </>}
+        <Route path='*' element={<Navigate to='/' />} />
+
+        <Route path={urls.error} element={<Warning/>} />
+      </Route>
     </Routes>
   );
 };

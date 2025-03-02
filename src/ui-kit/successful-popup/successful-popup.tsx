@@ -1,12 +1,13 @@
 import { FC, memo, ReactNode } from "react";
 import { Text } from "../text";
 import { theme } from "../themes/theme";
-import { Popup } from "../popup";
-import { Column } from "../column";
+
 import { Spacing } from "../spacing";
 import { Button } from "../button";
 import successSVG from '../../images/success.svg';
 import { Image } from "../image";
+import { Popup } from "../popup";
+import { Column } from "../column";
 
 export type SuccessfulPopupProps = {
     isOpen: boolean;

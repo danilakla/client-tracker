@@ -45,6 +45,7 @@ export const ScreenContent = styled.div<{height: number}>`
     overflow: auto;
     display: flex;
     flex-direction: column;
+    background-color: #f7f9fc;
     align-items: center;
 `;
 
