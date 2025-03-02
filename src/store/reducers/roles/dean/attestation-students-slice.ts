@@ -16,6 +16,7 @@ export type StudentDTO = {
     id: number,
     name: string
     classGroups: DebtDTO[]
+    unattestedCount: number;
 }
 
 export type DebtDTO = {
@@ -51,7 +52,8 @@ const initialState : AttestationStudentsState = {
     selectedStudent:{
         id: -1,
         name: '',
-        classGroups: []
+        classGroups: [],
+        unattestedCount: -1
     }
 }
 

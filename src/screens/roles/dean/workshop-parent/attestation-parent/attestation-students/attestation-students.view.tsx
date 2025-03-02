@@ -176,7 +176,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
         {filteredStudents.map((item, index) => 
-          <ActionButton key={index} onClick={() => goToSubjects(item)} text={item.name} />)}
+          <ActionButton key={index} onClick={() => goToSubjects(item)} text={`${item.name} (${item.unattestedCount})`} />)}
       </ItemsContainerMobile>
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header={nameSubgroup} onBack={goBack}>
@@ -185,7 +185,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
           {filteredStudents.map((item, index) =>
-            <ActionBlockButton key={index} text={item.name}
+            <ActionBlockButton key={index} text={`${item.name} (${item.unattestedCount})`}
               onClick={() => goToSubjects(item)}/>
           )}
         </GridContainer>
@@ -216,7 +216,7 @@ export const SubjectsView: FC<SubjectsViewProps> = memo(({
       <ActionButton text={student.name} isShowArrow={false}/>
       <Spacing themeSpace={20} variant='Column' />
       <Text themeFont={theme.fonts.h2} themeColor={theme.colors.gray}>
-       Список долгов
+       Список долгов - {student.unattestedCount}
       </Text>
       <Spacing themeSpace={10} variant='Column' />
       <ItemsContainerMobile>
