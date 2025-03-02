@@ -490,7 +490,7 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
         Занятие {position}
       </Text>
       {className !== null && <Spacing themeSpace={10} variant='Column' />}
-      <Text themeFont={theme.fonts.ht1} format='break' >
+      <Text themeFont={theme.fonts.ht1} style={{maxWidth: 200}} format='break' >
         {className}
       </Text>
       <Spacing themeSpace={15} variant='Column' />

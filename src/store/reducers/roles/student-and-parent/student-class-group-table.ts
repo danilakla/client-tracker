@@ -518,6 +518,7 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
                     idClass: cls.idClass,
                     gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
                     dateCreation: cls.dateCreation,
+                    className: cls.className,
                     isAttestation: cls.isAttestation,
                     position: cls.isAttestation ? -1 : positionCounter++,
                 }));
