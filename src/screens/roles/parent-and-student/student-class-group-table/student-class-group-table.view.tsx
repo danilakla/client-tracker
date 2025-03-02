@@ -577,7 +577,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
       horizontalScrollRef2,
       horizontalSliderRef,
       handleHorizontalStart,
-      handleVerticalStart
+      handleVerticalStart,
   } = useTableScroll(classesIds);
 
   return (

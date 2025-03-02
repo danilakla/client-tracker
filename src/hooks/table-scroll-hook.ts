@@ -1,6 +1,4 @@
-import { useUser } from "./user-hook";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTypedSelector } from "./use-typed-selector";
 
 export const useTableScroll = (classesIds: any) => {
     const [isVerticalScrollNeeded, setIsVerticalScrollNeeded] = useState(true);
@@ -302,6 +300,8 @@ export const useTableScroll = (classesIds: any) => {
     return {
       verticalScrollRef,
       horizontalScrollRef1,
+      updateHorizontalSliderSize,
+      updateHorizontalSliderPosition,
       horizontalScrollRef2,
       verticalTrackRef,
       verticalSliderRef,

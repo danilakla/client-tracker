@@ -299,6 +299,17 @@ export const classGroupControlSlice = createSlice({
         setDescriptionActionCreator(state, action: PayloadAction<string>) {
             state.selectedGrade.description = action.payload;
         },
+        updateClassNameActionCreator(state, action: PayloadAction<{classId: number, className: string | null}>) {
+            const { classId, className } = action.payload;
+
+            state.classesIds = state.classesIds.map(classItem =>
+                classItem.idClass === classId ? { ...classItem, className } : classItem
+            );
+
+            if (state.selectedClass.idClass === classId) {
+                state.selectedClass.className = className;
+            }
+        },
         setNameOfClassActionCreator(state, action: PayloadAction<string>) {
             state.nameOfClass = action.payload;
         },
@@ -1098,7 +1109,12 @@ export const renameClassActionCreator = createAsyncThunk('rename-class',
     async (data: { authToken: string, classId: number, nameOfClass: string, onSuccess: () => void}, thunkApi ) => {
         const { authToken, classId, nameOfClass, onSuccess } = data;
         try {
-            const responce = await teacherApi.updateNameOfClass(authToken, nameOfClass === '' ? null : nameOfClass, classId);
+            await teacherApi.updateNameOfClass(authToken, nameOfClass === '' ? null : nameOfClass, classId);
+
+            thunkApi.dispatch(classGroupControlSlice.actions.updateClassNameActionCreator({
+                classId: classId, 
+                className: nameOfClass === '' ? null : nameOfClass
+            } ));
 
             onSuccess();
         }
