@@ -46,6 +46,11 @@ export const InputStyled = styled.input<{
     border-color: ${theme.colors.primary};
     outline: none;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 1;
+  }
 `;
 
 export const InputButton = styled.img`

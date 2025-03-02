@@ -51,6 +51,11 @@ export const TextareaStyled = styled.textarea<{
     border-color: ${theme.colors.primary};
     outline: none;
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 1;
+  }
 `;
 
 export const CopyButton = styled.img`
