@@ -87,6 +87,10 @@ export const attestationStudentsSlice = createSlice({
         reset(state) {
             Object.assign(state, initialState);
         },
+        resetWithSuccess(state, action: PayloadAction<() => void>) {
+            Object.assign(state, initialState);
+            action.payload();
+        },
     },
     extraReducers: (builder) => {
         builder

@@ -1,0 +1,1 @@
+export { ClassGroupsBySubgroup } from './class-groups-by-subgroup';

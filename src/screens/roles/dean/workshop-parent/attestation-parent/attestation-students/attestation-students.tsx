@@ -98,19 +98,19 @@ export const AttestationStudents: FC<AttestationStudentsProps> = memo(() => {
   const openClassTable = useCallback((value: InitData) => {
     setIsCheckTable(true);
     dispatch(setInitDataActionCreator({value, onSuccess: deanClassTable}));
-  }, [dispatch, setIsCheckTable, setInitDataActionCreator, deanClassTable]);
+  }, [dispatch, setInitDataActionCreator, deanClassTable, setIsCheckTable]);
 
   return (
       <AttestationStudentsView 
         setSearchStudent={setSearchStudent}
         setSearchSubgroup={setSearchSubgroup}
-        setIsCheckTable={setIsCheckTable}
         setSelectedStudent={setSelectedStudent}
         setSelectedSubgroup={setSelectedSubgroup}
         deanAttestationStudentsState={deanAttestationStudentsState}
         goToAttestation={goBackToAttestation}
         filteredStudents={filteredStudents}
         filteredSubgroups={filteredSubgroups}
+        setIsCheckTable={setIsCheckTable}
         openClassTable={openClassTable}
         />
     );

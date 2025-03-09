@@ -8,6 +8,7 @@ import { useDeanStudents } from '../students/students.props';
 import { useControlSubjects } from '../subjects-parent/control-subjects/control-subjects.props';
 import { useAttestation } from '../attestation-parent/attestation/attestation.props';
 import { useStatisticsExcel } from '../statistics-exel/statistics-exel.props';
+import { useDeanClassGroupsBySubgroup } from '../class-groups-by-subgroup/class-groups-by-subgroup.props';
 
 export const Workshop: FC<WorkshopProps> = memo(() => {
   
@@ -18,6 +19,7 @@ export const Workshop: FC<WorkshopProps> = memo(() => {
   const goToDeanStudents = useDeanStudents();
   const goToAttestation = useAttestation();
   const goToStatisticsExcel = useStatisticsExcel();
+  const goToClassGroupsBySubgroup = useDeanClassGroupsBySubgroup();
 
   return (
       <WorkshopView 
@@ -28,6 +30,7 @@ export const Workshop: FC<WorkshopProps> = memo(() => {
         goToGenerateStudents={goToGenerateStudents}
         goToAttestation={goToAttestation}
         goToStatisticsExcel={goToStatisticsExcel}
+        goToClassGroupsBySubgroup={goToClassGroupsBySubgroup}
         />
     );
 });

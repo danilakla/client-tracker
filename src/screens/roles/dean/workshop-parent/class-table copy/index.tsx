@@ -1,1 +1,0 @@
-export { ClassTable } from './class-table';

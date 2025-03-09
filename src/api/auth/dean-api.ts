@@ -283,4 +283,11 @@ export const deanApi = {
                 return response.data;
             })
     },
+    getClassGroupsBySubgroups(authToken: string) {
+        return instance.get('/dean/pre/show/table', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

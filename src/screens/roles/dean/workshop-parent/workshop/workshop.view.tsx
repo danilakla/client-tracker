@@ -18,6 +18,7 @@ export type WorkshopViewProps = {
   goToDeanStudents: () => void;
   goToAttestation: () => void;
   goToStatisticsExcel: () => void;
+  goToClassGroupsBySubgroup: () => void;
 };
 
 export const WorkshopView: FC<WorkshopViewProps> = memo(({
@@ -27,7 +28,8 @@ export const WorkshopView: FC<WorkshopViewProps> = memo(({
   goToDeanStudents,
   goToControlSubjects,
   goToStatisticsExcel,
-  goToAttestation
+  goToAttestation,
+  goToClassGroupsBySubgroup
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -37,6 +39,7 @@ export const WorkshopView: FC<WorkshopViewProps> = memo(({
         goToSpecialties={goToSpecialties}
         goToClassFormats={goToClassFormats}
         goToDeanStudents={goToDeanStudents}
+        goToClassGroupsBySubgroup={goToClassGroupsBySubgroup}
         goToStatisticsExcel={goToStatisticsExcel}
         goToGenerateStudents={goToGenerateStudents}
         goToAttestation={goToAttestation}
@@ -47,6 +50,7 @@ export const WorkshopView: FC<WorkshopViewProps> = memo(({
         goToDeanStudents={goToDeanStudents}
         goToStatisticsExcel={goToStatisticsExcel}
         goToClassFormats={goToClassFormats}
+        goToClassGroupsBySubgroup={goToClassGroupsBySubgroup}
         goToGenerateStudents={goToGenerateStudents}
         goToControlSubjects={goToControlSubjects}
         goToAttestation={goToAttestation}
@@ -60,6 +64,7 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
   goToClassFormats,
   goToControlSubjects,
   goToGenerateStudents,
+  goToClassGroupsBySubgroup,
   goToDeanStudents,
   goToAttestation,
   goToStatisticsExcel
@@ -80,6 +85,8 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
       <ActionButton onClick={goToAttestation} text='Аттестация' />
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToStatisticsExcel} text='Статистика' />
+      <Spacing variant='Column' themeSpace={10} />
+      <ActionButton onClick={goToClassGroupsBySubgroup} text='Группы занятий' />
       <Spacing variant='Column' themeSpace={85} />
     </WrapperMobile>
   );
@@ -92,7 +99,8 @@ export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
   goToGenerateStudents,
   goToDeanStudents,
   goToAttestation,
-  goToStatisticsExcel
+  goToStatisticsExcel,
+  goToClassGroupsBySubgroup
 }) => {
 
   return (
@@ -106,6 +114,7 @@ export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
           <ActionBlockButton onClick={goToDeanStudents} text='Студенты' />
           <ActionBlockButton onClick={goToAttestation} text='Аттестация' />
           <ActionBlockButton onClick={goToStatisticsExcel} text='Статистика' />
+          <ActionBlockButton onClick={goToClassGroupsBySubgroup} text='Группы занятий' />
         </GridContainer>
       </Column>
     </WrapperDesktop>

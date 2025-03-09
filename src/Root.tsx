@@ -30,6 +30,7 @@ import { AttestationStudents as DeanAttestationStudents  } from "./screens/roles
 import { AttestationTeachers as DeanAttestationTeachers  } from "./screens/roles/dean/workshop-parent/attestation-parent/attestation-teachers";
 import { StatisticsExcel as DeanStatisticsExcel  } from "./screens/roles/dean/workshop-parent/statistics-exel";
 import { ClassTable as DeanlClassTable  } from "./screens/roles/dean/workshop-parent/class-table";
+import { ClassGroupsBySubgroup as DeanClassGroupsBySubgroup  } from "./screens/roles/dean/workshop-parent/class-groups-by-subgroup";
 
 import { Subjects as TeacherSubjects } from "./screens/roles/teacher/subjects-parent/subjects";
 import { ClassGroups as TeacherClassGroups } from "./screens/roles/teacher/subjects-parent/class-groups";
@@ -77,6 +78,7 @@ export const urls = {
   deanStatisticsEcxel: '/dean/workshop/statistics-excel',
 
   deanClassGroupTable: '/dean/workshop/class-group-table',
+  deanClassGroupsBySubgroup: '/dean/workshop/class-groups-by-subgroup',
 
   teacherSubjects: '/teacher/subjects',
   teacherClassGroups: '/teacher/subjects/class-groups',
@@ -151,6 +153,7 @@ export const Root: FC<RootProps> = () => {
 
           <Route path={urls.deanStatisticsEcxel} element={<DeanStatisticsExcel/>}/>
           <Route path={urls.deanClassGroupTable} element={<DeanlClassTable/>}/>
+          <Route path={urls.deanClassGroupsBySubgroup} element={<DeanClassGroupsBySubgroup/>}/>
         </>}
         {user.role === 'ROLE_PARENTS' && <>
           <Route index element={<Navigate to={urls.profile} />} />

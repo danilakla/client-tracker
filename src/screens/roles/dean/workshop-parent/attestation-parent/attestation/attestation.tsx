@@ -11,7 +11,6 @@ export const Attestation: FC<AttestationProps> = memo(() => {
   const goToAttestationStart = useAttestationStart();
   const goToAttestationStudents = useAttestationStudents();
   const goToAttestationTeachers = useAttestationTeachers();
-
   const goToDeanWorkshop = useDeanWorkshop();
 
   return (
