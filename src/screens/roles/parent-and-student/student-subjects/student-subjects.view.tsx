@@ -61,7 +61,7 @@ export const StudentSubjectsMobileView: FC<StudentSubjectsViewProps> = memo(({
   return (
     <WrapperMobile role={role} header='Предметы'>
       {studentSubjectsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={studentSubjectsState.loading}/>
         </Column>
       }
@@ -87,7 +87,7 @@ export const StudentSubjectsDesktopView: FC<StudentSubjectsViewProps> = memo(({
   return (
     <WrapperDesktop role={role} header='Предметы'>
       {studentSubjectsState.loading === 'loading' && 
-        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={studentSubjectsState.loading}/>
         </Column>
       }

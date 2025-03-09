@@ -34,7 +34,7 @@ export const Popup: FC<PopupProps> = memo(({ isActive, themeColor, closePopup, c
     }, [isActive]);
 
     return (
-      <WrapperPopap height={window.innerHeight} isActive={isActive} onClick={closePopup}>
+      <WrapperPopap isActive={isActive} onClick={closePopup}>
         <Surface themeColor={themeColor} style={{width: 'auto'}} padding={padding} onClick={(e) => e.stopPropagation()} {...rest}>
           {children}
         </Surface>

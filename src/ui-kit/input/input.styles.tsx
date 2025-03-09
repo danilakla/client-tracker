@@ -24,7 +24,6 @@ export const InputStyled = styled.input<{
   borderColor?: string;
 }>`
   width: 100%;
-  autocomplete: off;
   box-sizing: border-box;
   border: 2px solid ${({ borderColor }) => borderColor};
   padding: 10px 10px 10px 10px;

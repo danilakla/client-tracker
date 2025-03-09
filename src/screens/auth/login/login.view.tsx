@@ -33,7 +33,7 @@ export const LoginView: FC<LoginViewProps> = memo(({
 }) => {
 
   return (
-    <AuthWrapper height={window.innerHeight}>
+    <AuthWrapper>
       <StyledLogo src={logoTracker}/>
       <Spacing variant='Column' themeSpace={35}/>
       {

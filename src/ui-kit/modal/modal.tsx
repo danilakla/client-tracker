@@ -43,7 +43,7 @@ export const Modal: FC<ModalProps> = memo(({
     }, [isActive]);
     
     return (
-      <WrapperModal height={window.innerHeight} isActive={isActive} onClick={closeModal}>
+      <WrapperModal isActive={isActive} onClick={closeModal}>
         <Surface className="modal-content"
           style={{ zIndex: 10000 }} 
           themeColor={themeColor} 

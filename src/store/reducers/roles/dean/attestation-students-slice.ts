@@ -9,7 +9,7 @@ export type SubgroupDTO = {
         subgroupNumber: string,
         admissionDate: string
     },
-    students: StudentDTO[]
+    students: StudentDTO[];
 }
 
 export type StudentDTO = {
@@ -21,10 +21,11 @@ export type StudentDTO = {
 
 export type DebtDTO = {
     id: number,
-    description: string
-    idSubject: number,
-    idClassFormat: number,
-    idTeacher: number
+    description: string,
+    subjectName: string,
+    formatName: string,
+    teacherName: string,
+    idClassHold: number
 }
 
 export type AttestationStudentsState = {
@@ -33,6 +34,7 @@ export type AttestationStudentsState = {
     selectedSubgroup: SubgroupDTO;
     selectedStudent: StudentDTO;
     searchSubgroup: string;
+    isCheckTable: boolean;
     searchStudent: string;
 }
 
@@ -41,6 +43,7 @@ const initialState : AttestationStudentsState = {
     searchSubgroup: '',
     searchStudent: '',
     subgroups: [],
+    isCheckTable: false,
     selectedSubgroup: {
         subgroup: {
             id: -1,
@@ -63,6 +66,9 @@ export const attestationStudentsSlice = createSlice({
     reducers: {
         setSubgroupsActionCreator(state, action: PayloadAction<SubgroupDTO[]>) {
             state.subgroups = action.payload;
+        },
+        setIsCheckTableActionCreator(state, action: PayloadAction<boolean>) {
+            state.isCheckTable = action.payload;
         },
         setSelectedSubgroupActionCreator(state, action: PayloadAction<{value: SubgroupDTO, onSuccess: () => void}>) {
             state.selectedSubgroup = action.payload.value;
@@ -115,8 +121,8 @@ export const initStudentsForDeanActionCreator = createAsyncThunk('attestation-st
                 const students = item.students.map((student: any) => ({
                     ...student,
                     name: student.name.replace(/_/g, ' '),
-                }));
-
+                })).sort((a: any, b: any) => b.unattestedCount - a.unattestedCount); // 🔥 Sorting here
+            
                 return {
                     ...item,
                     subgroup: {
@@ -125,6 +131,7 @@ export const initStudentsForDeanActionCreator = createAsyncThunk('attestation-st
                     },
                     students,
                 };
+            
             });
 
             thunkApi.dispatch(attestationStudentsSlice.actions.setSubgroupsActionCreator(processedData))

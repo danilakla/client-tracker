@@ -269,4 +269,18 @@ export const deanApi = {
                 return response.data;
             })
     },
+    getStatisticsExcel(authToken: string) {
+        return instance.post('/dean/generate/info/course', null, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
+    getClassGroupTable(authToken: string, holdId: number) {
+        return instance.get(`/dean/show/table/${holdId}`, { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

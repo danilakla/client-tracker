@@ -291,7 +291,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   return (
     <WrapperMobile onBack={goToClassGroups} role={role} header='Таблица'>
       {studentClassGroupTableState.loading === 'loading' ?
-      <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+      <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={studentClassGroupTableState.loading}/>
       </Column> : <>
         <Surface>
@@ -391,7 +391,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
   return (
     <WrapperDesktop style={{padding: 'none'}}  onBack={goToClassGroups} role={role} header='Таблица' isCenter={true}>
 	    {studentClassGroupTableState.loading === 'loading' ?
-        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={studentClassGroupTableState.loading}/>
         </Column> : <>
         <Surface style={{width: 900}}>

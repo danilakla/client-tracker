@@ -180,7 +180,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
       header={'Группа занятий'}>
       {
         deanClassGroupDetailsState.loading === 'loading' ? 
-        (<Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        (<Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={deanClassGroupDetailsState.loading}/>
         </Column>) : (<>
           <Row>
@@ -314,7 +314,7 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
     <WrapperDesktop onBack={goToClassGroups} role='ROLE_DEAN' header='Группа занятий' isCenter={true}>
       {
         deanClassGroupDetailsState.loading === 'loading' ? 
-        (<Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        (<Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={deanClassGroupDetailsState.loading}/>
         </Column>) : (<>
           <Row >

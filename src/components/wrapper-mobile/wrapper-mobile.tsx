@@ -52,7 +52,7 @@ export const WrapperMobile: FC<WrapperMobileProps> = memo(({
 			</Text>
 		</HeaderContainer>
 
-		<ScreenContent {...rest} height={window.innerHeight}>
+		<ScreenContent {...rest}>
 			{children}
 		</ScreenContent>
 

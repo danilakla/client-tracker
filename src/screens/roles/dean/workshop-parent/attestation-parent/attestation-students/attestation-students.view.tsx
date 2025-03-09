@@ -1,5 +1,5 @@
 
-import { FC, memo, useCallback, useState } from 'react';
+import { FC, memo, useCallback, useEffect, useState } from 'react';
 import { theme } from '../../../../../../ui-kit/themes/theme';
 import { useMediaQuery } from 'react-responsive';
 import { WrapperMobile } from '../../../../../../components/wrapper-mobile';
@@ -14,6 +14,7 @@ import { CircleLoading } from '../../../../../../ui-kit/circle-loading';
 import { GridContainer } from '../../../../../../ui-kit/grid-container';
 import { ActionBlockButton } from '../../../../../../ui-kit/action-block-button';
 import { Text } from '../../../../../../ui-kit/text';
+import { InitData } from '../../../../../../store/reducers/roles/dean/class-group-table-slice';
 
 export type AttestationStudentsViewProps = {
   goToAttestation: () => void;
@@ -24,6 +25,8 @@ export type AttestationStudentsViewProps = {
   setSelectedSubgroup: (value: SubgroupDTO, onSuccess: () => void) => void;
   filteredStudents: StudentDTO[];
   filteredSubgroups: SubgroupDTO[];
+  openClassTable: (value: InitData) => void;
+  setIsCheckTable: (value: boolean) => void;
 };
 
 export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
@@ -34,7 +37,9 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
   setSelectedStudent,
   filteredStudents,
   filteredSubgroups,
-  setSelectedSubgroup
+  setSelectedSubgroup,
+  openClassTable,
+  setIsCheckTable
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
 
@@ -56,6 +61,14 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
   const goBackToSubgroups = useCallback(() => {
     setCurrentScreen('subgroups');
   },[])
+
+  useEffect(() => {
+    if(deanAttestationStudentsState.isCheckTable === true){
+      setCurrentScreen('subjects');
+      setIsCheckTable(false);
+    }
+  },[deanAttestationStudentsState.isCheckTable, setIsCheckTable])
+
 
   return (
     <>
@@ -85,6 +98,7 @@ export const AttestationStudentsView: FC<AttestationStudentsViewProps> = memo(({
           subgroupNumber={deanAttestationStudentsState.selectedSubgroup.subgroup.subgroupNumber}
           student={deanAttestationStudentsState.selectedStudent}
           isMobile={isMobile}
+          openClassTable={openClassTable}
           goBack={goBackToStudents}
         /> }
     </>
@@ -117,7 +131,7 @@ export const SubgroupsView: FC<SubgroupsViewProps> = memo(({
     isMobile ? 
     (<WrapperMobile role='ROLE_DEAN' header='Список групп' onBack={goBack}>
       {loading === 'loading' && 
-        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={loading}/>
         </Column>
       }
@@ -130,7 +144,7 @@ export const SubgroupsView: FC<SubgroupsViewProps> = memo(({
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header='Список групп' onBack={goBack}>
       {loading === 'loading' && 
-        <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={loading}/>
         </Column>
       }
@@ -176,7 +190,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
       <Spacing themeSpace={20} variant='Column' />
       <ItemsContainerMobile>
         {filteredStudents.map((item, index) => 
-          <ActionButton key={index} onClick={() => goToSubjects(item)} text={`${item.name} (${item.unattestedCount})`} />)}
+          <ActionButton key={index} onClick={() => goToSubjects(item)} text={`(${item.unattestedCount}) ${item.name}`} />)}
       </ItemsContainerMobile>
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header={nameSubgroup} onBack={goBack}>
@@ -185,7 +199,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
         <Spacing themeSpace={30} variant='Column' />
         <GridContainer columns={4}>
           {filteredStudents.map((item, index) =>
-            <ActionBlockButton key={index} text={`${item.name} (${item.unattestedCount})`}
+            <ActionBlockButton key={index} text={`(${item.unattestedCount}) ${item.name}`}
               onClick={() => goToSubjects(item)}/>
           )}
         </GridContainer>
@@ -199,13 +213,15 @@ type SubjectsViewProps = {
   isMobile: boolean;
   student: StudentDTO; 
   subgroupNumber: string;
+  openClassTable: (value: InitData) => void;
 };
 
 export const SubjectsView: FC<SubjectsViewProps> = memo(({
   goBack,
   student,
   isMobile,
-  subgroupNumber
+  subgroupNumber,
+  openClassTable
 }) => {
 
   return (
@@ -229,7 +245,7 @@ export const SubjectsView: FC<SubjectsViewProps> = memo(({
       <Spacing themeSpace={10} variant='Column' />
       <ItemsContainerMobile>
         {student.classGroups.map((item, index) => 
-          <ActionButton key={index} text={item.description} isShowArrow={false}/>)}
+          <ActionButton key={index} text={item.description} onClick={() => openClassTable(item)}/>)}
       </ItemsContainerMobile>
     </WrapperMobile>) :
     (<WrapperDesktop role='ROLE_DEAN' header='Задолженности' onBack={goBack}>

@@ -5,6 +5,8 @@ import { useAttestation } from '../attestation/attestation.props';
 import { attestationStudentsSlice, initStudentsForDeanActionCreator, StudentDTO, SubgroupDTO } from '../../../../../../store/reducers/roles/dean/attestation-students-slice';
 import { useAppDispatch, useTypedSelector } from '../../../../../../hooks/use-typed-selector';
 import { useUser } from '../../../../../../hooks/user-hook';
+import { classGroupTableSlice, InitData } from '../../../../../../store/reducers/roles/dean/class-group-table-slice';
+import { useClassTable } from '../../class-table/class-table.props';
 
 export const AttestationStudents: FC<AttestationStudentsProps> = memo(() => {
 
@@ -21,6 +23,7 @@ export const AttestationStudents: FC<AttestationStudentsProps> = memo(() => {
     setSearchSubgroupActionCreator,
     setSelectedStudentActionCreator,
     setSelectedSubgroupActionCreator,
+    setIsCheckTableActionCreator
   } = attestationStudentsSlice.actions;
 
   const isInizialized = useRef(true);
@@ -34,7 +37,7 @@ export const AttestationStudents: FC<AttestationStudentsProps> = memo(() => {
        isInizialized.current = false;
        initData();
      } else return () => {
-       dispatch(reset());
+      //  dispatch(reset());
      };
   },[dispatch, reset, initData]);
 
@@ -81,16 +84,34 @@ export const AttestationStudents: FC<AttestationStudentsProps> = memo(() => {
       setFilteredStudents(newFiltered);
   }, [deanAttestationStudentsState.selectedSubgroup, deanAttestationStudentsState.searchStudent]);
 
+
+  const setIsCheckTable = useCallback((value: boolean) => {
+    dispatch(setIsCheckTableActionCreator(value));
+  }, [dispatch, setIsCheckTableActionCreator]);
+
+  const { 
+    setInitDataActionCreator
+  } = classGroupTableSlice.actions;
+
+  const deanClassTable = useClassTable();
+
+  const openClassTable = useCallback((value: InitData) => {
+    setIsCheckTable(true);
+    dispatch(setInitDataActionCreator({value, onSuccess: deanClassTable}));
+  }, [dispatch, setIsCheckTable, setInitDataActionCreator, deanClassTable]);
+
   return (
       <AttestationStudentsView 
         setSearchStudent={setSearchStudent}
         setSearchSubgroup={setSearchSubgroup}
+        setIsCheckTable={setIsCheckTable}
         setSelectedStudent={setSelectedStudent}
         setSelectedSubgroup={setSelectedSubgroup}
         deanAttestationStudentsState={deanAttestationStudentsState}
         goToAttestation={goBackToAttestation}
         filteredStudents={filteredStudents}
         filteredSubgroups={filteredSubgroups}
+        openClassTable={openClassTable}
         />
     );
 });

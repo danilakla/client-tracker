@@ -166,7 +166,7 @@ export const ClassGroupsMobileView: FC<LocalViewProps> = memo(({
   return (
     <WrapperMobile onBack={goToControlSubjects} role='ROLE_DEAN' header={deanClassGroupsState.selectedSubject?.name}>
       {deanClassGroupsState.loading === 'loading' ? 
-        (<Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+        (<Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={deanClassGroupsState.loading}/>
         </Column>) : (<>
         <ActionButton onClick={openUpdateWindow} text={'Информация'} />

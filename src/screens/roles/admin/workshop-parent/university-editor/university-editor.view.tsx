@@ -62,7 +62,7 @@ export const UniversityEditorMobileView: FC<UniversityEditorViewProps> = memo(({
   return (
     <WrapperMobile onBack={goToWorkshop} role='ROLE_ADMIN' header='Университет'>
       {adminUniversityEditorState.loadingData === 'loading' ?
-      (<Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+      (<Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={'loading'}/>
       </Column>) :
       (<>

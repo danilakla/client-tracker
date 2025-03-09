@@ -141,7 +141,7 @@ export const addSpecialtyActionCreator = createAsyncThunk('dean-specialies/add-s
                 return;
             }
 
-            await deanApi.createSpecialty(authToken, name);
+            await deanApi.createSpecialty(authToken, name.trim());
             const responce = await deanApi.getSpecialties(authToken);
             thunkApi.dispatch(specialtiesSlice.actions.setSpecialtiesActionCreator(responce));
             onSuccess?.();
@@ -174,7 +174,7 @@ export const updateSpecialtyActionCreator = createAsyncThunk('dean-specialies/up
                 return;
             }
 
-            await deanApi.updateSpecialty(authToken, id, name);
+            await deanApi.updateSpecialty(authToken, id, name.trim());
             const responce = await deanApi.getSpecialties(authToken);
             thunkApi.dispatch(specialtiesSlice.actions.setSpecialtiesActionCreator(responce));
             onSuccess?.();

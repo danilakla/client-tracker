@@ -17,7 +17,7 @@ export type WarningViewProps = {
 
 export const WarningView: FC<WarningViewProps> = memo(() => {
   return (
-    <Column style={{height: window.innerHeight}} horizontalAlign='center' verticalAlign='center'>
+    <Column style={{height: '100dvh'}} horizontalAlign='center' verticalAlign='center'>
       <Image src={smthWrongIcon} style={{marginLeft: 60}} width={250} height={250} />
       <Spacing variant='Column' themeSpace={15} />
       <Text themeFont={theme.fonts.h1} themeColor={theme.colors.gray}>

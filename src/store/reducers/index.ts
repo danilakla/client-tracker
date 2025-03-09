@@ -25,6 +25,8 @@ import deanAttestationTeachersReducer from "./roles/dean/attestation-teachers-sl
 import deanClassGroupDetailsReducer from "./roles/dean/subjects-parent/class-group-details-slice"
 import deanClassGroupsReducer from "./roles/dean/subjects-parent/class-groups-slice"
 import deanControlSubjectsReducer from "./roles/dean/subjects-parent/control-subjects-slice"
+import deanStatisticsExcelReducer from "./roles/dean/statistics-excel-slice"
+import deanClassGroupTableReducer from "./roles/dean/class-group-table-slice"
 
 import teacherSubjectsReducer from "./roles/teacher/subjects-slice"
 import teacherClassGroupsReducer from "./roles/teacher/class-groups-slice"
@@ -60,6 +62,8 @@ export const rootReducers = combineReducers({
       deanAttestationStart: deanAttestationStartReducer,
       deanAttestationStudents: deanAttestationStudentsReducer,
       deanAttestationTeachers: deanAttestationTeachersReducer,
+      deanStatisticsExcel: deanStatisticsExcelReducer,
+      deanClassGroupTable: deanClassGroupTableReducer,
 
       teacherSubjects: teacherSubjectsReducer,
       teacherClassGroups: teacherClassGroupsReducer,

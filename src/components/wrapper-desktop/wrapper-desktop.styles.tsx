@@ -29,7 +29,7 @@ export const ControlPanelContainer = styled.div`
     border: 2px solid #e9e9f2;
 `;
 
-export const ControlPanelWrapper = styled.div<{height: number}>`
+export const ControlPanelWrapper = styled.div`
     position: fixed; 
     top: 0;
     display: flex;
@@ -38,7 +38,7 @@ export const ControlPanelWrapper = styled.div<{height: number}>`
     align-items: center;
     left: 25px;
     width: auto;
-    height: ${({ height }) => height}px;
+    height: 100dvh;
 `;
 
 export const ImageButtonStyled = styled.img`
@@ -52,13 +52,13 @@ export const ImageArrowButton = styled.img`
     height: 10px;
 `;
 
-export const ScreenContent = styled.div<{ isCenter?: boolean, height: number }>`
+export const ScreenContent = styled.div<{ isCenter?: boolean }>`
   padding:  95px 110px 0px 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  height: ${({ height }) => height}px;
+  height: 100dvh;
   overflow: auto;
 
   ${({ isCenter }) =>

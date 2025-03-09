@@ -2,11 +2,9 @@ import styled from "styled-components";
 
 export const WrapperModal = styled.div<{
     isActive: boolean;
-    height: number;
 }>`
     width: 100vw;
-    height: ${({ height }) => height}px;
-    overflow: auto;
+    height: 100dvh;
     top: 0;
     left: 0;
     backdrop-filter: blur(3px);

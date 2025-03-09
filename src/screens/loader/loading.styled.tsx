@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 
-export const AppContainer = styled.div<{height: number}>`
-  height: ${({ height }) => height}px;
+export const AppContainer = styled.div`
+  height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;

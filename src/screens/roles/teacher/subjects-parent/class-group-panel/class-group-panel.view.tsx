@@ -511,7 +511,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   return (
     <WrapperMobile onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' header='Таблица'>
       {teacherClassGroupControlState.loading === 'loading' ?
-      <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+      <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface style={{position: 'relative'}}>
@@ -531,7 +531,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
             <Spacing themeSpace={10} variant='Row' />
             {teacherClassGroupControlState.isNeedAttestation && 
             <Button height={38} width={38} onClick={controlSendAttestation} 
-              state={teacherClassGroupControlState.loadingReloadTable} variant='attentive' padding={0}>
+              variant='attentive' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={attentionSvgrepo} width={20} height={20}/> 
               </Column>
@@ -543,7 +543,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
               onClickGrade={openUpdateWindow} openClassControlForStudents={openClassControlForStudents}
               classesIds={teacherClassGroupControlState.classesIds}
               data={teacherClassGroupControlState.studentsStatistics}/> :
-            <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
+            <Text style={{marginTop: 70}} themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
               Студенты не найдены
             </Text>}
           <Spacing themeSpace={25} variant='Column' />
@@ -749,7 +749,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   return (
     <WrapperDesktop style={{padding: 'none'}} onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' header='Таблица' isCenter={true}>
       {teacherClassGroupControlState.loading === 'loading' ?
-      <Column style={{position: 'absolute', height: window.innerHeight, top: 0}}>
+      <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
       </Column> : <>
         <Surface style={{width: 900, position: 'relative'}}>
@@ -769,7 +769,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             <Spacing themeSpace={10} variant='Row' />
             {teacherClassGroupControlState.isNeedAttestation && 
             <Button height={38} width={38} onClick={controlSendAttestation} 
-              state={teacherClassGroupControlState.loadingReloadTable} variant='attentive' padding={0}>
+               variant='attentive' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={attentionSvgrepo} width={20} height={20}/> 
               </Column>
@@ -781,7 +781,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
               onClickGrade={openUpdateWindow} openClassControlForStudents={openClassControlForStudents}
               classesIds={teacherClassGroupControlState.classesIds}
               data={teacherClassGroupControlState.studentsStatistics}/> :
-            <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
+            <Text style={{marginTop: 70}} themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
               Студенты не найдены
             </Text>}
           <Spacing themeSpace={20} variant='Column' />
