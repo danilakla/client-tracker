@@ -139,7 +139,7 @@ export const addClassFormatActionCreator = createAsyncThunk('dean-class-formats/
         try {
             thunkApi.dispatch(classFormatsSlice.actions.clearErrors());
 
-            if(formatName.length < 1){
+            if(formatName.trim().length < 1){
                 thunkApi.dispatch(classFormatsSlice.actions.setError({
                     key: "newNameOfClassFormatError",
                     error: 'Введите корректное название',
@@ -148,7 +148,7 @@ export const addClassFormatActionCreator = createAsyncThunk('dean-class-formats/
                 return;
             }
 
-            await deanApi.createClassFormat(authToken, formatName, description);
+            await deanApi.createClassFormat(authToken, formatName.trim(), description.trim());
             const responce = await deanApi.getClassFormats(authToken);
             thunkApi.dispatch(classFormatsSlice.actions.setClassFormatsActionCreator(responce));
             onSuccess?.();
@@ -172,7 +172,7 @@ export const updateClassFormatActionCreator = createAsyncThunk('dean-class-forma
     async (data: { authToken: string, id: number, formatName: string, description: string, onSuccess?: () => void}, thunkApi ) => {
         const { authToken, id, formatName, description, onSuccess } = data;
         try {
-            if(formatName.length < 1){
+            if(formatName.trim().length < 1){
                 thunkApi.dispatch(classFormatsSlice.actions.setError({
                     key: "newNameOfClassFormatError",
                     error: 'Введите корректное название',
@@ -181,7 +181,7 @@ export const updateClassFormatActionCreator = createAsyncThunk('dean-class-forma
                 return;
             }
 
-            await deanApi.updateClassFormat(authToken, id, formatName, description);
+            await deanApi.updateClassFormat(authToken, id, formatName.trim(), description.trim());
             const responce = await deanApi.getClassFormats(authToken);
             thunkApi.dispatch(classFormatsSlice.actions.setClassFormatsActionCreator(responce));
             onSuccess?.();

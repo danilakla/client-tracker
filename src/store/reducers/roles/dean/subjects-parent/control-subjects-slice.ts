@@ -125,7 +125,7 @@ export const createSubjectActionCreator = createAsyncThunk('dean-control-subject
         try {
             thunkApi.dispatch(controlSubjectsSlice.actions.clearErrors());
 
-            if(name.length < 1){
+            if(name.trim().length < 1){
                 thunkApi.dispatch(controlSubjectsSlice.actions.setError({
                     key: "nameError",
                     error: 'Введите корректное название',
@@ -134,7 +134,7 @@ export const createSubjectActionCreator = createAsyncThunk('dean-control-subject
                 return;
             }
 
-            const responce = await deanApi.createSubject(authToken, name, description);
+            const responce = await deanApi.createSubject(authToken, name.trim(), description.trim());
             thunkApi.dispatch(controlSubjectsSlice.actions.addSubjectActionCreator(responce));
             onSuccess();
         }

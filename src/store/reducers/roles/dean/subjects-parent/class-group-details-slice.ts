@@ -355,7 +355,7 @@ export const createClassGroupActionCreator = createAsyncThunk('dean-class-group-
 
             if(hasError) return;
 
-            const responce = await deanApi.createClassGroup(authToken, teacherId, subjectId, formatClassId, description);
+            const responce = await deanApi.createClassGroup(authToken, teacherId, subjectId, formatClassId, description.trim());
             const existingSubgroupIds = newSubgroups
                 .filter(subgroup => subgroup.isExist)
                 .map(subgroup => subgroup.idSubgroup); 
@@ -427,7 +427,7 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
 
             if(hasError) return;
 
-            await deanApi.updateClassGroup(authToken, teacherId, classGroupId, subjectId , classFormatId, description);
+            await deanApi.updateClassGroup(authToken, teacherId, classGroupId, subjectId , classFormatId, description.trim());
             const existingSubgroupIds = newSubgroups
                 .filter(subgroup => subgroup.isExist)
                 .map(subgroup => subgroup.idSubgroup); 

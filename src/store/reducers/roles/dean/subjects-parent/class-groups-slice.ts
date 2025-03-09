@@ -134,7 +134,7 @@ export const updateSubjectActionCreator = createAsyncThunk('dean-control-subject
     async (data: { authToken: string, id: number, name: string, description: string ,onSuccess: () => void}, thunkApi ) => {
         const { authToken, name, description, id, onSuccess } = data;
         try {
-            const responce = await deanApi.updateSubject(authToken, id, name, description);
+            const responce = await deanApi.updateSubject(authToken, id, name.trim(), description.trim());
             thunkApi.dispatch(controlSubjectsSlice.actions.updateSubjectActionCreator(responce));
             thunkApi.dispatch(classGroupsSlice.actions.updateSubjectActionCreator(responce));
             onSuccess();

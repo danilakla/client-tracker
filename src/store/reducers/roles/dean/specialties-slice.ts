@@ -132,7 +132,7 @@ export const addSpecialtyActionCreator = createAsyncThunk('dean-specialies/add-s
         try {
             thunkApi.dispatch(specialtiesSlice.actions.clearErrors());
 
-            if(name.length < 1){
+            if(name.trim().length < 1){
                 thunkApi.dispatch(specialtiesSlice.actions.setError({
                     key: "newNameOfSpecialtyError",
                     error: 'Введите корректное название',
@@ -165,7 +165,7 @@ export const updateSpecialtyActionCreator = createAsyncThunk('dean-specialies/up
     async (data: { authToken: string, id: number, name: string, onSuccess?: () => void}, thunkApi ) => {
         const { authToken, id, name, onSuccess } = data;
         try {
-            if(name.length < 1){
+            if(name.trim().length < 1){
                 thunkApi.dispatch(specialtiesSlice.actions.setError({
                     key: "newNameOfSpecialtyError",
                     error: 'Введите корректное название',
