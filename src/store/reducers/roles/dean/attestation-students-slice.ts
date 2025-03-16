@@ -114,18 +114,23 @@ export const initStudentsForDeanActionCreator = createAsyncThunk('attestation-st
              const response = await deanApi.getStudentsNotAttessted(authToken);
 
              const currentYear = new Date().getFullYear();
-
+             const currentMonth = new Date().getMonth();
+       
              const processedData = response.map((item: any) => {
-                const admissionYear = new Date(item.subgroup.admissionDate).getFullYear();
-                const course = currentYear - admissionYear + 1;
+               const admissionYear = new Date(item.subgroup.admissionDate).getFullYear();
+               
+               const course =
+                 currentMonth >= 7
+                   ? currentYear - admissionYear + 1
+                   : currentYear - admissionYear;
 
-                const groupInfo = item.subgroup.subgroupNumber?.split('.') || ['0', '0'];
-                const formattedGroup = `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`;
+               const groupInfo = item.subgroup.subgroupNumber?.split('.') || ['0', '0'];
+               const formattedGroup = `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`;
 
                 const students = item.students.map((student: any) => ({
                     ...student,
                     name: student.name.replace(/_/g, ' '),
-                })).sort((a: any, b: any) => b.unattestedCount - a.unattestedCount); // 🔥 Sorting here
+                })).sort((a: any, b: any) => b.unattestedCount - a.unattestedCount);
             
                 return {
                     ...item,

@@ -175,8 +175,9 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
 
   const [isOpenGenerateKeyPopup, setIsOpenGenerateKeyPopup] = useState<boolean>(false);
   const controlGenerateKeyPopup = useCallback(() => {
+    setExpirationOfReview(5);
     setIsOpenGenerateKeyPopup(!isOpenGenerateKeyPopup);
-  },[isOpenGenerateKeyPopup])
+  },[isOpenGenerateKeyPopup, setExpirationOfReview])
   const [isOpenQrCodePopup, setIsOpenQrCodePopup] = useState<boolean>(false);
   const controlQrCodePopup = useCallback(() => {
     setIsOpenQrCodePopup(!isOpenQrCodePopup);
@@ -1020,15 +1021,15 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
           setValue={setTimeValueForRefresh}/>
         <Spacing variant='Column' themeSpace={25}/>
         <Text themeFont={theme.fonts.h2}>
-          Время для пересмотра: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForReview} cек.</b> </span>
+          Время для пересмотра: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForReview} мин.</b> </span>
         </Text>
         <Spacing variant='Column' themeSpace={15}/>
         <RangeSlider
-          minValue={10}
-          maxValue={180}
+          minValue={1}
+          maxValue={10}
           disabled={isStarted}
           value={timeValueForReview} 
-          step={10}
+          step={1}
           setValue={setTimeValueForReview}/>
         <Spacing variant='Column' themeSpace={25}/>
         <Row>

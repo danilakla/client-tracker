@@ -64,7 +64,7 @@ export const StatisticsExcelView: FC<StatisticsExcelViewProps> = memo(({
         closePopup={closeErrorWindow}
       />
       <SuccessfulPopup
-        text={'Статистика успешно отправлена'}
+        text={'Статистика успешно получена'}
         isOpen={isOpenSuccessWindow}
         closePopup={closeSuccessWindow}
       />
@@ -93,7 +93,7 @@ export const StatisticsExcelMobileView: FC<LocalViewProps> = memo(({
         height: '100dvh',
       }} horizontalAlign='center' verticalAlign='center'>
         <Button onClick={onGet} state={loading} variant='primary' padding={[12, 17]}>
-          Получить на почту
+          Скачать
         </Button>
       </Column>
     </WrapperMobile>
@@ -114,7 +114,7 @@ export const StatisticsExcelDesktopView: FC<LocalViewProps> = memo(({
         height: '100dvh',
       }} horizontalAlign='center' verticalAlign='center'>
         <Button onClick={onGet} state={loading} variant='primary' padding={[12, 17]}>
-          Получить на почту
+          Скачать
         </Button>
       </Column>
     </WrapperDesktop>

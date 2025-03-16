@@ -49,7 +49,14 @@ export const getStatisticsExcelActionCreator = createAsyncThunk('statistics-exce
     async (data: { authToken: string, onSuccess: () => void, onError: () => void }, thunkApi) => {
         const { authToken, onError, onSuccess } = data;
         try {
-            await deanApi.getStatisticsExcel(authToken);
+            const response = await deanApi.getStatisticsExcel(authToken);
+            
+            const fileURL = window.URL.createObjectURL(new Blob([response]));
+            const link = document.createElement('a');
+            link.href = fileURL;
+            link.setAttribute('download', 'statistics.xlsx');
+            document.body.appendChild(link);
+            link.click();
             onSuccess();
         }
         catch (e) {

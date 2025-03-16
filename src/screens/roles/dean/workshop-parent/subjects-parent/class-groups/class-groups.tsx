@@ -102,7 +102,9 @@ export const ClassGroups: FC<ClassGroupsProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initClassGroups();
-    } else return () => {
+    }  
+    
+    return () => {
       // dispatch(reset());
     };
   }, [dispatch, reset, initClassGroups]);
@@ -114,10 +116,15 @@ export const ClassGroups: FC<ClassGroupsProps> = memo(() => {
     }));
   },[dispatch, setSelectedClassGroupIdActionCreator, goToClassGroupEdit])
 
+  const handleGoToControlSubjects = useCallback(() => {
+    dispatch(reset());
+    goToControlSubjects();
+  },[dispatch, goToControlSubjects, reset])
+
   return (
       <ClassGroupsView 
         filteredClassGroups={filteredClassGroups}
-        goToControlSubjects={goToControlSubjects}
+        goToControlSubjects={handleGoToControlSubjects}
         setDescription={setDescription}
         setName={setName}
         updateSubject={updateSubject}

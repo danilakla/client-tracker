@@ -243,15 +243,16 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setCurrentStudentIdActionCreator(currentStudent.idStudent));
 
             const currentStudentClasses = responce.studentGrades
-            .filter((grade: any) => grade.idStudent === currentStudent.idStudent)
-            .map((grade: any) => grade.idClass);
+            .filter((grade: any) => grade.idStudent === currentStudent.idStudent);
 
             let positionCounter = 1;
 
             const classesIds: ClassHeaderType[] = responce.classes
                 .map((cls: any) => ({
                     idClass: cls.idClass,
-                    gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
+                    gradeId: currentStudentClasses.some((studentClass: any) => studentClass.idClass === cls.idClass) 
+                        ? currentStudentClasses.find((studentClass: any) => studentClass.idClass === cls.idClass)?.idStudentGrate 
+                        : -1, 
                     dateCreation: cls.dateCreation,
                     isAttestation: cls.isAttestation,
                     className: cls.className,
@@ -503,18 +504,19 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setCurrentStudentIdActionCreator(currentStudent.idStudent));
 
             const currentStudentClasses = responce.studentGrades
-            .filter((grade: any) => grade.idStudent === currentStudent.idStudent)
-            .map((grade: any) => grade.idClass);
+            .filter((grade: any) => grade.idStudent === currentStudent.idStudent);
 
             let positionCounter = 1;
 
             const classesIds: ClassHeaderType[] = responce.classes
                 .map((cls: any) => ({
                     idClass: cls.idClass,
-                    gradeId: currentStudentClasses.includes(cls.idClass) ? cls.idClass : -1,
+                    gradeId: currentStudentClasses.some((studentClass: any) => studentClass.idClass === cls.idClass) 
+                        ? currentStudentClasses.find((studentClass: any) => studentClass.idClass === cls.idClass)?.idStudentGrate 
+                        : -1, 
                     dateCreation: cls.dateCreation,
-                    className: cls.className,
                     isAttestation: cls.isAttestation,
+                    className: cls.className,
                     position: cls.isAttestation ? -1 : positionCounter++,
                 }));
 

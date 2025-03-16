@@ -190,7 +190,7 @@ const initialState: СlassGroupControlState = {
     },
     qrCodePopup: {
         expirationOfRefresh: 5,
-        expirationOfReview: 90,
+        expirationOfReview: 5,
         loadingStart: "idle",
         loadingQrCode: 'idle',
         loadingStop: "idle",
@@ -387,6 +387,16 @@ export const classGroupControlSlice = createSlice({
         },
         setSelectedGradeActionCreator(state, action: PayloadAction<{gradeInfo: GradeInfo, onSuccess: () => void}>) {
             switch(action.payload.gradeInfo.attendance){
+                case 1:
+                    state.isShowCompleted = true;
+                    state.isCompleted = false;
+                    state.selectedGrade = action.payload.gradeInfo;
+                    break;
+                case 2:
+                    state.isShowCompleted = true;
+                    state.isCompleted = false;
+                    state.selectedGrade = action.payload.gradeInfo;
+                    break;
                 case 7:
                     state.selectedGrade = {...action.payload.gradeInfo, attendance: 1};
                     state.isCompleted = true;
@@ -444,17 +454,22 @@ export const classGroupControlSlice = createSlice({
             state.qrCodePopup.qrCodeData = action.payload;
         },
         getReviewStudents(state, action: PayloadAction<{ studentGradeId: number, classId: number, expiration: number }[]>) {
-            action.payload.forEach(({ studentGradeId, classId }) => {
-                state.studentsStatistics.forEach((studentStat) => {
-                    studentStat.grades.forEach((grade) => {
-                        if (grade !== null && "idStudentGrate" in grade && grade.idStudentGrate === studentGradeId && grade.idClass === classId) {
-                            grade.isReview = true;
+            const reviewPairs = new Set(
+                action.payload.map(({ studentGradeId, classId }) => `${studentGradeId}_${classId}`)
+            );
+        
+            state.studentsStatistics = state.studentsStatistics.map((studentStat) => ({
+                ...studentStat,
+                grades: studentStat.grades.map((grade) => {
+                    if (grade && "idStudentGrate" in grade) {
+                        const gradeKey = `${grade.idStudentGrate}_${grade.idClass}`;
+                        if (reviewPairs.has(gradeKey)) {
+                            return { ...grade, isReview: true };
                         }
-                    });
-                });
-            });
-
-            console.log(state.studentsStatistics);
+                    }
+                    return grade;
+                }),
+            }));
         },
         setTimeOfOneClassActionCreator(state, action: PayloadAction<string>) {
             const parsedGrade = action.payload.trim();
@@ -907,7 +922,7 @@ export const createQrCodeActionCreator = createAsyncThunk('teacher-class-control
     async (data: { authToken: string, classId: number, expirationOfReview: number, expirationOfRefresh: number}, thunkApi ) => {
         const { authToken, classId, expirationOfRefresh, expirationOfReview } = data;
         try {
-            await teacherApi.createQrCode(authToken, classId, expirationOfReview);
+            await teacherApi.createQrCode(authToken, classId, expirationOfReview * 60);
             thunkApi.dispatch(classGroupControlSlice.actions.setQrCodeDataActionCreator({
                 date: (new Date()).toISOString(),
                 idClass: classId,

@@ -120,34 +120,6 @@ export const initClassGroupsBySubgroupnActionCreator = createAsyncThunk('class-g
             thunkApi.dispatch(
                 classGroupsBySubgroupSlice.actions.setSubgroupsActionCreator(transformResponse(response))
             )
-            
-            //  const currentYear = new Date().getFullYear();
-
-            //  const processedData = response.map((item: any) => {
-            //     const admissionYear = new Date(item.subgroup.admissionDate).getFullYear();
-            //     const course = currentYear - admissionYear + 1;
-
-            //     const groupInfo = item.subgroup.subgroupNumber?.split('.') || ['0', '0'];
-            //     const formattedGroup = `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`;
-
-            //     const students = item.students.map((student: any) => ({
-            //         ...student,
-            //         name: student.name.replace(/_/g, ' '),
-            //     })).sort((a: any, b: any) => b.unattestedCount - a.unattestedCount); // 🔥 Sorting here
-            
-            //     return {
-            //         ...item,
-            //         subgroup: {
-            //             ...item.subgroup,
-            //             subgroupNumber: formattedGroup,
-            //         },
-            //         students,
-            //     };
-            
-            // });
-
-            // thunkApi.dispatch(attestationStudentsSlice.actions.setSubgroupsActionCreator(processedData))
-
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -161,8 +133,10 @@ export const initClassGroupsBySubgroupnActionCreator = createAsyncThunk('class-g
 
 export default classGroupsBySubgroupSlice.reducer;
 
-
 export const transformResponse = (response: any[]): SubgroupDTO[] => {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+
     return response.map(subgroup => {
         const subjectMap: Record<string, SubjectDTO> = {};
 
@@ -182,9 +156,17 @@ export const transformResponse = (response: any[]): SubgroupDTO[] => {
             });
         });
 
+        const admissionYear = new Date(subgroup.admissionDate).getFullYear();
+        const course =
+                 currentMonth >= 7
+                   ? currentYear - admissionYear + 1
+                   : currentYear - admissionYear;
+        const groupInfo = subgroup.subgroupNumber?.split('.') || ['0', '0'];
+        const formattedGroup = `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`;
+        
         return {
             idSubgroup: subgroup.idSubgroup,
-            subgroupNumber: subgroup.subgroupNumber,
+            subgroupNumber: formattedGroup,
             subjects: Object.values(subjectMap)
         };
     });

@@ -98,16 +98,20 @@ export const classGroupDetailsSlice = createSlice({
     reducers: {
         setSubgroupsActionCreator(state, action: PayloadAction<{subgroups: SubgroupInfo[], existingIds: number[] | null}>) {
             const currentYear = new Date().getFullYear();
+            const currentMonth = new Date().getMonth();
 
             if (action.payload.existingIds === null) {
                 state.subgroups = action.payload.subgroups.map(subgroup => {
                     const admissionYear = new Date(subgroup.admissionDate).getFullYear();
-                    const course = currentYear - admissionYear + 1;
+                    const course =
+                         currentMonth >= 7
+                           ? currentYear - admissionYear + 1
+                           : currentYear - admissionYear;
                     const groupInfo = subgroup.subgroupNumber.split('.');
 
                     return {
                         ...subgroup,
-                        subgroupNumber: `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
+                        subgroupNumber: `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
                         isExist: false,
                     };
                 });
@@ -120,7 +124,7 @@ export const classGroupDetailsSlice = createSlice({
                     
                     return {
                         ...subgroup,
-                        subgroupNumber: `${course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
+                        subgroupNumber: `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
                         isExist: existingIds.includes(subgroup.idSubgroup),
                     };
                 });
