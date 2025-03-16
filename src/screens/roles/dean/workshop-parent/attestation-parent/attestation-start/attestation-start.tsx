@@ -30,7 +30,9 @@ export const AttestationStart: FC<AttestationStartProps> = memo(() => {
      if (isInizialized.current) {
        isInizialized.current = false;
        // initTableData();
-     } else return () => {
+     } 
+     
+     return () => {
        dispatch(reset());
      };
   }, [dispatch, reset]);

@@ -443,7 +443,7 @@ export const classGroupControlSlice = createSlice({
         setQrCodeDataActionCreator(state, action: PayloadAction<QrCodeDataType | null>) {
             state.qrCodePopup.qrCodeData = action.payload;
         },
-        getReviewStudents(state, action: PayloadAction<{ studentGradeId: number, classId: number }[]>) {
+        getReviewStudents(state, action: PayloadAction<{ studentGradeId: number, classId: number, expiration: number }[]>) {
             action.payload.forEach(({ studentGradeId, classId }) => {
                 state.studentsStatistics.forEach((studentStat) => {
                     studentStat.grades.forEach((grade) => {
@@ -453,6 +453,8 @@ export const classGroupControlSlice = createSlice({
                     });
                 });
             });
+
+            console.log(state.studentsStatistics);
         },
         setTimeOfOneClassActionCreator(state, action: PayloadAction<string>) {
             const parsedGrade = action.payload.trim();

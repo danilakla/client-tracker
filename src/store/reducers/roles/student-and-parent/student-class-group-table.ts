@@ -362,10 +362,6 @@ export const transformAndSortStudentsStatistics = (input: {
     return transformedStudents.sort((a, b) => a.student.surname.localeCompare(b.student.surname));
 }
 
-
-
-
-
 export const getKeyForQrActionCreator = createAsyncThunk('student-class-group-table/get-key-for-qr',
     async (data: { authToken: string, id: number, onError: () => void}, thunkApi ) => {
         const { authToken, id, onError } = data;
@@ -409,8 +405,6 @@ export const askReviewActionCreator = createAsyncThunk('student-class-group-tabl
         }
     }
 )
-
-
 
 export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-table/check=qr-code-st',
     async (data: { 
@@ -494,10 +488,12 @@ async function getAccurateTime(): Promise<AccurateTime> {
 
 export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('student-class-group-table/reload',
     async (data: { authToken: string, accountId : number, idHold: number, idSubgroup: number, role: "ROLE_STUDENT" | "ROLE_PARENTS"}, thunkApi ) => {
-        const { authToken, idHold, accountId } = data;
+        const { authToken, idHold, role, accountId } = data;
         try {
+            const responce = role === 'ROLE_STUDENT' ? 
+            await studentApi.getTableOfSubgroup(authToken, idHold) :
+            await parentApi.getTableOfSubgroup(authToken, idHold);
 
-            const responce = await studentApi.getTableOfSubgroup(authToken, idHold);
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
                 transformAndSortStudentsStatistics(responce)
             ));

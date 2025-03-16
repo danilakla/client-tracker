@@ -36,7 +36,9 @@ export const GeneratorKeys: FC<GeneratorKeysProps> = memo(() => {
   useEffect(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
-    } else return () => {
+    } 
+
+    return () => {
       dispatch(reset());
     };
   }, [dispatch,reset]);

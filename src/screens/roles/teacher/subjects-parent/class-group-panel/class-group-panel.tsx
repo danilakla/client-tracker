@@ -46,7 +46,9 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     if (isInizialized.current) {
       isInizialized.current = false;
       // initTableData();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset]);

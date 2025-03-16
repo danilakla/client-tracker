@@ -46,7 +46,9 @@ export const Subjects: FC<SubjectsProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initSubjects();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initSubjects]);

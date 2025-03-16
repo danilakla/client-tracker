@@ -39,7 +39,9 @@ export const Members: FC<MembersProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initializeMembersData();
-    } else return () => {
+    } 
+     
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initializeMembersData]);

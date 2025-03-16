@@ -31,7 +31,9 @@ export const UniversityEditor: FC<UniversityEditorProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initializationUniversityInfo();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initializationUniversityInfo]);

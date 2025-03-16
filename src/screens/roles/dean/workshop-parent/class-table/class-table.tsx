@@ -38,7 +38,9 @@ export const ClassTable: FC<ClassTableProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initTableData();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initTableData]);

@@ -36,7 +36,9 @@ export const Specialties: FC<SpecialtiesProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initSpecialties();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initSpecialties]);

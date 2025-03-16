@@ -53,7 +53,9 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     if (isInizialized.current) {
       isInizialized.current = false;
       initClassGroupDetails();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, initClassGroupDetails, reset]);

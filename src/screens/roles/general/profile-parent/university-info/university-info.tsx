@@ -28,7 +28,9 @@ export const UniversityInfo: FC<UniversityInfoProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       getUniversityInfo();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch,reset, getUniversityInfo]);

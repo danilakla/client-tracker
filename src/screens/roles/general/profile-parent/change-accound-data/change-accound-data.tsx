@@ -58,7 +58,9 @@ export const ChangeAccoundData: FC<ChangeAccoundDataProps> = memo(() => {
       setName(user.name);
       setLastname(user.lastname);
       setSurname(user.surname);
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [

@@ -37,7 +37,8 @@ export const ClassFormats: FC<ClassFormatsProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initClassFormats();
-    } else return () => {
+    } 
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initClassFormats]);

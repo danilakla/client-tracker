@@ -29,7 +29,9 @@ export const StudentSubjects: FC<StudentSubjectsProps> = memo(({
     if (isInizialized.current) {
       isInizialized.current = false;
       initData();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initData]);

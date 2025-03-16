@@ -61,8 +61,6 @@ export const Textarea: FC<TextareaProps> = memo(({
     }
   }, [value]);
 
-  
-
   return (
     <TextareaWrapper width={width}>
       {header && <>

@@ -105,8 +105,10 @@ export const ProfileMobileView: FC<ProfileViewProps> = memo(({
           </Row>
         </Surface>
         <Spacing variant='Column' themeSpace={25} />
-        <ActionButton onClick={goChangeLogin} text='Сменить логин' />
-        <Spacing variant='Column' themeSpace={10} />
+        {(user.role !== 'ROLE_PARENTS') && <>
+          <ActionButton onClick={goChangeLogin} text='Сменить логин' />
+          <Spacing variant='Column' themeSpace={10} />
+        </>}
         {(user.role !== 'ROLE_STUDENT' && user.role !== 'ROLE_PARENTS') && <>
           <ActionButton onClick={goChangeAccoundData} text='Учётные данные' />
           <Spacing variant='Column' themeSpace={10} />
@@ -181,8 +183,10 @@ export const ProfileDesktopView: FC<ProfileViewProps> = memo(({
             </Row>
           </Surface>
           <Spacing variant='Column' themeSpace={25} />
-          <ActionButton onClick={goChangeLogin} text='Сменить логин' />
-          <Spacing variant='Column' themeSpace={15} />
+          {(user.role !== 'ROLE_PARENTS') && <>
+            <ActionButton onClick={goChangeLogin} text='Сменить логин' />
+            <Spacing variant='Column' themeSpace={15} />
+          </>}
           {(user.role !== 'ROLE_STUDENT' && user.role !== 'ROLE_PARENTS') && <>
             <ActionButton onClick={goChangeAccoundData} text='Учётные данные' />
             <Spacing variant='Column' themeSpace={15} />

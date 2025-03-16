@@ -85,7 +85,9 @@ export const Students: FC<StudentsProps> = memo(() => {
     if (isInizialized.current) {
       isInizialized.current = false;
       initStudents();
-    } else return () => {
+    } 
+    
+    return () => {
       dispatch(reset());
     };
   }, [dispatch, reset, initStudents]);

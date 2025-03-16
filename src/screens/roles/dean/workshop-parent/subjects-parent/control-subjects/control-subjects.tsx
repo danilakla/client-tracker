@@ -69,7 +69,9 @@ export const ControlSubjects: FC<ControlSubjectsProps> = memo(() => {
     if (isInizialized.current && deanControlSubjectsState.loading !== 'success') {
       isInizialized.current = false;
       initSubjects();
-    } else return () => {
+    } 
+    
+    return () => {
       // dispatch(reset());
     };
   }, [dispatch, reset, initSubjects, deanControlSubjectsState.loading]);

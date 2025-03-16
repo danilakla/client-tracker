@@ -232,8 +232,8 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={20} variant='Column' />
           <ActionButtonSwitch  
             disable={type === 'edit'}
-            text='Разные занятия'
-            isLeft={deanClassGroupDetailsState.isMany} 
+            text='Совместные занятия'
+            isLeft={!deanClassGroupDetailsState.isMany} 
             onClick={switchIsMany} />
           <Spacing themeSpace={20} variant='Column' />
           {type === 'add' ? 
@@ -372,16 +372,19 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={25} variant='Row' />
             <Surface >
               <Row horizontalAlign='space-between'>
-                <Button onClick={controlSubroupsWindow}  variant='primary' padding={[12,17]}>
+                {type === 'add' && <>
+                  <Button onClick={controlSubroupsWindow}  variant='primary' padding={[12,17]}>
                   Редактировать группы
-                </Button>
-                <Spacing themeSpace={15} variant='Row' />
+                  </Button>
+                  <Spacing themeSpace={15} variant='Row' />
+                </>}
                 <ActionButtonSwitch  
                   disable={type === 'edit'}
                   width={'220px'}
-                  text='Разные занятия'
-                  isLeft={deanClassGroupDetailsState.isMany} 
+                  text='Совместные занятия'
+                  isLeft={!deanClassGroupDetailsState.isMany} 
                   onClick={switchIsMany} />
+                {type === 'edit' && <Spacing themeSpace={200} variant='Row' />}
               </Row>
               <Spacing themeSpace={15} variant='Column' />
               <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
