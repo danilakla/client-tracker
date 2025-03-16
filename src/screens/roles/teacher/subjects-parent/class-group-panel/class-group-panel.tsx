@@ -2,7 +2,7 @@ import { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { ClassGroupPanelProps } from './class-group-panel.props';
 import { ClassGroupPanelView } from './class-group-panel.view';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, AttestationGradeInfo, calculateAttestationActionCreator, classGroupControlSlice, ClassHeaderType, createQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, removeAttestationActionCreator, renameClassActionCreator, startReviewForClassActionCreator, updateAttestationClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
+import { activateKeyForClassActionCreator, addClassActionCreator, AttendanceCodeType, AttestationGradeInfo, calculateAttestationActionCreator, classGroupControlSlice, ClassHeaderType, generateQrCodeActionCreator, deleteClassActionCreator, GradeInfo, reloadTableStatisticsActionCreator, removeAttestationActionCreator, renameClassActionCreator, startQrCodeActionCreator, startReviewForClassActionCreator, updateAttestationClassActionCreator, updateGradeActionCreator } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useTeacherSubjects } from '../subjects/subjects.props';
 
@@ -182,8 +182,8 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(clearQrCodeDataActionCreator());
   },[dispatch,clearQrCodeDataActionCreator])
 
-  const createQrCode = useCallback(()=>{
-    dispatch(createQrCodeActionCreator({
+  const startQrCode = useCallback(()=>{
+    dispatch(startQrCodeActionCreator({
       authToken: authToken,
       expirationOfReview: teacherClassGroupControlState.qrCodePopup.expirationOfReview,
       expirationOfRefresh: teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
@@ -195,6 +195,17 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
     teacherClassGroupControlState.selectedClass.idClass,
     authToken
+  ])
+
+  const generateQrCode = useCallback(()=>{
+    dispatch(generateQrCodeActionCreator({
+      expirationOfRefresh: teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
+      classId: teacherClassGroupControlState.selectedClass.idClass,
+    }));
+  },[
+    dispatch,
+    teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
+    teacherClassGroupControlState.selectedClass.idClass,
   ])
 
   const onReview = useCallback((onSuccess: () => void)=>{
@@ -323,8 +334,9 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
 
         activateKeyForClass={activateKeyForClass}
 
-        createQrCode={createQrCode}
+        generateQrCode={generateQrCode}
         clearQrCodeData={clearQrCodeData}
+        startQrCode={startQrCode}
 
         setCountClassThatNotAttestationClass={setCountClassThatNotAttestationClass}
         setMaxCountLab={setMaxCountLab}

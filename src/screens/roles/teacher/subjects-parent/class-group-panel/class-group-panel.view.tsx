@@ -57,7 +57,8 @@ export type ClassGroupPanelViewProps = {
   activateKeyForClass: (expiration: number, onSuccess: () => void) => void
 
   clearQrCodeData: () => void;
-  createQrCode: () => void;
+  generateQrCode: () => void;
+  startQrCode: () => void;
 
   onReview: (onSuccess: () => void) => void;
 
@@ -91,6 +92,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   setGradeNumber,
   setCurrentNameOfClass,
   switchIsPassed,
+  startQrCode,
   reloadTable,
   onReview,
   setSelectedAttestationGrade,
@@ -102,7 +104,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   removeAttestation,
   activateKeyForClass,
 
-  createQrCode,
+  generateQrCode,
   clearQrCodeData,
 
   setCountClassThatNotAttestationClass,
@@ -365,11 +367,11 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
         isActive={isOpenDeletePopup} 
         state={teacherClassGroupControlState.loadingDelete}
         onDelete={confirmDeletePopup} />
-      <QrCodeControlPopup 
+      <QrCodeControlPopup startQrCode={startQrCode}
         qrCodeData={teacherClassGroupControlState.qrCodePopup.qrCodeData}
         stateQrCode={teacherClassGroupControlState.qrCodePopup.loadingQrCode} 
         stateStart={teacherClassGroupControlState.qrCodePopup.loadingStart} 
-        generateQrCode={createQrCode} clearDataQrCode={clearQrCodeData}
+        generateQrCode={generateQrCode} clearDataQrCode={clearQrCodeData}
         setTimeValueForRefresh={setExpirationOfRefresh}
         setTimeValueForReview={setExpirationOfReview} 
         timeValueForRefresh={teacherClassGroupControlState.qrCodePopup.expirationOfRefresh} 
@@ -948,11 +950,13 @@ export type QrCodeControlPopupProps = {
   stateStart: "idle" | "loading" | "success" | "error";
   stateQrCode: "idle" | "loading" | "success" | "error";
   qrCodeData: QrCodeDataType | null;
+  startQrCode: () => void;
 };
     
 export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
   isActive,
   closePopup,
+  startQrCode,
   timeValueForRefresh,
   timeValueForReview,
   setTimeValueForRefresh,
@@ -968,7 +972,7 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
   const [isStarted, setIsStarted] = useState<boolean>(false);
 
   const handleStart = useCallback(() => {
-    generateQrCode();
+    startQrCode();
     setIsStarted(true);
 
     if (intervalRef.current) return;
@@ -976,7 +980,7 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
     intervalRef.current = setInterval(() => {
       generateQrCode();
     }, timeValueForRefresh * 1000);
-  },[generateQrCode, timeValueForRefresh]);
+  },[startQrCode, generateQrCode, timeValueForRefresh]);
 
   const handleStop = useCallback(() => {
     clearDataQrCode();

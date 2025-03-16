@@ -617,13 +617,13 @@ export const classGroupControlSlice = createSlice({
                 state.generateKeyPopup.loadingActivate = "idle";
             })
 
-            .addCase(createQrCodeActionCreator.fulfilled, (state) => {
+            .addCase(startQrCodeActionCreator.fulfilled, (state) => {
                 state.qrCodePopup.loadingQrCode = 'success';
             })
-            .addCase(createQrCodeActionCreator.pending, (state) => {
+            .addCase(startQrCodeActionCreator.pending, (state) => {
                 state.qrCodePopup.loadingQrCode = 'loading';
             })
-            .addCase(createQrCodeActionCreator.rejected, (state) => {
+            .addCase(startQrCodeActionCreator.rejected, (state) => {
                 state.qrCodePopup.loadingQrCode = "idle";
             })
 
@@ -918,11 +918,31 @@ export const activateKeyForClassActionCreator = createAsyncThunk('teacher-class-
     }
 )
 
-export const createQrCodeActionCreator = createAsyncThunk('teacher-class-control/create-qr-code',
+export const startQrCodeActionCreator = createAsyncThunk('teacher-class-control/create-qr-code',
     async (data: { authToken: string, classId: number, expirationOfReview: number, expirationOfRefresh: number}, thunkApi ) => {
         const { authToken, classId, expirationOfRefresh, expirationOfReview } = data;
         try {
             await teacherApi.createQrCode(authToken, classId, expirationOfReview * 60);
+            thunkApi.dispatch(classGroupControlSlice.actions.setQrCodeDataActionCreator({
+                date: (new Date()).toISOString(),
+                idClass: classId,
+                expiration: expirationOfRefresh
+            }));
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+        }
+    }
+)
+
+export const generateQrCodeActionCreator = createAsyncThunk('teacher-class-control/generate-qr-code',
+    async (data: { classId: number, expirationOfRefresh: number}, thunkApi ) => {
+        const { classId, expirationOfRefresh } = data;
+        try {
             thunkApi.dispatch(classGroupControlSlice.actions.setQrCodeDataActionCreator({
                 date: (new Date()).toISOString(),
                 idClass: classId,
