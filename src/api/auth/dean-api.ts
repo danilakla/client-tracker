@@ -72,11 +72,13 @@ export const deanApi = {
             })
     },
     generateStudents(authToken: string, students: Student[]) {
-        return instance.post(`/dean/generate-student`, students ,{ 
-            headers: {'Authorization' : `Bearer ${authToken}`} })
-        .then((response) => {
-            return response.data;
+        return instance.post(`/dean/generate-student`, students, {
+            headers: { 'Authorization': `Bearer ${authToken}` },
+            responseType: 'blob', 
         })
+        .then((response) => {
+            return response.data; 
+        });
     },
     getMembers(authToken: string) {
         return instance.get('/dean/members/get', { 
@@ -271,10 +273,11 @@ export const deanApi = {
     },
     getStatisticsExcel(authToken: string) {
         return instance.post('/dean/generate/info/course', null, { 
-            headers: {'Authorization' : `Bearer ${authToken}`} })
-            .then((response) => {
-                return response.data;
-            })
+            headers: { 'Authorization': `Bearer ${authToken}` },
+            responseType: 'blob'
+        }).then((response) => {
+            return response.data;
+        });
     },
     getClassGroupTable(authToken: string, holdId: number) {
         return instance.get(`/dean/show/table/${holdId}`, { 

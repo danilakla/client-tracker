@@ -98,13 +98,17 @@ export const generateStudentsActionCreator = createAsyncThunk('dean-generate-stu
             }
 
             const response = await deanApi.generateStudents(authToken, students);
-            
+
             const fileURL = window.URL.createObjectURL(new Blob([response]));
             const link = document.createElement('a');
             link.href = fileURL;
-            link.setAttribute('download', 'statistics.xlsx');
+            link.setAttribute('download', 'information.xlsx'); 
+
             document.body.appendChild(link);
+
             link.click();
+
+            document.body.removeChild(link); 
 
             onSuccess?.();
         }
