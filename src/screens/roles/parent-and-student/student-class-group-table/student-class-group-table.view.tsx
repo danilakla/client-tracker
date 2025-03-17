@@ -225,13 +225,15 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           isOpen={isOpenErrorKeyPopup}
           textError={
             <>Срок действия ключа истек<br/>
-              или ключа не был создан
+              или ключ не был создан
             </>}
           closePopup={controlErrorKeyPopup}
         />
         <ErrorPopup
           isOpen={isOpenErrorQrCodePopup}
-          textError={<>шО ТЫ ДЕЛАЕШЬ</>}
+          textError={<>Время действия <br/>  
+          QR-кода истекло
+          </>}
           closePopup={closeErrorQrCodePopup}
         />
         <SuccessfulPopup

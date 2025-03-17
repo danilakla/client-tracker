@@ -320,17 +320,15 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
           {filteredStudents.map((item) => <StudentView data={item} isMobile={false}/>)}
         </GridContainer>
       </Column>)}
-      <Popup isActive={isErrorPopup} closePopup={closeErrorPopup}>
-        <Column horizontalAlign='center' style={{width: 290}}>
-          <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.attentive}> 
-            {deanGenerateStudentsState.errors['createError']}
-          </Text>
-          <Spacing variant='Column' themeSpace={25} />
-          <Button onClick={closeErrorPopup} variant='attentive' padding={[12, 17]}>
-            Вернуться назад
-          </Button>
-        </Column>
-      </Popup>
+      <ErrorPopup
+        isOpen={isErrorPopup}
+        textError={
+          <>
+          Проверьте правильность введённых <br /> данных в документе и убедитесь,<br />
+          что такие специальности<br />существуют в системе.
+        </>}
+        closePopup={closeErrorPopup}
+      />
       <Popup isActive={isSuccessPopup} closePopup={closeSuccessPopup}>
         <Column horizontalAlign='center'>
           <Text themeFont={theme.fonts.h2} themeColor={theme.colors.success}> 
