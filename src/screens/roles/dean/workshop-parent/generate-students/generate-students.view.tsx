@@ -121,11 +121,16 @@ export const GenerateStudentsView: FC<GenerateStudentsViewProps> = memo(({
     setIsErrorPopup(false);
   },[])
   
+  const handleSuccessPopup = useCallback(() => {
+    onClear();
+    setIsSuccessPopup(true);
+  },[onClear])
+
   const onCreate = useCallback(() => {
     onCreateAccounts(
-      () => setIsSuccessPopup(true), 
+      handleSuccessPopup, 
       () => setIsErrorPopup(true));
-  },[onCreateAccounts]);
+  },[handleSuccessPopup, onCreateAccounts]);
 
   return (
     isMobile ? 
