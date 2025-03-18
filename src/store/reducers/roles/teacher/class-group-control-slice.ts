@@ -698,11 +698,16 @@ export const initTableStatisticsActionCreator = createAsyncThunk('teacher-class-
 
             const responce = await teacherApi.getTableOfSubgroup(authToken, holdId);
 
+            const sortedResponse = {
+                ...responce,
+                classes: responce.classes.sort((a: any, b: any) => a.idClass - b.idClass)
+            };
+
             thunkApi.dispatch(classGroupControlSlice.actions.setStudentsStatisticsActionCreator(
-                transformAndSortStudentsStatistics(responce)
+                transformAndSortStudentsStatistics(sortedResponse)
             ));
-            thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
-            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes));
+            thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(sortedResponse.classes.length));
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(sortedResponse.classes));
 
             const isNotify = await teacherApi.notifyTeacherAttestation(authToken, holdId);
             thunkApi.dispatch(classGroupControlSlice.actions.setIsNeedAttestationActionCreator(isNotify));
@@ -988,11 +993,17 @@ export const reloadTableStatisticsActionCreator = createAsyncThunk('reload-teach
             thunkApi.dispatch(classGroupControlSlice.actions.setClassGroupInfoActionCreator({initData}))
 
             const responce = await teacherApi.getTableOfSubgroup(authToken, holdId);
+
+            const sortedResponse = {
+                ...responce,
+                classes: responce.classes.sort((a: any, b: any) => a.idClass - b.idClass)
+            };
+
             thunkApi.dispatch(classGroupControlSlice.actions.setStudentsStatisticsActionCreator(
-                transformAndSortStudentsStatistics(responce)
+                transformAndSortStudentsStatistics(sortedResponse)
             ));
-            thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(responce.classes.length));
-            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(responce.classes));
+            thunkApi.dispatch(classGroupControlSlice.actions.setCountClassesActionCreator(sortedResponse.classes.length));
+            thunkApi.dispatch(classGroupControlSlice.actions.setClassesIdsActionCreator(sortedResponse.classes));
 
             const isNotify = await teacherApi.notifyTeacherAttestation(authToken, holdId);
             thunkApi.dispatch(classGroupControlSlice.actions.setIsNeedAttestationActionCreator(isNotify));

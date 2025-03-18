@@ -207,11 +207,16 @@ export const initDeanClassTableActionCreator = createAsyncThunk('class-group-tab
                 
             const responce = await deanApi.getClassGroupTable(authToken, 1);
 
+            const sortedResponse = {
+                ...responce,
+                classes: responce.classes.sort((a: any, b: any) => a.idClass - b.idClass)
+            };
+
             thunkApi.dispatch(classGroupTableSlice.actions.setStudentsStatisticsActionCreator(
-                transformAndSortStudentsStatistics(responce)
+                transformAndSortStudentsStatistics(sortedResponse)
             ));
 
-            thunkApi.dispatch(classGroupTableSlice.actions.setClassesIdsActionCreator(responce.classes));
+            thunkApi.dispatch(classGroupTableSlice.actions.setClassesIdsActionCreator(sortedResponse.classes));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {
@@ -233,14 +238,16 @@ export const reloadDeanClassTableActionCreator = createAsyncThunk('class-group-t
 
             const responce = await deanApi.getClassGroupTable(authToken, 1);
 
+            const sortedResponse = {
+                ...responce,
+                classes: responce.classes.sort((a: any, b: any) => a.idClass - b.idClass)
+            };
 
             thunkApi.dispatch(classGroupTableSlice.actions.setStudentsStatisticsActionCreator(
-                transformAndSortStudentsStatistics(responce)
+                transformAndSortStudentsStatistics(sortedResponse)
             ));
 
-
-
-            thunkApi.dispatch(classGroupTableSlice.actions.setClassesIdsActionCreator(responce.classes));
+            thunkApi.dispatch(classGroupTableSlice.actions.setClassesIdsActionCreator(sortedResponse.classes));
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

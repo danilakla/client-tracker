@@ -234,20 +234,26 @@ export const initStudntTableStatisticsActionCreator = createAsyncThunk('student-
             const responce = role === 'ROLE_STUDENT' ? 
             await studentApi.getTableOfSubgroup(authToken, idHold) :
             await parentApi.getTableOfSubgroup(authToken, idHold);
+
+            const sortedResponse = {
+                ...responce,
+                classes: responce.classes.sort((a: any, b: any) => a.idClass - b.idClass)
+            };
+
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
-                transformAndSortStudentsStatistics(responce)
+                transformAndSortStudentsStatistics(sortedResponse)
             ));
 
-            const currentStudent = responce.students.find((student: any) => student.idAccount === accountId);
+            const currentStudent = sortedResponse.students.find((student: any) => student.idAccount === accountId);
             
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setCurrentStudentIdActionCreator(currentStudent.idStudent));
 
-            const currentStudentClasses = responce.studentGrades
+            const currentStudentClasses = sortedResponse.studentGrades
             .filter((grade: any) => grade.idStudent === currentStudent.idStudent);
 
             let positionCounter = 1;
 
-            const classesIds: ClassHeaderType[] = responce.classes
+            const classesIds: ClassHeaderType[] = sortedResponse.classes
                 .map((cls: any) => ({
                     idClass: cls.idClass,
                     gradeId: currentStudentClasses.some((studentClass: any) => studentClass.idClass === cls.idClass) 
@@ -495,20 +501,25 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
             await studentApi.getTableOfSubgroup(authToken, idHold) :
             await parentApi.getTableOfSubgroup(authToken, idHold);
 
+            const sortedResponse = {
+                ...responce,
+                classes: responce.classes.sort((a: any, b: any) => a.idClass - b.idClass)
+            };
+
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setStudentsStatisticsActionCreator(
-                transformAndSortStudentsStatistics(responce)
+                transformAndSortStudentsStatistics(sortedResponse)
             ));
 
-            const currentStudent = responce.students.find((student: any) => student.idAccount === accountId);
+            const currentStudent = sortedResponse.students.find((student: any) => student.idAccount === accountId);
             
             thunkApi.dispatch(studentClassGroupTableSlice.actions.setCurrentStudentIdActionCreator(currentStudent.idStudent));
 
-            const currentStudentClasses = responce.studentGrades
+            const currentStudentClasses = sortedResponse.studentGrades
             .filter((grade: any) => grade.idStudent === currentStudent.idStudent);
 
             let positionCounter = 1;
 
-            const classesIds: ClassHeaderType[] = responce.classes
+            const classesIds: ClassHeaderType[] = sortedResponse.classes
                 .map((cls: any) => ({
                     idClass: cls.idClass,
                     gradeId: currentStudentClasses.some((studentClass: any) => studentClass.idClass === cls.idClass) 
