@@ -444,8 +444,7 @@ export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-ta
                 return;
             }
 
-            let currentTime = await getAccurateTime();
-
+            let currentTime = await getAccurateTime(authToken);
 
             const timeDifference = currentTime.getTime() - parsedDate.getTime();
 
@@ -471,23 +470,15 @@ export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-ta
     }
 )
 
-
-interface WorldTimeApiResponse {
-    datetime: string;
-    [key: string]: unknown;
-}
-
 type AccurateTime = Date;
 
-async function getAccurateTime(): Promise<AccurateTime> {
+async function getAccurateTime(authToken: string): Promise<AccurateTime> {
     const start = Date.now();
-    const response = await fetch('http://worldtimeapi.org/api/timezone/Etc/UTC');
+    const response = await studentApi.getTimeFromServer(authToken);
     const end = Date.now();
 
-    const data: WorldTimeApiResponse = await response.json();
-
     const latency = (end - start) / 2;
-    const serverTime = new Date(data.datetime);
+    const serverTime = new Date(response.currentTime);
     const accurateTime = new Date(serverTime.getTime() + latency);
 
     return accurateTime;

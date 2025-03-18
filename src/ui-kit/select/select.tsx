@@ -12,7 +12,6 @@ import { Modal } from "../modal";
 import { Column } from "../column";
 import { Search } from "../search";
 import { ScrollView } from "../scroll-view";
-import { ItemsContainerMobile } from "../../screens/roles/dean/workshop-parent/subjects-parent/control-subjects/control-subjects.styled";
 
 export type ItemOfSelectType = {
   name: string,
