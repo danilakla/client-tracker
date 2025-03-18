@@ -116,6 +116,10 @@ const setErrorByKey = (state: StudentClassGroupTableState, key: string, error: E
     state.errors[key] = error;
 };
 
+function isGradeInfo(grade: GradeInfo | AttestationGradeInfo): grade is GradeInfo {
+    return (grade as GradeInfo).idStudentGrate !== undefined;
+}
+
 export const studentClassGroupTableSlice = createSlice({
     name: "student-class-group-table-slice",
     initialState: initialState,
@@ -152,6 +156,17 @@ export const studentClassGroupTableSlice = createSlice({
         },
         reset(state) {
             Object.assign(state, initialState);
+        },
+        updateGradeAttendance(state, action: PayloadAction<{ gradeId: number, newAttendance: AttendanceCodeType }>) {
+            const { gradeId, newAttendance } = action.payload;
+
+            state.studentsStatistics.forEach(studentStat => {
+                studentStat.grades.forEach(grade => {
+                    if (isGradeInfo(grade) && grade.idStudentGrate === gradeId) {
+                        grade.attendance = newAttendance;
+                    }
+                });
+            });
         },
         resetSelectedGrade(state) {
             state.selectedGrade = {
@@ -415,8 +430,8 @@ export const askReviewActionCreator = createAsyncThunk('student-class-group-tabl
 
 export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-table/check=qr-code-st',
     async (data: { 
-            authToken: string, value: string, keyRedux: number, onSuccess: () => void, onError: () => void}, thunkApi ) => {
-        const { authToken, keyRedux, value, onSuccess, onError} = data;
+            authToken: string, classes: ClassHeaderType[],value: string, keyRedux: number, onSuccess: () => void, onError: () => void}, thunkApi ) => {
+        const { authToken, keyRedux, classes, value, onSuccess, onError} = data;
         try {
 
             let parsedDate: Date | null = null;
@@ -447,9 +462,10 @@ export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-ta
             let currentTime = await getAccurateTime(authToken);
 
             const timeDifference = currentTime.getTime() - parsedDate.getTime();
+            const classItem = classes.find(classHeader => classHeader.idClass === jsonData.idClass);
 
             if (timeDifference / 1000 <= parsedExpiration) {
-                await studentApi.acceptAttendance(authToken, jsonData.idClass, 3);
+                await studentApi.acceptAttendance(authToken, classItem?.gradeId || -1, 3);
                 onSuccess();
                 return;
             } else {

@@ -48,7 +48,7 @@ export const studentApi = {
             })
     },
     acceptAttendance(authToken: string, studentGrateId: number, attendanceCode: number) {
-        return instance.post(`/teacher/accept/attendance`, {
+        return instance.post(`/student/accept/attendance`, {
             studentGrateId: studentGrateId,
             attendanceCode: attendanceCode
         },{ 

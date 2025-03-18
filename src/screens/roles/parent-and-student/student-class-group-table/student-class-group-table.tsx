@@ -49,7 +49,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
     } 
     
     return () => {
-      dispatch(reset());
+      // dispatch(reset());
     };
   }, [dispatch, reset, initTableData]);
 
@@ -103,11 +103,12 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
         authToken: authToken,
         onSuccess: onSuccess,
         onError: onError,
+        classes: studentClassGroupTableState.classesIds,
         keyRedux: studentClassGroupTableState.redisKeyData?.classId || -1,
         value: value
       })
     );
-  },[dispatch, authToken, studentClassGroupTableState.redisKeyData?.classId])
+  },[dispatch, authToken, studentClassGroupTableState.redisKeyData?.classId, studentClassGroupTableState.classesIds])
 
   const reloadTable = useCallback(()=>{
     dispatch(reloadStudntTableStatisticsActionCreator({
