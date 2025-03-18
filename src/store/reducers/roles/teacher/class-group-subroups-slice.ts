@@ -117,9 +117,10 @@ export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-c
         authToken: string, 
         idClassGroup: number, 
         onError: () => void,
+        handleEnd: () => void,
         initStudentTable: (holdId: number, subgroup: SubgroupInfo, classGroupInfo: ClassGroupData) => void
     }, thunkApi ) => {
-        const { authToken, onError, initStudentTable, idClassGroup } = data;
+        const { authToken, onError, handleEnd,initStudentTable, idClassGroup } = data;
         try {
             const responce = await teacherApi.getClassGroupSubgroups(authToken, idClassGroup);
             thunkApi.dispatch(classGroupSubroupsSlice.actions.setClassGroupInfoActionCreator(responce.classGroup));
@@ -176,6 +177,7 @@ export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-c
             }
 
             thunkApi.dispatch(classGroupSubroupsSlice.actions.setSubgroupsActionCreator(subgroups));
+            handleEnd();
         }
         catch (e) {
             if (axios.isAxiosError(e)) {

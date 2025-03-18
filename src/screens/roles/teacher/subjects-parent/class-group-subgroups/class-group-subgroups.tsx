@@ -68,6 +68,8 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
     }))
   },[dispatch, authToken])
 
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+
   const initData = useCallback(()=>{
     if(teacherClassGroupSubroupsState.idClassGroup === null){
       goToSubjects();
@@ -77,6 +79,7 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
     dispatch(initSubgroupOfClassGroupActionCreator({
       authToken: authToken, 
       initStudentTable: initStudentTable,
+      handleEnd: () => setIsSuccess(true),
       idClassGroup: teacherClassGroupSubroupsState.idClassGroup,
       onError: goToSubjects
     }));
@@ -123,6 +126,7 @@ export const ClassGroupSubgroups: FC<ClassGroupSubgroupsProps> = memo(() => {
           goToClassGroubBySubgroup={goToClassGroubBySubgroup}
           filteredSubgroups={filteredSubgroups}
           onPrevScreen={onPrevScreen}
+          isSuccess={isSuccess}
           teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
           setSearchText={setSearchText}
         /> :

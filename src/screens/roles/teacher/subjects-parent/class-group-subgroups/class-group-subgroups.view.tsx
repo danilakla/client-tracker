@@ -20,6 +20,7 @@ export type ClassGroupSubgroupsViewProps = {
   onPrevScreen: () => void;
   setSearchText: (value: string) => void;
   goToClassGroubBySubgroup: (subgroup: SubgroupInfo) => void;
+  isSuccess: boolean;
 };
 
 export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
@@ -27,6 +28,7 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
   filteredSubgroups,
   goToClassGroubBySubgroup,
   setSearchText,
+  isSuccess,
   onPrevScreen
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
@@ -38,6 +40,7 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
         goToClassGroubBySubgroup={goToClassGroubBySubgroup}
         teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
         setSearchText={setSearchText}
+        isSuccess={isSuccess}
         filteredSubgroups={filteredSubgroups}
         />) :
       (<SubjectsDesktopView
@@ -45,6 +48,7 @@ export const ClassGroupSubgroupsView: FC<ClassGroupSubgroupsViewProps> = memo(({
         goToClassGroubBySubgroup={goToClassGroubBySubgroup}
         teacherClassGroupSubroupsState={teacherClassGroupSubroupsState}
         setSearchText={setSearchText}
+        isSuccess={isSuccess}
         filteredSubgroups={filteredSubgroups}
         />)
   );
@@ -57,6 +61,7 @@ type LocalViewProps = {
   onPrevScreen: () => void;
   setSearchText: (value: string) => void;
   goToClassGroubBySubgroup: (subgroup: SubgroupInfo) => void;
+  isSuccess: boolean;
 };
 
 export const SubjectsMobileView: FC<LocalViewProps> = memo(({
@@ -64,6 +69,7 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
   filteredSubgroups,
   goToClassGroubBySubgroup,
   onPrevScreen,
+  isSuccess,
   setSearchText
 }) => {
 
@@ -71,7 +77,7 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
     <WrapperMobile onBack={onPrevScreen} role='ROLE_TEACHER' header={
       teacherClassGroupSubroupsState.loading === 'loading' ? 'Загрузка...' : 'Список подгрупп'
     }>
-      {teacherClassGroupSubroupsState.loading === 'loading' ?
+      {teacherClassGroupSubroupsState.loading === 'loading' || !isSuccess ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
       </Column> : <>
