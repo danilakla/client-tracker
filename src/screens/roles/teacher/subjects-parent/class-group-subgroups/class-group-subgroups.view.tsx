@@ -75,9 +75,9 @@ export const SubjectsMobileView: FC<LocalViewProps> = memo(({
 
   return (
     <WrapperMobile onBack={onPrevScreen} role='ROLE_TEACHER' header={
-      teacherClassGroupSubroupsState.loading === 'loading' ? 'Загрузка...' : 'Список подгрупп'
+      (teacherClassGroupSubroupsState.loading === 'loading' || !isSuccess) ? 'Загрузка...' : 'Список подгрупп'
     }>
-      {teacherClassGroupSubroupsState.loading === 'loading' || !isSuccess ?
+      {(teacherClassGroupSubroupsState.loading === 'loading' || !isSuccess) ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
       </Column> : <>
@@ -98,14 +98,15 @@ export const SubjectsDesktopView: FC<LocalViewProps> = memo(({
   filteredSubgroups,
   goToClassGroubBySubgroup,
   onPrevScreen,
-  setSearchText
+  setSearchText,
+  isSuccess
 }) => {
 
   return (
     <WrapperDesktop onBack={onPrevScreen} role='ROLE_TEACHER' header={
-      teacherClassGroupSubroupsState.loading === 'loading' ? 'Загрузка...' : 'Список подгрупп'
+      (teacherClassGroupSubroupsState.loading === 'loading' || !isSuccess) ? 'Загрузка...' : 'Список подгрупп'
     }>
-      {teacherClassGroupSubroupsState.loading === 'loading' && 
+      {(teacherClassGroupSubroupsState.loading === 'loading' || !isSuccess) && 
         <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={teacherClassGroupSubroupsState.loading}/>
         </Column>

@@ -5,7 +5,7 @@ import { theme } from '../../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../../components/wrapper-desktop';
 import { Surface } from '../../../../../ui-kit/surface';
-import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, EmptyClassItem, ExistMark, HeaderClasses, HeaderClassItem, HorizontalSlider, HorizontalTrack, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper, VerticalSlider, VerticalTrack } from './class-group-panel.styled';
+import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ColorCircleButton, ContainerWrapper, EmptyClassItem, ExistMark, HeaderClasses, HeaderClassItem, HorizontalSlider, HorizontalTrack, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper, VerticalSlider, VerticalTrack } from './class-group-panel.styled';
 import { Text } from '../../../../../ui-kit/text';
 import { Spacing } from '../../../../../ui-kit/spacing';
 import { AttendanceCodeType, attendanceColorsForStudents, attendanceOptions, AttestationGradeInfo, checkIsAttestationGrade, ClassHeaderType, GradeInfo, QrCodeDataType, StatisticOfStudent, СlassGroupControlState } from '../../../../../store/reducers/roles/teacher/class-group-control-slice';
@@ -516,7 +516,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
       {teacherClassGroupControlState.loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
-      </Column> : <>
+      </Column> : <ContainerWrapper isDesktop={false}>
         <Surface style={{position: 'relative'}}>
           <Row style={{position: 'absolute'}}>
             <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
@@ -562,7 +562,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
             </Row>}
         </Surface>
         <Spacing variant='Column' themeSpace={85} />
-      </>}
+      </ContainerWrapper>}
       <Modal isActive={isOpenUpdateWindow} closeModal={closeUpdateWindow}>
         <ControlStudentGrade
           selectedGrade={teacherClassGroupControlState.selectedGrade}
@@ -754,7 +754,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
       {teacherClassGroupControlState.loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={teacherClassGroupControlState.loading}/>
-      </Column> : <>
+      </Column> : <ContainerWrapper isDesktop={true}>
         <Surface style={{width: 900, position: 'relative'}}>
           <Row style={{position: 'absolute'}}>
             <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
@@ -800,7 +800,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
                 </Button>}
             </Row>}
         </Surface>
-      </>}
+      </ContainerWrapper>}
       <Popup isActive={isOpenUpdateWindow} closePopup={closeUpdateWindow}>
         <ControlStudentGrade
           selectedGrade={teacherClassGroupControlState.selectedGrade}

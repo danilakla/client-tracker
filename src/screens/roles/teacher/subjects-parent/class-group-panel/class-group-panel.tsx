@@ -49,7 +49,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     } 
     
     return () => {
-      // dispatch(reset());
+      dispatch(reset());
     };
   }, [dispatch, reset]);
 

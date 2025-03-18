@@ -21,6 +21,7 @@ import { Popup } from '../../../../../ui-kit/popup';
 
 import RefreshLogo from '../../../../../ui-kit/assets/refresh.svg';
 import InfoLogo from '../../../../../ui-kit/assets/info.svg';
+import { ContainerWrapper } from '../../../teacher/subjects-parent/class-group-panel/class-group-panel.styled';
 
 
 export type ClassTableViewProps = {
@@ -144,7 +145,7 @@ export const ClassTableMobileView: FC<LocalViewProps> = memo(({
       {loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={loading}/>
-      </Column> : <>
+      </Column> : <ContainerWrapper isDesktop={false}>
         <Surface>
         <Row style={{position: 'absolute'}}>
           <Button height={38.4} width={38.4} onClick={openClassDescription} variant='recomended' padding={0}>
@@ -171,7 +172,7 @@ export const ClassTableMobileView: FC<LocalViewProps> = memo(({
             </Text>}
         </Surface>
         <Spacing variant='Column' themeSpace={85} />
-      </>}
+      </ContainerWrapper>}
       <Modal isActive={isOpenGradeInfo} closeModal={closeGradeInfo}> 
         <ScrollView style={{maxHeight: 450}}>
           <Text themeFont={theme.fonts.h3} themeColor={theme.colors.gray}>
@@ -217,7 +218,7 @@ export const ClassTableDesktopView: FC<LocalViewProps> = memo(({
       {loading === 'loading' ?
         <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={loading}/>
-        </Column> : <>
+        </Column> : <ContainerWrapper isDesktop={true}>
         <Surface style={{width: 900}}>
           <Row style={{position: 'absolute'}}>
             <Button height={38.4} width={38.4} onClick={openClassDescription} variant='recomended' padding={0}>
@@ -243,7 +244,7 @@ export const ClassTableDesktopView: FC<LocalViewProps> = memo(({
               Студенты не найдены
             </Text>}
         </Surface>
-      </>}
+      </ContainerWrapper>}
       <Popup isActive={isOpenGradeInfo} closePopup={closeGradeInfo}> 
         <Column style={{width: 440}}>
           <ScrollView style={{maxHeight: 500}}>

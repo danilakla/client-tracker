@@ -23,7 +23,7 @@ import { SuccessfulPopup } from '../../../../ui-kit/successful-popup';
 import { Row } from '../../../../ui-kit/row';
 import { attendanceColorsForStudents, checkIsAttestationGrade } from '../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useTableScroll } from '../../../../hooks/table-scroll-hook';
-import { EmptyClassItem } from '../../teacher/subjects-parent/class-group-panel/class-group-panel.styled';
+import { ContainerWrapper, EmptyClassItem } from '../../teacher/subjects-parent/class-group-panel/class-group-panel.styled';
 
 import RefreshLogo from '../../../../ui-kit/assets/refresh.svg';
 import InfoLogo from '../../../../ui-kit/assets/info.svg';
@@ -295,7 +295,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
       {studentClassGroupTableState.loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={studentClassGroupTableState.loading}/>
-      </Column> : <>
+      </Column> : <ContainerWrapper isDesktop={false}>
         <Surface>
         <Row style={{position: 'absolute'}}>
           <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
@@ -323,7 +323,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
             </Text>}
         </Surface>
         <Spacing variant='Column' themeSpace={85} />
-      </>}
+      </ContainerWrapper>}
       <Modal isActive={isOpenDescription} closeModal={closeDescription}> 
         <ScrollView style={{maxHeight: 450}}>
           <Text themeFont={theme.fonts.h3} themeColor={theme.colors.gray}>
@@ -395,7 +395,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
 	    {studentClassGroupTableState.loading === 'loading' ?
         <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={studentClassGroupTableState.loading}/>
-        </Column> : <>
+        </Column> : <ContainerWrapper isDesktop={true}>
         <Surface style={{width: 900}}>
           <Row style={{position: 'absolute'}}>
             <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
@@ -422,7 +422,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
               Студенты не найдены
             </Text>}
         </Surface>
-      </>}
+      </ContainerWrapper>}
       <Popup isActive={isOpenDescription} closePopup={closeDescription}> 
         <Column style={{width: 440}}>
           <ScrollView style={{maxHeight: 500}}>

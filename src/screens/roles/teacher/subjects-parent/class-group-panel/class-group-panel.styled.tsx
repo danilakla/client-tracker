@@ -1,6 +1,19 @@
 import styled from "styled-components";
 import { theme } from "../../../../../ui-kit/themes/theme";
 
+export const ContainerWrapper = styled.div<{isDesktop: boolean}>`
+  opacity: 0;
+  animation: fadeIn 0.3s ease-out forwards;
+  animation-delay: 0.3s;
+  width: ${({ isDesktop }) => (isDesktop ? `` : "100%")};
+
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+`;
+
 export const ColorCircleButton = styled.div<{color: string, isSelected: boolean}>`
   width: 40px;
   height: 40px;
