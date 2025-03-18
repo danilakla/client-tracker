@@ -96,15 +96,22 @@ export const ClassesContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-x: scroll;
-  
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+  transform: translateZ(0);
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   & > div {
     & > div {
       border-bottom: 2px solid ${theme.colors.primary};
     }
   }
 
-  & > div:last-child {
+  &:last-child {
     & > div {
       border-bottom: none;
     }
@@ -178,6 +185,12 @@ export const HeaderClasses = styled.div`
   align-items: flex-end;
   overflow-x: auto;
   width: 100%;
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 
