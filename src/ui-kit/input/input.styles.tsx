@@ -41,6 +41,13 @@ export const InputStyled = styled.input<{
     font-size: ${theme.fonts.ht1.mobileSize};
   }
 
+  &[type="password"] {
+    font-size: ${theme.fonts.ht1.desktopSize};
+    @media (max-width: ${theme.toMobileSize + "px"}) {
+      font-size: ${theme.fonts.ht1.mobileSize};
+    }
+  }
+
   &:focus {
     border-color: ${theme.colors.primary};
     outline: none;
