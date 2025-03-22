@@ -205,7 +205,7 @@ export const initDeanClassTableActionCreator = createAsyncThunk('class-group-tab
             //     return;
             // }
                 
-            const responce = await deanApi.getClassGroupTable(authToken, 1);
+            const responce = await deanApi.getClassGroupTable(authToken, initData?.idClassHold || -1);
 
             const sortedResponse = {
                 ...responce,
