@@ -141,7 +141,9 @@ export const ClassTableMobileView: FC<LocalViewProps> = memo(({
 }) => {
 
   return (
-    <WrapperMobile role='ROLE_DEAN' header='Таблица' onBack={onBack}>
+    <WrapperMobile role='ROLE_DEAN'
+    header={initData?.description}
+    onBack={onBack}>
       {loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={loading}/>
@@ -214,7 +216,7 @@ export const ClassTableDesktopView: FC<LocalViewProps> = memo(({
 }) => {
 
   return (
-    <WrapperDesktop role='ROLE_DEAN' header='Таблица' onBack={onBack}>
+    <WrapperDesktop role='ROLE_DEAN' header={initData?.description} onBack={onBack}>
       {loading === 'loading' ?
         <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={loading}/>
