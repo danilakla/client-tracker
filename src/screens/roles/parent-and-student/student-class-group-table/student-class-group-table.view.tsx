@@ -519,11 +519,12 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
                     <CircleLoading state={'loading'}/>
                   </Column>) : 
                 (<Scanner 
+                sound={false}
                 onError={() => setErrorAccessCamera()}
                 styles={{
                 video: {
                   height: 268,
-                  width: 268
+                  width: 268,
                 },
                 container: {
                   height: 268,
@@ -587,7 +588,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
       {classesIds.length === 0 && <Spacing variant='Column' themeSpace={50} />}
       <TableHeader>
         <NameHeader isHide={isVerticalScrollNeeded}>
-          <Text themeFont={theme.fonts.h3}>Имя студента</Text>
+          <Text themeFont={theme.fonts.h3}>ФИО студента</Text>
         </NameHeader>
         {classesIds.length !== 0 && (
           <HeaderClasses ref={horizontalScrollRef1}>

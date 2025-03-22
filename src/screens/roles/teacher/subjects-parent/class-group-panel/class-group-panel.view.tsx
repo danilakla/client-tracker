@@ -1471,7 +1471,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 		  <TableHeader>
 		    <NameHeader isHide={isVerticalScrollNeeded}>
 		  	<Text themeFont={theme.fonts.h3}>
-		  	  Имя студента
+          ФИО студента
 		  	</Text>
 		    </NameHeader>
 		    {classesIds.length !== 0 && <HeaderClasses ref={horizontalScrollRef1}>
