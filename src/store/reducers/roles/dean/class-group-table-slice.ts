@@ -201,11 +201,11 @@ export const initDeanClassTableActionCreator = createAsyncThunk('class-group-tab
     async (data: { authToken: string, initData: InitData | null}, thunkApi ) => {
         const { authToken, initData } = data;
         try {
-            // if(initData === null){
-            //     return;
-            // }
+            if(initData === null){
+                return;
+            }
                 
-            const responce = await deanApi.getClassGroupTable(authToken, initData?.idClassHold || -1);
+            const responce = await deanApi.getClassGroupTable(authToken, initData.idClassHold);
 
             const sortedResponse = {
                 ...responce,
