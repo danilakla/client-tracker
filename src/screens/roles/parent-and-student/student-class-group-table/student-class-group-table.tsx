@@ -12,7 +12,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
 }) => {
   const studentClassGroupTableState = useTypedSelector(state => state.studentClassGroupTable);
   const dispatch = useAppDispatch();
-  const {authToken, userAccountId} = useUser();
+  const {authToken, userAccountId, user} = useUser();
 
   const goToClassGroups = useStudentClassGroups();
   const goToSubjects= useStudentSubjects();
@@ -131,6 +131,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
         askReview={askReview}
         setSelectedGrade={setSelectedGrade}
         checkQrCode={checkQrCode}
+        fioOfStudent={`${user.lastname} ${user.name} ${user.surname}`}
         goToClassGroups={goToClassGroups}
         setSelectedClass={setSelectedClass}
         reloadTable={reloadTable}

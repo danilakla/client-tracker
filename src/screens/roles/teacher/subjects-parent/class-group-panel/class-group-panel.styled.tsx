@@ -6,6 +6,9 @@ export const ContainerWrapper = styled.div<{isDesktop: boolean}>`
   animation: fadeIn 0.3s ease-out forwards;
   animation-delay: 0.3s;
   width: ${({ isDesktop }) => (isDesktop ? `` : "100%")};
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
 
   @keyframes fadeIn {
     to {

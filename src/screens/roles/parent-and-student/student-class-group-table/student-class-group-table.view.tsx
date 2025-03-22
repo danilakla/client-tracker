@@ -30,6 +30,7 @@ import InfoLogo from '../../../../ui-kit/assets/info.svg';
 
 export type StudentClassGroupTableViewProps = {
   role: "ROLE_STUDENT" | "ROLE_PARENTS";
+  fioOfStudent: string;
   studentClassGroupTableState: StudentClassGroupTableState;
   goToClassGroups: () => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
@@ -46,6 +47,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
   setSelectedGrade,
   getKeyForQr,
   goToClassGroups,
+  fioOfStudent,
   clearRedisKey,
   reloadTable,
   setSelectedClass,
@@ -162,6 +164,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           openClassControl={openClassControl}
           onHandleQrCode={onHandleQrCode}
           hasCameraAccess={hasCameraAccess}
+          fioOfStudent={fioOfStudent}
           setErrorAccessCamera={setErrorAccessCamera}
           isClassControlPopup={isClassControlPopup}
           getKeyForQr={onGetKeyForQr}
@@ -175,6 +178,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           onAskReview={controlConfirmReviewPopup}
           setErrorAccessCamera={setErrorAccessCamera}
           reloadTable={reloadTable}
+          fioOfStudent={fioOfStudent}
           closeClassControl={closeClassControl}
           onHandleQrCode={onHandleQrCode}
           openClassControl={openClassControl}
@@ -253,6 +257,7 @@ type LocalViewProps = {
   onHandleQrCode: (value: string) => void;
   isClassControlPopup: boolean;
   reloadTable: () => void;
+  fioOfStudent: string;
   onAskReview: () => void;
   hasCameraAccess: boolean | null;
   openClassControl: (value: ClassHeaderType) => void;
@@ -265,6 +270,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   goToClassGroups,
   studentClassGroupTableState,
   getKeyForQr,
+  fioOfStudent,
   onAskReview,
   setSelectedGrade,
   hasCameraAccess,
@@ -291,12 +297,13 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   },[isOpenInfo])
 
   return (
-    <WrapperMobile onBack={goToClassGroups} role={role} header='Таблица'>
+    <WrapperMobile onBack={goToClassGroups} role={role} header={studentClassGroupTableState.classGroup?.description}>
       {studentClassGroupTableState.loading === 'loading' ?
       <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
         <CircleLoading state={studentClassGroupTableState.loading}/>
       </Column> : <ContainerWrapper isDesktop={false}>
-        <Surface>
+        <Row>
+          <Surface style={{width: 'fit-content'}}>
         <Row style={{position: 'absolute'}}>
           <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
@@ -311,17 +318,22 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
               </Column>
             </Button>
           </Row>
-          <Spacing themeSpace={10} variant='Column' />
-          {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
+          <Spacing themeSpace={60} variant='Column' />
+          <Text themeFont={theme.fonts.h3} >
+          {fioOfStudent}
+          </Text>
+          <Spacing themeSpace={15} variant='Column' />
+          {studentClassGroupTableState.classesIds.length !== 0 ? 
             <StudentsTable 
               role={role}
               onClickGrade={openDescription} openClassControl={openClassControl}
               classesIds={studentClassGroupTableState.classesIds}
               data={studentClassGroupTableState.studentsStatistics}/> :
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
-              Студенты не найдены
+              Занятия не найдены
             </Text>}
         </Surface>
+        </Row>
         <Spacing variant='Column' themeSpace={85} />
       </ContainerWrapper>}
       <Modal isActive={isOpenDescription} closeModal={closeDescription}> 
@@ -354,6 +366,32 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
             {studentClassGroupTableState.classGroup?.teacherName.replaceAll('_', ' ')}</span><br/>
           Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {studentClassGroupTableState.classGroup?.description}</span><br/>
+          -------------------------
+          <br/>
+          Справка по статусам:
+          <br/>
+          <span style={{fontFamily: theme.fonts.ht2.family}}>
+          
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[1]}
+          /> - Пропущено<br/>
+
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[7]}
+          /> - Пропущено(Отработано)<br/>
+          
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[2]}
+          /> - Пропущено по уважительной причине<br/>
+
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[8]}
+          /> - Пропущено по уважительной причине(Отработано)<br/>
+
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[3]}
+          /> - Посещено
+          </span>
         </Text>
       </Modal>
     </WrapperMobile>
@@ -368,6 +406,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
   onAskReview,
   setSelectedGrade,
   reloadTable,
+  fioOfStudent,
   hasCameraAccess,
   setErrorAccessCamera,
   isClassControlPopup,
@@ -396,32 +435,73 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
         <Column style={{position: 'absolute', height: '100dvh', top: 0}}>
           <CircleLoading state={studentClassGroupTableState.loading}/>
         </Column> : <ContainerWrapper isDesktop={true}>
-        <Surface style={{width: 900}}>
-          <Row style={{position: 'absolute'}}>
-            <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
-              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
-              <Image src={InfoLogo} width={15} height={15}/> 
-              </Column>
-            </Button>
-            <Spacing themeSpace={10} variant='Row' />
+        <Row>
+        <Surface>
+          <Row style={{position: 'absolute'}} verticalAlign='center'>
             <Button height={38} width={38} onClick={reloadTable} 
               state={studentClassGroupTableState.loadingReloadTable} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={RefreshLogo} width={15} height={15}/> 
               </Column>
             </Button>
+            <Spacing themeSpace={15} variant='Row' />
+            <Text themeFont={theme.fonts.h3} >
+              {fioOfStudent}
+            </Text>
           </Row>
-          <Spacing themeSpace={20} variant='Column' />
-          {studentClassGroupTableState.studentsStatistics.length !== 0 ? 
+          <Spacing themeSpace={60} variant='Column' />
+          
+          <Spacing themeSpace={15} variant='Column' />
+          {studentClassGroupTableState.classesIds.length !== 0 ? 
             <StudentsTable
               role={role}
               onClickGrade={openDescription} openClassControl={openClassControl}
               classesIds={studentClassGroupTableState.classesIds}
               data={studentClassGroupTableState.studentsStatistics}/> :
             <Text themeFont={theme.fonts.h2} themeColor={theme.colors.attentive}>
-              Студенты не найдены
+              Занятия не найдены
             </Text>}
         </Surface>
+        <Spacing themeSpace={25} variant='Row' />
+        <Surface>
+          <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
+            Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
+            Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {studentClassGroupTableState.classGroup?.formatName}</span><br/>
+            Преподаватель: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {studentClassGroupTableState.classGroup?.teacherName.replaceAll('_', ' ')}</span><br/>
+            Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
+              {studentClassGroupTableState.classGroup?.description}</span><br/>
+              -------------------------
+            <br/>
+            Справка по статусам:
+            <br/>
+            <span style={{fontFamily: theme.fonts.ht2.family}}>
+            
+            <ColorCircle style={{ display: 'inline-block' }}
+              color={attendanceColorsForStudents[1]}
+            /> - Пропущено<br/>
+
+            <ColorCircle style={{ display: 'inline-block' }}
+              color={attendanceColorsForStudents[7]}
+            /> - Пропущено(Отработано)<br/>
+
+            <ColorCircle style={{ display: 'inline-block' }}
+              color={attendanceColorsForStudents[2]}
+            /> - Пропущено по уважительной причине<br/>
+
+            <ColorCircle style={{ display: 'inline-block' }}
+              color={attendanceColorsForStudents[8]}
+            /> - Пропущено по уважительной причине(Отработано)<br/>
+
+            <ColorCircle style={{ display: 'inline-block' }}
+              color={attendanceColorsForStudents[3]}
+            /> - Посещено
+            </span>
+          </Text>
+        </Surface>
+        </Row>
       </ContainerWrapper>}
       <Popup isActive={isOpenDescription} closePopup={closeDescription}> 
         <Column style={{width: 440}}>
@@ -433,16 +513,7 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
         </Column>
       </Popup>
       <Popup style={{width: 440}} isActive={isOpenInfo} closePopup={controlInfoWindow} >
-        <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
-          Предмет: <span style={{fontFamily: theme.fonts.ht2.family}}>
-            {studentClassGroupTableState.classGroup?.subjectName}</span><br/>
-          Формат занятия: <span style={{fontFamily: theme.fonts.ht2.family}}>
-            {studentClassGroupTableState.classGroup?.formatName}</span><br/>
-          Преподаватель: <span style={{fontFamily: theme.fonts.ht2.family}}>
-            {studentClassGroupTableState.classGroup?.teacherName.replaceAll('_', ' ')}</span><br/>
-          Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
-            {studentClassGroupTableState.classGroup?.description}</span><br/>
-        </Text>
+        
       </Popup>
       <Popup isActive={isClassControlPopup} closePopup={closeClassControl}>
         <QrcCodePart
@@ -585,31 +656,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 
   return (
     <TableWrapper>
-      {classesIds.length === 0 && <Spacing variant='Column' themeSpace={50} />}
-      <TableHeader>
-        <NameHeader isHide={isVerticalScrollNeeded}>
-          <Text themeFont={theme.fonts.h3}>ФИО студента</Text>
-        </NameHeader>
-        {classesIds.length !== 0 && (
-          <HeaderClasses ref={horizontalScrollRef1}>
-            {classesIds.map((item, index) => (
-              <HeaderClassItem
-                key={index} 
-                onClick={(item.gradeId === -1 || role === 'ROLE_PARENTS') ? () => {} : () => openClassControl(item)}>
-                <Text themeFont={theme.fonts.h3} >
-                  {!item.isAttestation ? 
-                  <>Занятие {item.position}</> : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
-                </Text>
-                {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
-                <Text themeFont={theme.fonts.ml} format='hide' style={{maxHeight: 100}}>
-                  {item.className}
-                </Text>
-              </HeaderClassItem>
-            ))}
-          </HeaderClasses>
-        )}
-      </TableHeader>
-      <Spacing themeSpace={10} variant="Column" />
       <Row style={{ alignItems: "stretch" }}>
         {isVerticalScrollNeeded && <VerticalTrack ref={verticalTrackRef}>
           <VerticalSlider
@@ -622,11 +668,17 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
         <ScrollWrapper ref={verticalScrollRef}>
           <Table>
             <StudentsContainer>
-              {data.map((item, index) => (
-                <StudentItem key={index}>
-                  <Text themeFont={theme.fonts.ht2}>{item.student.surname}</Text>
-                  <Text themeFont={theme.fonts.ht2}>{item.student.name}</Text>
-                  <Text themeFont={theme.fonts.ht2}>{item.student.lastname}</Text>
+              {classesIds.map((item, index) => (
+                <StudentItem key={index}
+                  onClick={(item.gradeId === -1 || role === 'ROLE_PARENTS') ? () => {} : () => openClassControl(item)}>
+                  <Text themeFont={theme.fonts.h3} >
+                    {!item.isAttestation ? 
+                    <>Занятие {item.position}</> : <span style={{color: theme.colors.attentive}}>Аттестация</span>}
+                  </Text>
+                  {item.className !== null && <Spacing variant='Row' themeSpace={5} />}
+                  <Text themeFont={theme.fonts.ml} format='hide' style={{maxHeight: 100}}>
+                    {item.className}
+                  </Text>
                 </StudentItem>
               ))}
             </StudentsContainer>

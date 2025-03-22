@@ -5,30 +5,30 @@ export const ScrollWrapper = styled.div`
   width: 100%;
   overflow: auto;
 
-  max-height: 280px;
+  max-height: 350px;
 
   @media (min-height: 740px) {
-    max-height: 350px;
-  }
-
-  @media (min-height: 810px) {
     max-height: 420px;
   }
 
-  @media (min-height: 880px) {
+  @media (min-height: 810px) {
     max-height: 490px;
   }
 
-  @media (min-height: 950px) {
+  @media (min-height: 880px) {
     max-height: 560px;
   }
 
-  @media (min-height: 1020px) {
+  @media (min-height: 950px) {
     max-height: 630px;
   }
 
-  @media (min-height: 1090px) {
+  @media (min-height: 1020px) {
     max-height: 700px;
+  }
+
+  @media (min-height: 1090px) {
+    max-height: 770px;
   }
 `;
 
@@ -64,17 +64,9 @@ export const StudentsContainer = styled.div`
 `;
 
 export const ClassesRow = styled.div`
-  display: flex;
-  position: relative;
-  flex-direction: row;
-      
-  & > div {
-    border-right: 1px solid #52526655;
-  }
+  display: block;
+  width: 70px;   
 
-  & > div:last-child {
-    border-right: none;
-  }
 `;
 
 export const ClassesContainer = styled.div`
@@ -87,10 +79,7 @@ export const ClassesContainer = styled.div`
     & > div {
       border-bottom: 2px solid ${theme.colors.primary};
     }
-  }
-
-  & > div:last-child {
-    & > div {
+    & > div:last-child {
       border-bottom: none;
     }
   }
