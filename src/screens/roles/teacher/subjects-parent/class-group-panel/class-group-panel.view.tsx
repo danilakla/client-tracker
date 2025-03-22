@@ -182,8 +182,11 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   },[isOpenGenerateKeyPopup, setExpirationOfReview])
   const [isOpenQrCodePopup, setIsOpenQrCodePopup] = useState<boolean>(false);
   const controlQrCodePopup = useCallback(() => {
+    if(!isOpenQrCodePopup) 
+      setExpirationOfReview(5);
+
     setIsOpenQrCodePopup(!isOpenQrCodePopup);
-  },[isOpenQrCodePopup])
+  },[isOpenQrCodePopup, setExpirationOfReview])
 
   const [isClassControlPopup, setIsClassControlPopup] = useState<boolean>(false);
   const controlClassControlPopup = useCallback(() => {
@@ -194,9 +197,8 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   },[setSelectedClass, controlClassControlPopup])
   const closeClassControlForStudents = useCallback(() => {
     controlClassControlPopup();
-    setExpirationOfReview(90);
     setExpirationOfRefresh(5);
-  },[setExpirationOfReview, setExpirationOfRefresh, controlClassControlPopup])
+  },[setExpirationOfRefresh, controlClassControlPopup])
 
   const confirmActivateKeyForClass = useCallback((expiration: number, onSuccess: () => void) => {
     activateKeyForClass(expiration, onSuccess);
