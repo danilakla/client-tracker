@@ -42,10 +42,7 @@ export const InputStyled = styled.input<{
   }
 
   &[type="password"] {
-    font-size: ${theme.fonts.ht1.desktopSize};
-    @media (max-width: ${theme.toMobileSize + "px"}) {
-      font-size: ${theme.fonts.ht1.mobileSize};
-    }
+    line-height: 1;
   }
 
   &:focus {
