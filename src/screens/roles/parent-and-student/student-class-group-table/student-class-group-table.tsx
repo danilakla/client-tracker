@@ -49,7 +49,7 @@ export const StudentClassGroupTable: FC<StudentClassGroupTableProps> = memo(({
     } 
     
     return () => {
-      // dispatch(reset());
+      dispatch(reset());
     };
   }, [dispatch, reset, initTableData]);
 

@@ -646,11 +646,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
       verticalTrackRef,
       verticalScrollRef,
       verticalSliderRef,
-      horizontalTrackRef,
-      horizontalScrollRef1,
-      horizontalScrollRef2,
-      horizontalSliderRef,
-      handleHorizontalStart,
       handleVerticalStart,
   } = useTableScroll(classesIds);
 
@@ -682,7 +677,7 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
                 </StudentItem>
               ))}
             </StudentsContainer>
-            <ClassesContainer ref={horizontalScrollRef2}>
+            <ClassesContainer>
               {data.map((item, index)=> <ClassesRow key={index}>
               {item.grades.map((item, index) => 
               <ClassItemView 
@@ -694,19 +689,6 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
           </Table>
         </ScrollWrapper>
       </Row>
-      {isHorizontalScrollNeeded && 
-      <Column 
-        style={{visibility: isHorizontalScrollNeeded ? 'visible' : 'hidden'}}  
-        horizontalAlign="flex-end">
-        <Spacing variant="Column" themeSpace={10} />
-        <HorizontalTrack ref={horizontalTrackRef}>
-          <HorizontalSlider
-            ref={horizontalSliderRef}
-            onMouseDown={handleHorizontalStart}
-            onTouchStart={handleHorizontalStart}
-          />
-        </HorizontalTrack>
-      </Column>}
     </TableWrapper>
   );
 });
