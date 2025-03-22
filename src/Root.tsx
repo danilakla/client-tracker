@@ -188,9 +188,9 @@ export const Root: FC<RootProps> = () => {
           {/* <Route path={urls.teacherClassGroupControl} element={<TeacherClassGroupPanel/>}/> */}
         </>}
         <Route path='*' element={<Navigate to='/' />} />
-
-        <Route path={urls.error} element={<Warning/>} />
       </Route>
+
+      <Route path={urls.error} element={<Warning/>} />
     </Routes>
   );
 };
