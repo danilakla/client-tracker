@@ -67,17 +67,17 @@ export const SignupView: FC<SignupViewProps> = memo(({
         selectedItem={signupState.role} 
         setValue={setRole}/>
       <Spacing variant='Column' themeSpace={30}/>
-      {signupState.role.value === 'ADMIN' ? (<>
+      <Input 
+          header='Введите ключ' 
+          placeholder='3fac%...' error={signupState.errors['keyError']}
+          value={signupState.key} setValue={setKey}/>
+      {signupState.role.value === 'ADMIN' && (<>
+        <Spacing variant='Column' themeSpace={30}/>
         <Input 
           header='Введите название университета' 
           placeholder='Белоруccкий....' error={signupState.errors['universityNameError']}
           value={signupState.nameUniversity} setValue={setNameUniversity}/>
-      </>) : (
-        <Input 
-          header='Введите ключ' 
-          placeholder='3fac%...' error={signupState.errors['keyError']}
-          value={signupState.key} setValue={setKey}/>
-        )}
+      </>)}
       <Spacing variant='Column' themeSpace={30}/>
       <Input 
         header='Введите электроную почту' 

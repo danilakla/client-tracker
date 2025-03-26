@@ -83,6 +83,7 @@ export const Signup: FC<SignupProps> = memo(() => {
             lastname: signupState.lastname, 
             surname: signupState.surname,
             universityName: signupState.nameUniversity,
+            adminKey: signupState.key,
             onSuccess: () => navigate('/')
         }));
         break;

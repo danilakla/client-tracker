@@ -627,6 +627,17 @@ export const classGroupControlSlice = createSlice({
                 state.qrCodePopup.loadingQrCode = "idle";
             })
 
+            .addCase(generateQrCodeActionCreator.fulfilled, (state) => {
+                state.qrCodePopup.loadingQrCode = 'success';
+            })
+            .addCase(generateQrCodeActionCreator.pending, (state) => {
+                state.qrCodePopup.loadingQrCode = 'loading';
+            })
+            .addCase(generateQrCodeActionCreator.rejected, (state) => {
+                state.qrCodePopup.loadingQrCode = "idle";
+            })
+            
+
             .addCase(startReviewForClassActionCreator.fulfilled, (state) => {
                 state.loadingReview = 'success';
             })
@@ -928,8 +939,9 @@ export const startQrCodeActionCreator = createAsyncThunk('teacher-class-control/
         const { authToken, classId, expirationOfRefresh, expirationOfReview } = data;
         try {
             await teacherApi.createQrCode(authToken, classId, expirationOfReview * 60);
+            const response = await getAccurateTime(authToken);
             thunkApi.dispatch(classGroupControlSlice.actions.setQrCodeDataActionCreator({
-                date: (new Date()).toISOString(),
+                date: response.toISOString(),
                 idClass: classId,
                 expiration: expirationOfRefresh
             }));
@@ -945,11 +957,13 @@ export const startQrCodeActionCreator = createAsyncThunk('teacher-class-control/
 )
 
 export const generateQrCodeActionCreator = createAsyncThunk('teacher-class-control/generate-qr-code',
-    async (data: { classId: number, expirationOfRefresh: number}, thunkApi ) => {
-        const { classId, expirationOfRefresh } = data;
+    async (data: { classId: number, expirationOfRefresh: number, authToken: string}, thunkApi ) => {
+        const { classId, expirationOfRefresh,authToken } = data;
         try {
+            const response = await getAccurateTime(authToken);
+
             thunkApi.dispatch(classGroupControlSlice.actions.setQrCodeDataActionCreator({
-                date: (new Date()).toISOString(),
+                date: response.toISOString(),
                 idClass: classId,
                 expiration: expirationOfRefresh
             }));
@@ -1147,6 +1161,20 @@ export const removeAttestationActionCreator = createAsyncThunk('teacher-class-co
         }
     }
 )
+
+type AccurateTime = Date;
+
+async function getAccurateTime(authToken: string): Promise<AccurateTime> {
+    const start = Date.now();
+    const response = await teacherApi.getTimeFromServer(authToken);
+    const end = Date.now();
+
+    const latency = (end - start) / 2;
+    const serverTime = new Date(response.currentTime);
+    const accurateTime = new Date(serverTime.getTime() + latency);
+
+    return accurateTime;
+}
 
 export const renameClassActionCreator = createAsyncThunk('rename-class',
     async (data: { authToken: string, classId: number, nameOfClass: string, onSuccess: () => void}, thunkApi ) => {

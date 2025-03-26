@@ -14,6 +14,13 @@ export const teacherApi = {
                 return response.data;
             })
     },
+    getTimeFromServer(authToken: string) {
+        return instance.get('/time', { 
+            headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
     getClassGroupSubgroups(authToken: string, id: number) {
         return instance.get(`/teacher/get/class-groups/${id}`, { 
             headers: {'Authorization' : `Bearer ${authToken}`} })

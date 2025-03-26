@@ -119,6 +119,7 @@ export const singupSlice = createSlice({
 
 export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sign-up/admin',
     async (data: { 
+        adminKey: string,
         login: string, 
         password: string, 
         role: string,
@@ -129,13 +130,14 @@ export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sig
         universityName: string,
         onSuccess?: () => void 
     }, thunkApi) => {
-        const { login, role, password, name, confirmPassword, lastname, surname, onSuccess, universityName } = data;
+        const { login, role, password, name, confirmPassword, lastname, surname, onSuccess, universityName, adminKey } = data;
         try {
             thunkApi.dispatch(singupSlice.actions.clearErrors());
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             let hasError = false;
             
+            hasError = !validateField(thunkApi, adminKey, 1, "keyError", 'Введите ключ') || hasError;
             hasError = !validateField(thunkApi, universityName, 1, "universityNameError", 'Введите название университета') || hasError;
             hasError = !validateField(thunkApi, name, 1, "nameError", 'Введите корректное имя') || hasError;
             hasError = !validateField(thunkApi, lastname, 1, "lastnameError", 'Введите корректную фамилию') || hasError;
@@ -161,14 +163,18 @@ export const signUpAdminAndCreateUniversityActionCreator = createAsyncThunk('sig
 
             thunkApi.dispatch(singupSlice.actions.clearErrors());
 
-            await authApi.singUpAdmin(login, role, password, name, lastname, surname);
+            await authApi.singUpAdmin(login, role, password, name, lastname, surname, adminKey);
             const responce = await authApi.loginUser(login, password);
             await authApi.createUniversity(universityName, responce.jwt);
             localStorage.setItem('authToken', responce.jwt);
             onSuccess?.();
         }
         catch (e) {
-            thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            if (axios.isAxiosError(e)) {
+                thunkApi.dispatch(singupSlice.actions.setError(
+                    { key: "keyError", error: e.response?.data.message }
+                ));
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
         }
     }
 )

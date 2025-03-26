@@ -465,7 +465,15 @@ export const checkQrCodeActionCreator = createAsyncThunk('student-class-group-ta
             const classItem = classes.find(classHeader => classHeader.idClass === jsonData.idClass);
 
             if (timeDifference / 1000 <= parsedExpiration) {
-                await studentApi.acceptAttendance(authToken, classItem?.gradeId || -1, 3);
+                if(classItem === undefined) return;
+
+                await studentApi.acceptAttendance(authToken, classItem.gradeId || -1, 3);
+
+                thunkApi.dispatch(studentClassGroupTableSlice.actions.updateGradeAttendance({
+                    gradeId:classItem.gradeId,
+                    newAttendance: 3 as AttendanceCodeType
+                }));
+
                 onSuccess();
                 return;
             } else {

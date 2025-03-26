@@ -18,8 +18,9 @@ export const authApi = {
                 return response.data;
             })
     },
-    singUpAdmin(login: string, role: string, password: string, name: string, lastname: string, surname: string) {
+    singUpAdmin(login: string, role: string, password: string, name: string, lastname: string, surname: string, adminKey: string) {
         return instance.post('/register', {
+                adminKey: adminKey,
                 login: login, 
                 password: password,
                 name: name,

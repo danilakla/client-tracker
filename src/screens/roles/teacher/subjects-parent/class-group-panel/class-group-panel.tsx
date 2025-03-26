@@ -201,11 +201,12 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     dispatch(generateQrCodeActionCreator({
       expirationOfRefresh: teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
       classId: teacherClassGroupControlState.selectedClass.idClass,
+      authToken
     }));
   },[
     dispatch,
     teacherClassGroupControlState.qrCodePopup.expirationOfRefresh,
-    teacherClassGroupControlState.selectedClass.idClass,
+    teacherClassGroupControlState.selectedClass.idClass, authToken
   ])
 
   const onReview = useCallback((onSuccess: () => void)=>{
