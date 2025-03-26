@@ -192,6 +192,32 @@ export const ClassTableMobileView: FC<LocalViewProps> = memo(({
             {initData?.teacherName.replaceAll('_', ' ')}</span><br/>
           Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {initData?.description}</span><br/>
+          -------------------------
+          <br/>
+          Справка по статусам:
+          <br/>
+          <span style={{fontFamily: theme.fonts.ht2.family}}>
+          
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[1]}
+          /> - Пропущено<br/>
+        
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[7]}
+          /> - Пропущено(Отработано)<br/>
+          
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[2]}
+          /> - Пропущено по уважительной причине<br/>
+        
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[8]}
+          /> - Пропущено по уважительной причине(Отработано)<br/>
+        
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[3]}
+          /> - Посещено
+          </span>
         </Text>
       </Modal>
     </WrapperMobile>
@@ -266,6 +292,32 @@ export const ClassTableDesktopView: FC<LocalViewProps> = memo(({
             {initData?.teacherName.replaceAll('_', ' ')}</span><br/>
           Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {initData?.description}</span><br/>
+          -------------------------
+          <br/>
+          Справка по статусам:
+          <br/>
+          <span style={{fontFamily: theme.fonts.ht2.family}}>
+          
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[1]}
+          /> - Пропущено<br/>
+        
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[7]}
+          /> - Пропущено(Отработано)<br/>
+          
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[2]}
+          /> - Пропущено по уважительной причине<br/>
+        
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[8]}
+          /> - Пропущено по уважительной причине(Отработано)<br/>
+        
+          <ColorCircle style={{ display: 'inline-block' }}
+            color={attendanceColorsForStudents[3]}
+          /> - Посещено
+          </span>
         </Text>
       </Popup>
     </WrapperDesktop>

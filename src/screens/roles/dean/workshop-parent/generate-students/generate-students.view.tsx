@@ -200,7 +200,7 @@ export const GenerateStudentsMobileView: FC<LocalViewData> = memo(({
 }) => {
 
   return (
-    <WrapperMobile onBack={goToWorkshop} role='ROLE_DEAN' header='Генерация студентов'>
+    <WrapperMobile onBack={goToWorkshop} role='ROLE_DEAN' header='Генерация учётных записей студентов'>
       <input
           type="file"
           accept=".xlsx, .xls"
@@ -279,7 +279,7 @@ export const GenerateStudentsDesktopView: FC<LocalViewData> = memo(({
 }) => {
 
   return (
-    <WrapperDesktop onBack={goToWorkshop} role='ROLE_DEAN' header='Генерация студентов'>
+    <WrapperDesktop onBack={goToWorkshop} role='ROLE_DEAN' header='Генерация учётных записей студентов'>
       <input
           type="file"
           accept=".xlsx, .xls"

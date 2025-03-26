@@ -78,7 +78,7 @@ export const WorkshopMobileView: FC<WorkshopViewProps> = memo(({
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToSpecialties} text='Специальности' />
       <Spacing variant='Column' themeSpace={10} />
-      <ActionButton onClick={goToGenerateStudents} text='Генерация студентов' />
+      <ActionButton onClick={goToGenerateStudents} text='Генерация учётных записей студентов' />
       <Spacing variant='Column' themeSpace={10} />
       <ActionButton onClick={goToDeanStudents} text='Студенты' />
       <Spacing variant='Column' themeSpace={10} />
@@ -110,7 +110,7 @@ export const WorkshopDesktopView: FC<WorkshopViewProps> = memo(({
           <ActionBlockButton onClick={goToControlSubjects} text='Предметы' />
           <ActionBlockButton onClick={goToClassFormats} text='Форматы занятий' />
           <ActionBlockButton onClick={goToSpecialties} text='Специаль- ности' />
-          <ActionBlockButton onClick={goToGenerateStudents} text='Генерация студентов' />
+          <ActionBlockButton onClick={goToGenerateStudents} text='Генерация учётных записей студентов' />
           <ActionBlockButton onClick={goToDeanStudents} text='Студенты' />
           <ActionBlockButton onClick={goToAttestation} text='Аттестация' />
           <ActionBlockButton onClick={goToStatisticsExcel} text='Статистика' />

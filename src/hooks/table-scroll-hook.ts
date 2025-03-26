@@ -282,5 +282,7 @@ export const useTableScroll = (classesIds: any) => {
         handleHorizontalStart,
         isVerticalScrollNeeded,
         isHorizontalScrollNeeded,
+        updateVerticalSliderPosition,
+        updateVerticalSliderSize
     };
 };

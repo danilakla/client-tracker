@@ -641,13 +641,19 @@ export const StudentsTable: FC<StudentsTableProps> = memo(({
 }) => {
 
   const {
-      isHorizontalScrollNeeded,
       isVerticalScrollNeeded,
       verticalTrackRef,
       verticalScrollRef,
       verticalSliderRef,
       handleVerticalStart,
+      updateVerticalSliderPosition,
+      updateVerticalSliderSize
   } = useTableScroll(classesIds);
+
+  useEffect(() => {
+    updateVerticalSliderPosition();
+    updateVerticalSliderSize();
+  }, [classesIds, updateVerticalSliderPosition, updateVerticalSliderSize]);
 
   return (
     <TableWrapper>
