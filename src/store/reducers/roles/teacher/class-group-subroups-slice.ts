@@ -126,8 +126,9 @@ export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-c
             thunkApi.dispatch(classGroupSubroupsSlice.actions.setClassGroupInfoActionCreator(responce.classGroup));
 
             const idSubgroups: number[] = responce.subgroupsId.map((subgroup: any) => subgroup.idSubgroup);
-            const currentYear = new Date().getFullYear();
-            const currentMonth = new Date().getMonth();
+            
+            const today = new Date();
+            const currentYear = today >= new Date(today.getFullYear(), 7, 1) ? today.getFullYear() : today.getFullYear() - 1; 
 
             const subgroupsData = await teacherApi.getSubgroupsByIds(authToken, idSubgroups, idClassGroup);
         
@@ -137,10 +138,7 @@ export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-c
                 );
         
                 const admissionYear = new Date(item.subgroup.admissionDate).getFullYear();
-                const course =
-                 currentMonth >= 7
-                   ? currentYear - admissionYear + 1
-                   : currentYear - admissionYear;
+                const course = currentYear - admissionYear + 1;
         
                 const groupInfo = item.subgroup.subgroupNumber?.split('.') || ['0', '0'];
         
@@ -148,7 +146,7 @@ export const initSubgroupOfClassGroupActionCreator = createAsyncThunk('teacher-c
                   idHold: item.idHold, 
                   subgroup: {
                     idSubgroup: item.subgroup.idSubgroup,
-                    subgroupNumber: `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
+                    subgroupNumber: `${course === 0 ? 1 : course} курс ${groupInfo[0]} гр. ${groupInfo[1]} п.`,
                     admissionDate: item.subgroup.admissionDate,
                     idDean: item.subgroup.idDean,
                     idSpecialty: item.subgroup.idSpecialty,

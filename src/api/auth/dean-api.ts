@@ -71,7 +71,14 @@ export const deanApi = {
                 return response.data;
             })
     },
-    generateStudents(authToken: string, students: Student[]) {
+    generateStudents(authToken: string, students: {
+        name: string;
+        lastname: string;
+        surname: string;
+        numberOfGroup: string;
+        specialty: string;
+        date: Date;
+    }[]) {
         return instance.post(`/dean/generate-student`, students, {
             headers: { 'Authorization': `Bearer ${authToken}` },
             responseType: 'blob', 

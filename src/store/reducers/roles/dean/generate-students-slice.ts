@@ -11,6 +11,7 @@ export type Student = {
     surname: string;
     numberOfGroup: string;
     specialty: string;
+    course: string;
   }
 
 export type GenerateStudentsState = {
@@ -87,6 +88,34 @@ export const generateStudentsActionCreator = createAsyncThunk('dean-generate-stu
     async (data: { authToken: string, students: Student[], onSuccess?: () => void, onError?: () => void}, thunkApi ) => {
         const { authToken, students, onSuccess, onError } = data;
         try {
+            const today = new Date();
+
+            const currentYear = today.getFullYear();
+
+            const septemberFirstThisYear = new Date(currentYear, 7, 1);
+
+            const academicYear = today >= septemberFirstThisYear ? currentYear : currentYear - 1;
+
+            const studentsWithYear = students.map(student => {
+                const courseNumber = parseInt(student.course, 10);
+
+                if (isNaN(courseNumber) || courseNumber < 1) {
+                    onError?.();
+                }
+
+                const admissionYear = academicYear - (courseNumber - 1); 
+                const admissionDate = new Date(admissionYear, 7, 1);
+
+                return {
+                    name: student.name,
+                    lastname: student.lastname,
+                    surname: student.surname,
+                    numberOfGroup: student.numberOfGroup,
+                    specialty: student.specialty,
+                    date: admissionDate
+                };
+            });
+
             if(students.length === 0){
                 thunkApi.dispatch(generateStudentsSlice.actions.setError({
                     key: "createError",
@@ -97,7 +126,7 @@ export const generateStudentsActionCreator = createAsyncThunk('dean-generate-stu
                 return;
             }
 
-            const response = await deanApi.generateStudents(authToken, students);
+            const response = await deanApi.generateStudents(authToken, studentsWithYear);
 
             const fileURL = window.URL.createObjectURL(new Blob([response]));
             const link = document.createElement('a');

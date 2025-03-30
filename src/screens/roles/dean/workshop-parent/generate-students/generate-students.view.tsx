@@ -67,8 +67,8 @@ export const GenerateStudentsView: FC<GenerateStudentsViewProps> = memo(({
           const worksheet = workbook.Sheets[firstSheetName];
     
           const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-            header: ["fio", "numberOfGroup", "subgroup", "specialty"]
-          }) as { fio: string, numberOfGroup: string, subgroup: string, specialty: string }[];
+            header: ["fio", "course", "numberOfGroup", "subgroup", "specialty"]
+          }) as { fio: string, course: string, numberOfGroup: string, subgroup: string, specialty: string }[];
     
           const students = jsonData.map((row) => {
             const fioParts = row.fio.trim().split(" ");
@@ -82,6 +82,7 @@ export const GenerateStudentsView: FC<GenerateStudentsViewProps> = memo(({
               name,
               lastname,
               surname,
+              course: row.course,
               numberOfGroup,
               specialty: row.specialty,
             };
@@ -375,11 +376,7 @@ export const StudentView: FC<StudentViewProps> = memo(({
         </Text>
         <Spacing themeSpace={10} variant='Column' />
         <Text themeFont={theme.fonts.ht2}> 
-          Группа - {groupInfo[0]}
-        </Text>
-        <Spacing themeSpace={10} variant='Column' />
-        <Text themeFont={theme.fonts.ht2}> 
-          Подгруппа - {groupInfo[1]}
+          {data.course} курс {groupInfo[0]} группа {groupInfo[1]} подгруппа
         </Text>
         <Spacing themeSpace={10} variant='Column' />
         <Text themeFont={theme.fonts.ht2}> 

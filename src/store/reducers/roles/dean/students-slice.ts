@@ -89,15 +89,12 @@ export const studentsSlice = createSlice({
     initialState: initialState,
     reducers: {
         setSubgroupsActionCreator(state, action: PayloadAction<SubgroupInfoState[]>) {
-            const currentYear = new Date().getFullYear();
-            const currentMonth = new Date().getMonth();
+            const today = new Date();
+            const currentYear = today >= new Date(today.getFullYear(), 7, 1) ? today.getFullYear() : today.getFullYear() - 1; 
 
             state.subgroups = action.payload.map(subgroup => {
                 const admissionYear = new Date(subgroup.subgroup.admissionDate).getFullYear();
-                const course =
-                 currentMonth >= 7
-                   ? currentYear - admissionYear + 1
-                   : currentYear - admissionYear;
+                const course = currentYear - admissionYear + 1;
 
                 const groupInfo = subgroup.subgroup.subgroupNumber.split('.');
                     
@@ -105,7 +102,7 @@ export const studentsSlice = createSlice({
                     ...subgroup,
                     subgroup: {
                         ...subgroup.subgroup,
-                        subgroupNumber: `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`
+                        subgroupNumber: `${course} курс ${groupInfo[0]} гр. ${groupInfo[1]} п.`
                     },
                     students: subgroup.students.map(student => ({
                         ...student,

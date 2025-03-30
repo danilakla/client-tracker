@@ -48,12 +48,14 @@ export const GenerateStudents: FC<GenerateStudentsProps> = memo(() => {
     const trimmedSearchText = deanGenerateStudentsState.searchText.trim().toLowerCase();
   
     const filteredStudents = deanGenerateStudentsState.students.filter(student => {
+      const groupInfo = student.numberOfGroup.split('.');
+
       return (
         !trimmedSearchText ||
         student.name.toLowerCase().includes(trimmedSearchText) ||
         student.lastname.toLowerCase().includes(trimmedSearchText) ||
         student.surname.toLowerCase().includes(trimmedSearchText) ||
-        student.numberOfGroup.toLowerCase().includes(trimmedSearchText) ||
+        `${student.course} курс ${groupInfo[0]} группа ${groupInfo[1]} подгруппа`.includes(trimmedSearchText) ||
         student.specialty.toLowerCase().includes(trimmedSearchText)
       );
     });

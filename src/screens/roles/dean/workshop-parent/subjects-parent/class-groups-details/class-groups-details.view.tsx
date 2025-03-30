@@ -273,7 +273,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
           <Spacing variant='Column' themeSpace={10}/>
           <ScrollView style={{maxHeight: 400, position: 'relative'}}>
             <Column horizontalAlign='center'>
-              <ItemsContainerMobile>
+              <ItemsContainerMobile style={{paddingBottom: 0}}>
               {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
                   Совпадений не найдено
                 </Text>}

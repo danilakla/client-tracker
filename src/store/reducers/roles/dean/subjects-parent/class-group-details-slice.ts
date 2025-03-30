@@ -97,34 +97,34 @@ export const classGroupDetailsSlice = createSlice({
     initialState: initialState,
     reducers: {
         setSubgroupsActionCreator(state, action: PayloadAction<{subgroups: SubgroupInfo[], existingIds: number[] | null}>) {
-            const currentYear = new Date().getFullYear();
-            const currentMonth = new Date().getMonth();
+            const today = new Date();
+            const currentYear = today >= new Date(today.getFullYear(), 7, 1) ? today.getFullYear() : today.getFullYear() - 1; 
 
             if (action.payload.existingIds === null) {
                 state.subgroups = action.payload.subgroups.map(subgroup => {
                     const admissionYear = new Date(subgroup.admissionDate).getFullYear();
-                    const course =
-                         currentMonth >= 7
-                           ? currentYear - admissionYear + 1
-                           : currentYear - admissionYear;
+                    const course = currentYear - admissionYear + 1;
+
                     const groupInfo = subgroup.subgroupNumber.split('.');
 
                     return {
                         ...subgroup,
-                        subgroupNumber: `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
+                        subgroupNumber: `${course} курс ${groupInfo[0]} гр. ${groupInfo[1]} п.`,
                         isExist: false,
                     };
                 });
             } else {
                 const existingIds = action.payload.existingIds as number[];
                 state.subgroups = action.payload.subgroups.map(subgroup => {
-                    const admissionYear = new Date(subgroup.admissionDate).getFullYear();
-                    const course = currentYear - admissionYear + 1;
+
+                const admissionYear = new Date(subgroup.admissionDate).getFullYear();
+                const course = currentYear - admissionYear + 1;
+
                     const groupInfo = subgroup.subgroupNumber.split('.');
                     
                     return {
                         ...subgroup,
-                        subgroupNumber: `${course === 0 ? 1 : course} курс - ${groupInfo[0]} гр. - ${groupInfo[1]} п.`,
+                        subgroupNumber: `${course} курс ${groupInfo[0]} гр. ${groupInfo[1]} п.`,
                         isExist: existingIds.includes(subgroup.idSubgroup),
                     };
                 });
