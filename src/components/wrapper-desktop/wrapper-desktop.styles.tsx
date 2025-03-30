@@ -65,13 +65,13 @@ export const ScreenContent = styled.div<{ isCenter?: boolean }>`
     isCenter &&
     `
     padding-bottom: 65px;
-    min-height: 740px;  
+    min-height: 680px;  
     justify-content: center;
   `}
 `;
 
 export const Wrapper = styled.div`
-    min-height: 740px;
+    min-height: 680px;
 `;
 
 export const BackButton = styled.div`

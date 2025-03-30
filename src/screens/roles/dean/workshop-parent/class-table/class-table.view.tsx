@@ -21,6 +21,7 @@ import { Popup } from '../../../../../ui-kit/popup';
 
 import RefreshLogo from '../../../../../ui-kit/assets/refresh.svg';
 import InfoLogo from '../../../../../ui-kit/assets/info.svg';
+import bookLogo from '../../../../../ui-kit/assets/book.svg';
 import { ContainerWrapper } from '../../../teacher/subjects-parent/class-group-panel/class-group-panel.styled';
 
 
@@ -48,6 +49,14 @@ export const ClassTableView: FC<ClassTableViewProps> = memo(({
   onBack
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
+
+  const [isOpenRules, setIsOpenRules] = useState<boolean>(false);
+  const closeRules = useCallback(() => {
+    setIsOpenRules(false);
+  },[])
+  const openRules = useCallback(() => {
+    setIsOpenRules(true);
+  },[])
 
   const [isOpenClassDescription, setIsOpenClassDescription] = useState<boolean>(false);
   const closeClassDescription = useCallback(() => {
@@ -83,6 +92,9 @@ export const ClassTableView: FC<ClassTableViewProps> = memo(({
         openGradeInfo={onOpenGradeInfo}
         isOpenGradeInfo={isOpenGradeInfo}
         closeGradeInfo={closeGradeInfo}
+        isOpenRules={isOpenRules}
+        openRules={openRules}
+        closeRules={closeRules}
         isOpenClassDescription={isOpenClassDescription}
         closeClassDescription={closeClassDescription}
         onBack={onBack}
@@ -90,6 +102,9 @@ export const ClassTableView: FC<ClassTableViewProps> = memo(({
       (<ClassTableDesktopView
         loading={loading}
         onBack={onBack}
+        isOpenRules={isOpenRules}
+        openRules={openRules}
+        closeRules={closeRules}
         loadingRefresh={loadingRefresh}
         classesIds={classesIds}
         studentsStatistics={studentsStatistics}
@@ -121,6 +136,9 @@ type LocalViewProps = {
   isOpenClassDescription: boolean;
   closeClassDescription: () => void;
   onBack: () => void;
+  isOpenRules: boolean;
+  openRules: () => void;
+  closeRules: () => void;
 }
 
 export const ClassTableMobileView: FC<LocalViewProps> = memo(({
@@ -137,7 +155,10 @@ export const ClassTableMobileView: FC<LocalViewProps> = memo(({
   isOpenGradeInfo,
   closeGradeInfo,
   isOpenClassDescription,
-  closeClassDescription
+  closeClassDescription,
+  openRules,
+  closeRules,
+  isOpenRules
 }) => {
 
   return (
@@ -149,8 +170,14 @@ export const ClassTableMobileView: FC<LocalViewProps> = memo(({
         <CircleLoading state={loading}/>
       </Column> : <ContainerWrapper isDesktop={false}>
         <Surface>
-        <Row style={{position: 'absolute'}}>
-          <Button height={38.4} width={38.4} onClick={openClassDescription} variant='recomended' padding={0}>
+          <Row style={{position: 'absolute'}}>
+            <Button height={38.4} width={38.4} onClick={openRules} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={bookLogo} width={20} height={20}/> 
+              </Column>
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38.4} width={38.4} onClick={openClassDescription} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
               </Column>
@@ -192,33 +219,10 @@ export const ClassTableMobileView: FC<LocalViewProps> = memo(({
             {initData?.teacherName.replaceAll('_', ' ')}</span><br/>
           Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {initData?.description}</span><br/>
-          -------------------------
-          <br/>
-          Справка по статусам:
-          <br/>
-          <span style={{fontFamily: theme.fonts.ht2.family}}>
-          
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[1]}
-          /> - Пропущено<br/>
-        
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[7]}
-          /> - Пропущено(Отработано)<br/>
-          
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[2]}
-          /> - Пропущено по уважительной причине<br/>
-        
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[8]}
-          /> - Пропущено по уважительной причине(Отработано)<br/>
-        
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[3]}
-          /> - Посещено
-          </span>
         </Text>
+      </Modal>
+      <Modal isActive={isOpenRules} closeModal={closeRules} >
+        <RulesText/>
       </Modal>
     </WrapperMobile>
   );
@@ -238,7 +242,10 @@ export const ClassTableDesktopView: FC<LocalViewProps> = memo(({
   closeGradeInfo,
   isOpenClassDescription,
   closeClassDescription,
-  onBack
+  onBack,
+  isOpenRules,
+  closeRules,
+  openRules
 }) => {
 
   return (
@@ -249,6 +256,12 @@ export const ClassTableDesktopView: FC<LocalViewProps> = memo(({
         </Column> : <ContainerWrapper isDesktop={true}>
         <Surface style={{width: 900}}>
           <Row style={{position: 'absolute'}}>
+            <Button height={38.4} width={38.4} onClick={openRules} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={bookLogo} width={20} height={20}/> 
+              </Column>
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
             <Button height={38.4} width={38.4} onClick={openClassDescription} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
@@ -292,37 +305,44 @@ export const ClassTableDesktopView: FC<LocalViewProps> = memo(({
             {initData?.teacherName.replaceAll('_', ' ')}</span><br/>
           Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {initData?.description}</span><br/>
-          -------------------------
-          <br/>
-          Справка по статусам:
-          <br/>
-          <span style={{fontFamily: theme.fonts.ht2.family}}>
-          
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[1]}
-          /> - Пропущено<br/>
-        
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[7]}
-          /> - Пропущено(Отработано)<br/>
-          
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[2]}
-          /> - Пропущено по уважительной причине<br/>
-        
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[8]}
-          /> - Пропущено по уважительной причине(Отработано)<br/>
-        
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[3]}
-          /> - Посещено
-          </span>
         </Text>
+      </Popup>
+      <Popup style={{width: 440}} isActive={isOpenRules} closePopup={closeRules} >
+        <RulesText/>
       </Popup>
     </WrapperDesktop>
   );
 });
+  
+export const RulesText: FC = memo(() => {
+  return (
+    <Text themeFont={theme.fonts.h2} style={{lineHeight: 1.7}}>
+      Справка по статусам:
+      <br/>
+      <span style={{fontFamily: theme.fonts.ht2.family}}>
+      
+      <ColorCircle style={{ display: 'inline-block' }}
+        color={attendanceColorsForStudents[1]}
+      /> - Пропущено<br/>
+      
+      <ColorCircle style={{ display: 'inline-block' }}
+        color={attendanceColorsForStudents[7]}
+      /> - Пропущено(Отработано)<br/>
+      
+      <ColorCircle style={{ display: 'inline-block' }}
+        color={attendanceColorsForStudents[2]}
+      /> - Пропущено по уважительной причине<br/>
+      
+      <ColorCircle style={{ display: 'inline-block' }}
+        color={attendanceColorsForStudents[8]}
+      /> - Пропущено по уважительной причине(Отработано)<br/>
+      
+      <ColorCircle style={{ display: 'inline-block' }}
+        color={attendanceColorsForStudents[3]}
+      /> - Посещено
+      </span>
+    </Text>
+)});
 
 export type StudentsTableProps = {
   data: StatisticOfStudent[];

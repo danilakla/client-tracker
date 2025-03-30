@@ -24,9 +24,11 @@ import { Row } from '../../../../ui-kit/row';
 import { attendanceColorsForStudents, checkIsAttestationGrade } from '../../../../store/reducers/roles/teacher/class-group-control-slice';
 import { useTableScroll } from '../../../../hooks/table-scroll-hook';
 import { ContainerWrapper, EmptyClassItem } from '../../teacher/subjects-parent/class-group-panel/class-group-panel.styled';
-
+import bookLogo from '../../../../ui-kit/assets/book.svg';
 import RefreshLogo from '../../../../ui-kit/assets/refresh.svg';
 import InfoLogo from '../../../../ui-kit/assets/info.svg';
+import { RulesText } from '../../dean/workshop-parent/class-table/class-table.view';
+import { Line } from '../../../../ui-kit/line';
 
 export type StudentClassGroupTableViewProps = {
   role: "ROLE_STUDENT" | "ROLE_PARENTS";
@@ -296,6 +298,14 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
     setIsOpenInfo(!isOpenInfo);
   },[isOpenInfo])
 
+  const [isOpenRules, setIsOpenRules] = useState<boolean>(false);
+  const closeRules = useCallback(() => {
+    setIsOpenRules(false);
+  },[])
+  const openRules = useCallback(() => {
+    setIsOpenRules(true);
+  },[])
+
   return (
     <WrapperMobile onBack={goToClassGroups} role={role} header={studentClassGroupTableState.classGroup?.description}>
       {studentClassGroupTableState.loading === 'loading' ?
@@ -304,8 +314,14 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
       </Column> : <ContainerWrapper isDesktop={false}>
         <Row>
           <Surface style={{width: 'fit-content'}}>
-        <Row style={{position: 'absolute'}}>
-          <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
+          <Row style={{position: 'absolute'}}>
+            <Button height={38.4} width={38.4} onClick={openRules} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+                <Image src={bookLogo} width={20} height={20}/> 
+              </Column>
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
+            <Button height={38.4} width={38.4} onClick={controlInfoWindow} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
               </Column>
@@ -366,33 +382,10 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
             {studentClassGroupTableState.classGroup?.teacherName.replaceAll('_', ' ')}</span><br/>
           Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
             {studentClassGroupTableState.classGroup?.description}</span><br/>
-          -------------------------
-          <br/>
-          Справка по статусам:
-          <br/>
-          <span style={{fontFamily: theme.fonts.ht2.family}}>
-          
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[1]}
-          /> - Пропущено<br/>
-
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[7]}
-          /> - Пропущено(Отработано)<br/>
-          
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[2]}
-          /> - Пропущено по уважительной причине<br/>
-
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[8]}
-          /> - Пропущено по уважительной причине(Отработано)<br/>
-
-          <ColorCircle style={{ display: 'inline-block' }}
-            color={attendanceColorsForStudents[3]}
-          /> - Посещено
-          </span>
         </Text>
+      </Modal>
+      <Modal isActive={isOpenRules} closeModal={closeRules} >
+        <RulesText/>
       </Modal>
     </WrapperMobile>
   );
@@ -473,32 +466,8 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
               {studentClassGroupTableState.classGroup?.teacherName.replaceAll('_', ' ')}</span><br/>
             Описание: <span style={{fontFamily: theme.fonts.ht2.family}}>
               {studentClassGroupTableState.classGroup?.description}</span><br/>
-              -------------------------
-            <br/>
-            Справка по статусам:
-            <br/>
-            <span style={{fontFamily: theme.fonts.ht2.family}}>
-            
-            <ColorCircle style={{ display: 'inline-block' }}
-              color={attendanceColorsForStudents[1]}
-            /> - Пропущено<br/>
-
-            <ColorCircle style={{ display: 'inline-block' }}
-              color={attendanceColorsForStudents[7]}
-            /> - Пропущено(Отработано)<br/>
-
-            <ColorCircle style={{ display: 'inline-block' }}
-              color={attendanceColorsForStudents[2]}
-            /> - Пропущено по уважительной причине<br/>
-
-            <ColorCircle style={{ display: 'inline-block' }}
-              color={attendanceColorsForStudents[8]}
-            /> - Пропущено по уважительной причине(Отработано)<br/>
-
-            <ColorCircle style={{ display: 'inline-block' }}
-              color={attendanceColorsForStudents[3]}
-            /> - Посещено
-            </span>
+            <Line style={{borderRadius: 2, marginTop: 5, marginBottom: 5}} height={2} color={'#52526660'}/>
+            <RulesText/>
           </Text>
         </Surface>
         </Row>

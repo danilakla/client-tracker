@@ -24,6 +24,8 @@ import ShieldLogo from '../../../../../ui-kit/assets/security-shield.svg';
 import RefreshLogo from '../../../../../ui-kit/assets/refresh.svg';
 import attentionSvgrepo from '../../../../../ui-kit/assets/attention-svgrepo.svg';
 import InfoLogo from '../../../../../ui-kit/assets/info.svg';
+import bookLogo from '../../../../../ui-kit/assets/book.svg';
+
 import { Image } from '../../../../../ui-kit/image';
 import QRCode from 'react-qr-code';
 import React from 'react';
@@ -31,6 +33,7 @@ import { Checkbox } from '../../../../../ui-kit/checkbox';
 import { useTableScroll } from '../../../../../hooks/table-scroll-hook';
 import { ActionButtonSwitch } from '../../../../../ui-kit/action-button-switch';
 import { SuccessfulPopup } from '../../../../../ui-kit/successful-popup';
+import { RulesText } from '../../../dean/workshop-parent/class-table/class-table.view';
 
 
 export type ClassGroupPanelViewProps = {
@@ -513,6 +516,14 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   closeRenameClass
 }) => {
 
+  const [isOpenRules, setIsOpenRules] = useState<boolean>(false);
+  const closeRules = useCallback(() => {
+    setIsOpenRules(false);
+  },[])
+  const openRules = useCallback(() => {
+    setIsOpenRules(true);
+  },[])
+
   return (
     <WrapperMobile onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' 
     header={teacherClassGroupControlState.initData?.classGroup.classGroup.description}>
@@ -522,6 +533,12 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
       </Column> : <ContainerWrapper isDesktop={false}>
         <Surface style={{position: 'relative'}}>
           <Row style={{position: 'absolute'}}>
+            <Button height={38.4} width={38.4} onClick={openRules} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+              <Image src={bookLogo} width={20} height={20}/> 
+              </Column>
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
             <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
@@ -698,6 +715,9 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
             ))}</span>
         </Text>
       </Modal>
+      <Modal isActive={isOpenRules} closeModal={closeRules} >
+        <RulesText/>
+      </Modal>
     </WrapperMobile>
   );
 });
@@ -752,6 +772,14 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   closeRenameClass
 }) => {
 
+  const [isOpenRules, setIsOpenRules] = useState<boolean>(false);
+  const closeRules = useCallback(() => {
+    setIsOpenRules(false);
+  },[])
+  const openRules = useCallback(() => {
+    setIsOpenRules(true);
+  },[])
+
   return (
     <WrapperDesktop style={{padding: 'none'}} onBack={goToTeacherClassGroupSubgroups} role='ROLE_TEACHER' 
     header={teacherClassGroupControlState.initData?.classGroup.classGroup.description} isCenter={true}>
@@ -761,6 +789,12 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
       </Column> : <ContainerWrapper isDesktop={true}>
         <Surface style={{width: 900, position: 'relative'}}>
           <Row style={{position: 'absolute'}}>
+            <Button height={38.4} width={38.4} onClick={openRules} variant='recomended' padding={0}>
+              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
+                <Image src={bookLogo} width={20} height={20}/> 
+              </Column>
+            </Button>
+            <Spacing themeSpace={10} variant='Row' />
             <Button height={38.4} width={38.4} onClick={controlDescriptionClass} variant='recomended' padding={0}>
               <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
               <Image src={InfoLogo} width={15} height={15}/> 
@@ -937,6 +971,9 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
               </React.Fragment>
             ))}</span>
         </Text>
+      </Popup>
+      <Popup isActive={isOpenRules} closePopup={closeRules} >
+        <RulesText/>
       </Popup>
     </WrapperDesktop>
   );
