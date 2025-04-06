@@ -112,7 +112,7 @@ export const SignupView: FC<SignupViewProps> = memo(({
         value={signupState.confirmPassword} setValue={setConfirmPassword}/>
       <Spacing variant='Column' themeSpace={30}/>
       <Button onClick={onSignup} state={signupState.loading} variant='primary' padding={[12,17]}>
-        Зарегестрироваться
+        Зарегистрироваться
       </Button>
       <Spacing variant='Column' themeSpace={30}/>
       <Link onClick={goToLogInUser}>

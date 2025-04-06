@@ -61,33 +61,53 @@ export const GenerateStudentsView: FC<GenerateStudentsViewProps> = memo(({
             (data, byte) => data + String.fromCharCode(byte),
             ""
           );
-          const workbook = XLSX.read(binaryStr, { type: 'binary' });
-    
+          const workbook = XLSX.read(binaryStr, { type: "binary" });
+  
           const firstSheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[firstSheetName];
-    
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-            header: ["fio", "course", "numberOfGroup", "subgroup", "specialty"]
-          }) as { fio: string, course: string, numberOfGroup: string, subgroup: string, specialty: string }[];
-    
-          const students = jsonData.map((row) => {
-            const fioParts = row.fio.trim().split(" ");
-            const lastname = fioParts[0];
-            const name = fioParts[1];
-            const surname = fioParts[2];
-    
-            const numberOfGroup = `${row.numberOfGroup}.${row.subgroup}`;
-    
+  
+          const rawData = XLSX.utils.sheet_to_json<any[]>(worksheet, { header: 1 });
+  
+          if (!rawData || rawData.length < 2) {
+            alert("Файл пустой или некорректный.");
+            return;
+          }
+  
+          const headerRow = rawData[0];
+          const dataRows = rawData.slice(1);
+  
+          const headerMap: { [key: string]: number } = {};
+
+          headerRow.forEach((cell: string, index: number) => {
+            const normalized = cell.trim().toLowerCase();
+          
+            if (normalized.includes("фио")) headerMap["fio"] = index;
+            else if (normalized.includes("подгруппа")) headerMap["subgroup"] = index;
+            else if (normalized.includes("группа")) headerMap["numberOfGroup"] = index;
+            else if (normalized.includes("курс")) headerMap["course"] = index;
+            else if (normalized.includes("специальн")) headerMap["specialty"] = index;
+          });
+          
+  
+          const students = dataRows.map((row) => {
+            const fioRaw = row[headerMap["fio"]] ?? "";
+            const fioParts = fioRaw.trim().split(" ");
+            const lastname = fioParts[0] ?? "";
+            const name = fioParts[1] ?? "";
+            const surname = fioParts[2] ?? "";
+  
+            const numberOfGroup = `${row[headerMap["numberOfGroup"]]}.${row[headerMap["subgroup"]]}`;
+  
             return {
               name,
               lastname,
               surname,
-              course: row.course,
+              course: row[headerMap["course"]] ?? "",
               numberOfGroup,
-              specialty: row.specialty,
+              specialty: row[headerMap["specialty"]] ?? "",
             };
           });
-    
+  
           setStudents(students);
         } catch (error: any) {
           console.error("Ошибка при обработке файла:", error);

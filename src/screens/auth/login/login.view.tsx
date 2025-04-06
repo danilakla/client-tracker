@@ -69,7 +69,7 @@ export const LoginView: FC<LoginViewProps> = memo(({
       <Spacing variant='Column' themeSpace={15}/>
       <Link onClick={goToSignUpAndReset}>
         <Text themeFont={theme.fonts.ht2} themeColor={theme.colors.gray}>
-          Зарегестрироваться
+         Зарегистрироваться
         </Text>
       </Link>
     </AuthWrapper>
