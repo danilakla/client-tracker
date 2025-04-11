@@ -96,6 +96,7 @@ type RootProps = {};
 export const Root: FC<RootProps> = () => {
   const { user } = useTypedSelector(state => state.user);
 
+
   const {goToErrorScreen} = useAppControlHook();
 
   useEffect(() => {

@@ -16,6 +16,7 @@ export const useAppControlHook = () => {
         }
     }, [goToWarning, status])
 
+    
     return {
         goToErrorScreen: goToErrorScreen
     }

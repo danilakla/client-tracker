@@ -28,6 +28,9 @@ export const appStatusSlice = createSlice({
             .addCase(getUserInfoActionCreator.fulfilled, (state) => {
                 state.status = 'success';
             })
+            .addCase(getUserInfoActionCreator.rejected, (state) => {
+                state.status = 'no-autorizate';
+            })
             .addCase(getUserInfoActionCreator.pending, (state) => {
                 state.status = "loading";
             });
@@ -36,30 +39,15 @@ export const appStatusSlice = createSlice({
 
 
 export const getUserInfoActionCreator = createAsyncThunk('user/info',
-    async (data: { authToken: string }, thunkApi) => {
+    async (data: { authToken: string}, thunkApi) => {
         const { authToken } = data;
-        try {
-            const responce = await userApi.getUserInfo(authToken);
+        const responce = await userApi.getUserInfo(authToken);
             thunkApi.dispatch(userSlice.actions.setAuthTockenActionCreater(authToken));
             thunkApi.dispatch(userSlice.actions.setUserActionCreater(responce));
 
             if(localStorage.getItem('role') === 'ROLE_PARENTS'){
                 thunkApi.dispatch(userSlice.actions.setUserRoleActionCreater('ROLE_PARENTS'));
             }
-        }
-        catch (e) {
-            // console.log('00000');
-            // if (axios.isAxiosError(e)) {
-            //     if (e.response?.status === 401) {
-            //         console.log('121212');
-            //     } else {
-            //         thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
-            //     }
-            // } else {
-            //     thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
-            // }
-            thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
-        }
     }
 )
 
