@@ -300,4 +300,13 @@ export const deanApi = {
                 return response.data;
             })
     },
+    reassignStudent(authToken: string, studentsId: number, subgroupId: number){
+        return instance.put('/dean/reassign/students',{
+            studentsId: [studentsId],
+            subgroupId: subgroupId
+            }, { headers: {'Authorization' : `Bearer ${authToken}`} })
+            .then((response) => {
+                return response.data;
+            })
+    },
 }

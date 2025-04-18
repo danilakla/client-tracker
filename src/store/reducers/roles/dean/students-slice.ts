@@ -27,8 +27,11 @@ export type SubgroupInfoState = {
 
 export type StudentsState = {
     subgroups: SubgroupInfoState[];
+    selectedNewId: number;
+    searchNewSubgroup: string;
     selectedSubgroup: SubgroupInfoState;
     selectedStudent: StudentInfoState;
+    newSubgroup: number;
     searchSubgroups: string;
     searchStudents: string;
     newPassword: string;
@@ -38,6 +41,7 @@ export type StudentsState = {
     loadingDelete: "idle" | "loading" | "success" | "error";
     loadingAdd: "idle" | "loading" | "success" | "error";
     loadingUpdate: "idle" | "loading" | "success" | "error";
+    loadingReassign: "idle" | "loading" | "success" | "error";
     loading: "idle" | "loading" | "success" | "error";
     loadingRecovery: "idle" | "loading" | "success" | "error";
     errors: Record<string, ErrorType>;
@@ -45,6 +49,10 @@ export type StudentsState = {
 
 const initialState: StudentsState = {
     subgroups: [],
+    selectedNewId: -1,
+    loadingReassign: 'idle',
+    newSubgroup: -1,
+    searchNewSubgroup: '',
     selectedSubgroup: {
         subgroup: {
             idSubgroup: -1,
@@ -88,6 +96,42 @@ export const studentsSlice = createSlice({
     name: "dean-students",
     initialState: initialState,
     reducers: {
+        moveStudentToSubgroup(state, action: PayloadAction<{ idStudent: number; toSubgroupId: number }>
+        ) {
+            const { idStudent, toSubgroupId } = action.payload;
+            let movedStudent: StudentInfoState;
+
+            state.selectedSubgroup = {
+                ...state.selectedSubgroup,
+                students: state.selectedSubgroup.students.filter(
+                    student => student.idStudent !== idStudent
+                ),
+            };
+
+            state.subgroups = state.subgroups.map(subgroup => ({
+                ...subgroup,
+                students: subgroup.students.filter(student => {
+                    if (student.idStudent === idStudent) {
+                        movedStudent = { ...student };
+                        return false;
+                    }
+                    return true;
+                })
+            }));
+        
+            movedStudent!.idSubgroup = toSubgroupId;
+        
+            state.subgroups = state.subgroups.map(subgroup =>
+                subgroup.subgroup.idSubgroup === toSubgroupId
+                    ? {
+                        ...subgroup,
+                        students: [...subgroup.students, movedStudent!].sort((a, b) =>
+                            a.flpName.localeCompare(b.flpName)
+                        ),
+                    }
+                    : subgroup
+            );
+        },          
         setSubgroupsActionCreator(state, action: PayloadAction<SubgroupInfoState[]>) {
             const today = new Date();
             const currentYear = today >= new Date(today.getFullYear(), 7, 1) ? today.getFullYear() : today.getFullYear() - 1; 
@@ -217,8 +261,15 @@ export const studentsSlice = createSlice({
         setSearchSubgroupsActionCreator(state, action: PayloadAction<string>) {
             state.searchSubgroups = action.payload;
         },
+        setSearchNewSubgroupsActionCreator(state, action: PayloadAction<string>) {
+            state.searchNewSubgroup = action.payload;
+        },
         setSearchStudentsActionCreator(state, action: PayloadAction<string>) {
             state.searchStudents = action.payload;
+        },
+        setSelectedNewIdActionCreator(state, action: PayloadAction<{id: number, onSuccess: () => void}>) {
+            state.selectedNewId = action.payload.id;
+            action.payload.onSuccess();
         },
         setNewPasswordActionCreator(state, action: PayloadAction<string>) {
             state.newPassword = action.payload;
@@ -312,7 +363,16 @@ export const studentsSlice = createSlice({
             .addCase(deleteSubgroupActionCreator.rejected, (state) => {
                 state.loadingDelete = "idle";
             })
-            
+
+            .addCase(reassignStudentActionCreator.fulfilled, (state) => {
+                state.loadingReassign = 'success';
+            })
+            .addCase(reassignStudentActionCreator.pending, (state) => {
+                state.loadingReassign = 'loading';
+            })
+            .addCase(reassignStudentActionCreator.rejected, (state) => {
+                state.loadingReassign = "idle";
+            })
     },
 });
 
@@ -464,6 +524,24 @@ export const deleteSubgroupActionCreator = createAsyncThunk('dean-students/delet
         try {
             await deanApi.deleteSubgroup(authToken, idSubgroup);
             thunkApi.dispatch(studentsSlice.actions.removeSubgroupByIdActionCreator(idSubgroup));
+            onSuccess();
+        }
+        catch (e) {
+            if (axios.isAxiosError(e)) {
+                if(e.response?.status === 401){
+                    thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "no-autorizate" }))
+                } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+            } else thunkApi.dispatch(appStatusSlice.actions.setStatusApp({ status: "app-error" }))
+        }
+    }
+)
+
+export const reassignStudentActionCreator = createAsyncThunk('dean-students/reassign-student',
+    async (data: {authToken: string, idStudent: number, idSubgroup: number, onSuccess: () => void}, thunkApi ) => {
+        const { authToken, idStudent, idSubgroup, onSuccess } = data;
+        try {
+            await deanApi.reassignStudent(authToken, idStudent, idSubgroup);
+            thunkApi.dispatch(studentsSlice.actions.moveStudentToSubgroup({idStudent, toSubgroupId: idSubgroup}));
             onSuccess();
         }
         catch (e) {

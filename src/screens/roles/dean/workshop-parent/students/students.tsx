@@ -4,7 +4,7 @@ import { StudentsView } from './students.view';
 import { useDeanWorkshop } from '../workshop/workshop.props';
 import { useUser } from '../../../../../hooks/user-hook';
 import { useAppDispatch, useTypedSelector } from '../../../../../hooks/use-typed-selector';
-import { createStudentActionCreator, deleteStudentActionCreator, deleteSubgroupActionCreator, initDeanMembersActionCreator, recoverPasswordForStudentActionCreator, StudentInfoState, studentsSlice, SubgroupInfoState, updateStudentActionCreator } from '../../../../../store/reducers/roles/dean/students-slice';
+import { createStudentActionCreator, deleteStudentActionCreator, deleteSubgroupActionCreator, initDeanMembersActionCreator, reassignStudentActionCreator, recoverPasswordForStudentActionCreator, StudentInfoState, studentsSlice, SubgroupInfoState, updateStudentActionCreator } from '../../../../../store/reducers/roles/dean/students-slice';
 
 export const Students: FC<StudentsProps> = memo(() => {
   const goToWorkshop = useDeanWorkshop();
@@ -23,6 +23,8 @@ export const Students: FC<StudentsProps> = memo(() => {
     setSelectedStudentActionCreator,
     setSelectedSubgroupActionCreator,
     clearFormActionCreator,
+    setSearchNewSubgroupsActionCreator,
+    setSelectedNewIdActionCreator,
     reset
   } = studentsSlice.actions;
 
@@ -49,6 +51,14 @@ export const Students: FC<StudentsProps> = memo(() => {
   const setSearchStudents = useCallback((value: string)=>{
     dispatch(setSearchStudentsActionCreator(value));
   },[dispatch, setSearchStudentsActionCreator])
+
+  const setSearchNewSubgroup = useCallback((value: string)=>{
+    dispatch(setSearchNewSubgroupsActionCreator(value));
+  },[dispatch, setSearchNewSubgroupsActionCreator])
+
+  const setSelectedNewId = useCallback((id: number, onSuccess: () => void)=>{
+    dispatch(setSelectedNewIdActionCreator({id, onSuccess}));
+  },[dispatch, setSelectedNewIdActionCreator])
 
   const setSelectedSubgroup = useCallback((value: SubgroupInfoState, onSuccess: () => void)=>{
     dispatch(setSelectedSubgroupActionCreator({value, onSuccess}));
@@ -128,8 +138,6 @@ export const Students: FC<StudentsProps> = memo(() => {
     deanStudentsState.newSurname
   ]);
 
-
-
   const deleteSubgroup = useCallback((onSuccess: () => void)=>{
     dispatch(deleteSubgroupActionCreator({
       authToken: authToken,
@@ -142,11 +150,24 @@ export const Students: FC<StudentsProps> = memo(() => {
     deanStudentsState.selectedSubgroup.subgroup.idSubgroup,
   ]);
 
+  const reassignStudent = useCallback((onSuccess: () => void) => {
+    dispatch(reassignStudentActionCreator({
+      authToken,
+      idStudent: deanStudentsState.selectedStudent.idStudent,
+      idSubgroup: deanStudentsState.selectedNewId,
+      onSuccess
+    }));
+  },[
+    authToken, dispatch,
+    deanStudentsState.selectedStudent.idStudent,
+    deanStudentsState.selectedNewId])
+
   return (
       <StudentsView 
         onCreate={onCreate}
         setNewLastname={setNewLastname}
         clearForm={clearForm}
+        reassignStudent={reassignStudent}
         setNewName={setNewName}
         deleteSubgroup={deleteSubgroup}
         setNewSurname={setNewSurname}
@@ -159,6 +180,8 @@ export const Students: FC<StudentsProps> = memo(() => {
         setSearchSubgroups={setSearchSubgroups}
         deanStudentsState={deanStudentsState}
         goToWorkshop={goToWorkshop}
+        setSearchNewSubgroup={setSearchNewSubgroup}
+        setSelectedNewId={setSelectedNewId}
         />
     );
 });

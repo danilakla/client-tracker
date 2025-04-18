@@ -24,6 +24,9 @@ import { ConfirmDeletePopup } from '../../../../../components/confirm-delete-pop
 import { GridContainer } from '../../../../../ui-kit/grid-container';
 import { ActionBlockButton } from '../../../../../ui-kit/action-block-button';
 import { ItemsContainerMobile } from '../subjects-parent/control-subjects/control-subjects.styled';
+import { Select } from '../../../../../ui-kit/select';
+import { ScrollView } from '../../../../../ui-kit/scroll-view';
+import { ActionExistbleButton } from '../../../../../ui-kit/action-existble-button';
 
 export type StudentsViewProps = {
   goToWorkshop: () => void;
@@ -35,12 +38,15 @@ export type StudentsViewProps = {
   setNewLastname: (value: string) => void;
   setNewName: (value: string) => void;
   onUpdate: (onSuccess: () => void) => void;
+  setSearchNewSubgroup: (value: string) => void;
+  setSelectedNewId: (id: number, onSuccess: () => void) => void;
   clearForm: () => void;
   deleteStudent: (onSuccess: () => void) => void;
   setNewSurname: (value: string) => void;
   setSelectedSubgroup: (value: SubgroupInfoState, onSuccess: () => void) => void;
   setSelectedStudent: (value: StudentInfoState, onSuccess: () => void) => void;
   deleteSubgroup: (onSuccess: () => void) => void;
+  reassignStudent: (onSuccess: () => void) => void;
 };
 
 export const StudentsView: FC<StudentsViewProps> = memo(({
@@ -57,7 +63,10 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
   recoveryPasswordForStudent,
   setNewName,
   setNewSurname,
+  setSearchNewSubgroup,
+  setSelectedNewId,
   setSelectedStudent,
+  reassignStudent,
   setSelectedSubgroup
 }) => {
   const isMobile = useMediaQuery({maxWidth: theme.toMobileSize});
@@ -180,6 +189,35 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
     deleteSubgroup(afterDeleteSubgroupPopup);
   },[deleteSubgroup, afterDeleteSubgroupPopup])
 
+  const [isOpenReassign, setIsOpenReassign] = useState<boolean>(false);
+  const openReassign = useCallback(() => {
+    setIsOpenReassign(true);
+  },[])
+  const closeReassign = useCallback(() => {
+    setSearchNewSubgroup('');
+    setIsOpenReassign(false);
+  },[setSearchNewSubgroup])
+
+  const [isOpenConfirmReassign, setIsOpenConfirmReassign] = useState<boolean>(false);
+  const openConfirmReassign = useCallback((id: number) => {
+    setSelectedNewId(id, () => setIsOpenConfirmReassign(true));
+  },[setSelectedNewId])
+  const closeConfirmReassign = useCallback(() => {
+    setIsOpenConfirmReassign(false);
+  },[])
+
+  const onSuccessReassignStudent = useCallback(() => {
+    setCurrentScreen('subgroup');
+    setSearchNewSubgroup('');
+    setSearchStudents('');
+    setIsOpenReassign(false);
+    setIsOpenConfirmReassign(false);
+  },[setSearchNewSubgroup, setSearchStudents])
+
+  const confirmReassing = useCallback(() => {
+    reassignStudent(onSuccessReassignStudent);
+  },[reassignStudent, onSuccessReassignStudent])
+
   return (
     <>
     {deanStudentsState.loading === 'loading' && <Column style={{position: 'absolute', height: '100dvh', top: 0, zIndex: 1}}>
@@ -205,6 +243,7 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
       onClick={goToStudentDetails}
       data={deanStudentsState.selectedSubgroup} />}
     {currentScreen === 'student' && <StudentDetailsView
+      openReassign={openReassign}
       isCenter={true}
       onBack={handleBackActions[currentScreen]}
       header={headers[currentScreen]}
@@ -269,6 +308,30 @@ export const StudentsView: FC<StudentsViewProps> = memo(({
         isActive={isOpenDeleteSubgroupPopup} 
         state={deanStudentsState.loadingDelete}
         onDelete={onDeleteSubgroup} />
+    <ReassignView data={deanStudentsState.subgroups}
+      currentGroupId={deanStudentsState.selectedSubgroup.subgroup.idSubgroup} 
+      search={deanStudentsState.searchNewSubgroup}
+      setSearch={setSearchNewSubgroup}
+      openConfirmReassign={openConfirmReassign} 
+      isMobile={isMobile} isActive={isOpenReassign} closeWindow={closeReassign}/>
+    <Popup isActive={isOpenConfirmReassign} closePopup={closeConfirmReassign}>
+      <Column horizontalAlign='center'>
+        <Text themeColor={theme.colors.attentive} themeFont={theme.fonts.h2} align='center'> 
+          Вы уверены, что хотите<br/>
+          переназначить подгруппу?
+        </Text>
+        <Spacing  themeSpace={25} variant='Column' />
+        <Row>
+          <Button onClick={confirmReassing} state={deanStudentsState.loadingReassign} variant='attentive' padding={[12,17]}>
+            Переназначить
+          </Button>
+          <Spacing variant='Row' themeSpace={20}/>
+          <Button onClick={closeConfirmReassign} variant='recomended' padding={[12,17]}>
+            Отмена
+          </Button>
+        </Row>
+      </Column>
+    </Popup>
     </>
   );
 });
@@ -441,6 +504,7 @@ type StudentDetailsViewProps = {
   openUpdateAccountData: () => void;
   login: string;
   group: string;
+  openReassign: () => void;
 
   header: string;
   onBack: () => void;
@@ -454,6 +518,7 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
   controlConfirmRecoveryPopup,
   controlConfirmDeletePopup,
   openUpdateAccountData,
+  openReassign,
   keyStudentParents,
   fioFields,
 
@@ -505,7 +570,7 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
         <Spacing themeSpace={15} variant='Column' />
         <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
         <Spacing variant='Column' themeSpace={10} />
-        <ActionButton onClick={openUpdateAccountData} text='Перенести в другую подгруппу' />
+        <ActionButton onClick={openReassign} text='Перенести в другую подгруппу'/>
         <Spacing variant='Column' themeSpace={10} />
         <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />
         <Spacing variant='Column' themeSpace={10} />
@@ -559,6 +624,8 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
             </Surface>
             <Spacing themeSpace={15} variant='Column' />
             <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
+            <Spacing variant='Column' themeSpace={10} />
+            <ActionButton onClick={openReassign} text='Перенести в другую подгруппу' />
             <Spacing variant='Column' themeSpace={10} />
             <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />
             <Spacing variant='Column' themeSpace={10} />
@@ -730,5 +797,96 @@ export const ConfirmRecoveryPopupView: FC<ConfirmRecoveryPopupViewProps> = memo(
         </Row>
       </Column>
     </Popup>
+  );
+});
+
+
+type ReassignViewProps = {
+  isMobile: boolean;
+  isActive: boolean;
+  closeWindow: () => void;
+  currentGroupId: number;
+  openConfirmReassign: (id: number) => void;
+  search: string,
+  setSearch: (value: string) => void;
+  data: SubgroupInfoState[];
+}
+
+export const ReassignView: FC<ReassignViewProps> = memo(({
+  isMobile,
+  isActive,
+  search,
+  setSearch,
+  closeWindow,
+  currentGroupId,
+  data,
+  openConfirmReassign
+}) => {
+  const [filteredData, setFilteredData] = useState<SubgroupInfoState[]>([]);
+
+  useEffect(() => {
+    const trimmedSearchText = search.trim().toLowerCase();
+
+    const filteredSubgroups = data
+      .filter(item => 
+        !trimmedSearchText || item.subgroup.subgroupNumber.toLowerCase().includes(trimmedSearchText) 
+      )
+      .sort((a, b) => {
+        const numA = parseFloat(a.subgroup.subgroupNumber);
+        const numB = parseFloat(b.subgroup.subgroupNumber);
+        return numA - numB;
+      });
+
+      setFilteredData(filteredSubgroups.filter(item => item.subgroup.idSubgroup !== currentGroupId));
+  }, [data, search, currentGroupId]);
+
+  return (
+    isMobile ?
+      (<Modal isActive={isActive} closeModal={closeWindow}>
+        <Column horizontalAlign='center'>
+          <Text themeFont={theme.fonts.h2}>
+            Выберите подгруппу
+          </Text>
+          <Spacing variant='Column' themeSpace={10} />
+          <Search value={search} setValue={setSearch}/>
+          <Spacing variant='Column' themeSpace={10} />
+          <ScrollView style={{maxHeight: 440}}>
+            <Column horizontalAlign='center'>
+              <ItemsContainerMobile style={{paddingBottom: 0}}>
+                {filteredData.length === 0 && <Text themeFont={theme.fonts.ht2}>
+                  Совпадений не найдено
+                </Text>}
+                {filteredData.map((item) => 
+                  <ActionButton key={1} 
+                    onClick={() => openConfirmReassign(item.subgroup.idSubgroup)} 
+                    text={item.subgroup.subgroupNumber}/>)}
+              </ItemsContainerMobile>
+            </Column>
+          </ScrollView>
+        </Column>
+      </Modal>) :
+      (<Popup isActive={isActive} closePopup={closeWindow}>
+        <Column horizontalAlign='center'>
+          <Text themeFont={theme.fonts.h2}>
+            Выберите подгруппу
+          </Text>
+          <Spacing variant='Column' themeSpace={10} />
+          <Search value={search} setValue={setSearch}/>
+          <Spacing variant='Column' themeSpace={10} />
+          <ScrollView style={{maxHeight: 340}}>
+            <Column horizontalAlign='center'>
+              <ItemsContainerMobile style={{paddingBottom: 0, width: 440}}>
+                {filteredData.length === 0 && <Text themeFont={theme.fonts.ht2}>
+                  Совпадений не найдено
+                </Text>}
+                {filteredData.map((item) => 
+                <ActionButton key={1} 
+                  onClick={() => openConfirmReassign(item.subgroup.idSubgroup)} 
+                  text={item.subgroup.subgroupNumber}/>)}
+              </ItemsContainerMobile>
+            </Column>
+          </ScrollView>
+        </Column>
+      </Popup>)
   );
 });
