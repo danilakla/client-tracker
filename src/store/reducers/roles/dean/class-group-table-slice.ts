@@ -232,11 +232,11 @@ export const reloadDeanClassTableActionCreator = createAsyncThunk('class-group-t
     async (data: { authToken: string, initData: InitData | null}, thunkApi ) => {
         const { authToken, initData } = data;
         try {
-            // if(initData === null){
-            //     return;
-            // }
+            if(initData === null){
+                return;
+            }
 
-            const responce = await deanApi.getClassGroupTable(authToken, 1);
+            const responce = await deanApi.getClassGroupTable(authToken, initData.idClassHold);
 
             const sortedResponse = {
                 ...responce,

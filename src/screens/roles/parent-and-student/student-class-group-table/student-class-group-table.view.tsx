@@ -544,39 +544,33 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
       </Button>
       <Spacing themeSpace={15} variant='Column' />
       <Surface 
-        padding='10px' borderRadius='10px' 
-        borderColor={theme.colors.foreground} height={357} width={300}>
+        padding='0px' borderRadius='10px' style={{boxSizing: 'content-box'}}
+        borderColor={theme.colors.foreground} height={372} width={300}>
           {redisKeyData === null ? (
             <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
-              <Image src={ShieldLogo} width={250} height={250}/>
+              <Image src={ShieldLogo} width={300} height={300}/>
             </Column>) : (<>
             <Surface 
               padding='0px' 
               borderColor={theme.colors.surface} 
-              style={{borderRadius: 10, overflow: 'hidden', borderWidth: 5}}>
-                {hasCameraAccess ? loadingScan === 'loading' ? 
-                  (<Column style={{height: 268, position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
+              style={{borderRadius: 10, margin: 0, overflow: 'hidden', borderWidth: 0}}>
+                {loadingScan === 'loading' ? 
+                  (<Column style={{height: 300, position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
                     <CircleLoading state={'loading'}/>
                   </Column>) : 
                 (<Scanner 
+                components={{zoom: true}}
                 sound={false}
-                onError={() => setErrorAccessCamera()}
                 styles={{
                 video: {
-                  height: 268,
-                  width: 268,
+                  height: 300,
+                  width: 300,
                 },
                 container: {
-                  height: 268,
-                  width: 268
+                  height: 300,
+                  width: 300
                 }
-              }} onScan={(result: IDetectedBarcode[]) => onHandleQrCode(result[0].rawValue)} />)
-                : 
-              <Column style={{height: 268}} horizontalAlign='center' verticalAlign='center'>
-                <Text align='center' themeFont={theme.fonts.h3} themeColor={theme.colors.gray}>
-                  При подключении к камере произошла ошибка, перезагрузите страницу или проверте доступ
-                </Text>
-            </Column>}
+              }} onScan={(result: IDetectedBarcode[]) => onHandleQrCode(result[0].rawValue)} />)}
             </Surface>
             <Spacing themeSpace={15} variant='Column' />
             <Column horizontalAlign='center'>

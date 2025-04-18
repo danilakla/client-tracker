@@ -227,22 +227,25 @@ export const classGroupControlSlice = createSlice({
         setStudentsStatisticsActionCreator(state, action: PayloadAction<StatisticOfStudent[]>) {
             state.studentsStatistics = action.payload;
         },
-        removeLastClassActionCreator(state) {
-            const lastClassIndex = state.classesIds
-                .map((classItem, index) => ({ ...classItem, index }))
-                .reverse()
-                .find((classItem) => !classItem.isAttestation)?.index;
+        removeClassActionCreator(state, action: PayloadAction<number>) {
+            const classId = action.payload;
+            let positionCounter = 1;
 
-            if (lastClassIndex !== undefined) {
-                const [removedClass] = state.classesIds.splice(lastClassIndex, 1);
+            state.classesIds = state.classesIds.filter((lession) => lession.idClass !== classId).map((classItem) => {
+                const position = classItem.isAttestation ? -1 : positionCounter++;
             
-                state.studentsStatistics = state.studentsStatistics.map((studentStatistic) => ({
-                    ...studentStatistic,
-                    grades: studentStatistic.grades.filter((grade) => grade.idClass !== removedClass.idClass),
-                }));
+                return {
+                    ...classItem,
+                    position
+                };
+            });
+
+            state.studentsStatistics = state.studentsStatistics.map((studentStatistic) => ({
+                ...studentStatistic,
+                grades: studentStatistic.grades.filter((grade) => grade.idClass !== classId),
+            }));
             
                 state.countClasses--;
-            }
         },
         setClassesIdsActionCreator(state, action: PayloadAction<{
             idClass: number,
@@ -740,7 +743,7 @@ export const deleteClassActionCreator = createAsyncThunk('teacher-class-delete',
         const { authToken, idClass, onSuccess } = data;
         try {
             await teacherApi.deleteClass(authToken, idClass);
-            thunkApi.dispatch(classGroupControlSlice.actions.removeLastClassActionCreator());
+            thunkApi.dispatch(classGroupControlSlice.actions.removeClassActionCreator(idClass));
             onSuccess();
         }
         catch (e) {

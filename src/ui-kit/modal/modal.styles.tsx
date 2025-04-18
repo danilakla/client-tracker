@@ -7,8 +7,6 @@ export const WrapperModal = styled.div<{
     height: 100dvh;
     top: 0;
     left: 0;
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
     position: fixed;
     will-change: opacity, transform;
     display: flex;

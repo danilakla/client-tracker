@@ -74,19 +74,12 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   ])
 
   const deleteClass = useCallback((onSuccess: () => void) => {
-    const lastNonAttestationClass = teacherClassGroupControlState.classesIds
-        .slice()
-        .reverse()
-        .find(classItem => !classItem.isAttestation);
-
-    if (lastNonAttestationClass) {
         dispatch(deleteClassActionCreator({
             authToken: authToken,
-            idClass: lastNonAttestationClass.idClass,  
+            idClass: teacherClassGroupControlState.selectedClass.idClass,  
             onSuccess: onSuccess
         }));
-    }
-}, [dispatch, authToken, teacherClassGroupControlState.classesIds]);
+}, [dispatch, authToken, teacherClassGroupControlState.selectedClass.idClass]);
 
   const updateGrade = useCallback((onSuccess: () => void)=>{
     dispatch(updateGradeActionCreator({

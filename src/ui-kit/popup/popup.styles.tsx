@@ -8,8 +8,6 @@ export const WrapperPopap = styled.div<{
     z-index: 1000;
     box-sizing: border-box;
     top: 0;
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
     background: rgba(24, 24, 24, 0.11);
     left: 0;
     background-color: rgba(0,0,0,0.3);

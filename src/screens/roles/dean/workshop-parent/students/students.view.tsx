@@ -505,6 +505,8 @@ export const StudentDetailsView: FC<StudentDetailsViewProps> = memo(({
         <Spacing themeSpace={15} variant='Column' />
         <ActionButton onClick={openUpdateAccountData} text='Учётные данные' />
         <Spacing variant='Column' themeSpace={10} />
+        <ActionButton onClick={openUpdateAccountData} text='Перенести в другую подгруппу' />
+        <Spacing variant='Column' themeSpace={10} />
         <ActionButton onClick={controlConfirmRecoveryPopup} text='Сбросить пароль' />
         <Spacing variant='Column' themeSpace={10} />
         <ActionButton 

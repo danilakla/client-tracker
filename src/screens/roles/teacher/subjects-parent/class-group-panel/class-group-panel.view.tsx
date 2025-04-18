@@ -159,6 +159,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   },[])
   const closeDeletePopup = useCallback(() => {
     setIsOpenDeletePopup(false);
+    setIsClassControlPopup(false);
   },[])
   const confirmDeletePopup = useCallback(() => {
     deleteClass(closeDeletePopup);
@@ -256,8 +257,10 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
     renameClass(closeRenameClass);
   },[renameClass, closeRenameClass])
 
+
   return (
     <>
+      
       {
         isMobile ? 
         (<ClassGroupPanelMobileView
@@ -373,6 +376,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
         state={teacherClassGroupControlState.loadingDelete}
         onDelete={confirmDeletePopup} />
       <QrCodeControlPopup startQrCode={startQrCode}
+        isMobile={isMobile}
         qrCodeData={teacherClassGroupControlState.qrCodePopup.qrCodeData}
         stateQrCode={teacherClassGroupControlState.qrCodePopup.loadingQrCode} 
         stateStart={teacherClassGroupControlState.qrCodePopup.loadingStart} 
@@ -551,14 +555,6 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
               <Image src={RefreshLogo} width={15} height={15}/> 
               </Column>
             </Button>
-            <Spacing themeSpace={10} variant='Row' />
-            {teacherClassGroupControlState.isNeedAttestation && 
-            <Button height={38} width={38} onClick={controlSendAttestation} 
-              variant='attentive' padding={0}>
-              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
-              <Image src={attentionSvgrepo} width={20} height={20}/> 
-              </Column>
-            </Button>}
           </Row>
           <Spacing themeSpace={10} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
@@ -576,9 +572,10 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
                 Добавить занятие
               </Button>
               <Spacing themeSpace={20} variant='Row' />
-              <Button onClick={openDeletePopup} height={45} variant='attentive' padding={[12, 10]}>
-                Удалить занятие
-              </Button>
+              {teacherClassGroupControlState.isNeedAttestation && 
+              <Button onClick={controlSendAttestation} height={45} variant='attentive' padding={[12, 10]}>
+                Отправить аттестацию
+              </Button>}
             </Row>}
         </Surface>
         <Spacing variant='Column' themeSpace={85} />
@@ -676,6 +673,13 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           state={teacherClassGroupControlState.loadingReview}
           variant="primary" padding={[12,17]}>
           Пересмотр
+        </Button>
+        <Spacing themeSpace={15} variant='Column' />
+        <Button 
+          onClick={openDeletePopup} 
+          width={200}
+          variant='attentive' padding={[12,17]}>
+          Удалить занятие
         </Button>
       </Modal>
       <Modal closeModal={closeRenameClass}  isActive={isOpenRenameClass}>
@@ -807,14 +811,6 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
               <Image src={RefreshLogo} width={15} height={15}/> 
               </Column>
             </Button>
-            <Spacing themeSpace={10} variant='Row' />
-            {teacherClassGroupControlState.isNeedAttestation && 
-            <Button height={38} width={38} onClick={controlSendAttestation} 
-               variant='attentive' padding={0}>
-              <Column style={{height: '100%'}}  verticalAlign='center' horizontalAlign='center'>
-              <Image src={attentionSvgrepo} width={20} height={20}/> 
-              </Column>
-            </Button>}
           </Row>
           <Spacing themeSpace={20} variant='Column' />
           {teacherClassGroupControlState.studentsStatistics.length !== 0 ? 
@@ -832,9 +828,9 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
                 Добавить занятие
               </Button>
               <Spacing themeSpace={15} variant='Row' />
-              {teacherClassGroupControlState.classesIds.length !== 0 && 
-                <Button onClick={openDeletePopup} variant='attentive' padding={[12, 17]}>
-                  Удалить занятие
+              {teacherClassGroupControlState.isNeedAttestation && 
+                <Button onClick={controlSendAttestation} variant='attentive' padding={[12, 17]}>
+                  Отправить аттестацию 
                 </Button>}
             </Row>}
         </Surface>
@@ -893,6 +889,13 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
             width={240}
             variant="primary" padding={[12,17]}>
             Пересмотр
+          </Button>
+          <Spacing themeSpace={15} variant='Column' />
+          <Button 
+            onClick={openDeletePopup} 
+            width={240}
+            variant='attentive' padding={[12,17]}>
+            Удалить занятие
           </Button>
         </Column>
       </Popup>
@@ -992,6 +995,7 @@ export type QrCodeControlPopupProps = {
   stateQrCode: "idle" | "loading" | "success" | "error";
   qrCodeData: QrCodeDataType | null;
   startQrCode: () => void;
+  isMobile: boolean;
 };
     
 export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
@@ -1003,6 +1007,7 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
   setTimeValueForRefresh,
   setTimeValueForReview,
   stateQrCode,
+  isMobile,
   generateQrCode,
   stateStart,
   qrCodeData,
@@ -1050,6 +1055,8 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
     setIsStarted(false);
   },[closePopup]) 
 
+  const [isOpenFull, setIsOpenFull] = useState<boolean>(false);
+
   return (
     <Popup isActive={isActive} closePopup={() => {}}>
       <Column horizontalAlign='center'>
@@ -1064,7 +1071,7 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
           value={timeValueForRefresh} 
           step={0.5}
           setValue={setTimeValueForRefresh}/>
-        <Spacing variant='Column' themeSpace={25}/>
+        <Spacing variant='Column' themeSpace={15}/>
         <Text themeFont={theme.fonts.h2}>
           Время для пересмотра: <span style={{width: 70, display: 'inline-block'}}><b> {timeValueForReview} мин.</b> </span>
         </Text>
@@ -1094,23 +1101,42 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
             </Button>}
         </Row>
       </Column>
-      <Spacing variant='Column' themeSpace={30}/>
-      <Surface padding='10px' borderRadius='10px' borderColor={theme.colors.foreground} height={300} width={300}>
+      <Spacing variant='Column' themeSpace={10}/>
+      <Surface padding='10px' borderRadius='10px' borderColor={theme.colors.foreground} height={isMobile ? 320 : 370} width={isMobile ? 320: 370}>
         <Column style={{height: '100%', position: 'relative'}} horizontalAlign='center' verticalAlign='center'>
           {!isStarted ? <Image src={ShieldLogo} width={250} height={250}/> : <>
             {
               (stateQrCode === 'idle' || stateQrCode === 'loading') ? 
                 (<CircleLoading state={'loading'}/>) :
                 (<>
-                  <QRCode
+                  <QRCode level='L' size={500} onClick={ !isMobile ? () => setIsOpenFull(true) : () => {}}
                     value={JSON.stringify(qrCodeData)}
                     />
                 </>)
             }
             </>}
         </Column>
+        {isOpenFull && <Column horizontalAlign='center' verticalAlign='center'
+        onClick={() => setIsOpenFull(false)}
+          style={{
+            position: 'absolute', 
+            left: 0, top: 0, 
+            height: '100vh', 
+            width: '100vw', 
+            background: 'white', 
+            zIndex: 1000000000000000}}>
+              {
+                (stateQrCode === 'idle' || stateQrCode === 'loading') ? 
+                (<CircleLoading state={'loading'}/>) :
+                (<>
+                  <QRCode level='L' size={550}
+                    value={JSON.stringify(qrCodeData)}
+                  />
+                </>)
+              }
+      </Column>}
       </Surface>
-      <Spacing variant='Column' themeSpace={25}/>
+      <Spacing variant='Column' themeSpace={10}/>
       <Column horizontalAlign='center'>
         <Button 
           onClick={onClose} 
