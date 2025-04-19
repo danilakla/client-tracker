@@ -231,7 +231,7 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
                   onClick={switchHasApplyAttestation} />
           <Spacing themeSpace={20} variant='Column' />
           <ActionButtonSwitch  
-            disable={type === 'edit'}
+            disable={type === 'edit'} 
             text='Совместные занятия'
             isLeft={!deanClassGroupDetailsState.isMany} 
             onClick={switchIsMany} />
@@ -377,15 +377,16 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
             </Column>
           <Spacing themeSpace={25} variant='Row' />
             <Surface >
-              <Row horizontalAlign='space-between'>
-                <ActionButtonSwitch  
-                  disable={type === 'edit'}
-                  text='Совместные занятия'
-                  isLeft={!deanClassGroupDetailsState.isMany} 
-                  onClick={switchIsMany} />
-                {type === 'edit' && <Spacing themeSpace={200} variant='Row' />}
-              </Row>
+              <ActionButtonSwitch  
+                disable={type === 'edit'}
+                text='Совместные занятия'
+                isLeft={!deanClassGroupDetailsState.isMany} 
+                onClick={switchIsMany} />
               <Spacing themeSpace={15} variant='Column' />
+              <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+                Назначенные подгруппы
+              </Text>
+              <Spacing variant='Column' themeSpace={5}/>
               <Row style={{width: '100%', flexShrink: 0}}>
                 <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
                 <Spacing themeSpace={10} variant='Row' />
@@ -394,10 +395,6 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                 </Button>
               </Row>
               <Spacing themeSpace={15} variant='Column' />
-              <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-                Назначенные подгруппы
-              </Text>
-              <Spacing variant='Column' themeSpace={5}/>
               <ScrollView style={{height: 255}}>
                 <Column horizontalAlign='center'>
                   <ItemsContainerMobile style={{paddingBottom: 0}}>
