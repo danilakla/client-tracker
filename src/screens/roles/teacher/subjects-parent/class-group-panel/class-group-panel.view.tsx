@@ -41,6 +41,7 @@ export type ClassGroupPanelViewProps = {
   goToTeacherClassGroupSubgroups: () => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
   switchIsPassed: () => void;
+  setHourAttestation: (value: string) => void;
   updateGrade: (onSuccess: () => void) => void;
   toggleComplited: () => void;
   deleteClass: (onSuccess: () => void) => void;
@@ -87,6 +88,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
   createClass,
   updateGrade,
   setSelectedGrade,
+  setHourAttestation,
   toggleAttested,
   deleteClass,
   setAttendance,
@@ -302,6 +304,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           calculateAttestation={onCalculateAttestation}
           renameClass={handleRenameClass}
           openClassAttestation={openClassAttestation}
+          setHourAttestation={setHourAttestation}
           closeClassAttestation={closeClassAttestation}
           isOpenRenameClass={isOpenRenameClass}
           closeRenameClass={closeRenameClass}
@@ -312,6 +315,7 @@ export const ClassGroupPanelView: FC<ClassGroupPanelViewProps> = memo(({
           onClickSave={onClickSave}
           renameClass={handleRenameClass}
           setNameOfClass={setNameOfClass}
+          setHourAttestation={setHourAttestation}
           calculateAttestation={onCalculateAttestation}
           handleReview={handleReview}
           setAvgGrade={setAvgGrade}
@@ -468,6 +472,7 @@ type LocalViewProps = {
   controlSendAttestation: () => void;
   isOpenRenameClass: boolean;
   openRenameClass: () => void;
+  setHourAttestation: (value: string) => void;
   closeRenameClass: () => void;
 };
 
@@ -489,6 +494,7 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
   openUpdateWindow,
   handleReview,
   switchIsPassed,
+  setHourAttestation,
   toggleAttested,
   confirmUpdate,
   reloadTable,
@@ -623,14 +629,14 @@ export const ClassGroupPanelMobileView: FC<LocalViewProps> = memo(({
           errorHour={teacherClassGroupControlState.errors["errorHour"]}
           setCurrentCountLab={setCountClassThatNotAttestationClass}
           setMaxCountLab={setMaxCountLab}
-          setHour={setTimeOfOneClass}
+          setHour={setHourAttestation}
           setAvgGrade={setAvgGrade}
           toggleAttested={toggleAttested}
           isAttested={teacherClassGroupControlState.isAttested}
           avgGrade={teacherClassGroupControlState.avgGrade}
           currentCountLab={teacherClassGroupControlState.countClassThatNotAttestation}
           maxCountLab={teacherClassGroupControlState.maxLabCount}
-          hour={teacherClassGroupControlState.timeOfOneClass}
+          hour={teacherClassGroupControlState.hourAttestation}
           stateSave={teacherClassGroupControlState.loadingCalculate}
           onSave={onClickSave}
           onCancel={closeAttestationGrade}
@@ -735,6 +741,7 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
   isOpenUpdateWindow,
   setAttendance,
   openDeletePopup,
+  setHourAttestation,
   setDescription,
   setGradeNumber,
   closeUpdateWindow,
@@ -924,14 +931,14 @@ export const ClassGroupPanelDesktopView: FC<LocalViewProps> = memo(({
           errorHour={teacherClassGroupControlState.errors["errorHour"]}
           setCurrentCountLab={setCountClassThatNotAttestationClass}
           setMaxCountLab={setMaxCountLab}
-          setHour={setTimeOfOneClass}
+          setHour={setHourAttestation}
           toggleAttested={toggleAttested}
           isAttested={teacherClassGroupControlState.isAttested}
           setAvgGrade={setAvgGrade}
           avgGrade={teacherClassGroupControlState.avgGrade}
           currentCountLab={teacherClassGroupControlState.countClassThatNotAttestation}
           maxCountLab={teacherClassGroupControlState.maxLabCount}
-          hour={teacherClassGroupControlState.timeOfOneClass}
+          hour={teacherClassGroupControlState.hourAttestation}
           stateSave={teacherClassGroupControlState.loadingCalculate}
           onSave={onClickSave}
           onCancel={closeAttestationGrade}
@@ -1413,9 +1420,9 @@ export type ControlAttestationGradeProps = {
   errorMaxCountLab: string | null;
   errorCurrentCountLab: string | null;
 
-  avgGrade: number | null;
+  avgGrade: string;
   isAttested: boolean;
-  hour: number | null;
+  hour: string;
   maxCountLab: number | null;
   currentCountLab: number | null;
   setAvgGrade: (value: string) => void;
@@ -1466,12 +1473,12 @@ export const ControlAttestationGrade: FC<ControlAttestationGradeProps> = memo(({
       <Input 
           header='Оценка' 
           placeholder='9' error={errorAvgGrade}
-          value={avgGrade?.toString() || ''} setValue={setAvgGrade}/>
+          value={avgGrade} setValue={setAvgGrade}/>
       <Spacing themeSpace={25} variant='Column' />
       <Input 
           header='Количество часов' 
           placeholder='9' error={errorHour}
-          value={hour?.toString() || ''} setValue={setHour}/>
+          value={hour} setValue={setHour}/>
       <Spacing themeSpace={25} variant='Column' />
       <Input 
           header='Кол-во защищённых занятий' 

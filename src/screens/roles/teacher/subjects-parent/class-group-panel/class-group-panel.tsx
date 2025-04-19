@@ -23,7 +23,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     setAttendanceActionCreator,
     switchIsPassedActionCreator,
     setNameOfClassActionCreator,
-
+    setHourAttestationActionCreator,
     setSelectedClassActionCreator,
     setExpirationOfRefreshActionCreator,
     toggleIsCompletedActionCreator,
@@ -256,7 +256,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
       avgGrade: teacherClassGroupControlState.avgGrade,
       maxCountLab: teacherClassGroupControlState.maxLabCount,
       idAttestationStudentGrades: teacherClassGroupControlState.selectedAttestationGrade.idAttestationStudentGrades,
-      hour: teacherClassGroupControlState.timeOfOneClass,
+      hour: teacherClassGroupControlState.hourAttestation,
       currentCountLab: teacherClassGroupControlState.countClassThatNotAttestation,
       isAttested: teacherClassGroupControlState.isAttested,
       onSuccess: onSuccess
@@ -266,7 +266,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
     teacherClassGroupControlState.avgGrade,
     teacherClassGroupControlState.maxLabCount,
     teacherClassGroupControlState.selectedAttestationGrade.idAttestationStudentGrades,
-    teacherClassGroupControlState.timeOfOneClass,
+    teacherClassGroupControlState.hourAttestation,
     teacherClassGroupControlState.isAttested,
     teacherClassGroupControlState.countClassThatNotAttestation,])
 
@@ -284,6 +284,10 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
   const setCurrentNameOfClass = useCallback((onSuccess: () => void)=>{
     dispatch(setCurrentNameOfClassActionCreator({onSuccess}));
   },[dispatch,setCurrentNameOfClassActionCreator])
+
+  const setHourAttestation = useCallback((value: string)=>{
+    dispatch(setHourAttestationActionCreator(value));
+  },[dispatch,setHourAttestationActionCreator])
   
   const renameClass = useCallback((onSuccess: () => void) => {
     dispatch(renameClassActionCreator({
@@ -302,6 +306,7 @@ export const ClassGroupPanel: FC<ClassGroupPanelProps> = memo(({onPrevScreen}) =
       <ClassGroupPanelView 
         createClass={createClass}
         onSave={onSave}
+        setHourAttestation={setHourAttestation}
         switchIsPassed={switchIsPassed}
         calculateAttestation={calculateAttestation}
         updateGrade={updateGrade}

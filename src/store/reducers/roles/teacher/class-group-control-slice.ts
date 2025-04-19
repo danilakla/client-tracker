@@ -136,7 +136,8 @@ export type СlassGroupControlState = {
     loadingCalculate: "idle" | "loading" | "success" | "error";
     maxLabCount:  number | null;
     countClassThatNotAttestation: number | null;
-    avgGrade: number | null;
+    avgGrade: string;
+    hourAttestation: string;
     timeOfOneClass: number | null;
     isAttested: boolean;
 };
@@ -149,6 +150,7 @@ const initialState: СlassGroupControlState = {
     errors: {},
     classesIds: [],
     attestationClassesIds: [],
+    hourAttestation: '',
     loadingUpdate: 'idle',
     isCompleted: false,
     isShowCompleted: false,
@@ -204,7 +206,7 @@ const initialState: СlassGroupControlState = {
     loadingCalculate: "idle",
 
     maxLabCount: null,
-    avgGrade: null,
+    avgGrade: '',
     countClassThatNotAttestation: null,
     timeOfOneClass: null,
     isAttested: false,
@@ -286,7 +288,7 @@ export const classGroupControlSlice = createSlice({
             if (parsedGrade === "") {
                 state.selectedGrade.grade = null;
             } else {
-                const numericGrade = parseFloat(parsedGrade);
+                const numericGrade = parseInt(parsedGrade);
 
                 if (!isNaN(numericGrade)){
                     if(numericGrade > 10) return;
@@ -421,9 +423,9 @@ export const classGroupControlSlice = createSlice({
         }>) {
             state.selectedAttestationGrade = action.payload.value;
             state.countClassThatNotAttestation = action.payload.value.currentCountLab;
-            state.avgGrade = action.payload.value.avgGrade;
+            state.avgGrade = action.payload.value.avgGrade?.toString() || '';
             state.maxLabCount = action.payload.value.maxCountLab;
-            state.timeOfOneClass = action.payload.value.hour;
+            state.hourAttestation = action.payload.value.hour?.toString() || '';
             state.isAttested = action.payload.value.isAttested;
             action.payload.onSuccess();
         },
@@ -526,7 +528,7 @@ export const classGroupControlSlice = createSlice({
             state.maxLabCount = null;
             state.countClassThatNotAttestation = null;
             state.timeOfOneClass = null;
-            state.avgGrade = null;
+            state.avgGrade = '';
             state.errors = {};
         },
 
@@ -552,19 +554,37 @@ export const classGroupControlSlice = createSlice({
             });
         },
         setAvgGradeActionCreator(state, action: PayloadAction<string>) {
-            const parsedGrade = action.payload.trim();
+            let input = action.payload.trim().replace(',', '.');
 
-            if (parsedGrade === "") {
-                state.avgGrade = null;
-            } else {
-                const numericGrade = parseFloat(parsedGrade);
+            if(input === ''){
+                state.avgGrade = '';
+                return;
+            }
 
-                if (!isNaN(numericGrade)){
-                    if(numericGrade > 10) return;
-                    state.avgGrade = numericGrade;
-                }
-                else
-                    state.avgGrade = null;
+            const cleanedForParsing = input.endsWith('.') ? input.slice(0, -1) : input;
+        
+            const validFormat = /^(10(\.\d{0,2})?|[0-9](\.\d{1,2})?)$/.test(cleanedForParsing);
+            const numericGrade = parseFloat(cleanedForParsing);
+        
+            if (validFormat && !isNaN(numericGrade) && numericGrade >= 0 && numericGrade <= 10) {
+                state.avgGrade = input;
+            }
+        },
+        setHourAttestationActionCreator(state, action: PayloadAction<string>) {
+            let input = action.payload.trim().replace(',', '.');
+
+            if(input === ''){
+                state.hourAttestation = '';
+                return;
+            }
+
+            const cleanedForParsing = input.endsWith('.') ? input.slice(0, -1) : input;
+        
+            const validFormat = /^(10(\.\d{0,2})?|[0-9](\.\d{1,2})?)$/.test(cleanedForParsing);
+            const numericGrade = parseFloat(cleanedForParsing);
+        
+            if (validFormat && !isNaN(numericGrade) && numericGrade >= 0 && numericGrade <= 10) {
+                state.hourAttestation = input;
             }
         },
     },
@@ -1109,19 +1129,22 @@ export const updateAttestationClassActionCreator = createAsyncThunk('teacher-cla
     async (data: { 
       authToken: string, 
       idAttestationStudentGrades: number,
-      avgGrade: number | null,
-      hour: number | null,
+      avgGrade: string,
+      hour: string,
       isAttested: boolean,
       currentCountLab :number | null,
       maxCountLab: number | null,
       onSuccess: () => void}, thunkApi ) => {
         const { authToken, idAttestationStudentGrades, avgGrade, hour, currentCountLab,isAttested,  maxCountLab, onSuccess } = data;
         try { 
+            const cleanedAvgGrade = avgGrade.endsWith('.') ? avgGrade.slice(0, -1) : avgGrade;
+            const cleanedHour = hour.endsWith('.') ? hour.slice(0, -1) : hour;
+
             const responce = await teacherApi.updateAttestationGrade(
                 authToken,
                 idAttestationStudentGrades,
-                avgGrade,
-                hour,
+                parseFloat(cleanedAvgGrade),
+                parseFloat(cleanedHour),
                 currentCountLab,
                 maxCountLab,
                 isAttested
