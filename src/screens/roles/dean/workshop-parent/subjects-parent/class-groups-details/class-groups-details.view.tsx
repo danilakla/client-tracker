@@ -236,25 +236,31 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
             isLeft={!deanClassGroupDetailsState.isMany} 
             onClick={switchIsMany} />
           <Spacing themeSpace={20} variant='Column' />
-          {type === 'add' ? 
-          <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
-            Редактировать группы
-          </Button>
-           : <Column horizontalAlign='center'>
-            <Text themeFont={theme.fonts.h3}>
-              Список подгрупп
+          <Column style={{maxWidth: 440}}>
+            <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+              Назначенные подгруппы
             </Text>
-          </Column>}
-          <Spacing themeSpace={type === 'add' ? 15 : 10} variant='Column' />
-          <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
+            <Spacing variant='Column' themeSpace={5}/>
+            <Row style={{width: '100%'}}>
+              <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
+              <Spacing themeSpace={10} variant='Row' />
+              <Button onClick={controlSubroupsWindow} variant='primary' padding={[12,17]}>
+                Редактировать
+              </Button>
+            </Row>
+          </Column>
           <Spacing themeSpace={10} variant='Column' />
-          {
-            filteredSubgroupsExists.map((item, index) =>
-              <>
-              <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>
-              <Spacing themeSpace={10} variant='Column' />
-              </>)
-          }
+          <ScrollView style={{maxHeight: 340, flexShrink: 0, maxWidth: 440}}>
+            <Column horizontalAlign='center'>
+              <ItemsContainerMobile style={{paddingBottom: 0}}>
+                {filteredSubgroupsExists.length === 0 && <Text themeFont={theme.fonts.ht2}>
+                  Совпадений не найдено или подгруппы не назначены
+                </Text>}
+                {filteredSubgroupsExists.map((item, index) => 
+                <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)}
+              </ItemsContainerMobile>
+            </Column>
+          </ScrollView>
           <Spacing themeSpace={20} variant='Column' />
          {type === 'edit' && 
           <Button onClick={openDeletePopup} variant='attentive' padding={[12,17]}>
@@ -264,14 +270,14 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
         </>)
       }
       <Modal padding='none' isActive={isOpenSubgroups} closeModal={controlSubroupsWindow}>
-        <Column horizontalAlign='flex-start' padding={25}>
+        <Column horizontalAlign='center' padding={25}>
           <Search value={deanClassGroupDetailsState.searchTextWindow} setValue={setSearchTextWindow}/>
           <Spacing themeSpace={15} variant='Column' />
           <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-            Редактировать группы
+            Переназначить подгруппы
           </Text>
           <Spacing variant='Column' themeSpace={10}/>
-          <ScrollView style={{maxHeight: 400, position: 'relative'}}>
+          <ScrollView style={{maxHeight: 400, position: 'relative', maxWidth: 440}}>
             <Column horizontalAlign='center'>
               <ItemsContainerMobile style={{paddingBottom: 0}}>
               {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
@@ -372,26 +378,32 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
           <Spacing themeSpace={25} variant='Row' />
             <Surface >
               <Row horizontalAlign='space-between'>
-                {type === 'add' && <>
-                  <Button onClick={controlSubroupsWindow}  variant='primary' padding={[12,17]}>
-                  Редактировать группы
-                  </Button>
-                  <Spacing themeSpace={15} variant='Row' />
-                </>}
                 <ActionButtonSwitch  
                   disable={type === 'edit'}
-                  width={'220px'}
                   text='Совместные занятия'
                   isLeft={!deanClassGroupDetailsState.isMany} 
                   onClick={switchIsMany} />
                 {type === 'edit' && <Spacing themeSpace={200} variant='Row' />}
               </Row>
               <Spacing themeSpace={15} variant='Column' />
-              <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
+              <Row style={{width: '100%', flexShrink: 0}}>
+                <Search value={deanClassGroupDetailsState.searchText} setValue={setSearchText}/>
+                <Spacing themeSpace={10} variant='Row' />
+                <Button onClick={controlSubroupsWindow}  variant='primary' padding={[12,17]}>
+                  Редактировать
+                </Button>
+              </Row>
               <Spacing themeSpace={15} variant='Column' />
-              <ScrollView style={{height: 276}}>
+              <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
+                Назначенные подгруппы
+              </Text>
+              <Spacing variant='Column' themeSpace={5}/>
+              <ScrollView style={{height: 255}}>
                 <Column horizontalAlign='center'>
-                  <ItemsContainerMobile>
+                  <ItemsContainerMobile style={{paddingBottom: 0}}>
+                  {filteredSubgroupsExists.length === 0 && <Text align='center' themeFont={theme.fonts.ht2}>
+                    Совпадений не найдено<br/> или подгруппы не назначены
+                  </Text>}
                   {filteredSubgroupsExists.map((item, index) => 
                       <ActionButton key={index} text={item.subgroupNumber} isShowArrow={false}/>)}
                   </ItemsContainerMobile>
@@ -406,12 +418,12 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
           <Search value={deanClassGroupDetailsState.searchTextWindow} setValue={setSearchTextWindow}/>
           <Spacing themeSpace={15} variant='Column' />
           <Text themeColor={theme.colors.gray} themeFont={theme.fonts.h3}>
-            Редактировать группы
+            Переназначить подгруппы
           </Text>
           <Spacing variant='Column' themeSpace={10}/>
           <ScrollView style={{maxHeight: 400, position: 'relative'}}>
           <Column horizontalAlign='center'>
-          <ItemsContainerMobile>
+          <ItemsContainerMobile style={{paddingBottom: 0}}>
           {filteredSubgroupsWindow.length === 0 && <Text themeFont={theme.fonts.ht2}>
               Совпадений не найдено
             </Text>}

@@ -56,7 +56,7 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     } 
     
     return () => {
-      dispatch(reset());
+      // dispatch(reset());
     };
   }, [dispatch, initClassGroupDetails, reset]);
 
