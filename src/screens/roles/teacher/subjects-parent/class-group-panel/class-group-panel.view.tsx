@@ -34,6 +34,7 @@ import { useTableScroll } from '../../../../../hooks/table-scroll-hook';
 import { ActionButtonSwitch } from '../../../../../ui-kit/action-button-switch';
 import { SuccessfulPopup } from '../../../../../ui-kit/successful-popup';
 import { RulesText } from '../../../dean/workshop-parent/class-table/class-table.view';
+import { decryptAES, encryptAES } from '../../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 
 export type ClassGroupPanelViewProps = {
@@ -1063,6 +1064,11 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
   },[closePopup]) 
 
   const [isOpenFull, setIsOpenFull] = useState<boolean>(false);
+  const secretKey = process.env.REACT_APP_SECRET_KEY || "default-secret-key";
+
+  const encryptText = useCallback((text: string): string => {
+     return encryptAES(text, secretKey);
+  }, [secretKey]);
 
   return (
     <Popup isActive={isActive} closePopup={() => {}}>
@@ -1117,7 +1123,7 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
                 (<CircleLoading state={'loading'}/>) :
                 (<>
                   <QRCode level='L' size={500} onClick={ !isMobile ? () => setIsOpenFull(true) : () => {}}
-                    value={JSON.stringify(qrCodeData)}
+                    value={encryptText(JSON.stringify(qrCodeData))}
                     />
                 </>)
             }
@@ -1137,7 +1143,7 @@ export const QrCodeControlPopup: FC<QrCodeControlPopupProps> = memo(({
                 (<CircleLoading state={'loading'}/>) :
                 (<>
                   <QRCode level='L' size={550}
-                    value={JSON.stringify(qrCodeData)}
+                    value={encryptText(JSON.stringify(qrCodeData))}
                   />
                 </>)
               }

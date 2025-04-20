@@ -4,7 +4,7 @@ import { useMediaQuery } from 'react-responsive';
 import { theme } from '../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../components/wrapper-desktop';
-import { GradeInfo, ClassHeaderType, RedisKeyDataType, StatisticOfStudent, StudentClassGroupTableState, AttestationGradeInfo } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { GradeInfo, ClassHeaderType, RedisKeyDataType, StatisticOfStudent, StudentClassGroupTableState, AttestationGradeInfo, encryptAES, decryptAES } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 import { Column } from '../../../../ui-kit/column';
 import { CircleLoading } from '../../../../ui-kit/circle-loading';
 import { Surface } from '../../../../ui-kit/surface';
@@ -526,6 +526,12 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
   loadingKey,
   loadingScan
 }) => {
+  const secretKey = process.env.REACT_APP_SECRET_KEY || "default-secret-key";
+  
+  const decryptText = useCallback((encryptedText: string): string => {
+    return decryptAES(encryptedText, secretKey);
+  }, [secretKey]);
+
 	return (
 	  <Column horizontalAlign='center'>
       <Text themeFont={theme.fonts.h1}>
@@ -570,7 +576,7 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
                   height: 300,
                   width: 300
                 }
-              }} onScan={(result: IDetectedBarcode[]) => onHandleQrCode(result[0].rawValue)} />)}
+              }} onScan={(result: IDetectedBarcode[]) => onHandleQrCode(decryptText(result[0].rawValue))} />)}
             </Surface>
             <Spacing themeSpace={15} variant='Column' />
             <Column horizontalAlign='center'>

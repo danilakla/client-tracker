@@ -5,6 +5,7 @@ import { studentApi } from "../../../../api/auth/student-api";
 import { ClassGroupInfo } from "./student-subjects-slice";
 import { AttendanceCodeType } from "../teacher/class-group-control-slice";
 import { parentApi } from "../../../../api/auth/parent-api";
+import AES from 'aes-js';
 
 type ErrorType = string | null;
 export type AttendanceOption = {
@@ -557,3 +558,41 @@ export const reloadStudntTableStatisticsActionCreator = createAsyncThunk('studen
         }
     }
 )
+
+
+// Генерация ключа из строки (обрезаем/дополняем до 16 байт)
+function getKeyFromPassword(password: string): Uint8Array {
+  const padded = password.padEnd(16, '0').slice(0, 16);
+  return AES.utils.utf8.toBytes(padded);
+}
+
+// Синхронное шифрование
+export function encryptAES(text: string, password: string): string {
+  const key = getKeyFromPassword(password);
+  const textBytes = AES.utils.utf8.toBytes(text);
+
+  const iv = new Uint8Array(16); // Можешь заменить на random, если хочешь
+  for (let i = 0; i < iv.length; i++) iv[i] = i * 3 + 1; // простая IV
+
+  const aesCtr = new AES.ModeOfOperation.ctr(key, new AES.Counter(iv));
+  const encryptedBytes = aesCtr.encrypt(textBytes);
+
+  const encryptedHex = AES.utils.hex.fromBytes(iv) + AES.utils.hex.fromBytes(encryptedBytes);
+  return encryptedHex;
+}
+
+// Синхронная дешифровка
+export function decryptAES(encryptedHex: string, password: string): string {
+  const key = getKeyFromPassword(password);
+
+  const ivHex = encryptedHex.slice(0, 32);
+  const cipherHex = encryptedHex.slice(32);
+
+  const iv = AES.utils.hex.toBytes(ivHex);
+  const encryptedBytes = AES.utils.hex.toBytes(cipherHex);
+
+  const aesCtr = new AES.ModeOfOperation.ctr(key, new AES.Counter(iv));
+  const decryptedBytes = aesCtr.decrypt(encryptedBytes);
+
+  return AES.utils.utf8.fromBytes(decryptedBytes);
+}
