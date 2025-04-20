@@ -4,13 +4,13 @@ import { useMediaQuery } from 'react-responsive';
 import { theme } from '../../../../ui-kit/themes/theme';
 import { WrapperMobile } from '../../../../components/wrapper-mobile';
 import { WrapperDesktop } from '../../../../components/wrapper-desktop';
-import { GradeInfo, ClassHeaderType, RedisKeyDataType, StatisticOfStudent, StudentClassGroupTableState, AttestationGradeInfo, encryptAES, decryptAES } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { GradeInfo, ClassHeaderType, RedisKeyDataType, StatisticOfStudent, StudentClassGroupTableState, AttestationGradeInfo, decryptAES } from '../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 import { Column } from '../../../../ui-kit/column';
 import { CircleLoading } from '../../../../ui-kit/circle-loading';
 import { Surface } from '../../../../ui-kit/surface';
 import { Text } from '../../../../ui-kit/text';
 import { Spacing } from '../../../../ui-kit/spacing';
-import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ExistMark, HeaderClasses, HeaderClassItem, HorizontalSlider, HorizontalTrack, NameHeader, ScrollWrapper, StudentItem, StudentsContainer, Table, TableHeader, TableWrapper, VerticalSlider, VerticalTrack } from './student-class-group-table.styled';
+import { ClassesContainer, ClassesRow, ClassItem, ColorCircle, ExistMark, ScrollWrapper, StudentItem, StudentsContainer, Table, TableWrapper, VerticalSlider, VerticalTrack } from './student-class-group-table.styled';
 import { Popup } from '../../../../ui-kit/popup';
 import { Modal } from '../../../../ui-kit/modal';
 import { ScrollView } from '../../../../ui-kit/scroll-view';
@@ -94,11 +94,6 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
     };
   }, [clearRedisKey]);
 
-  const [hasCameraAccess, setHasCameraAccess] = useState<boolean>(true);
-  const setErrorAccessCamera = useCallback(() => {
-    setHasCameraAccess(false);
-  },[])
-
   const [isReviewSuccessPopup, setIsReviewSuccessPopup] = useState<boolean>(false);
   const openReviewSuccessPopup = useCallback(() => {
     setIsReviewSuccessPopup(true);
@@ -165,9 +160,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           closeClassControl={closeClassControl}
           openClassControl={openClassControl}
           onHandleQrCode={onHandleQrCode}
-          hasCameraAccess={hasCameraAccess}
           fioOfStudent={fioOfStudent}
-          setErrorAccessCamera={setErrorAccessCamera}
           isClassControlPopup={isClassControlPopup}
           getKeyForQr={onGetKeyForQr}
           reloadTable={reloadTable}
@@ -176,9 +169,7 @@ export const StudentClassGroupTableView: FC<StudentClassGroupTableViewProps> = m
           />) :
         (<StudentClassGroupTableDesktopView
           role={role}
-          hasCameraAccess={hasCameraAccess}
           onAskReview={controlConfirmReviewPopup}
-          setErrorAccessCamera={setErrorAccessCamera}
           reloadTable={reloadTable}
           fioOfStudent={fioOfStudent}
           closeClassControl={closeClassControl}
@@ -261,11 +252,9 @@ type LocalViewProps = {
   reloadTable: () => void;
   fioOfStudent: string;
   onAskReview: () => void;
-  hasCameraAccess: boolean | null;
   openClassControl: (value: ClassHeaderType) => void;
   setSelectedGrade: (gradeInfo: GradeInfo, onSuccess: () => void) => void;
   getKeyForQr: () => void;
-  setErrorAccessCamera: () => void;
 };
 
 export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
@@ -275,9 +264,7 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
   fioOfStudent,
   onAskReview,
   setSelectedGrade,
-  hasCameraAccess,
   reloadTable,
-  setErrorAccessCamera,
   isClassControlPopup,
   onHandleQrCode,
   closeClassControl,
@@ -366,8 +353,6 @@ export const StudentClassGroupTableMobileView: FC<LocalViewProps> = memo(({
           getKeyForQr={getKeyForQr}
           className={studentClassGroupTableState.selectedClass.className}
           loadingScan={studentClassGroupTableState.loadingScan}
-          hasCameraAccess={hasCameraAccess}
-          setErrorAccessCamera={setErrorAccessCamera}
           onHandleQrCode={onHandleQrCode}
           onAskReview={onAskReview}
           position={studentClassGroupTableState.selectedClass.position}/>
@@ -400,8 +385,6 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
   setSelectedGrade,
   reloadTable,
   fioOfStudent,
-  hasCameraAccess,
-  setErrorAccessCamera,
   isClassControlPopup,
   onHandleQrCode,
   closeClassControl,
@@ -491,8 +474,6 @@ export const StudentClassGroupTableDesktopView: FC<LocalViewProps> = memo(({
           getKeyForQr={getKeyForQr}
           className={studentClassGroupTableState.selectedClass.className}
           loadingScan={studentClassGroupTableState.loadingScan}
-          hasCameraAccess={hasCameraAccess}
-          setErrorAccessCamera={setErrorAccessCamera}
           onHandleQrCode={onHandleQrCode}
           onAskReview={onAskReview}
           position={studentClassGroupTableState.selectedClass.position}/>
@@ -506,10 +487,8 @@ export type QrcCodePartProps = {
   className: string | null;
   redisKeyData: RedisKeyDataType | null;
   getKeyForQr: () => void;
-  setErrorAccessCamera: () => void;
   onHandleQrCode: (value: string) => void;
   onAskReview: () => void;
-  hasCameraAccess: boolean | null;
   loadingKey: "idle" | "loading" | "success" | "error";
   loadingScan: "loading" | "idle" | "success" | "error";
 };
@@ -518,8 +497,6 @@ export const QrcCodePart: FC<QrcCodePartProps> = memo(({
   position,
   redisKeyData,
   getKeyForQr,
-  setErrorAccessCamera,
-  hasCameraAccess,
   className,
   onHandleQrCode,
   onAskReview,

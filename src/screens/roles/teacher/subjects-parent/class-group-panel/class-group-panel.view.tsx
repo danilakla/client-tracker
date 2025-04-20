@@ -22,7 +22,6 @@ import { RangeSlider } from '../../../../../ui-kit/range-slider';
 
 import ShieldLogo from '../../../../../ui-kit/assets/security-shield.svg';
 import RefreshLogo from '../../../../../ui-kit/assets/refresh.svg';
-import attentionSvgrepo from '../../../../../ui-kit/assets/attention-svgrepo.svg';
 import InfoLogo from '../../../../../ui-kit/assets/info.svg';
 import bookLogo from '../../../../../ui-kit/assets/book.svg';
 
@@ -34,7 +33,7 @@ import { useTableScroll } from '../../../../../hooks/table-scroll-hook';
 import { ActionButtonSwitch } from '../../../../../ui-kit/action-button-switch';
 import { SuccessfulPopup } from '../../../../../ui-kit/successful-popup';
 import { RulesText } from '../../../dean/workshop-parent/class-table/class-table.view';
-import { decryptAES, encryptAES } from '../../../../../store/reducers/roles/student-and-parent/student-class-group-table';
+import { encryptAES } from '../../../../../store/reducers/roles/student-and-parent/student-class-group-table';
 
 
 export type ClassGroupPanelViewProps = {
