@@ -379,6 +379,8 @@ export const createClassGroupActionCreator = createAsyncThunk('dean-class-group-
 export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-details-slice/update-class-group',
     async (data: { 
         authToken: string,
+        isMany: boolean,
+        hasApplyAttestation: boolean,
         teacherId: string,
         subjectId: string,
         classGroupId: string,
@@ -397,6 +399,8 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
             description, 
             newSubgroups, 
             oldSubgroups, 
+            hasApplyAttestation,
+            isMany,
             onSuccess 
         } = data;
 
@@ -431,7 +435,7 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
 
             if(hasError) return;
 
-            await deanApi.updateClassGroup(authToken, teacherId, classGroupId, subjectId , classFormatId, description.trim());
+            await deanApi.updateClassGroup(authToken, teacherId, classGroupId, subjectId , classFormatId, description.trim(), hasApplyAttestation);
             const existingSubgroupIds = newSubgroups
                 .filter(subgroup => subgroup.isExist)
                 .map(subgroup => subgroup.idSubgroup); 
@@ -442,7 +446,7 @@ export const updateClassGroupActionCreator = createAsyncThunk('dean-class-group-
 
             const addedSubgroupIds = existingSubgroupIds.filter(id => !oldSubgroupIds.includes(id));
             if(addedSubgroupIds.length > 0)
-                await deanApi.addGroupToClassGroup(authToken, Number.parseFloat(classGroupId), addedSubgroupIds);
+                await deanApi.addGroupToClassGroup(authToken, Number.parseFloat(classGroupId), addedSubgroupIds, hasApplyAttestation, isMany);
             
 
             const removedSubgroupIds = oldSubgroupIds.filter(id => !existingSubgroupIds.includes(id));

@@ -201,13 +201,22 @@ export const deanApi = {
                 return response.data;
             })
     },
-    updateClassGroup(authToken: string, teacherId: string, classGroupId: string, subjectId: string, classFormatId: string, description: string){
+    updateClassGroup(
+        authToken: string, 
+        teacherId: string, 
+        classGroupId: string, 
+        subjectId: string, 
+        classFormatId: string, 
+        description: string,
+        hasApplyAttestation: boolean
+    ){
         return instance.put('/dean/class-group/update',{
             teacherId: teacherId,
             classGroupId: classGroupId,
             subjectId: subjectId,
             classFormatId: classFormatId,
-            description: description
+            description: description,
+            hasApplyAttestation: hasApplyAttestation
             }, { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;
@@ -224,10 +233,12 @@ export const deanApi = {
                 return response.data;
             })
     },
-    addGroupToClassGroup(authToken: string, classGroupId: number, studentGroupIds: number[]){
+    addGroupToClassGroup(authToken: string, classGroupId: number, studentGroupIds: number[], hasApplyAttestation: boolean, isMany: boolean){
         return instance.post('/dean/add/groups-to-class',{
             classGroupId: classGroupId,
-            studentGroupIds: studentGroupIds
+            studentGroupIds: studentGroupIds,
+            hasApplyAttestation: hasApplyAttestation,
+            isMany: isMany
             }, { headers: {'Authorization' : `Bearer ${authToken}`} })
             .then((response) => {
                 return response.data;

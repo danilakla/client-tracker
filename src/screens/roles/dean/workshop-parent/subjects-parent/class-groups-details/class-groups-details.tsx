@@ -141,6 +141,8 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
   const updateClassGroup = useCallback(() => {
     dispatch(updateClassGroupActionCreator({
       authToken: authToken,
+      hasApplyAttestation: deanClassGroupDetailsState.hasApplyAttestation,
+      isMany: deanClassGroupDetailsState.isMany,
       teacherId: deanClassGroupDetailsState.selectedTeacher.value,
       subjectId: deanClassGroupsState.selectedSubject?.idSubject.toString() || '-1',
       classGroupId: deanClassGroupDetailsState.selectedClassGroupId?.toString() || '-1',
@@ -155,6 +157,8 @@ export const ClassGroupsDetails: FC<ClassGroupsDetailsProps> = memo(({
     authToken,
     goToClassGroups,
     deanClassGroupDetailsState.selectedTeacher,
+    deanClassGroupDetailsState.hasApplyAttestation,
+    deanClassGroupDetailsState.isMany,
     deanClassGroupsState.selectedSubject?.idSubject,
     deanClassGroupDetailsState.selectedClassGroupId,
     deanClassGroupDetailsState.selectedClassFormat,

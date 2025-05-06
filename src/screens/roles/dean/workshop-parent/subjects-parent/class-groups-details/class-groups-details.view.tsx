@@ -224,7 +224,6 @@ export const ClassGroupsDetailsMobileView: FC<LocalViewProps> = memo(({
             </Text>
           </Column>
           <ActionButtonSwitch  
-                  disable={type === 'edit'}
                   width={'100%'}
                   text='Включить в аттестацию'
                   isLeft={!deanClassGroupDetailsState.hasApplyAttestation} 
@@ -368,7 +367,6 @@ export const ClassGroupsDetailsDesktopView: FC<LocalViewProps> = memo(({
                   </Text>
                 </Column>
                 <ActionButtonSwitch  
-                  disable={type === 'edit'}
                   width={'100%'}
                   text='Включить в аттестацию'
                   isLeft={!deanClassGroupDetailsState.hasApplyAttestation} 
